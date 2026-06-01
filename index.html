@@ -5119,7 +5119,8 @@ function renderCupStandings(s){
         var self = this;
         self.setStatus('loading');
         var url = self.apiUrl() + '?ref=' + encodeURIComponent(CLOUD_CONFIG.branch) + '&_t=' + Date.now();
-        var headers = { 'Accept': 'application/vnd.github+json' };
+        // Use 'raw' media type to support files > 1 MB (limit is 100 MB)
+        var headers = { 'Accept': 'application/vnd.github.raw' };
         if(self.pat) headers['Authorization'] = 'Bearer ' + self.pat;
         return fetch(url, { headers: headers, cache: 'no-store' })
           .then(function(r) {
@@ -5133,18 +5134,16 @@ function renderCupStandings(s){
               return null;
             }
             if(!r.ok) throw new Error('HTTP ' + r.status);
-            return r.json();
+            return r.text();
           })
-          .then(function(data) {
-            if(!data) return null;
-            self.sha = data.sha;
-            var raw = atob((data.content || '').replace(/\s/g, ''));
-            var jsonText;
-            try { jsonText = decodeURIComponent(escape(raw)); }
-            catch(_) { jsonText = raw; }
+          .then(function(jsonText) {
+            if(!jsonText) return null;
             var parsed = JSON.parse(jsonText);
             self.lastSyncedHash = self.hash(jsonText);
-            self.setStatus('synced');
+            // Fetch sha separately (small request) — needed for future PUTs
+            self._refreshSha().finally(function() {
+              self.setStatus('synced');
+            });
             return parsed;
           })
           .catch(function(err) {
