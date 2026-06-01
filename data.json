@@ -70,7 +70,12 @@
         null,
         null
       ],
-      "results": {},
+      "results": {
+        "0-5": {
+          "hg": 0,
+          "ag": 1
+        }
+      },
       "rounds": [
         [
           {
