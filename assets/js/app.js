@@ -4321,6 +4321,21 @@ function renderCupStandings(s){
       }
     };
 
+    // Classify logos by filename prefix: entries whose name starts with
+    // "season_" (case-insensitive) are league/season logos; everything else
+    // is treated as a team logo. This keeps a single storage list but
+    // exposes two independent pickers in the UI.
+    function isSeasonLogoEntry(entry) {
+      if(!entry || !entry.name) return false;
+      return /^season[_\s-]/i.test(entry.name);
+    }
+    function getTeamLogoOptions() {
+      return (state.logoMasterList || []).filter(function(l) { return !isSeasonLogoEntry(l); });
+    }
+    function getSeasonLogoOptions() {
+      return (state.logoMasterList || []).filter(isSeasonLogoEntry);
+    }
+
     // =================== REPO UPLOADER (admin push images to repo) ===================
     // Uploads a binary image to logos/ or photos/ in the GitHub repo via the
     // Contents API. Requires CloudSync.pat. Returns Promise<relativePath>.
@@ -9806,10 +9821,11 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
           logoListBtn.textContent = '📋';
           logoListBtn.className = 'ghost small';
           logoListBtn.style.cssText = 'padding: 2px 6px; min-width: 24px; margin-left: 4px;';
-          logoListBtn.title = 'Select from Logo List';
+          logoListBtn.title = 'Select from Team Logo List';
           logoListBtn.addEventListener('click', function() {
-            if(!state.logoMasterList || state.logoMasterList.length === 0) {
-              toast('Logo List is empty. Add logos to Logo List first.');
+            var teamLogoOptions = getTeamLogoOptions();
+            if(teamLogoOptions.length === 0) {
+              toast('Team Logo List is empty. Add logos to Logo List first.');
               return;
             }
             
@@ -9818,9 +9834,9 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
             selectLogoDialog.style.cssText = 'width: 400px; border: none; border-radius: 8px; padding: 20px; background: var(--card); color: var(--text);';
             
             selectLogoDialog.innerHTML = 
-              '<h4 style="margin: 0 0 16px 0; color: var(--accent);">Select Logo from Master List</h4>' +
+              '<h4 style="margin: 0 0 16px 0; color: var(--accent);">Select Team Logo</h4>' +
               '<div style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; background: var(--bg);">' +
-              state.logoMasterList.slice().sort(function(a, b) {
+              teamLogoOptions.slice().sort(function(a, b) {
                 return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
               }).map(function(logo, idx) { 
                 return '<div class="logo-option" style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid var(--border); color: var(--text); display: flex; align-items: center; gap: 10px;" data-logo-data="' + logo.data + '" data-logo-name="' + logo.name + '">' + 
@@ -9931,7 +9947,69 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
           })
           .then(function() { $('logoFile').value = ''; });
       });
-      $('btnLogo').addEventListener('click',function(){ if(!ensureAdmin()) return; $('logoFile').click() });
+      $('btnLogo').addEventListener('click',function(){
+        if(!ensureAdmin()) return;
+        var s = activeSeason();
+        var seasonLogoOptions = getSeasonLogoOptions();
+
+        var dlg = document.createElement('dialog');
+        dlg.style.cssText = 'width: 460px; max-width: 92vw; border: none; border-radius: 8px; padding: 20px; background: var(--card); color: var(--text);';
+
+        var listHtml = seasonLogoOptions.length === 0
+          ? '<div style="color: var(--muted); padding: 12px; text-align: center;">Chưa có season logo nào. Upload mới hoặc push file <code>season_*</code> vào <code>logos/</code> trên repo.</div>'
+          : seasonLogoOptions.slice().sort(function(a, b) {
+              return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+            }).map(function(logo) {
+              return '<div class="season-logo-option" style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px;" data-logo-data="' + logo.data + '" data-logo-name="' + logo.name + '">' +
+                '<img src="' + logo.data + '" style="width: 36px; height: 36px; object-fit: cover; border-radius: 4px;" />' +
+                '<span>' + logo.name + '</span>' +
+              '</div>';
+            }).join('');
+
+        dlg.innerHTML =
+          '<h4 style="margin: 0 0 12px 0; color: var(--accent);">Logo giải đấu</h4>' +
+          '<div style="font-size: 12px; color: var(--muted); margin-bottom: 10px;">Chọn từ danh sách Season Logos hoặc upload file mới (sẽ được lưu vào <code>logos/</code> với tiền tố <code>season_</code>).</div>' +
+          '<div style="max-height: 260px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; background: var(--bg);">' + listHtml + '</div>' +
+          '<div style="display: flex; gap: 8px; justify-content: space-between; align-items: center; margin-top: 14px;">' +
+            '<button type="button" id="seasonLogoClearBtn" style="padding: 8px 14px; background: #dc2626; color: white; border: none; border-radius: 4px; cursor: pointer;">Xoá logo</button>' +
+            '<div style="display: flex; gap: 8px;">' +
+              '<button type="button" id="seasonLogoUploadBtn" style="padding: 8px 14px; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer;">Upload mới...</button>' +
+              '<button type="button" id="seasonLogoCancelBtn" style="padding: 8px 14px; background: var(--muted); color: white; border: none; border-radius: 4px; cursor: pointer;">Hủy</button>' +
+            '</div>' +
+          '</div>';
+
+        document.body.appendChild(dlg);
+
+        function closeDlg(){ try { dlg.close(); } catch(_){} if(document.body.contains(dlg)) document.body.removeChild(dlg); }
+
+        dlg.querySelectorAll('.season-logo-option').forEach(function(opt){
+          opt.addEventListener('mouseenter', function(){ this.style.backgroundColor = 'var(--hover)'; });
+          opt.addEventListener('mouseleave', function(){ this.style.backgroundColor = ''; });
+          opt.addEventListener('click', function(){
+            s.logo = this.getAttribute('data-logo-data');
+            saveAll();
+            refreshSeasonUI && refreshSeasonUI();
+            toast('Đã chọn logo "' + this.getAttribute('data-logo-name') + '"');
+            closeDlg();
+          });
+        });
+
+        dlg.querySelector('#seasonLogoUploadBtn').addEventListener('click', function(){
+          closeDlg();
+          $('logoFile').click();
+        });
+        dlg.querySelector('#seasonLogoClearBtn').addEventListener('click', function(){
+          s.logo = null;
+          saveAll();
+          refreshSeasonUI && refreshSeasonUI();
+          toast('Đã xoá logo giải');
+          closeDlg();
+        });
+        dlg.querySelector('#seasonLogoCancelBtn').addEventListener('click', closeDlg);
+        dlg.addEventListener('close', function(){ if(document.body.contains(dlg)) document.body.removeChild(dlg); });
+
+        if(typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open','open');
+      });
       
       // Team List functionality - Editable master team list
       $('btnTeamList').addEventListener('click',function(){ 
@@ -10071,40 +10149,56 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
         
         var logoList = state.logoMasterList || [];
         console.log('Logo list:', logoList);
-        
+
+        function renderLogoSection(title, sublist) {
+          if(sublist.length === 0) {
+            return '<div style="margin-bottom: 14px;">' +
+              '<div style="font-weight: 600; color: var(--text); margin: 6px 0;">' + title + ' (0)</div>' +
+              '<div style="color: var(--muted); padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg);">No logos in this group</div>' +
+              '</div>';
+          }
+          var items = sublist.slice().sort(function(a, b) {
+            return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+          }).map(function(logo, idx) {
+            var isScan = logo.source === 'scan';
+            var badge = isScan
+              ? '<span title="Tự động scan từ logos/" style="background: #10b981; color: white; font-size: 10px; padding: 1px 6px; border-radius: 3px; margin-left: 6px;">auto</span>'
+              : '<span title="Lưu base64 trong data.json (legacy, có thể xóa nếu file đã có trên repo)" style="background: #f59e0b; color: white; font-size: 10px; padding: 1px 6px; border-radius: 3px; margin-left: 6px;">manual</span>';
+            var deleteBtn = isScan
+              ? '<button type="button" disabled title="Xóa bằng cách remove file trong logos/ trên repo" style="padding: 2px 8px; background: #9ca3af; color: white; border: none; border-radius: 3px; cursor: not-allowed; font-size: 12px;">Delete</button>'
+              : '<button type="button" onclick="removeLogo(' + logoList.indexOf(logo) + ')" style="padding: 2px 8px; background: #e74c3c; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 12px;">Delete</button>';
+            return '<div style="padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">' +
+              '<div style="display: flex; align-items: center; gap: 10px;">' +
+                '<img src="' + logo.data + '" style="width: 32px; height: 32px; object-fit: cover; border-radius: 4px;" />' +
+                '<span>' + (idx + 1) + '. ' + logo.name + badge + '</span>' +
+              '</div>' +
+              deleteBtn +
+            '</div>';
+          }).join('');
+          return '<div style="margin-bottom: 14px;">' +
+            '<div style="font-weight: 600; color: var(--text); margin: 6px 0;">' + title + ' (' + sublist.length + ')</div>' +
+            '<div style="border: 1px solid var(--border); border-radius: 4px; padding: 8px; background: var(--bg);">' + items + '</div>' +
+            '</div>';
+        }
+
+        var teamLogos = getTeamLogoOptions();
+        var seasonLogos = getSeasonLogoOptions();
+
         logoDialog.innerHTML = 
           '<h3 style="color: var(--accent); margin: 0 0 8px 0;">Logo Master List (' + logoList.length + ' logos)</h3>' +
           '<div style="background: var(--bg); border: 1px dashed var(--border); border-radius: 6px; padding: 10px 12px; margin: 0 0 12px 0; font-size: 12px; color: var(--muted); line-height: 1.5;">' +
             '<strong style="color: var(--text);">💡 Cách thêm logo mới (khuyến nghị):</strong><br/>' +
-            'Push file ảnh vào thư mục <code style="background: var(--card); padding: 1px 5px; border-radius: 3px;">logos/</code> trên GitHub repo. Website sẽ tự động scan và đưa vào danh sách (tên hiển thị = tên file không có đuôi).' +
+            'Push file ảnh vào thư mục <code style="background: var(--card); padding: 1px 5px; border-radius: 3px;">logos/</code> trên GitHub repo. File có tên bắt đầu bằng <code>season_</code> sẽ vào nhóm <b>Season Logos</b>, còn lại vào nhóm <b>Team Logos</b>.' +
             '<div style="margin-top: 6px;"><button type="button" id="rescanLogosBtn" style="padding: 4px 10px; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">🔄 Quét lại ngay</button></div>' +
           '</div>' +
           '<div style="margin: 12px 0;">' +
-            '<input type="file" id="newLogoInput" accept="image/*" style="width: 250px; padding: 8px; margin-right: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; color: var(--text);">' +
+            '<input type="file" id="newLogoInput" accept="image/*" style="width: 230px; padding: 8px; margin-right: 6px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; color: var(--text);">' +
+            '<label style="font-size: 12px; color: var(--muted); margin-right: 8px;"><input type="checkbox" id="newLogoIsSeason" style="vertical-align: middle;"> Season logo</label>' +
             '<button type="button" id="addLogoBtn" style="padding: 8px 16px; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer;">Upload to logos/</button>' +
           '</div>' +
-          '<div id="logoListDisplay" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; padding: 8px; margin: 16px 0; background: var(--bg);">' +
-            (logoList.length === 0 ? 
-              '<div style="color: var(--muted);">No logos added yet</div>' :
-              logoList.slice().sort(function(a, b) {
-                return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-              }).map(function(logo, idx) { 
-                var isScan = logo.source === 'scan';
-                var badge = isScan
-                  ? '<span title="Tự động scan từ logos/" style="background: #10b981; color: white; font-size: 10px; padding: 1px 6px; border-radius: 3px; margin-left: 6px;">auto</span>'
-                  : '<span title="Lưu base64 trong data.json" style="background: #f59e0b; color: white; font-size: 10px; padding: 1px 6px; border-radius: 3px; margin-left: 6px;">manual</span>';
-                var deleteBtn = isScan
-                  ? '<button type="button" disabled title="Xóa bằng cách remove file trong logos/ trên repo" style="padding: 2px 8px; background: #9ca3af; color: white; border: none; border-radius: 3px; cursor: not-allowed; font-size: 12px;">Delete</button>'
-                  : '<button type="button" onclick="removeLogo(' + logoList.indexOf(logo) + ')" style="padding: 2px 8px; background: #e74c3c; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 12px;">Delete</button>';
-                return '<div style="padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">' + 
-                  '<div style="display: flex; align-items: center; gap: 10px;">' +
-                    '<img src="' + logo.data + '" style="width: 32px; height: 32px; object-fit: cover; border-radius: 4px;" />' +
-                    '<span>' + (idx + 1) + '. ' + logo.name + badge + '</span>' + 
-                  '</div>' +
-                  deleteBtn +
-                '</div>'; 
-              }).join('')
-            ) +
+          '<div id="logoListDisplay" style="max-height: 360px; overflow-y: auto; padding: 4px 2px; margin: 8px 0;">' +
+            renderLogoSection('🛡️ Team Logos', teamLogos) +
+            renderLogoSection('🏆 Season Logos', seasonLogos) +
           '</div>' +
           '<div style="text-align: right;">' +
             '<button type="button" onclick="this.closest(\'dialog\').close()" style="padding: 8px 16px; background: var(--muted); color: white; border: none; border-radius: 4px; cursor: pointer;">Close</button>' +
@@ -10143,6 +10237,10 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
             if(!file.type.startsWith('image/')) { alert('Please select an image file.'); return; }
 
             var fileName = file.name.replace(/\.[^/.]+$/, '');
+            var isSeason = !!(logoDialog.querySelector('#newLogoIsSeason') && logoDialog.querySelector('#newLogoIsSeason').checked);
+            if(isSeason && !/^season[_\s-]/i.test(fileName)) {
+              fileName = 'season_' + fileName;
+            }
             addBtn.disabled = true;
             var origText = addBtn.textContent;
             addBtn.textContent = '⏳ Uploading...';
