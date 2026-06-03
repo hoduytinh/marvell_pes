@@ -12355,6 +12355,10 @@
         "swiss-2-4": {
           "hg": 1,
           "ag": 2
+        },
+        "swiss-3-2": {
+          "hg": 1,
+          "ag": 2
         }
       },
       "rounds": [
@@ -13544,14 +13548,8 @@
         "winsToAdvance": 3,
         "lossesToEliminate": 3,
         "teamsToAdvance": 8,
-        "qualified": [
-          5,
-          13
-        ],
-        "eliminated": [
-          2,
-          14
-        ],
+        "qualified": [],
+        "eliminated": [],
         "swissBracketSize": 16,
         "hasPrePlayoff": false
       }
