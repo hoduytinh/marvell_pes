@@ -6984,7 +6984,7 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
           tr.innerHTML = 
             '<td style="padding: 10px; font-weight: 600; ' + rankColor + '">' + (idx + 1) + '</td>' +
             '<td style="padding: 10px; font-weight: 600; color: var(--text);">' + champion.name + '</td>' +
-            '<td style="padding: 10px; text-align: center; font-weight: 700; color: var(--accent); font-size: 16px;">' + champion.points.toFixed(1) + '</td>';
+            '<td style="padding: 10px; text-align: center; font-weight: 700; color: var(--accent); font-size: 16px;">' + champion.points.toFixed(2) + '</td>';
           
           tbody.appendChild(tr);
         });
@@ -7588,7 +7588,7 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
           };
           pointCell.appendChild(pointInput);
         } else {
-          pointCell.textContent = (ranking.point || 0).toFixed(1);
+          pointCell.textContent = (ranking.point || 0).toFixed(2);
         }
         row.appendChild(pointCell);
         
@@ -7616,7 +7616,7 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
         // Total cell (calculated)
         var totalCell = document.createElement('td');
         var totalPts = (ranking.point || 0) * (ranking.rate || 1);
-        totalCell.textContent = totalPts.toFixed(1);
+        totalCell.textContent = totalPts.toFixed(2);
         totalCell.style.cssText = 'padding: 8px; text-align: center; font-weight: 700; color: var(--accent);';
         row.appendChild(totalCell);
         
