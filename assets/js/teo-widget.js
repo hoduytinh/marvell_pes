@@ -584,9 +584,7 @@
       '#teoHead{display:flex;justify-content:center;align-items:center;padding:14px 16px;border-bottom:1px solid var(--teo-border);background:linear-gradient(90deg,var(--teo-head1),var(--teo-head2))}',
       '#teoHead strong{font-size:15px;color:var(--teo-head-text)}',
       '#teoBody{padding:14px 16px;overflow:auto;max-height:calc(78vh - 62px)}',
-      '#teoTopRow{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(136px,.9fr);gap:10px;align-items:end}',
-      '#teoTopRow .teo-field{min-width:0}',
-      '#teoTopRow .teo-field label{margin-top:0}',
+      '#teoTopRow{display:block}',
       '#teoFunctionDesc{font-size:12px;color:var(--teo-desc-text);margin:8px 0 8px;background:var(--teo-desc-bg);border:1px solid var(--teo-desc-border);padding:8px 10px;border-radius:10px}',
       '#teoTeamsRow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:end}',
       '#teoTeamsRow .teo-field{min-width:0}',
@@ -595,7 +593,11 @@
       '#teoPanel select,#teoPanel button{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;border:1px solid var(--teo-control-border);background:var(--teo-control-bg);color:var(--teo-control-text)}',
       '#teoPanel select:focus,#teoPanel button:focus{outline:2px solid rgba(56,189,248,.45);outline-offset:1px}',
       '#teoPanel .teo-hidden{display:none}',
-      '#teoRunBtn{margin-top:12px;background:linear-gradient(135deg,var(--teo-run1),var(--teo-run2));border-color:var(--teo-run1);color:#ffffff;font-weight:800;cursor:pointer;box-shadow:0 8px 18px var(--teo-run-shadow)}',
+      '#teoActionsRow{display:flex;gap:8px;margin-top:12px;align-items:stretch}',
+      '#teoActionsRow #teoRunBtn{flex:1;margin-top:0}',
+      '#teoActionsRow #teoCaptureBtn{flex:0 0 auto;width:auto;padding-left:14px;padding-right:14px;margin-top:0;white-space:nowrap}',
+      '#teoRunBtn{background:linear-gradient(135deg,var(--teo-run1),var(--teo-run2));border-color:var(--teo-run1);color:#ffffff;font-weight:800;cursor:pointer;box-shadow:0 8px 18px var(--teo-run-shadow)}',
+
       '#teoResult{margin-top:14px;padding:12px;background:linear-gradient(180deg,var(--teo-result-bg1),var(--teo-result-bg2));border:1px solid var(--teo-result-border);border-radius:12px;max-height:46vh;overflow:auto;font-size:13px;line-height:1.5}',
       '#teoResult .muted{color:var(--teo-muted)}',
       '#teoResult ul{padding-left:18px;margin:8px 0 0}',
@@ -619,7 +621,6 @@
       '#teoTeamManager{margin-top:8px;padding-top:8px;border-top:1px dashed var(--teo-section-border)}',
       '#teoTeamManager .actions{display:flex;gap:8px;margin-bottom:8px}',
       '#teoTeamManager .actions button{flex:1;padding:7px 8px;font-size:12px}',
-      '#teoThemeSel{margin-bottom:2px}',
       '#teoTeamChecklist{max-height:180px;overflow:auto;background:var(--teo-control-bg);border:1px solid var(--teo-control-border);border-radius:8px;padding:8px}',
       '#teoTeamChecklist label{display:flex;align-items:center;gap:8px;margin:4px 0;color:var(--teo-text);font-size:13px;font-weight:500;text-transform:none;letter-spacing:0}',
       '#teoTeamManager .status{font-size:12px;color:var(--teo-label);margin-top:6px}',
@@ -651,16 +652,8 @@
         '<div class="teo-field">' +
           '<label for="teoFunction">Chức năng</label>' +
           '<select id="teoFunction">' +
-            '<option value="h2h">#1 - Lịch sử đối đầu 2 team</option>' +
-            '<option value="profile">#2 - Thông tin cá nhân 1 team</option>' +
-          '</select>' +
-        '</div>' +
-        '<div class="teo-field">' +
-          '<label for="teoThemeSel">Theme</label>' +
-          '<select id="teoThemeSel">' +
-            '<option value="blue">Blue</option>' +
-            '<option value="dark">Dark</option>' +
-            '<option value="white">White</option>' +
+            '<option value="profile">Hồ sơ cá nhân</option>' +
+            '<option value="h2h">Lịch sử đối đầu</option>' +
           '</select>' +
         '</div>' +
       '</div>',
@@ -675,8 +668,10 @@
           '<select id="teoTeamB"></select>' +
         '</div>' +
       '</div>',
-      '<button id="teoRunBtn" type="button">Kiểm tra đối đầu</button>',
-      '<button id="teoCaptureBtn" type="button" class="teo-hidden">📸 Chụp tổng hợp vào clipboard</button>',
+      '<div id="teoActionsRow">' +
+        '<button id="teoRunBtn" type="button">Kiểm tra đối đầu</button>' +
+        '<button id="teoCaptureBtn" type="button" class="teo-hidden">📸 Capture</button>' +
+      '</div>',
       '<div id="teoAdminWrap" class="teo-hidden">' +
         '<h6>Tùy chỉnh Admin</h6>' +
         '<button id="teoTeamManageBtn" type="button">Chọn team hiển thị trong danh sách</button>' +
@@ -702,7 +697,6 @@
     document.body.appendChild(panel);
 
     var fnEl = document.getElementById('teoFunction');
-    var themeSelEl = document.getElementById('teoThemeSel');
     var fnDescEl = document.getElementById('teoFunctionDesc');
     var teamAFieldEl = document.getElementById('teoTeamAField');
     var teamALabelEl = document.getElementById('teoTeamALabel');
@@ -723,17 +717,6 @@
     var teamManagerStatusEl = document.getElementById('teoTeamManagerStatus');
     var resultEl = document.getElementById('teoResult');
     var hasSummary = false;
-
-    function applyWidgetTheme(theme, persist) {
-      var t = theme || loadWidgetTheme();
-      if(['blue', 'dark', 'white'].indexOf(t) === -1) t = 'blue';
-      panel.dataset.theme = t;
-      fab.dataset.theme = t;
-      if(themeSelEl) themeSelEl.value = t;
-      if(persist) {
-        try { localStorage.setItem(THEME_KEY, t); } catch(_) {}
-      }
-    }
 
     function setCaptureEnabled(on) {
       hasSummary = !!on;
@@ -899,7 +882,7 @@
           '<div class="teo-pill">Hiệu số<br><b>' + (summary.GF - summary.GA) + '</b></div>',
           '<div class="teo-pill">Win Rate (' + summary.teamA + ')<br><b>' + wr + '</b></div>',
         '</div>',
-        '<div class="teo-section"><h5>5 trận gần nhất (mới đến cũ)</h5></div>',
+        '<div class="teo-section"><h5>5 trận gần nhất</h5></div>',
         '<ul class="teo-history">' + latest.map(function(m) {
           return '<li><span class="muted">[' + m.seasonName + ' | ' + m.stage + ']</span> ' + m.score + '</li>';
         }).join('') + '</ul>'
@@ -947,6 +930,9 @@
       var modeRows = buildSummaryRows(summary.byMode, modeKeys);
 
       var seasonKeys = Object.keys(summary.bySeason).sort(function(a, b) {
+        var ay = parseSeasonYear(a);
+        var by = parseSeasonYear(b);
+        if(by !== ay) return by - ay;
         return a.toLowerCase().localeCompare(b.toLowerCase());
       });
       var seasonRows = buildSummaryRows(summary.bySeason, seasonKeys);
@@ -970,7 +956,7 @@
         '<ul class="teo-summary">' + modeRows + '</ul>',
         '<div class="teo-section"><h5>Tổng hợp theo mùa</h5></div>',
         '<ul class="teo-summary">' + seasonRows + '</ul>',
-        '<div class="teo-section"><h5>5 trận gần nhất (mới đến cũ)</h5></div>',
+        '<div class="teo-section"><h5>5 trận gần nhất</h5></div>',
         '<ul class="teo-history">' + latestRows + '</ul>'
       ].join('');
       setCaptureEnabled(true);
@@ -1043,10 +1029,6 @@
       setTeamManagerStatus('Đã reset về mặc định (hiển thị tất cả team).');
     });
 
-    themeSelEl.addEventListener('change', function() {
-      applyWidgetTheme(this.value, true);
-    });
-
     fnEl.addEventListener('change', function() {
       applyFunctionUI();
     });
@@ -1087,7 +1069,6 @@
       renderH2HResult(analyzeHeadToHead(state, a, b));
     });
 
-    applyWidgetTheme(loadWidgetTheme(), false);
     renderAdminState();
     applyFunctionUI();
   }
