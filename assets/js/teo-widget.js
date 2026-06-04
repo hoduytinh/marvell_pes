@@ -482,6 +482,37 @@
     };
   }
 
+  function getTeamTrophies(state, teamName) {
+    var trophies = []; // { year, eventName, medal }
+    if(!state || !state.seasons) return trophies;
+    var nameLower = String(teamName).toLowerCase();
+    Object.keys(state.seasons).forEach(function(sk) {
+      var s = state.seasons[sk];
+      if(!s || s.mode !== 'legend' || !Array.isArray(s.timelines)) return;
+      s.timelines.forEach(function(timeline) {
+        if(!timeline || !Array.isArray(timeline.events)) return;
+        timeline.events.forEach(function(event) {
+          if(!event || !event.medals) return;
+          var eName = event.name || event.title || '';
+          var year = timeline.year || '';
+          ['gold','silver','bronze'].forEach(function(medal) {
+            var list = event.medals[medal];
+            if(!Array.isArray(list)) return;
+            list.forEach(function(t) {
+              if(String(t || '').toLowerCase() === nameLower) {
+                trophies.push({ year: year, eventName: eName, medal: medal });
+              }
+            });
+          });
+        });
+      });
+    });
+    trophies.sort(function(a, b) {
+      return String(b.year).localeCompare(String(a.year));
+    });
+    return trophies;
+  }
+
   function analyzeTeamProfile(state, teamName) {
     var all = collectAllPlayedMatches(state);
     var details = [];
@@ -558,7 +589,8 @@
       Pts: Pts,
       byMode: byMode,
       bySeason: bySeason,
-      matches: details
+      matches: details,
+      trophies: getTeamTrophies(state, teamName)
     };
   }
 
@@ -612,8 +644,12 @@
       '#teoResult .teo-summary li:nth-child(even){background:var(--teo-summary-alt)}',
       '#teoResult .teo-summary .teo-summary-head{background:var(--teo-summary-head);font-size:11px;font-weight:800;letter-spacing:.3px;text-transform:uppercase}',
       '#teoResult .teo-summary .name{font-weight:700;color:var(--teo-text)}',
+      '#teoResult .teo-summary.teo-mode-summary .name{text-transform:uppercase;letter-spacing:.3px}',
       '#teoResult .teo-summary .num{text-align:right;font-variant-numeric:tabular-nums}',
       '#teoResult .teo-history li{margin-bottom:4px}',
+      '#teoResult .teo-trophies{list-style:none;padding:0;margin:6px 0 8px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}',
+      '#teoResult .teo-trophies li{background:var(--teo-summary-alt);border:1px solid var(--teo-summary-border);border-radius:8px;padding:5px 8px;font-size:12px;line-height:1.4}',
+      '#teoResult .teo-trophies .trophy-year{display:block;font-size:10px;color:var(--teo-muted);margin-top:2px}',
       '#teoCaptureBtn{margin-top:8px;background:linear-gradient(135deg,var(--teo-capture1),var(--teo-capture2));border-color:var(--teo-capture2);color:#fff;font-weight:700;cursor:pointer}',
       '#teoAdminWrap{margin-top:10px;padding:10px;border:1px solid var(--teo-desc-border);border-radius:10px;background:var(--teo-desc-bg)}',
       '#teoAdminWrap h6{margin:0 0 8px 0;font-size:12px;color:var(--teo-label);text-transform:uppercase;letter-spacing:.4px}',
@@ -657,7 +693,7 @@
           '</select>' +
         '</div>' +
       '</div>',
-      '<div id="teoFunctionDesc">Chức năng #1: Kiểm tra lịch sử đối đầu của 2 team (toàn bộ dữ liệu).</div>',
+      '<div id="teoFunctionDesc">Tổng hợp toàn bộ thành tích, thống kê theo mùa và chế độ thi đấu.</div>',
       '<div id="teoTeamsRow">' +
         '<div class="teo-field" id="teoTeamAField">' +
           '<label for="teoTeamA" id="teoTeamALabel">Team A</label>' +
@@ -952,8 +988,15 @@
           '<div class="teo-pill">Điểm (3-1-0)<br><b>' + summary.Pts + '</b></div>',
           '<div class="teo-pill">Win Rate<br><b>' + profileWr + '</b></div>',
         '</div>',
+        '<div class="teo-section"><h5>Danh Hiệu</h5></div>',
+        summary.trophies.length
+          ? '<ul class="teo-trophies">' + summary.trophies.map(function(t) {
+              var icon = t.medal === 'gold' ? '🥇' : t.medal === 'silver' ? '🥈' : '🥉';
+              return '<li>' + icon + ' ' + t.eventName + (t.year ? '<span class="trophy-year">' + t.year + '</span>' : '') + '</li>';
+            }).join('') + '</ul>'
+          : '<div class="muted" style="margin:4px 0 8px">Chưa có danh hiệu nào.</div>',
         '<div class="teo-section"><h5>Tổng hợp theo chế độ</h5></div>',
-        '<ul class="teo-summary">' + modeRows + '</ul>',
+        '<ul class="teo-summary teo-mode-summary">' + modeRows + '</ul>',
         '<div class="teo-section"><h5>Tổng hợp theo mùa</h5></div>',
         '<ul class="teo-summary">' + seasonRows + '</ul>',
         '<div class="teo-section"><h5>5 trận gần nhất</h5></div>',
@@ -965,7 +1008,7 @@
     function applyFunctionUI() {
       var fn = fnEl.value;
       if(fn === 'profile') {
-        fnDescEl.textContent = 'Chức năng #2: Kiểm tra thông tin cá nhân 1 team, truy xuất toàn bộ dữ liệu và tổng hợp.';
+        fnDescEl.textContent = 'Tổng hợp toàn bộ thành tích, thống kê theo mùa và chế độ thi đấu.';
         teamALabelEl.textContent = 'Team';
         teamAFieldEl.classList.remove('teo-hidden');
         teamBFieldEl.classList.add('teo-hidden');
@@ -973,7 +1016,7 @@
         resultEl.innerHTML = '<span class="muted">Chọn 1 team và bấm Xem thông tin team.</span>';
         setCaptureEnabled(false);
       } else {
-        fnDescEl.textContent = 'Chức năng #1: Kiểm tra lịch sử đối đầu của 2 team (toàn bộ dữ liệu).';
+        fnDescEl.textContent = 'So sánh kết quả tất cả các trận giữa 2 team trong toàn bộ dữ liệu.';
         teamALabelEl.textContent = 'Team A';
         teamAFieldEl.classList.remove('teo-hidden');
         teamBFieldEl.classList.remove('teo-hidden');
