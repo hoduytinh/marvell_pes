@@ -26,7 +26,7 @@
           "year": "2022",
           "events": [
             {
-              "name": "dual",
+              "name": "Dual",
               "medals": {
                 "gold": [
                   "Thiện",
@@ -43,7 +43,7 @@
               }
             },
             {
-              "name": "single",
+              "name": "Single",
               "medals": {
                 "gold": [
                   "Tĩnh Tèo"
