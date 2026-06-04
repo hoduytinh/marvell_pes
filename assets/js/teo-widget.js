@@ -3,6 +3,7 @@
 
   var STORAGE_KEY = 'pes-league-v15';
   var VISIBLE_TEAMS_KEY = 'teoVisibleTeams';
+  var THEME_KEY = 'pes-theme';
 
   function isAdminSession() {
     try { return sessionStorage.getItem('pesAdmin') === '1'; }
@@ -56,6 +57,11 @@
 
   function clearVisibleTeamsFilter() {
     try { localStorage.removeItem(VISIBLE_TEAMS_KEY); } catch(_) {}
+  }
+
+  function loadWidgetTheme() {
+    try { return localStorage.getItem(THEME_KEY) || 'blue'; }
+    catch(_) { return 'blue'; }
   }
 
   function loadState() {
@@ -568,46 +574,57 @@
     var style = document.createElement('style');
     style.id = 'teo-widget-style';
     style.textContent = [
-      '#teoFab{position:fixed;right:18px;bottom:18px;z-index:9999;border:none;background:linear-gradient(135deg,#14b8a6,#38bdf8);color:#fff;padding:12px 18px;border-radius:999px;font-weight:800;font-size:14px;letter-spacing:.2px;cursor:pointer;box-shadow:0 10px 24px rgba(56,189,248,.35)}',
-      '#teoPanel{position:fixed;right:18px;bottom:76px;z-index:9999;width:520px;max-width:calc(100vw - 24px);max-height:78vh;overflow:hidden;background:linear-gradient(160deg,#f7fbff 0%,#eef6ff 45%,#e8f3ff 100%);color:#0f172a;border:1px solid rgba(14,116,144,.22);border-radius:16px;box-shadow:0 24px 50px rgba(2,132,199,.22);display:none}',
+      '#teoFab,#teoPanel{--teo-bg1:#f7fbff;--teo-bg2:#eef6ff;--teo-bg3:#e8f3ff;--teo-text:#0f172a;--teo-border:rgba(14,116,144,.22);--teo-head1:rgba(186,230,253,.8);--teo-head2:rgba(187,247,208,.75);--teo-head-text:#0b3a66;--teo-desc-bg:rgba(186,230,253,.65);--teo-desc-border:rgba(56,189,248,.45);--teo-desc-text:#164e63;--teo-label:#0c4a6e;--teo-control-bg:#ffffff;--teo-control-border:#93c5fd;--teo-control-text:#0f172a;--teo-result-bg1:#ffffff;--teo-result-bg2:#f4f9ff;--teo-result-border:rgba(125,211,252,.55);--teo-muted:#475569;--teo-pill1:rgba(74,222,128,.2);--teo-pill2:rgba(56,189,248,.22);--teo-pill-border:rgba(56,189,248,.4);--teo-section:#0369a1;--teo-section-border:rgba(100,116,139,.4);--teo-summary-border:rgba(125,211,252,.55);--teo-summary-alt:rgba(186,230,253,.25);--teo-summary-head:rgba(125,211,252,.45);--teo-fab1:#14b8a6;--teo-fab2:#38bdf8;--teo-fab-shadow:rgba(56,189,248,.35);--teo-run1:#22c55e;--teo-run2:#06b6d4;--teo-run-shadow:rgba(34,197,94,.24);--teo-capture1:#f59e0b;--teo-capture2:#f97316}',
+      '#teoPanel[data-theme="dark"],#teoFab[data-theme="dark"]{--teo-bg1:#081120;--teo-bg2:#0d1730;--teo-bg3:#132142;--teo-text:#e7eeff;--teo-border:rgba(59,130,246,.22);--teo-head1:rgba(30,64,175,.42);--teo-head2:rgba(8,145,178,.34);--teo-head-text:#f8fbff;--teo-desc-bg:rgba(29,78,216,.18);--teo-desc-border:rgba(96,165,250,.28);--teo-desc-text:#c7d5f5;--teo-label:#9fd2ff;--teo-control-bg:#0b1530;--teo-control-border:#2a466d;--teo-control-text:#eaf1ff;--teo-result-bg1:#0b1327;--teo-result-bg2:#101a31;--teo-result-border:rgba(71,85,105,.6);--teo-muted:#9fb2d6;--teo-pill1:rgba(34,197,94,.14);--teo-pill2:rgba(14,165,233,.14);--teo-pill-border:rgba(125,211,252,.35);--teo-section:#7dd3fc;--teo-section-border:rgba(148,163,184,.35);--teo-summary-border:rgba(148,163,184,.28);--teo-summary-alt:rgba(148,163,184,.08);--teo-summary-head:rgba(14,165,233,.22);--teo-fab1:#0f766e;--teo-fab2:#0ea5e9;--teo-fab-shadow:rgba(0,0,0,.35);--teo-run1:#16a34a;--teo-run2:#06b6d4;--teo-run-shadow:rgba(6,182,212,.24);--teo-capture1:#f59e0b;--teo-capture2:#ea580c}',
+      '#teoPanel[data-theme="blue"],#teoFab[data-theme="blue"]{--teo-bg1:#eaf4ff;--teo-bg2:#dbeafe;--teo-bg3:#d7ebff;--teo-text:#102544;--teo-border:rgba(30,58,95,.22);--teo-head1:rgba(125,211,252,.72);--teo-head2:rgba(96,165,250,.42);--teo-head-text:#10386b;--teo-desc-bg:rgba(186,230,253,.72);--teo-desc-border:rgba(56,189,248,.45);--teo-desc-text:#164e63;--teo-label:#0c4a6e;--teo-control-bg:#ffffff;--teo-control-border:#93c5fd;--teo-control-text:#102544;--teo-result-bg1:#ffffff;--teo-result-bg2:#eff6ff;--teo-result-border:rgba(96,165,250,.45);--teo-muted:#47627f;--teo-pill1:rgba(59,130,246,.16);--teo-pill2:rgba(56,189,248,.2);--teo-pill-border:rgba(56,189,248,.35);--teo-section:#0369a1;--teo-section-border:rgba(59,130,246,.26);--teo-summary-border:rgba(96,165,250,.4);--teo-summary-alt:rgba(191,219,254,.35);--teo-summary-head:rgba(147,197,253,.45);--teo-fab1:#0ea5e9;--teo-fab2:#2563eb;--teo-fab-shadow:rgba(37,99,235,.28);--teo-run1:#0284c7;--teo-run2:#22c55e;--teo-run-shadow:rgba(14,165,233,.22);--teo-capture1:#f59e0b;--teo-capture2:#fb7185}',
+      '#teoFab{position:fixed;right:18px;bottom:18px;z-index:9999;border:none;background:linear-gradient(135deg,var(--teo-fab1),var(--teo-fab2));color:#fff;padding:12px 18px;border-radius:999px;font-weight:800;font-size:14px;letter-spacing:.2px;cursor:pointer;box-shadow:0 10px 24px var(--teo-fab-shadow)}',
+      '#teoPanel{position:fixed;right:18px;bottom:76px;z-index:9999;width:520px;max-width:calc(100vw - 24px);max-height:78vh;overflow:hidden;background:linear-gradient(160deg,var(--teo-bg1) 0%,var(--teo-bg2) 45%,var(--teo-bg3) 100%);color:var(--teo-text);border:1px solid var(--teo-border);border-radius:16px;box-shadow:0 24px 50px rgba(2,132,199,.22);display:none}',
       '#teoPanel.open{display:block;animation:teoPop .16s ease-out}',
       '@keyframes teoPop{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}',
-      '#teoHead{display:flex;justify-content:center;align-items:center;padding:14px 16px;border-bottom:1px solid rgba(14,116,144,.2);background:linear-gradient(90deg,rgba(186,230,253,.8),rgba(187,247,208,.75))}',
-      '#teoHead strong{font-size:15px;color:#0b3a66}',
+      '#teoHead{display:flex;justify-content:center;align-items:center;padding:14px 16px;border-bottom:1px solid var(--teo-border);background:linear-gradient(90deg,var(--teo-head1),var(--teo-head2))}',
+      '#teoHead strong{font-size:15px;color:var(--teo-head-text)}',
       '#teoBody{padding:14px 16px;overflow:auto;max-height:calc(78vh - 62px)}',
-      '#teoFunctionDesc{font-size:12px;color:#164e63;margin:8px 0 8px;background:rgba(186,230,253,.65);border:1px solid rgba(56,189,248,.45);padding:8px 10px;border-radius:10px}',
-      '#teoPanel label{display:block;margin:10px 0 5px;font-size:12px;font-weight:700;color:#0c4a6e;text-transform:uppercase;letter-spacing:.4px}',
-      '#teoPanel select,#teoPanel button{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;border:1px solid #93c5fd;background:#ffffff;color:#0f172a}',
+      '#teoTopRow{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(136px,.9fr);gap:10px;align-items:end}',
+      '#teoTopRow .teo-field{min-width:0}',
+      '#teoTopRow .teo-field label{margin-top:0}',
+      '#teoFunctionDesc{font-size:12px;color:var(--teo-desc-text);margin:8px 0 8px;background:var(--teo-desc-bg);border:1px solid var(--teo-desc-border);padding:8px 10px;border-radius:10px}',
+      '#teoTeamsRow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:end}',
+      '#teoTeamsRow .teo-field{min-width:0}',
+      '#teoTeamsRow .teo-field label{margin-top:0}',
+      '#teoPanel label{display:block;margin:10px 0 5px;font-size:12px;font-weight:700;color:var(--teo-label);text-transform:uppercase;letter-spacing:.4px}',
+      '#teoPanel select,#teoPanel button{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;border:1px solid var(--teo-control-border);background:var(--teo-control-bg);color:var(--teo-control-text)}',
       '#teoPanel select:focus,#teoPanel button:focus{outline:2px solid rgba(56,189,248,.45);outline-offset:1px}',
       '#teoPanel .teo-hidden{display:none}',
-      '#teoRunBtn{margin-top:12px;background:linear-gradient(135deg,#22c55e,#06b6d4);border-color:#22c55e;color:#ffffff;font-weight:800;cursor:pointer;box-shadow:0 8px 18px rgba(34,197,94,.24)}',
-      '#teoResult{margin-top:14px;padding:12px;background:linear-gradient(180deg,#ffffff,#f4f9ff);border:1px solid rgba(125,211,252,.55);border-radius:12px;max-height:46vh;overflow:auto;font-size:13px;line-height:1.5}',
-      '#teoResult .muted{color:#475569}',
+      '#teoRunBtn{margin-top:12px;background:linear-gradient(135deg,var(--teo-run1),var(--teo-run2));border-color:var(--teo-run1);color:#ffffff;font-weight:800;cursor:pointer;box-shadow:0 8px 18px var(--teo-run-shadow)}',
+      '#teoResult{margin-top:14px;padding:12px;background:linear-gradient(180deg,var(--teo-result-bg1),var(--teo-result-bg2));border:1px solid var(--teo-result-border);border-radius:12px;max-height:46vh;overflow:auto;font-size:13px;line-height:1.5}',
+      '#teoResult .muted{color:var(--teo-muted)}',
       '#teoResult ul{padding-left:18px;margin:8px 0 0}',
-      '#teoResult .teo-title{font-size:14px;font-weight:800;color:#0f172a;margin-bottom:8px}',
+      '#teoResult .teo-title{font-size:14px;font-weight:800;color:var(--teo-text);margin-bottom:8px}',
       '#teoResult .teo-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0 10px}',
-      '#teoResult .teo-pill{background:linear-gradient(160deg,rgba(74,222,128,.2),rgba(56,189,248,.22));border:1px solid rgba(56,189,248,.4);border-radius:10px;padding:7px 8px}',
-      '#teoResult .teo-pill b{color:#0f172a}',
-      '#teoResult .teo-section{margin-top:10px;padding-top:8px;border-top:1px dashed rgba(100,116,139,.4)}',
-      '#teoResult .teo-section h5{margin:0 0 6px 0;color:#0369a1;font-size:12px;text-transform:uppercase;letter-spacing:.4px}',
-      '#teoResult .teo-summary{list-style:none;padding:0;margin:6px 0 0;border:1px solid rgba(125,211,252,.55);border-radius:10px;overflow:hidden}',
+      '#teoResult .teo-pill{background:linear-gradient(160deg,var(--teo-pill1),var(--teo-pill2));border:1px solid var(--teo-pill-border);border-radius:10px;padding:7px 8px}',
+      '#teoResult .teo-pill b{color:var(--teo-text)}',
+      '#teoResult .teo-section{margin-top:10px;padding-top:8px;border-top:1px dashed var(--teo-section-border)}',
+      '#teoResult .teo-section h5{margin:0 0 6px 0;color:var(--teo-section);font-size:12px;text-transform:uppercase;letter-spacing:.4px}',
+      '#teoResult .teo-summary{list-style:none;padding:0;margin:6px 0 0;border:1px solid var(--teo-summary-border);border-radius:10px;overflow:hidden}',
       '#teoResult .teo-summary li{display:grid;grid-template-columns:1.55fr .55fr 1fr .9fr .7fr .7fr;gap:8px;align-items:center;padding:7px 10px}',
-      '#teoResult .teo-summary li:nth-child(even){background:rgba(186,230,253,.25)}',
-      '#teoResult .teo-summary .teo-summary-head{background:rgba(125,211,252,.45);font-size:11px;font-weight:800;letter-spacing:.3px;text-transform:uppercase}',
-      '#teoResult .teo-summary .name{font-weight:700;color:#0f172a}',
+      '#teoResult .teo-summary li:nth-child(even){background:var(--teo-summary-alt)}',
+      '#teoResult .teo-summary .teo-summary-head{background:var(--teo-summary-head);font-size:11px;font-weight:800;letter-spacing:.3px;text-transform:uppercase}',
+      '#teoResult .teo-summary .name{font-weight:700;color:var(--teo-text)}',
       '#teoResult .teo-summary .num{text-align:right;font-variant-numeric:tabular-nums}',
       '#teoResult .teo-history li{margin-bottom:4px}',
-      '#teoCaptureBtn{margin-top:8px;background:linear-gradient(135deg,#f59e0b,#f97316);border-color:#f97316;color:#fff;font-weight:700;cursor:pointer}',
-      '#teoAdminWrap{margin-top:10px;padding:10px;border:1px solid rgba(56,189,248,.45);border-radius:10px;background:rgba(186,230,253,.28)}',
-      '#teoAdminWrap h6{margin:0 0 8px 0;font-size:12px;color:#0c4a6e;text-transform:uppercase;letter-spacing:.4px}',
-      '#teoTeamManageBtn{background:#0ea5e9;color:#fff;border-color:#0284c7;font-weight:700}',
-      '#teoTeamManager{margin-top:8px;padding-top:8px;border-top:1px dashed rgba(14,116,144,.4)}',
+      '#teoCaptureBtn{margin-top:8px;background:linear-gradient(135deg,var(--teo-capture1),var(--teo-capture2));border-color:var(--teo-capture2);color:#fff;font-weight:700;cursor:pointer}',
+      '#teoAdminWrap{margin-top:10px;padding:10px;border:1px solid var(--teo-desc-border);border-radius:10px;background:var(--teo-desc-bg)}',
+      '#teoAdminWrap h6{margin:0 0 8px 0;font-size:12px;color:var(--teo-label);text-transform:uppercase;letter-spacing:.4px}',
+      '#teoTeamManageBtn{background:linear-gradient(135deg,var(--teo-fab1),var(--teo-fab2));color:#fff;border-color:var(--teo-fab2);font-weight:700}',
+      '#teoTeamManager{margin-top:8px;padding-top:8px;border-top:1px dashed var(--teo-section-border)}',
       '#teoTeamManager .actions{display:flex;gap:8px;margin-bottom:8px}',
       '#teoTeamManager .actions button{flex:1;padding:7px 8px;font-size:12px}',
-      '#teoTeamChecklist{max-height:180px;overflow:auto;background:#fff;border:1px solid #bfdbfe;border-radius:8px;padding:8px}',
-      '#teoTeamChecklist label{display:flex;align-items:center;gap:8px;margin:4px 0;color:#0f172a;font-size:13px;font-weight:500;text-transform:none;letter-spacing:0}',
-      '#teoTeamManager .status{font-size:12px;color:#0c4a6e;margin-top:6px}',
-      '@media (max-width: 700px){#teoFab{right:12px;bottom:12px}#teoPanel{right:12px;bottom:62px;width:calc(100vw - 16px);max-height:82vh}#teoBody{max-height:calc(82vh - 62px)}#teoResult{max-height:44vh}#teoResult .teo-metrics{grid-template-columns:1fr}#teoResult .teo-summary li{grid-template-columns:1.2fr .5fr .85fr .85fr .65fr .65fr;padding:7px 8px;gap:6px;font-size:12px}}'
+      '#teoThemeSel{margin-bottom:2px}',
+      '#teoTeamChecklist{max-height:180px;overflow:auto;background:var(--teo-control-bg);border:1px solid var(--teo-control-border);border-radius:8px;padding:8px}',
+      '#teoTeamChecklist label{display:flex;align-items:center;gap:8px;margin:4px 0;color:var(--teo-text);font-size:13px;font-weight:500;text-transform:none;letter-spacing:0}',
+      '#teoTeamManager .status{font-size:12px;color:var(--teo-label);margin-top:6px}',
+      '@media (max-width: 700px){#teoFab{right:12px;bottom:12px}#teoPanel{right:12px;bottom:62px;width:calc(100vw - 16px);max-height:82vh}#teoBody{max-height:calc(82vh - 62px)}#teoResult{max-height:44vh}#teoResult .teo-metrics{grid-template-columns:1fr}#teoResult .teo-summary li{grid-template-columns:1.2fr .5fr .85fr .85fr .65fr .65fr;padding:7px 8px;gap:6px;font-size:12px}}',
+      '@media (max-width: 480px){#teoTopRow{grid-template-columns:1fr}#teoTeamsRow{grid-template-columns:1fr}}'
     ].join('');
     document.head.appendChild(style);
   }
@@ -630,16 +647,34 @@
     var body = createEl('div');
     body.id = 'teoBody';
     body.innerHTML = [
-      '<label for="teoFunction">Chức năng</label>',
-      '<select id="teoFunction">' +
-        '<option value="h2h">#1 - Lịch sử đối đầu 2 team</option>' +
-        '<option value="profile">#2 - Thông tin cá nhân 1 team</option>' +
-      '</select>',
+      '<div id="teoTopRow">' +
+        '<div class="teo-field">' +
+          '<label for="teoFunction">Chức năng</label>' +
+          '<select id="teoFunction">' +
+            '<option value="h2h">#1 - Lịch sử đối đầu 2 team</option>' +
+            '<option value="profile">#2 - Thông tin cá nhân 1 team</option>' +
+          '</select>' +
+        '</div>' +
+        '<div class="teo-field">' +
+          '<label for="teoThemeSel">Theme</label>' +
+          '<select id="teoThemeSel">' +
+            '<option value="blue">Blue</option>' +
+            '<option value="dark">Dark</option>' +
+            '<option value="white">White</option>' +
+          '</select>' +
+        '</div>' +
+      '</div>',
       '<div id="teoFunctionDesc">Chức năng #1: Kiểm tra lịch sử đối đầu của 2 team (toàn bộ dữ liệu).</div>',
-      '<label for="teoTeamA" id="teoTeamALabel">Team A</label>',
-      '<select id="teoTeamA"></select>',
-      '<label for="teoTeamB" id="teoTeamBLabel">Team B</label>',
-      '<select id="teoTeamB"></select>',
+      '<div id="teoTeamsRow">' +
+        '<div class="teo-field" id="teoTeamAField">' +
+          '<label for="teoTeamA" id="teoTeamALabel">Team A</label>' +
+          '<select id="teoTeamA"></select>' +
+        '</div>' +
+        '<div class="teo-field" id="teoTeamBField">' +
+          '<label for="teoTeamB" id="teoTeamBLabel">Team B</label>' +
+          '<select id="teoTeamB"></select>' +
+        '</div>' +
+      '</div>',
       '<button id="teoRunBtn" type="button">Kiểm tra đối đầu</button>',
       '<button id="teoCaptureBtn" type="button" class="teo-hidden">📸 Chụp tổng hợp vào clipboard</button>',
       '<div id="teoAdminWrap" class="teo-hidden">' +
@@ -667,9 +702,12 @@
     document.body.appendChild(panel);
 
     var fnEl = document.getElementById('teoFunction');
+    var themeSelEl = document.getElementById('teoThemeSel');
     var fnDescEl = document.getElementById('teoFunctionDesc');
+    var teamAFieldEl = document.getElementById('teoTeamAField');
     var teamALabelEl = document.getElementById('teoTeamALabel');
     var teamAEl = document.getElementById('teoTeamA');
+    var teamBFieldEl = document.getElementById('teoTeamBField');
     var teamBEl = document.getElementById('teoTeamB');
     var teamBLabelEl = document.getElementById('teoTeamBLabel');
     var runBtn = document.getElementById('teoRunBtn');
@@ -685,6 +723,17 @@
     var teamManagerStatusEl = document.getElementById('teoTeamManagerStatus');
     var resultEl = document.getElementById('teoResult');
     var hasSummary = false;
+
+    function applyWidgetTheme(theme, persist) {
+      var t = theme || loadWidgetTheme();
+      if(['blue', 'dark', 'white'].indexOf(t) === -1) t = 'blue';
+      panel.dataset.theme = t;
+      fab.dataset.theme = t;
+      if(themeSelEl) themeSelEl.value = t;
+      if(persist) {
+        try { localStorage.setItem(THEME_KEY, t); } catch(_) {}
+      }
+    }
 
     function setCaptureEnabled(on) {
       hasSummary = !!on;
@@ -839,7 +888,7 @@
         return;
       }
 
-      var latest = sortMatchesNewest(summary.matches).slice(0, 10);
+      var latest = sortMatchesNewest(summary.matches).slice(0, 5);
       var wr = summary.total ? ((summary.W * 100 / summary.total).toFixed(1) + '%') : '0.0%';
       resultEl.innerHTML = [
         '<div class="teo-title">Đối đầu trực tiếp: ' + summary.teamA + ' vs ' + summary.teamB + '</div>',
@@ -850,7 +899,7 @@
           '<div class="teo-pill">Hiệu số<br><b>' + (summary.GF - summary.GA) + '</b></div>',
           '<div class="teo-pill">Win Rate (' + summary.teamA + ')<br><b>' + wr + '</b></div>',
         '</div>',
-        '<div class="teo-section"><h5>10 trận gần nhất (mới đến cũ)</h5></div>',
+        '<div class="teo-section"><h5>5 trận gần nhất (mới đến cũ)</h5></div>',
         '<ul class="teo-history">' + latest.map(function(m) {
           return '<li><span class="muted">[' + m.seasonName + ' | ' + m.stage + ']</span> ' + m.score + '</li>';
         }).join('') + '</ul>'
@@ -902,7 +951,7 @@
       });
       var seasonRows = buildSummaryRows(summary.bySeason, seasonKeys);
 
-      var latest = sortMatchesNewest(summary.matches).slice(0, 10);
+      var latest = sortMatchesNewest(summary.matches).slice(0, 5);
       var latestRows = latest.map(function(m) {
         return '<li><span class="muted">[' + m.seasonName + ' | ' + m.stage + ' | ' + m.result + ']</span> ' + m.score + '</li>';
       }).join('');
@@ -921,7 +970,7 @@
         '<ul class="teo-summary">' + modeRows + '</ul>',
         '<div class="teo-section"><h5>Tổng hợp theo mùa</h5></div>',
         '<ul class="teo-summary">' + seasonRows + '</ul>',
-        '<div class="teo-section"><h5>10 trận gần nhất (mới đến cũ)</h5></div>',
+        '<div class="teo-section"><h5>5 trận gần nhất (mới đến cũ)</h5></div>',
         '<ul class="teo-history">' + latestRows + '</ul>'
       ].join('');
       setCaptureEnabled(true);
@@ -932,16 +981,16 @@
       if(fn === 'profile') {
         fnDescEl.textContent = 'Chức năng #2: Kiểm tra thông tin cá nhân 1 team, truy xuất toàn bộ dữ liệu và tổng hợp.';
         teamALabelEl.textContent = 'Team';
-        teamBLabelEl.classList.add('teo-hidden');
-        teamBEl.classList.add('teo-hidden');
+        teamAFieldEl.classList.remove('teo-hidden');
+        teamBFieldEl.classList.add('teo-hidden');
         runBtn.textContent = 'Xem thông tin team';
         resultEl.innerHTML = '<span class="muted">Chọn 1 team và bấm Xem thông tin team.</span>';
         setCaptureEnabled(false);
       } else {
         fnDescEl.textContent = 'Chức năng #1: Kiểm tra lịch sử đối đầu của 2 team (toàn bộ dữ liệu).';
         teamALabelEl.textContent = 'Team A';
-        teamBLabelEl.classList.remove('teo-hidden');
-        teamBEl.classList.remove('teo-hidden');
+        teamAFieldEl.classList.remove('teo-hidden');
+        teamBFieldEl.classList.remove('teo-hidden');
         runBtn.textContent = 'Kiểm tra đối đầu';
         resultEl.innerHTML = '<span class="muted">Chọn 2 team và bấm Kiểm tra đối đầu.</span>';
         setCaptureEnabled(false);
@@ -994,6 +1043,10 @@
       setTeamManagerStatus('Đã reset về mặc định (hiển thị tất cả team).');
     });
 
+    themeSelEl.addEventListener('change', function() {
+      applyWidgetTheme(this.value, true);
+    });
+
     fnEl.addEventListener('change', function() {
       applyFunctionUI();
     });
@@ -1034,6 +1087,7 @@
       renderH2HResult(analyzeHeadToHead(state, a, b));
     });
 
+    applyWidgetTheme(loadWidgetTheme(), false);
     renderAdminState();
     applyFunctionUI();
   }
