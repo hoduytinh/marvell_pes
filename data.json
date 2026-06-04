@@ -147,7 +147,7 @@
           "year": "2024",
           "events": [
             {
-              "name": "euro",
+              "name": "Euro",
               "medals": {
                 "gold": [
                   "Đức"
@@ -159,7 +159,7 @@
               }
             },
             {
-              "name": "single",
+              "name": "Single",
               "medals": {
                 "gold": [
                   "Phong"
@@ -200,7 +200,7 @@
               }
             },
             {
-              "name": "SERIB",
+              "name": "SeriB",
               "medals": {
                 "gold": [
                   "Linh"
