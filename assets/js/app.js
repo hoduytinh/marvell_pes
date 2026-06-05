@@ -3979,7 +3979,7 @@ function renderCupStandings(s){
     function saveAll(){
       try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(_){}
       // Trigger debounced push to GitHub if PAT configured
-      if(typeof CloudSync !== 'undefined' && CloudSync.hasPAT()) {
+      if(typeof CloudSync !== 'undefined' && CloudSync.hasPAT() && CloudSync.isEnabled()) {
         CloudSync.schedulePush(state);
       }
     }
@@ -3994,6 +3994,7 @@ function renderCupStandings(s){
 
     var CloudSync = {
       pat: null,
+      enabled: true,
       sha: null,
       lastSyncedHash: null,
       pushTimer: null,
@@ -4004,10 +4005,27 @@ function renderCupStandings(s){
 
       init: function() {
         try { this.pat = localStorage.getItem('pesGitHubPAT') || null; } catch(_){}
+        try { this.enabled = localStorage.getItem('pesCloudSyncEnabled') !== '0'; } catch(_) { this.enabled = true; }
         this.updateUI();
       },
 
       hasPAT: function() { return !!this.pat; },
+      isEnabled: function() { return !!this.enabled; },
+
+      setEnabled: function(on) {
+        this.enabled = !!on;
+        try {
+          localStorage.setItem('pesCloudSyncEnabled', this.enabled ? '1' : '0');
+        } catch(_){}
+        if(!this.enabled) {
+          if(this.pushTimer) {
+            clearTimeout(this.pushTimer);
+            this.pushTimer = null;
+          }
+          this.pendingState = null;
+        }
+        this.updateUI();
+      },
 
       setPAT: function(pat) {
         this.pat = pat ? pat.trim() : null;
@@ -4030,7 +4048,20 @@ function renderCupStandings(s){
 
       updateUI: function() {
         var el = document.getElementById('cloudSyncStatus');
+        var toggleBtn = document.getElementById('btnCloudSyncToggle');
+        if(toggleBtn) {
+          toggleBtn.textContent = this.enabled ? 'Sync: ON' : 'Sync: OFF';
+          toggleBtn.title = this.enabled
+            ? 'Tự động đồng bộ đang bật. Nhấn để tắt.'
+            : 'Tự động đồng bộ đang tắt. Nhấn để bật lại.';
+        }
         if(!el) return;
+        if(!this.enabled) {
+          el.textContent = '⏸️ Sync tắt';
+          el.style.color = 'var(--muted)';
+          el.title = 'Đang tắt tự động đồng bộ lên server';
+          return;
+        }
         var labels = {
           idle: this.pat ? '☁️ Sẵn sàng' : '☁️ Chưa có PAT',
           loading: '⏳ Đang tải cloud...',
@@ -4089,7 +4120,7 @@ function renderCupStandings(s){
 
       schedulePush: function(stateRef) {
         var self = this;
-        if(!self.pat) return;
+        if(!self.pat || !self.enabled) return;
         self.pendingState = stateRef;
         if(self.pushTimer) clearTimeout(self.pushTimer);
         self.pushTimer = setTimeout(function() {
@@ -4100,7 +4131,7 @@ function renderCupStandings(s){
 
       push: function(stateRef) {
         var self = this;
-        if(!self.pat) return Promise.resolve(false);
+        if(!self.pat || !self.enabled) return Promise.resolve(false);
         if(!stateRef) return Promise.resolve(false);
         if(self.pushInProgress) {
           // Will be re-pushed via schedulePush after current completes
@@ -4186,6 +4217,7 @@ function renderCupStandings(s){
 
       // Force an immediate push (ignore debounce, ignore hash check)
       pushNow: function(stateRef) {
+        if(!this.enabled) return Promise.resolve(false);
         if(this.pushTimer) { clearTimeout(this.pushTimer); this.pushTimer = null; }
         this.lastSyncedHash = null; // force push
         return this.push(stateRef);
@@ -9390,6 +9422,17 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
           }
         }
       });
+      $('btnCloudSyncToggle').addEventListener('click', function() {
+        if(!isAdmin()) { toast('Chỉ admin được phép đổi trạng thái sync'); return; }
+        var nextState = !CloudSync.isEnabled();
+        CloudSync.setEnabled(nextState);
+        if(nextState) {
+          toast('Đã bật tự động đồng bộ lên server');
+          if(CloudSync.hasPAT()) CloudSync.schedulePush(state);
+        } else {
+          toast('Đã tắt tự động đồng bộ lên server');
+        }
+      });
       $('btnNewSeason').addEventListener('click',function(){ 
         if(!ensureAdmin()) return; 
         $('newSeasonName').value=''; 
@@ -11593,8 +11636,12 @@ var sel=$('seasonSel'); sel.innerHTML='';
                 refreshAll();
               }
             } else {
-              // No cloud data yet — push current state
-              CloudSync.pushNow(state);
+              // No cloud data yet — push current state if sync is enabled
+              if(CloudSync.isEnabled()) {
+                CloudSync.pushNow(state);
+              } else {
+                CloudSync.updateUI();
+              }
             }
           });
         } else {
@@ -11614,6 +11661,7 @@ var sel=$('seasonSel'); sel.innerHTML='';
         var val = patInput.value.trim();
         if(val && val !== CloudSync.pat) CloudSync.setPAT(val);
         if(!CloudSync.hasPAT()) { toast('Cần nhập PAT trước'); return; }
+        if(!CloudSync.isEnabled()) { toast('Đang tắt sync. Bật Sync: ON để push.'); return; }
         toast('Đang push lên GitHub...');
         CloudSync.pushNow(state).then(function(ok) {
           if(ok) toast('✅ Push thành công');
