@@ -12375,6 +12375,10 @@
         "swiss-3-4": {
           "hg": 2,
           "ag": 1
+        },
+        "swiss-3-1": {
+          "hg": 1,
+          "ag": 2
         }
       },
       "rounds": [
@@ -13557,6 +13561,24 @@
             ],
             "generated": true,
             "roundNumber": 4
+          },
+          {
+            "matches": [
+              {
+                "home": 6,
+                "away": 3
+              },
+              {
+                "home": 8,
+                "away": 12
+              },
+              {
+                "home": 15,
+                "away": 10
+              }
+            ],
+            "generated": true,
+            "roundNumber": 5
           }
         ],
         "playoffBracket": null,
@@ -13564,8 +13586,20 @@
         "winsToAdvance": 3,
         "lossesToEliminate": 3,
         "teamsToAdvance": 8,
-        "qualified": [],
-        "eliminated": [],
+        "qualified": [
+          5,
+          1,
+          9,
+          13,
+          11
+        ],
+        "eliminated": [
+          0,
+          2,
+          4,
+          7,
+          14
+        ],
         "swissBracketSize": 16,
         "hasPrePlayoff": false
       }
