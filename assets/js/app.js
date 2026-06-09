@@ -3248,9 +3248,8 @@ function renderSwissStandings(s) {
     return b.GF - a.GF;
   });
   
-  var qualified = s.swiss.qualified || [];
-  var eliminated = s.swiss.eliminated || [];
-  var teamsToAdvance = s.swiss.teamsToAdvance || Math.floor(s.teams.length / 2);
+  var winsToAdvance = s.swiss.winsToAdvance || 3;
+  var lossesToEliminate = s.swiss.lossesToEliminate || 3;
   
   standings.forEach(function(row, pos) {
     var tr = document.createElement('tr');
@@ -3284,21 +3283,34 @@ function renderSwissStandings(s) {
         stageBadge = '<span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600;">' + stage + '</span>';
         rowStyle = ' style="background: rgba(59, 130, 246, 0.1);"';
       }
-    } else if(qualified.indexOf(row.idx) !== -1) {
+    } else if(row.W >= winsToAdvance) {
       stage = 'Qualified';
       stageBadge = '<span style="background: #22c55e; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600;">✓ Qualified</span>';
       rowStyle = ' style="background: rgba(34, 197, 94, 0.15);"';
-    } else if(eliminated.indexOf(row.idx) !== -1) {
+    } else if(row.L >= lossesToEliminate) {
       stage = 'Eliminated';
       stageBadge = '<span style="background: #ef4444; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600;">✗ Eliminated</span>';
       rowStyle = ' style="background: rgba(239, 68, 68, 0.1); opacity: 0.6;"';
-    } else if(pos < teamsToAdvance) {
-      stage = 'In Contention';
-      rowStyle = ' style="background: rgba(59, 130, 246, 0.1);"';
-      stageBadge = '<span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600;">In Contention</span>';
     } else {
-      stage = 'Active';
-      stageBadge = '<span style="background: #64748b; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600;">Active</span>';
+      var winsLeft = winsToAdvance - row.W;
+      var lossesLeft = lossesToEliminate - row.L;
+
+      if(winsLeft === 1 && lossesLeft === 1) {
+        stage = 'Decider Match';
+        rowStyle = ' style="background: rgba(168, 85, 247, 0.12);"';
+        stageBadge = '<span style="background: #a855f7; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600;">2-2 Decider</span>';
+      } else if(winsLeft === 1) {
+        stage = 'One Win Away';
+        rowStyle = ' style="background: rgba(59, 130, 246, 0.1);"';
+        stageBadge = '<span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600;">1 Win To Qualify</span>';
+      } else if(lossesLeft === 1) {
+        stage = 'One Loss Away';
+        rowStyle = ' style="background: rgba(245, 158, 11, 0.12);"';
+        stageBadge = '<span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600;">1 Loss To Eliminate</span>';
+      } else {
+        stage = 'Active';
+        stageBadge = '<span style="background: #64748b; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600;">Active</span>';
+      }
     }
     
     var logo = s.teamLogos && s.teamLogos[row.idx] ? '<img src="' + s.teamLogos[row.idx] + '" alt="logo"/>' : '';
