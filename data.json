@@ -13591,14 +13591,15 @@
           }
         ],
         "playoffBracket": null,
-        "phase": "swiss",
+        "phase": "playoff",
         "winsToAdvance": 3,
         "lossesToEliminate": 3,
         "teamsToAdvance": 8,
         "qualified": [],
         "eliminated": [],
         "swissBracketSize": 16,
-        "hasPrePlayoff": false
+        "hasPrePlayoff": false,
+        "playoffQualifiers": null
       }
     }
   },
