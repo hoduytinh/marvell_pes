@@ -13412,7 +13412,8 @@
         "euro": 6,
         "playoff": 0,
         "rel": 3,
-        "h2h": false
+        "h2h": false,
+        "enableRegen": false
       },
       "createdAt": 1779086231720,
       "mode": "swiss",
