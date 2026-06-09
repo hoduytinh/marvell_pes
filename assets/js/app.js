@@ -1807,7 +1807,7 @@ function renderSwissBracket(s) {
     roundDiv.appendChild(roundTitle);
 
     // Admin-only: Regenerate pairings button for this Swiss round
-    if(isAdmin() && !round.isPrePlayoff) {
+    if(isAdmin() && !round.isPrePlayoff && s.settings && s.settings.enableRegen !== false) {
       var regenBtn = document.createElement('button');
       regenBtn.textContent = '🔄 Regenerate';
       regenBtn.title = 'Tạo lại các cặp đấu cho vòng này (sẽ xóa kết quả của vòng này và các vòng sau)';
@@ -4805,7 +4805,7 @@ function renderCupStandings(s){
         teamLogos:Array(n).fill(DEFAULT_TEAM_LOGO),
         results:{},
         rounds: [],
-        settings:{top:4,euro:6,playoff:0,rel:3,h2h:false},
+        settings:{top:4,euro:6,playoff:0,rel:3,h2h:false,enableRegen:false},
         createdAt: Date.now(),
         mode: type,
         has3rdPlace: has3rdPlace,
@@ -9982,8 +9982,8 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
           renderStandingTracker() 
         }) 
       });
-      $('btnSettings').addEventListener('click',function(){ if(!ensureAdmin()) return; var s=activeSeason(); $('cfgTop').value=s.settings.top; $('cfgEuro').value=s.settings.euro; $('cfgPlayoff').value=s.settings.playoff||0; $('cfgRel').value=s.settings.rel; $('cfgH2H').checked=!!s.settings.h2h; var dlg=$('settingsDialog'); if(dlg && typeof dlg.showModal==='function'){dlg.showModal()} else {dlg.setAttribute('open','open')} });
-      $('btnApplySettings').addEventListener('click',function(){ if(!ensureAdmin()) return; var s=activeSeason(); s.settings.top=clamp(parseInt($('cfgTop').value,10)||4,1,10); s.settings.euro=clamp(parseInt($('cfgEuro').value,10)||6,0,10); s.settings.playoff=clamp(parseInt($('cfgPlayoff').value,10)||0,0,8); s.settings.rel=clamp(parseInt($('cfgRel').value,10)||3,1,6); s.settings.h2h=$('cfgH2H').checked?true:false; saveAll(); var legendText='Top '+s.settings.top+' (🔵), '+s.settings.euro+' (🟠)'; if(s.settings.playoff>0){ legendText+=', Playoff ('+s.settings.playoff+', 🟣)'; } legendText+=', rớt hạng ('+s.settings.rel+', 🔴)'; $('bandLegend').textContent=legendText; renderStandings() });
+      $('btnSettings').addEventListener('click',function(){ if(!ensureAdmin()) return; var s=activeSeason(); $('cfgTop').value=s.settings.top; $('cfgEuro').value=s.settings.euro; $('cfgPlayoff').value=s.settings.playoff||0; $('cfgRel').value=s.settings.rel; $('cfgH2H').checked=!!s.settings.h2h; $('cfgEnableRegen').checked=s.settings.enableRegen!==false; $('cfgEnableRegenWrap').style.display=s.mode==='swiss' ? '' : 'none'; var dlg=$('settingsDialog'); if(dlg && typeof dlg.showModal==='function'){dlg.showModal()} else {dlg.setAttribute('open','open')} });
+      $('btnApplySettings').addEventListener('click',function(){ if(!ensureAdmin()) return; var s=activeSeason(); s.settings.top=clamp(parseInt($('cfgTop').value,10)||4,1,10); s.settings.euro=clamp(parseInt($('cfgEuro').value,10)||6,0,10); s.settings.playoff=clamp(parseInt($('cfgPlayoff').value,10)||0,0,8); s.settings.rel=clamp(parseInt($('cfgRel').value,10)||3,1,6); s.settings.h2h=$('cfgH2H').checked?true:false; s.settings.enableRegen=$('cfgEnableRegen').checked?true:false; saveAll(); var legendText='Top '+s.settings.top+' (🔵), '+s.settings.euro+' (🟠)'; if(s.settings.playoff>0){ legendText+=', Playoff ('+s.settings.playoff+', 🟣)'; } legendText+=', rớt hạng ('+s.settings.rel+', 🔴)'; $('bandLegend').textContent=legendText; refreshSeasonUI() });
       $('logoFile').addEventListener('change',function(e){
         var file = (e.target.files && e.target.files[0]) ? e.target.files[0] : null;
         if(!file) return;
