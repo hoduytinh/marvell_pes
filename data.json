@@ -12387,6 +12387,10 @@
         "swiss-4-1": {
           "hg": 2,
           "ag": 0
+        },
+        "swiss-4-2": {
+          "hg": 0,
+          "ag": 2
         }
       },
       "rounds": [
@@ -13590,16 +13594,113 @@
             "roundNumber": 5
           }
         ],
-        "playoffBracket": null,
+        "playoffBracket": {
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "rounds": [
+            [
+              {
+                "home": 0,
+                "away": 1
+              },
+              {
+                "home": 2,
+                "away": 3
+              },
+              {
+                "home": 4,
+                "away": 5
+              },
+              {
+                "home": 6,
+                "away": 7
+              }
+            ],
+            [
+              {
+                "home": {
+                  "fromRound": 0,
+                  "matchId": 0
+                },
+                "away": {
+                  "fromRound": 0,
+                  "matchId": 1
+                }
+              },
+              {
+                "home": {
+                  "fromRound": 0,
+                  "matchId": 2
+                },
+                "away": {
+                  "fromRound": 0,
+                  "matchId": 3
+                }
+              }
+            ],
+            [
+              {
+                "home": {
+                  "fromRound": 1,
+                  "matchId": 0
+                },
+                "away": {
+                  "fromRound": 1,
+                  "matchId": 1
+                }
+              }
+            ]
+          ],
+          "stageNames": [
+            "Tứ kết",
+            "Bán kết",
+            "Chung kết"
+          ]
+        },
         "phase": "playoff",
         "winsToAdvance": 3,
         "lossesToEliminate": 3,
         "teamsToAdvance": 8,
-        "qualified": [],
-        "eliminated": [],
+        "qualified": [
+          5,
+          10,
+          1,
+          9,
+          13,
+          8,
+          11,
+          6
+        ],
+        "eliminated": [
+          0,
+          2,
+          3,
+          4,
+          7,
+          12,
+          14,
+          15
+        ],
         "swissBracketSize": 16,
         "hasPrePlayoff": false,
-        "playoffQualifiers": null
+        "playoffQualifiers": [
+          5,
+          6,
+          9,
+          13,
+          10,
+          11,
+          1,
+          8
+        ]
       }
     }
   },
