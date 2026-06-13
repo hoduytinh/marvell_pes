@@ -2396,7 +2396,32 @@ function renderSwissBracket(s) {
     playoffTitle.textContent = '🏆 Knock-out stage';
     playoffTitle.style.cssText = 'margin: 0 0 20px 0; text-align: center; color: #FFD700; font-size: 20px;';
     playoffContainer.appendChild(playoffTitle);
-    
+
+    // Admin-only: Regenerate the knock-out bracket from current Swiss standings
+    if(isAdmin() && s.settings && s.settings.enableRegen !== false) {
+      var playoffRegenBtn = document.createElement('button');
+      playoffRegenBtn.textContent = '🔄 Regenerate';
+      playoffRegenBtn.title = 'Tạo lại nhánh knock-out theo thứ hạng Swiss hiện tại (sẽ xóa toàn bộ kết quả vòng knock-out)';
+      playoffRegenBtn.style.cssText = 'display: block; margin: 0 auto 16px auto; padding: 4px 10px; font-size: 11px; border: 1px solid #FFD700; border-radius: 4px; background: var(--card); color: var(--text); cursor: pointer; font-weight: 600; transition: all 0.2s;';
+      playoffRegenBtn.addEventListener('mouseenter', function() {
+        this.style.background = '#FFD700';
+        this.style.color = '#000';
+      });
+      playoffRegenBtn.addEventListener('mouseleave', function() {
+        this.style.background = 'var(--card)';
+        this.style.color = 'var(--text)';
+      });
+      playoffRegenBtn.addEventListener('click', function() {
+        if(!isAdmin()) { toast('Chỉ admin được phép sửa'); return; }
+        var msg = 'Tạo lại nhánh knock-out theo thứ hạng Swiss hiện tại?\n\n' +
+                 'Lưu ý: TẤT CẢ kết quả của vòng knock-out sẽ bị xóa.';
+        if(!confirm(msg)) return;
+        regenerateSwissPlayoffs(s);
+        saveAll();
+      });
+      playoffContainer.appendChild(playoffRegenBtn);
+    }
+
     // Create a container for the playoff bracket
     var playoffBracketContainer = document.createElement('div');
     playoffBracketContainer.className = 'cup-bracket-container';
@@ -2993,7 +3018,7 @@ function generateNextSwissRound(s, roundIdx) {
 }
 
 // Generate playoff bracket from top Swiss performers
-function generateSwissPlayoffs(s) {
+function generateSwissPlayoffs(s, randomize) {
   if(!s.swiss || s.swiss.playoffBracket) return;
   
   var swiss = s.swiss;
@@ -3007,7 +3032,8 @@ function generateSwissPlayoffs(s) {
     var record = { idx: teamIdx, wins: 0, losses: 0, gf: 0, ga: 0 };
     
     swiss.rounds.forEach(function(round, r) {
-      if(!round.matches) return;
+      // Pre-Swiss playoff is only a qualifier gate and must not affect Swiss seeding
+      if(!round.matches || round.isPrePlayoff) return;
       
       round.matches.forEach(function(match, midx) {
         if(match.home !== teamIdx && match.away !== teamIdx) return;
@@ -3033,15 +3059,37 @@ function generateSwissPlayoffs(s) {
     return record;
   });
   
-  // Sort qualified teams by wins, then GD, then GF
+  // Sort qualified teams by Swiss strength:
+  // 1) higher wins, 2) fewer losses (3-0 above 3-1 above 3-2), 3) GD, 4) GF
   teamRecords.sort(function(a, b) {
     if(a.wins !== b.wins) return b.wins - a.wins;
+    if(a.losses !== b.losses) return a.losses - b.losses;
     var gdA = a.gf - a.ga;
     var gdB = b.gf - b.ga;
     if(gdA !== gdB) return gdB - gdA;
     return b.gf - a.gf;
   });
-  
+
+  // When regenerating, shuffle teams that share the SAME record (wins+losses)
+  // so each draw differs while keeping seeding constraints intact
+  // (3-0 tier above 3-2 tier, top seeds on opposite bracket halves).
+  if(randomize) {
+    var g = 0;
+    while(g < teamRecords.length) {
+      var h = g + 1;
+      while(h < teamRecords.length &&
+            teamRecords[h].wins === teamRecords[g].wins &&
+            teamRecords[h].losses === teamRecords[g].losses) h++;
+      for(var k = h - 1; k > g; k--) {
+        var rnd = g + Math.floor(Math.random() * (k - g + 1));
+        var tmp = teamRecords[k];
+        teamRecords[k] = teamRecords[rnd];
+        teamRecords[rnd] = tmp;
+      }
+      g = h;
+    }
+  }
+
   // Take only the number we need for playoffs (should already be exact)
   var playoffQualifiers = teamRecords.slice(0, swiss.teamsToAdvance).map(function(r) { return r.idx; });
 
@@ -3082,6 +3130,35 @@ function generateSwissPlayoffs(s) {
   s.swiss.phase = 'playoff';
 
   saveAll();
+}
+
+// Regenerate the knock-out (playoff) bracket from current Swiss standings
+function regenerateSwissPlayoffs(s) {
+  if(!s.swiss) return;
+  var swiss = s.swiss;
+
+  // Clear any existing knock-out results
+  if(swiss.playoffBracket && swiss.playoffBracket.rounds) {
+    swiss.playoffBracket.rounds.forEach(function(pRound, pRoundIdx) {
+      if(pRound) {
+        pRound.forEach(function(match, matchIdx) {
+          delete s.results['playoff-' + pRoundIdx + '-' + matchIdx];
+          delete s.results['swiss-playoff-' + pRoundIdx + '-' + matchIdx];
+        });
+      }
+    });
+  }
+
+  // Reset bracket so generateSwissPlayoffs can rebuild it from scratch
+  swiss.playoffBracket = null;
+  swiss.playoffQualifiers = null;
+  swiss.phase = 'swiss';
+
+  // Rebuild knock-out bracket using current Swiss seeding (randomized draw)
+  generateSwissPlayoffs(s, true);
+
+  renderSwissBracket(s);
+  renderSwissStandings(s);
 }
 
 // Render Swiss standings
