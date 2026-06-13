@@ -13421,7 +13421,7 @@
         "playoff": 0,
         "rel": 3,
         "h2h": false,
-        "enableRegen": true
+        "enableRegen": false
       },
       "createdAt": 1779086231720,
       "mode": "swiss",
