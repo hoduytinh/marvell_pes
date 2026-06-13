@@ -13693,11 +13693,11 @@
         "hasPrePlayoff": false,
         "playoffQualifiers": [
           5,
-          6,
-          1,
-          9,
-          13,
           10,
+          9,
+          1,
+          13,
+          6,
           11,
           8
         ]
