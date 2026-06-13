@@ -13692,14 +13692,14 @@
         "swissBracketSize": 16,
         "hasPrePlayoff": false,
         "playoffQualifiers": [
-          5,
-          6,
-          9,
           13,
-          10,
-          11,
+          6,
           1,
-          8
+          9,
+          5,
+          8,
+          11,
+          10
         ]
       }
     }
