@@ -252,12 +252,19 @@
         }
       );
 
+      // Swiss playoff bracket is built from the qualifiers sub-list, so the
+      // resolved indices reference playoffQualifiers, not season.teams directly.
+      var playoffQualifiers = season.swiss.playoffQualifiers || [];
+
       for(var pr = 0; pr < playoff.rounds.length; pr++) {
         var pRound = playoff.rounds[pr] || [];
         for(var pm = 0; pm < pRound.length; pm++) {
           var pMatch = pRound[pm] || {};
-          var pHomeIdx = playoffResolve(pMatch.home);
-          var pAwayIdx = playoffResolve(pMatch.away);
+          var pHomeQual = playoffResolve(pMatch.home);
+          var pAwayQual = playoffResolve(pMatch.away);
+          if(typeof pHomeQual !== 'number' || typeof pAwayQual !== 'number') continue;
+          var pHomeIdx = playoffQualifiers[pHomeQual];
+          var pAwayIdx = playoffQualifiers[pAwayQual];
           if(typeof pHomeIdx !== 'number' || typeof pAwayIdx !== 'number') continue;
           if(!Array.isArray(season.teams)) continue;
           if(!season.teams[pHomeIdx] || !season.teams[pAwayIdx]) continue;
