@@ -12391,6 +12391,10 @@
         "swiss-4-2": {
           "hg": 0,
           "ag": 2
+        },
+        "swiss-playoff-0-2": {
+          "hg": 2,
+          "ag": 0
         }
       },
       "rounds": [
@@ -13636,10 +13640,7 @@
                 }
               },
               {
-                "home": {
-                  "fromRound": 0,
-                  "matchId": 2
-                },
+                "home": 4,
                 "away": {
                   "fromRound": 0,
                   "matchId": 3
