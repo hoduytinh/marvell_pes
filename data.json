@@ -13750,6 +13750,11 @@
       "source": "scan"
     },
     {
+      "name": "Algeria",
+      "data": "logos/Algeria.jpg",
+      "source": "scan"
+    },
+    {
       "name": "Argentina",
       "data": "logos/Argentina.jpg",
       "source": "scan"
@@ -13762,6 +13767,16 @@
     {
       "name": "Aston_Villa",
       "data": "logos/Aston_Villa.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Australia",
+      "data": "logos/Australia.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Austria",
+      "data": "logos/Austria.jpg",
       "source": "scan"
     },
     {
@@ -13790,6 +13805,11 @@
       "source": "scan"
     },
     {
+      "name": "Bosnia_and_Herzegovina",
+      "data": "logos/Bosnia_and_Herzegovina.jpg",
+      "source": "scan"
+    },
+    {
       "name": "Botafogo",
       "data": "logos/Botafogo.jpg",
       "source": "scan"
@@ -13814,6 +13834,16 @@
       "source": "scan"
     },
     {
+      "name": "Canada",
+      "data": "logos/Canada.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Cape_Verde",
+      "data": "logos/Cape_Verde.jpg",
+      "source": "scan"
+    },
+    {
       "name": "Chelsea",
       "data": "logos/Chelsea.jpg",
       "source": "scan"
@@ -13824,8 +13854,38 @@
       "source": "scan"
     },
     {
+      "name": "Croatia",
+      "data": "logos/Croatia.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Curacao",
+      "data": "logos/Curacao.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Czech_Republic",
+      "data": "logos/Czech_Republic.jpg",
+      "source": "scan"
+    },
+    {
       "name": "Dortmund",
       "data": "logos/Dortmund.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "DR_Congo",
+      "data": "logos/DR_Congo.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Ecuador",
+      "data": "logos/Ecuador.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Egypt",
+      "data": "logos/Egypt.jpg",
       "source": "scan"
     },
     {
@@ -13844,13 +13904,43 @@
       "source": "scan"
     },
     {
+      "name": "Ghana",
+      "data": "logos/Ghana.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Haiti",
+      "data": "logos/Haiti.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Iran",
+      "data": "logos/Iran.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Iraq",
+      "data": "logos/Iraq.jpg",
+      "source": "scan"
+    },
+    {
       "name": "Italia",
       "data": "logos/Italia.jpg",
       "source": "scan"
     },
     {
+      "name": "Ivory_Coast",
+      "data": "logos/Ivory_Coast.jpg",
+      "source": "scan"
+    },
+    {
       "name": "Japan",
       "data": "logos/Japan.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Jordan",
+      "data": "logos/Jordan.jpg",
       "source": "scan"
     },
     {
@@ -13869,6 +13959,26 @@
       "source": "scan"
     },
     {
+      "name": "Mexico",
+      "data": "logos/Mexico.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Morocco",
+      "data": "logos/Morocco.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Netherlands",
+      "data": "logos/Netherlands.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "New_Zealand",
+      "data": "logos/New_Zealand.jpg",
+      "source": "scan"
+    },
+    {
       "name": "nh_VIP",
       "data": "logos/nh_VIP.svg",
       "source": "scan"
@@ -13876,6 +13986,21 @@
     {
       "name": "Nigeria",
       "data": "logos/Nigeria.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Norway",
+      "data": "logos/Norway.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Panama",
+      "data": "logos/Panama.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Paraguay",
+      "data": "logos/Paraguay.jpg",
       "source": "scan"
     },
     {
@@ -13889,8 +14014,23 @@
       "source": "scan"
     },
     {
+      "name": "Qatar",
+      "data": "logos/Qatar.jpg",
+      "source": "scan"
+    },
+    {
       "name": "Real-madrid",
       "data": "logos/Real-madrid.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Saudi_Arabia",
+      "data": "logos/Saudi_Arabia.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Scotland",
+      "data": "logos/Scotland.jpg",
       "source": "scan"
     },
     {
@@ -13934,8 +14074,23 @@
       "source": "scan"
     },
     {
+      "name": "season_2026_-_WorldCup",
+      "data": "logos/season_2026_-_WorldCup.jpg",
+      "source": "scan"
+    },
+    {
       "name": "season_Hall_of_Champions",
       "data": "logos/season_Hall_of_Champions.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Senegal",
+      "data": "logos/Senegal.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "South_Africa",
+      "data": "logos/South_Africa.jpg",
       "source": "scan"
     },
     {
@@ -13949,13 +14104,43 @@
       "source": "scan"
     },
     {
+      "name": "Sweden",
+      "data": "logos/Sweden.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Switzerland",
+      "data": "logos/Switzerland.jpg",
+      "source": "scan"
+    },
+    {
       "name": "Thy_in",
       "data": "logos/Thy_in.jpg",
       "source": "scan"
     },
     {
+      "name": "Tunisia",
+      "data": "logos/Tunisia.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Turkey",
+      "data": "logos/Turkey.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "United_States",
+      "data": "logos/United_States.jpg",
+      "source": "scan"
+    },
+    {
       "name": "Uruguay",
       "data": "logos/Uruguay.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Uzbekistan",
+      "data": "logos/Uzbekistan.jpg",
       "source": "scan"
     }
   ],
