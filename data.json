@@ -3786,7 +3786,7 @@
           "hg": 0,
           "ag": 2
         },
-        "swiss-playoff-2-0": {
+        "swiss-playoff-3-0": {
           "hg": 3,
           "ag": 1
         }
@@ -4821,7 +4821,7 @@
       },
       "createdAt": 1764313646377,
       "mode": "swiss",
-      "has3rdPlace": false,
+      "has3rdPlace": true,
       "swiss": {
         "rounds": [
           {
@@ -5005,6 +5005,12 @@
             ],
             [
               {
+                "home": 0,
+                "away": 4
+              }
+            ],
+            [
+              {
                 "home": 2,
                 "away": 7
               }
@@ -5013,6 +5019,7 @@
           "stageNames": [
             "Tứ kết",
             "Bán kết",
+            "Tranh hạng 3",
             "Chung kết"
           ]
         },

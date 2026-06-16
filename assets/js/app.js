@@ -9532,7 +9532,7 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
         var thirdPlaceDiv = $('thirdPlaceOption');
         var groupsDiv = $('tournamentGroupOption');
         
-        if(type === 'cup' || type === 'tournament') {
+        if(type === 'cup' || type === 'tournament' || type === 'swiss') {
           thirdPlaceDiv.style.display = 'block';
         } else {
           thirdPlaceDiv.style.display = 'none';
