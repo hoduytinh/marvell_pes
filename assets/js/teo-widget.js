@@ -130,8 +130,10 @@
         : ((typeof teamRef.loserFromRound === 'number') ? teamRef.loserFromRound : null);
       if(baseRound == null || typeof teamRef.matchId !== 'number') return null;
 
+      // Newer brackets use isLoser:true, older data may use loserFromRound.
+      var wantsLoser = (teamRef.isLoser === true) || (teamRef.loserFromRound != null);
       var bracket = teamRef.bracket || '';
-      var loserFlag = (teamRef.loserFromRound != null) ? 'L' : 'W';
+      var loserFlag = wantsLoser ? 'L' : 'W';
       var memoKey = baseRound + '|' + teamRef.matchId + '|' + bracket + '|' + loserFlag;
       if(Object.prototype.hasOwnProperty.call(memo, memoKey)) return memo[memoKey];
 
@@ -152,7 +154,7 @@
 
       var winner = sourceResult.hg > sourceResult.ag ? homeIdx : awayIdx;
       var loser = winner === homeIdx ? awayIdx : homeIdx;
-      var resolved = (teamRef.loserFromRound != null) ? loser : winner;
+      var resolved = wantsLoser ? loser : winner;
       memo[memoKey] = resolved;
       return resolved;
     }
