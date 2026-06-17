@@ -130,8 +130,9 @@
         : ((typeof teamRef.loserFromRound === 'number') ? teamRef.loserFromRound : null);
       if(baseRound == null || typeof teamRef.matchId !== 'number') return null;
 
-      // Newer brackets use isLoser:true, older data may use loserFromRound.
-      var wantsLoser = (teamRef.isLoser === true) || (teamRef.loserFromRound != null);
+      // Newer brackets use isLoser:true, older data may use loserFromRound,
+      // and double-elimination brackets use position:'loser'.
+      var wantsLoser = (teamRef.isLoser === true) || (teamRef.loserFromRound != null) || (teamRef.position === 'loser');
       var bracket = teamRef.bracket || '';
       var loserFlag = wantsLoser ? 'L' : 'W';
       var memoKey = baseRound + '|' + teamRef.matchId + '|' + bracket + '|' + loserFlag;
@@ -333,9 +334,11 @@
       resolveTeam: deResolve
     }, out);
 
-    if(Array.isArray(de.grandFinal)) {
+    var grandFinals = Array.isArray(de.grandFinals) ? de.grandFinals
+      : (Array.isArray(de.grandFinal) ? de.grandFinal : null);
+    if(grandFinals) {
       addFromRoundArray(season, {
-        rounds: [de.grandFinal],
+        rounds: [grandFinals],
         keyBuilder: function(_r, m) { return 'de-grand-final-' + m; },
         stageLabel: function() { return 'DE Grand Final'; },
         resolveTeam: deResolve
