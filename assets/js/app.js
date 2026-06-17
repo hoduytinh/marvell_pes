@@ -3239,6 +3239,43 @@ function renderSwissStandings(s) {
   // Add playoff bracket results if playoffs exist
   if(s.swiss.playoffBracket && s.swiss.playoffBracket.rounds) {
     var qualifiers = s.swiss.playoffQualifiers || [];
+    var playoffBracket = s.swiss.playoffBracket;
+
+    function normalizeStageLabel(stageName) {
+      if(stageName === 'Final' || stageName === 'Chung kết') return 'Final';
+      if(stageName === '3rd Place Match' || stageName === 'Tranh hạng 3') return '3rd Place Match';
+      if(stageName === 'Semi-finals' || stageName === 'Bán kết') return 'Semi-finals';
+      if(stageName === 'Quarter-finals' || stageName === 'Tứ kết') return 'Quarter-finals';
+      return stageName || 'Knockout';
+    }
+
+    // Find where winner/loser of a specific match goes in later rounds.
+    function resolveNextPlayoffStages(fromRoundIdx, fromMatchIdx) {
+      var winnerStage = null;
+      var loserStage = null;
+
+      for(var nr = fromRoundIdx + 1; nr < playoffBracket.rounds.length; nr++) {
+        var nextRound = playoffBracket.rounds[nr];
+        var nextStage = normalizeStageLabel(playoffBracket.stageNames[nr]);
+        for(var nm = 0; nm < nextRound.length; nm++) {
+          var nextMatch = nextRound[nm];
+          var refs = [nextMatch.home, nextMatch.away];
+          for(var ri = 0; ri < refs.length; ri++) {
+            var ref = refs[ri];
+            if(!ref || typeof ref !== 'object') continue;
+            if(ref.fromRound === fromRoundIdx && ref.matchId === fromMatchIdx) {
+              if(ref.isLoser === true) loserStage = nextStage;
+              else winnerStage = nextStage;
+            }
+          }
+        }
+      }
+
+      return {
+        winnerStage: winnerStage,
+        loserStage: loserStage
+      };
+    }
     
     s.swiss.playoffBracket.rounds.forEach(function(round, roundIdx) {
       round.forEach(function(match, matchIdx) {
@@ -3257,43 +3294,38 @@ function renderSwissStandings(s) {
           home.GF += result.hg; home.GA += result.ag;
           away.GF += result.ag; away.GA += result.hg;
           
-          var stageName = s.swiss.playoffBracket.stageNames[roundIdx] || 'Knockout';
+          var stageName = normalizeStageLabel(playoffBracket.stageNames[roundIdx]);
+          var nextStages = resolveNextPlayoffStages(roundIdx, matchIdx);
           
           if(result.hg > result.ag) {
             home.W++; home.Pts += 3;
             away.L++;
             // Winner advances to next stage, loser stays at current stage
-            if(stageName === 'Final' || stageName === 'Chung kết') {
+            if(stageName === 'Final') {
               home.playoffStage = 'Winner';
               away.playoffStage = 'Runner-up';
-            } else if(stageName === '3rd Place Match' || stageName === 'Tranh hạng 3') {
+            } else if(stageName === '3rd Place Match') {
               home.playoffStage = '3rd Place';
               away.playoffStage = '4th Place';
             } else {
-              // Winner gets next stage
-              home.playoffStage = s.swiss.playoffBracket.stageNames[roundIdx + 1] || stageName;
-              // Loser stays at current stage (only if not set to a better stage already)
-              if(!away.playoffStage) {
-                away.playoffStage = stageName;
-              }
+              // Respect actual bracket routing (winner to final, loser to 3rd-place when configured).
+              home.playoffStage = nextStages.winnerStage || stageName;
+              away.playoffStage = nextStages.loserStage || stageName;
             }
           } else if(result.ag > result.hg) {
             away.W++; away.Pts += 3;
             home.L++;
             // Winner advances to next stage, loser stays at current stage
-            if(stageName === 'Final' || stageName === 'Chung kết') {
+            if(stageName === 'Final') {
               away.playoffStage = 'Winner';
               home.playoffStage = 'Runner-up';
-            } else if(stageName === '3rd Place Match' || stageName === 'Tranh hạng 3') {
+            } else if(stageName === '3rd Place Match') {
               away.playoffStage = '3rd Place';
               home.playoffStage = '4th Place';
             } else {
-              // Winner gets next stage
-              away.playoffStage = s.swiss.playoffBracket.stageNames[roundIdx + 1] || stageName;
-              // Loser stays at current stage (only if not set to a better stage already)
-              if(!home.playoffStage) {
-                home.playoffStage = stageName;
-              }
+              // Respect actual bracket routing (winner to final, loser to 3rd-place when configured).
+              away.playoffStage = nextStages.winnerStage || stageName;
+              home.playoffStage = nextStages.loserStage || stageName;
             }
           } else {
             home.D++; home.Pts++;
@@ -3309,7 +3341,7 @@ function renderSwissStandings(s) {
   
   standings.sort(function(a, b) {
     // Sort by playoff stage first
-    var stageOrder = ['Winner', 'Runner-up', '3rd Place', '4th Place', 'Semi-finals', 'Quarter-finals'];
+    var stageOrder = ['Winner', 'Runner-up', '3rd Place', '4th Place', 'Final', '3rd Place Match', 'Semi-finals', 'Quarter-finals'];
     var stageA = a.playoffStage ? stageOrder.indexOf(a.playoffStage) : 999;
     var stageB = b.playoffStage ? stageOrder.indexOf(b.playoffStage) : 999;
     
