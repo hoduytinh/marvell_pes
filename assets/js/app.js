@@ -6113,7 +6113,10 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
         return b.bronze - a.bronze;
       });
       
-      stats.totalChampions = stats.championsList.length;
+      // Total Champions = số người đã từng ít nhất 1 lần có huy chương vàng
+      stats.totalChampions = stats.championsList.filter(function(c) {
+        return c.gold > 0;
+      }).length;
       
       return stats;
     }
