@@ -4105,6 +4105,17 @@ function renderCupStandings(s){
       }
     }
 
+    // Bridge for Teo widget: shared "visible teams" config stored in state so it
+    // syncs to all users via cloud (instead of being a per-browser localStorage override).
+    window.pesGetTeoVisibleTeams = function(){
+      return Array.isArray(state.teoVisibleTeams) ? state.teoVisibleTeams.slice() : null;
+    };
+    window.pesSetTeoVisibleTeams = function(list){
+      if(Array.isArray(list) && list.length){ state.teoVisibleTeams = list.slice(); }
+      else { delete state.teoVisibleTeams; }
+      saveAll();
+    };
+
     // =================== CLOUD SYNC (GitHub Pages) ===================
     var CLOUD_CONFIG = {
       owner: 'hoduytinh',
@@ -6102,10 +6113,10 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
         });
       });
       
-      // Sort by: Points (Gold×3 + Silver×2 + Bronze×1)
+      // Sort by: Points (Gold×4 + Silver×2 + Bronze×1)
       stats.championsList.sort(function(a, b) {
-        var pointsA = a.gold * 3 + a.silver * 2 + a.bronze * 1;
-        var pointsB = b.gold * 3 + b.silver * 2 + b.bronze * 1;
+        var pointsA = a.gold * 4 + a.silver * 2 + a.bronze * 1;
+        var pointsB = b.gold * 4 + b.silver * 2 + b.bronze * 1;
         if(pointsB !== pointsA) return pointsB - pointsA;
         // If points are equal, sort by gold, then silver, then bronze
         if(b.gold !== a.gold) return b.gold - a.gold;
@@ -6260,7 +6271,7 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
         tr.onmouseleave = function() { this.style.background = originalBg; };
         
         var total = champion.gold + champion.silver + champion.bronze;
-        var points = champion.gold * 3 + champion.silver * 2 + champion.bronze * 1;
+        var points = champion.gold * 4 + champion.silver * 2 + champion.bronze * 1;
         
         tr.innerHTML = 
           '<td style="padding: 10px; font-weight: 600; ' + rankColor + '">' + (idx + 1) + '</td>' +

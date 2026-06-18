@@ -35,12 +35,19 @@
     });
   }
 
-  function loadVisibleTeamsSet() {
+  function loadVisibleTeamsSet(state) {
     try {
-      var raw = localStorage.getItem(VISIBLE_TEAMS_KEY);
-      if(!raw) return null;
-      var arr = JSON.parse(raw);
-      if(!Array.isArray(arr)) return null;
+      // Shared admin config (synced via cloud) takes precedence over any legacy
+      // per-browser override, so an admin change propagates to everyone.
+      var arr = (state && Array.isArray(state.teoVisibleTeams)) ? state.teoVisibleTeams : null;
+      if(!arr) {
+        var raw = localStorage.getItem(VISIBLE_TEAMS_KEY);
+        if(raw) {
+          var parsed = JSON.parse(raw);
+          if(Array.isArray(parsed)) arr = parsed;
+        }
+      }
+      if(!Array.isArray(arr) || !arr.length) return null;
       var set = Object.create(null);
       arr.forEach(function(name) { set[String(name).toLowerCase()] = true; });
       return set;
@@ -50,12 +57,18 @@
   }
 
   function saveVisibleTeams(list) {
-    try {
-      localStorage.setItem(VISIBLE_TEAMS_KEY, JSON.stringify(list || []));
-    } catch(_) {}
+    // Persist to shared state so it syncs to all users via cloud.
+    if(typeof window.pesSetTeoVisibleTeams === 'function') {
+      window.pesSetTeoVisibleTeams(list || []);
+    }
+    // Drop the legacy per-browser override so it can no longer shadow the shared config.
+    try { localStorage.removeItem(VISIBLE_TEAMS_KEY); } catch(_) {}
   }
 
   function clearVisibleTeamsFilter() {
+    if(typeof window.pesSetTeoVisibleTeams === 'function') {
+      window.pesSetTeoVisibleTeams([]);
+    }
     try { localStorage.removeItem(VISIBLE_TEAMS_KEY); } catch(_) {}
   }
 
@@ -104,7 +117,7 @@
 
   function getVisibleTeamNames(state) {
     var all = getAllTeamNames(state);
-    var selectedSet = loadVisibleTeamsSet();
+    var selectedSet = loadVisibleTeamsSet(state);
     if(!selectedSet) return all;
     var filtered = all.filter(function(name) { return !!selectedSet[String(name).toLowerCase()]; });
     return filtered.length ? filtered : all;
@@ -776,7 +789,7 @@
     }
 
     function getVisibleSelection(allTeams) {
-      var selectedSet = loadVisibleTeamsSet();
+      var selectedSet = loadVisibleTeamsSet(loadState());
       if(!selectedSet) {
         return allTeams.reduce(function(acc, t) { acc[String(t).toLowerCase()] = true; return acc; }, Object.create(null));
       }
