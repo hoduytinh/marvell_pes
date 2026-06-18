@@ -224,17 +224,29 @@
             {
               "name": "Single",
               "medals": {
-                "gold": [],
-                "silver": [],
-                "bronze": []
+                "gold": [
+                  ""
+                ],
+                "silver": [
+                  ""
+                ],
+                "bronze": [
+                  ""
+                ]
               }
             },
             {
               "name": "World Cup",
               "medals": {
-                "gold": [],
-                "silver": [],
-                "bronze": []
+                "gold": [
+                  ""
+                ],
+                "silver": [
+                  ""
+                ],
+                "bronze": [
+                  ""
+                ]
               }
             }
           ],
