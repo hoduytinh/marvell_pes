@@ -217,6 +217,20 @@
             }
           ],
           "pictures": []
+        },
+        {
+          "year": "2026",
+          "events": [
+            {
+              "name": "Single",
+              "medals": {
+                "gold": [],
+                "silver": [],
+                "bronze": []
+              }
+            }
+          ],
+          "pictures": []
         }
       ],
       "masterTeams": [
