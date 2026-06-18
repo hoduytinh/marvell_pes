@@ -122,7 +122,9 @@
                 "silver": [
                   "Đức"
                 ],
-                "bronze": []
+                "bronze": [
+                  "Tĩnh Tèo"
+                ]
               }
             }
           ],
@@ -210,6 +212,57 @@
                 ],
                 "bronze": [
                   "Vyyy"
+                ]
+              }
+            }
+          ],
+          "pictures": []
+        },
+        {
+          "year": "2026",
+          "events": [
+            {
+              "name": "Single",
+              "medals": {
+                "gold": [
+                  ""
+                ],
+                "silver": [
+                  ""
+                ],
+                "bronze": [
+                  "Tĩnh Tèo"
+                ]
+              }
+            },
+            {
+              "name": "World Cup",
+              "medals": {
+                "gold": [
+                  ""
+                ],
+                "silver": [
+                  ""
+                ],
+                "bronze": [
+                  ""
+                ]
+              }
+            },
+            {
+              "name": "Dual",
+              "medals": {
+                "gold": [
+                  "",
+                  ""
+                ],
+                "silver": [
+                  "",
+                  ""
+                ],
+                "bronze": [
+                  "",
+                  ""
                 ]
               }
             }
@@ -12411,6 +12464,14 @@
         "swiss-playoff-0-3": {
           "hg": 1,
           "ag": 2
+        },
+        "swiss-playoff-1-1": {
+          "hg": 1,
+          "ag": 2
+        },
+        "swiss-playoff-2-0": {
+          "hg": 0,
+          "ag": 2
         }
       },
       "rounds": [
@@ -13657,20 +13718,13 @@
             [
               {
                 "home": 2,
-                "away": {
-                  "fromRound": 1,
-                  "matchId": 1,
-                  "isLoser": true
-                }
+                "away": 4
               }
             ],
             [
               {
                 "home": 0,
-                "away": {
-                  "fromRound": 1,
-                  "matchId": 1
-                }
+                "away": 7
               }
             ]
           ],
@@ -13720,7 +13774,7 @@
       }
     }
   },
-  "current": "s61o8upo",
+  "current": "s74dil3z",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
