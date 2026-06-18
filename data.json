@@ -228,6 +228,14 @@
                 "silver": [],
                 "bronze": []
               }
+            },
+            {
+              "name": "World Cup",
+              "medals": {
+                "gold": [],
+                "silver": [],
+                "bronze": []
+              }
             }
           ],
           "pictures": []
