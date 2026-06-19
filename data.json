@@ -12472,6 +12472,10 @@
         "swiss-playoff-2-0": {
           "hg": 0,
           "ag": 2
+        },
+        "swiss-playoff-3-0": {
+          "hg": 3,
+          "ag": 2
         }
       },
       "rounds": [
