@@ -225,10 +225,10 @@
               "name": "Single",
               "medals": {
                 "gold": [
-                  ""
+                  "Tùng Mai"
                 ],
                 "silver": [
-                  ""
+                  "Phong"
                 ],
                 "bronze": [
                   "Tĩnh Tèo"
@@ -12121,6 +12121,91 @@
                   "rate": 1
                 }
               ]
+            },
+            {
+              "name": "Single",
+              "rankings": [
+                {
+                  "name": "Tùng Mai",
+                  "point": 10,
+                  "rate": 1
+                },
+                {
+                  "name": "Phong",
+                  "point": 8,
+                  "rate": 1
+                },
+                {
+                  "name": "Tĩnh Tèo",
+                  "point": 6,
+                  "rate": 1
+                },
+                {
+                  "name": "Thái",
+                  "point": 6,
+                  "rate": 1
+                },
+                {
+                  "name": "Đức",
+                  "point": 4,
+                  "rate": 1
+                },
+                {
+                  "name": "Thiện",
+                  "point": 4,
+                  "rate": 1
+                },
+                {
+                  "name": "Toàn T10",
+                  "point": 4,
+                  "rate": 1
+                },
+                {
+                  "name": "Tú",
+                  "point": 4,
+                  "rate": 1
+                },
+                {
+                  "name": "Linh",
+                  "point": 3,
+                  "rate": 1
+                },
+                {
+                  "name": "Em Kiên",
+                  "point": 3,
+                  "rate": 1
+                },
+                {
+                  "name": "Phát Cool",
+                  "point": 3,
+                  "rate": 1
+                },
+                {
+                  "name": "Vi",
+                  "point": 2,
+                  "rate": 1
+                },
+                {
+                  "name": "Truông",
+                  "point": 2,
+                  "rate": 1
+                },
+                {
+                  "name": "Tâm",
+                  "point": 2,
+                  "rate": 1
+                },
+                {
+                  "name": "Hưng",
+                  "point": 1,
+                  "rate": 1
+                },
+                {
+                  "name": "Vyyy",
+                  "point": 1,
+                  "rate": 1
+                }
+              ]
             }
           ],
           "pictures": []
@@ -13778,7 +13863,7 @@
       }
     }
   },
-  "current": "s74dil3z",
+  "current": "sn3pex2x",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
