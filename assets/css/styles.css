@@ -18,6 +18,14 @@
     button.ghost{background:transparent;border:1px dashed var(--border)}
     button.danger{background:#2a0c0c;border:1px solid #4c1d1d;color:#ffb4b4}
     .hidden{display:none}
+    /* Header dropdown menus (admin toolbar grouping) */
+    .hmenu{position:relative}
+    .hmenu>summary{list-style:none;cursor:pointer;user-select:none;background:transparent;border:1px dashed var(--border);border-radius:10px;padding:8px 12px;color:var(--text);white-space:nowrap}
+    .hmenu>summary::-webkit-details-marker{display:none}
+    .hmenu>summary::after{content:" ▾";opacity:.7;font-size:11px}
+    .hmenu[open]>summary{background:var(--card);border-style:solid;border-color:var(--accent)}
+    .hmenu-panel{position:absolute;top:calc(100% + 6px);right:0;min-width:190px;display:flex;flex-direction:column;gap:6px;padding:8px;background:var(--panel);border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.4);z-index:30}
+    .hmenu-panel button{width:100%;text-align:left}
     table{width:100%;border-collapse:separate;border-spacing:0}
     th,td{padding:8px;border-bottom:1px solid #1b2548}
     .table-wrap{overflow:visible;max-height:none;margin-top:10px;position:relative}

@@ -10607,6 +10607,20 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
         showBackupDataDialog();
       });
       
+      // Header dropdown menus: keep only one open, close on outside click,
+      // and close the menu after an action button inside it is clicked.
+      document.addEventListener('click', function(e){
+        var openTarget = e.target.closest ? e.target.closest('header details.hmenu') : null;
+        document.querySelectorAll('header details.hmenu[open]').forEach(function(d){
+          if(d !== openTarget) d.removeAttribute('open');
+        });
+        var actionBtn = e.target.closest ? e.target.closest('.hmenu-panel button') : null;
+        if(actionBtn){
+          var dd = actionBtn.closest('details.hmenu');
+          if(dd) dd.removeAttribute('open');
+        }
+      });
+      
 
       function showSeasonExportDialog() {
         var exportDialog = document.createElement('dialog');

@@ -69,14 +69,65 @@
         <span id="leagueLogo" class="logo" title="Logo giải"></span>
         <h1>Marvell Pes Club <span id="seasonTitle" class="muted"></span></h1>
       </div>
-      <div class="right" style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <div class="right" style="margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
   <span id="customLinks"></span>
-  <button id="btnAddLink" class="ghost adminOnly hidden" style="margin-right:4px">+Link</button>
-  <button id="btnAddNote" class="ghost adminOnly hidden" style="margin-right:4px">+Note</button>
-  <button id="btnAdmin" class="ghost">Admin</button>
-  <button id="btnCloudConfig" class="ghost adminOnly hidden" title="Cấu hình GitHub Cloud Sync">☁️ Cloud</button>
-  <button id="btnCloudSyncToggle" class="ghost adminOnly hidden" title="Bật/tắt tự động đồng bộ dữ liệu lên server">Sync: ON</button>
+
+  <!-- Nhóm: Mùa giải -->
+  <details class="hmenu adminOnly hidden">
+    <summary class="ghost">🏆 Mùa giải</summary>
+    <div class="hmenu-panel">
+        <button id="btnNewSeason" class="primary">Mùa mới</button>
+        <button id="btnReorderSeasons" class="ghost">⇅ Sắp xếp</button>
+        <button id="btnRenameSeason" class="ghost">Đổi tên</button>
+        <button id="btnDeleteSeason" class="danger">Xoá mùa</button>
+        <button id="btnResetSeason" class="danger" title="Xoá kết quả mùa hiện tại">Reset mùa</button>
+        <button id="btnSettings" class="ghost">Cài đặt</button>
+    </div>
+  </details>
+
+  <!-- Nhóm: Đội & Logo -->
+  <details class="hmenu adminOnly hidden">
+    <summary class="ghost">👥 Đội &amp; Logo</summary>
+    <div class="hmenu-panel">
+        <button id="btnLogo" class="ghost">Logo giải</button>
+        <button id="btnTeamCount" class="ghost">Số đội</button>
+        <button id="btnEditNames" class="ghost">Team setup</button>
+        <button id="btnTeamList" class="ghost">Team List</button>
+        <button id="btnLogoList" class="ghost">Logo List</button>
+    </div>
+  </details>
+
+  <!-- Nhóm: Dữ liệu -->
+  <details class="hmenu adminOnly hidden">
+    <summary class="ghost">💾 Dữ liệu</summary>
+    <div class="hmenu-panel">
+        <button id="btnExportHTML" class="ghost" title="Tạo file HTML hoàn chỉnh với dữ liệu đã chọn">📤 Export Data</button>
+        <button id="btnImportData" class="ghost" title="Nhập dữ liệu từ file HTML đã xuất">📥 Import Data</button>
+        <button id="btnBackupData" class="ghost" title="Tạo/khôi phục snapshot toàn bộ dữ liệu (tối đa 3 bản)">💾 Backup</button>
+    </div>
+  </details>
+
+  <!-- Nhóm: Cloud & Trang -->
+  <details class="hmenu adminOnly hidden">
+    <summary class="ghost">☁️ Cloud &amp; Trang</summary>
+    <div class="hmenu-panel">
+        <button id="btnAddLink" class="ghost">+Link</button>
+        <button id="btnAddNote" class="ghost">+Note</button>
+        <button id="btnCloudConfig" class="ghost" title="Cấu hình GitHub Cloud Sync">☁️ Cloud</button>
+        <button id="btnCloudSyncToggle" class="ghost" title="Bật/tắt tự động đồng bộ dữ liệu lên server">Sync: ON</button>
+    </div>
+  </details>
+
   <span id="cloudSyncStatus" title="Trạng thái đồng bộ" style="font-size:12px;padding:4px 8px;border-radius:4px;background:var(--card);border:1px solid var(--border);color:var(--muted);white-space:nowrap;">☁️ —</span>
+  <button id="btnAdmin" class="ghost">Admin</button>
+  <select id="themeSel" title="Theme">
+    <option value="dark">Theme: Dark</option>
+    <option value="white">Theme: White</option>
+    <option value="blue" selected>Theme: Blue</option>
+  </select>
+  <select id="seasonSel" title="Chọn mùa"></select>
+  <input id="logoFile" type="file" accept="image/*" hidden />
+
   <dialog id="cloudConfigDialog">
     <form method="dialog">
       <h3>☁️ GitHub Cloud Sync</h3>
@@ -109,27 +160,6 @@
       </div>
     </form>
   </dialog>
-  <select id="seasonSel" title="Chọn mùa"></select>
-        <button id="btnNewSeason" class="primary adminOnly hidden">Mùa mới</button>
-        <button id="btnReorderSeasons" class="ghost adminOnly hidden">⇅ Sắp xếp</button>
-        <button id="btnRenameSeason" class="ghost adminOnly hidden">Đổi tên</button>
-        <button id="btnDeleteSeason" class="danger adminOnly hidden">Xoá mùa</button>
-        <input id="logoFile" type="file" accept="image/*" hidden />
-        <button id="btnLogo" class="ghost adminOnly hidden">Logo giải</button>
-        <button id="btnTeamCount" class="ghost adminOnly hidden">Số đội</button>
-        <button id="btnEditNames" class="ghost adminOnly hidden">Team setup</button>
-        <button id="btnTeamList" class="ghost adminOnly hidden">Team List</button>
-        <button id="btnLogoList" class="ghost adminOnly hidden">Logo List</button>
-        <button id="btnSettings" class="ghost adminOnly hidden">Cài đặt</button>
-        <button id="btnResetSeason" class="danger adminOnly hidden" title="Xoá kết quả mùa hiện tại">Reset mùa</button>
-        <select id="themeSel" title="Theme">
-          <option value="dark">Theme: Dark</option>
-          <option value="white">Theme: White</option>
-          <option value="blue" selected>Theme: Blue</option>
-        </select>
-        <button id="btnExportHTML" class="ghost adminOnly hidden" title="Tạo file HTML hoàn chỉnh với dữ liệu đã chọn">📤 Export Data</button>
-        <button id="btnImportData" class="ghost adminOnly hidden" title="Nhập dữ liệu từ file HTML đã xuất">📥 Import Data</button>
-        <button id="btnBackupData" class="ghost adminOnly hidden" title="Tạo/khôi phục snapshot toàn bộ dữ liệu (tối đa 3 bản)">💾 Backup</button>
       </div>
     </div>
   </header>
