@@ -10602,6 +10602,11 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
         showImportDataDialog();
       });
       
+      $('btnBackupData').addEventListener('click',function(){ 
+        if(!ensureAdmin()) return;
+        showBackupDataDialog();
+      });
+      
 
       function showSeasonExportDialog() {
         var exportDialog = document.createElement('dialog');
@@ -11045,6 +11050,253 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
           console.error('Import failed:', e);
           alert('❌ Import thất bại: ' + e.message);
         }
+      }
+      
+      // =================== DATA BACKUP (SNAPSHOTS) ===================
+      // Snapshot blobs are stored in IndexedDB (large quota, hundreds of MB) instead
+      // of localStorage (~5MB), because the full state with base64 images is several MB.
+      // Only small metadata is kept in localStorage for a quick listing.
+      var BACKUP_INDEX_KEY = 'pesBackupIndex';
+      var BACKUP_EXTRA_KEYS = ['pesHomeLink', 'pesHomeLabel', 'pesCustomLinks', 'pesNotes'];
+      var MAX_BACKUPS = 3;
+      var BACKUP_DB_NAME = 'pesBackupDB';
+      var BACKUP_STORE = 'snapshots';
+      
+      function openBackupDB() {
+        return new Promise(function(resolve, reject) {
+          if(!window.indexedDB) { reject(new Error('IndexedDB not supported')); return; }
+          var req = indexedDB.open(BACKUP_DB_NAME, 1);
+          req.onupgradeneeded = function() {
+            var db = req.result;
+            if(!db.objectStoreNames.contains(BACKUP_STORE)) {
+              db.createObjectStore(BACKUP_STORE, { keyPath: 'id' });
+            }
+          };
+          req.onsuccess = function() { resolve(req.result); };
+          req.onerror = function() { reject(req.error || new Error('Cannot open backup DB')); };
+        });
+      }
+      
+      function backupDBPut(record) {
+        return openBackupDB().then(function(db) {
+          return new Promise(function(resolve, reject) {
+            var tx = db.transaction(BACKUP_STORE, 'readwrite');
+            tx.objectStore(BACKUP_STORE).put(record);
+            tx.oncomplete = function() { db.close(); resolve(); };
+            tx.onerror = function() { db.close(); reject(tx.error); };
+            tx.onabort = function() { db.close(); reject(tx.error || new Error('quota')); };
+          });
+        });
+      }
+      
+      function backupDBGet(id) {
+        return openBackupDB().then(function(db) {
+          return new Promise(function(resolve, reject) {
+            var tx = db.transaction(BACKUP_STORE, 'readonly');
+            var r = tx.objectStore(BACKUP_STORE).get(id);
+            r.onsuccess = function() { db.close(); resolve(r.result || null); };
+            r.onerror = function() { db.close(); reject(r.error); };
+          });
+        });
+      }
+      
+      function backupDBDelete(id) {
+        return openBackupDB().then(function(db) {
+          return new Promise(function(resolve, reject) {
+            var tx = db.transaction(BACKUP_STORE, 'readwrite');
+            tx.objectStore(BACKUP_STORE).delete(id);
+            tx.oncomplete = function() { db.close(); resolve(); };
+            tx.onerror = function() { db.close(); reject(tx.error); };
+          });
+        });
+      }
+      
+      function loadBackupIndex() {
+        try {
+          var raw = localStorage.getItem(BACKUP_INDEX_KEY);
+          var arr = raw ? JSON.parse(raw) : [];
+          return Array.isArray(arr) ? arr : [];
+        } catch(_) { return []; }
+      }
+      
+      function saveBackupIndex(idx) {
+        try { localStorage.setItem(BACKUP_INDEX_KEY, JSON.stringify(idx)); } catch(_) {}
+      }
+      
+      function buildBackupSnapshot() {
+        var extras = {};
+        BACKUP_EXTRA_KEYS.forEach(function(k) {
+          try { var v = localStorage.getItem(k); if(v !== null) extras[k] = v; } catch(_) {}
+        });
+        return {
+          version: 1,
+          createdAt: Date.now(),
+          state: JSON.parse(JSON.stringify(state)),
+          extras: extras
+        };
+      }
+      
+      // Returns a Promise<{ok, reason?, id?}>.
+      function createBackup() {
+        var idx = loadBackupIndex();
+        if(idx.length >= MAX_BACKUPS) {
+          return Promise.resolve({ ok: false, reason: 'max' });
+        }
+        var snap = buildBackupSnapshot();
+        var id = 'bk_' + snap.createdAt + '_' + Math.random().toString(36).slice(2, 7);
+        var json = JSON.stringify(snap);
+        return backupDBPut({ id: id, json: json }).then(function() {
+          idx.push({
+            id: id,
+            createdAt: snap.createdAt,
+            seasons: Object.keys((snap.state && snap.state.seasons) || {}).length,
+            teams: ((snap.state && snap.state.teamMasterList) || []).length,
+            sizeKB: Math.round(json.length / 1024)
+          });
+          saveBackupIndex(idx);
+          return { ok: true, id: id };
+        }).catch(function(e) {
+          var quota = e && (e.name === 'QuotaExceededError' || /quota/i.test(String(e.message || e)));
+          return { ok: false, reason: quota ? 'quota' : 'error', error: e };
+        });
+      }
+      
+      // Returns a Promise.
+      function deleteBackup(id) {
+        var idx = loadBackupIndex().filter(function(b) { return b.id !== id; });
+        saveBackupIndex(idx);
+        return backupDBDelete(id).catch(function(){});
+      }
+      
+      // Returns a Promise<boolean>.
+      function restoreBackup(id) {
+        return backupDBGet(id).then(function(rec) {
+          if(!rec || !rec.json) return false;
+          var snap;
+          try { snap = JSON.parse(rec.json); } catch(_) { return false; }
+          if(!snap || !snap.state) return false;
+          
+          // Replace the entire contents of `state` in place (preserve the reference).
+          Object.keys(state).forEach(function(k) { delete state[k]; });
+          Object.keys(snap.state).forEach(function(k) { state[k] = snap.state[k]; });
+          
+          // Restore content-related localStorage keys.
+          var extras = snap.extras || {};
+          BACKUP_EXTRA_KEYS.forEach(function(k) {
+            try {
+              if(extras[k] !== undefined) localStorage.setItem(k, extras[k]);
+              else localStorage.removeItem(k);
+            } catch(_) {}
+          });
+          
+          saveAll();
+          refreshSeasonUI();
+          refreshNoteCount();
+          updateHomeButton();
+          return true;
+        }).catch(function() { return false; });
+      }
+      
+      function showBackupDataDialog() {
+        var dialog = document.createElement('dialog');
+        dialog.style.cssText = 'width: 560px; max-width: 92vw; border: none; border-radius: 12px; padding: 0; background: var(--card); color: var(--text);';
+        document.body.appendChild(dialog);
+        
+        function fmtDate(ts) {
+          try { return new Date(ts).toLocaleString('vi-VN'); } catch(_) { return String(ts); }
+        }
+        
+        function render() {
+          var idx = loadBackupIndex().slice().sort(function(a, b) { return b.createdAt - a.createdAt; });
+          var atMax = idx.length >= MAX_BACKUPS;
+          
+          var listHtml = idx.length === 0
+            ? '<div style="text-align:center; color: var(--muted); padding: 24px;">Chưa có bản backup nào.</div>'
+            : idx.map(function(b) {
+                return '<div style="display:flex; align-items:center; gap:12px; padding:12px; margin-bottom:8px; background: var(--bg); border:1px solid var(--border); border-radius:8px;">' +
+                  '<div style="flex:1; min-width:0;">' +
+                    '<div style="font-weight:600;">🗂️ ' + fmtDate(b.createdAt) + '</div>' +
+                    '<div style="font-size:12px; color: var(--muted); margin-top:2px;">' + (b.seasons || 0) + ' mùa • ' + (b.teams || 0) + ' team • ' + (b.sizeKB || 0) + ' KB</div>' +
+                  '</div>' +
+                  '<button type="button" class="restore-bk" data-id="' + b.id + '" style="padding:6px 12px; background: var(--accent); color:#fff; border:none; border-radius:6px; cursor:pointer; white-space:nowrap;">↩️ Restore</button>' +
+                  '<button type="button" class="delete-bk" data-id="' + b.id + '" style="padding:6px 12px; background:#c0392b; color:#fff; border:none; border-radius:6px; cursor:pointer; white-space:nowrap;">🗑️ Delete</button>' +
+                '</div>';
+              }).join('');
+          
+          dialog.innerHTML =
+            '<div style="padding: 20px;">' +
+              '<h3 style="margin:0 0 6px 0; color: var(--accent);">💾 Backup Data</h3>' +
+              '<p style="margin:0 0 16px 0; color: var(--muted); font-size:13px;">Snapshot toàn bộ dữ liệu hệ thống (tối đa ' + MAX_BACKUPS + ' bản). Đã dùng ' + idx.length + '/' + MAX_BACKUPS + '.</p>' +
+              '<div style="margin-bottom:16px;">' + listHtml + '</div>' +
+              '<div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">' +
+                '<button type="button" id="createBackupBtn" ' + (atMax ? 'disabled' : '') + ' style="padding:10px 16px; background:' + (atMax ? 'var(--muted)' : 'var(--accent)') + '; color:#fff; border:none; border-radius:6px; cursor:' + (atMax ? 'not-allowed' : 'pointer') + '; opacity:' + (atMax ? '0.6' : '1') + ';">➕ Tạo backup mới</button>' +
+                '<button type="button" id="closeBackupBtn" style="padding:10px 16px; background: var(--border); color: var(--text); border:none; border-radius:6px; cursor:pointer;">Đóng</button>' +
+              '</div>' +
+              (atMax ? '<div style="margin-top:10px; font-size:12px; color: var(--muted);">Đã đạt tối đa ' + MAX_BACKUPS + ' bản. Hãy xoá một bản để tạo mới.</div>' : '') +
+            '</div>';
+          
+          var createBtn = dialog.querySelector('#createBackupBtn');
+          if(createBtn) createBtn.addEventListener('click', function() {
+            createBtn.disabled = true;
+            createBtn.textContent = '⏳ Đang tạo...';
+            createBackup().then(function(res) {
+              if(res.ok) {
+                toast('Đã tạo backup');
+              } else if(res.reason === 'max') {
+                alert('Đã đạt tối đa ' + MAX_BACKUPS + ' bản backup. Hãy xoá một bản trước.');
+              } else if(res.reason === 'quota') {
+                alert('❌ Không đủ dung lượng trình duyệt để lưu backup. Hãy xoá bớt backup cũ.');
+              } else {
+                alert('❌ Tạo backup thất bại.');
+              }
+              render();
+            });
+          });
+          
+          dialog.querySelector('#closeBackupBtn').addEventListener('click', function() {
+            dialog.close();
+          });
+          
+          dialog.querySelectorAll('.restore-bk').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              var id = btn.getAttribute('data-id');
+              if(confirm('Khôi phục bản backup này?\n\n⚠️ Toàn bộ dữ liệu hiện tại sẽ bị thay thế bằng dữ liệu trong backup (và đồng bộ lên cloud nếu đang bật). Không thể hoàn tác.')) {
+                btn.disabled = true;
+                btn.textContent = '⏳...';
+                restoreBackup(id).then(function(ok) {
+                  if(ok) {
+                    alert('✅ Khôi phục thành công!');
+                    dialog.close();
+                  } else {
+                    alert('❌ Khôi phục thất bại: không đọc được dữ liệu backup.');
+                    render();
+                  }
+                });
+              }
+            });
+          });
+          
+          dialog.querySelectorAll('.delete-bk').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              var id = btn.getAttribute('data-id');
+              if(confirm('Xoá bản backup này? Không thể hoàn tác.')) {
+                deleteBackup(id).then(function() {
+                  toast('Đã xoá backup');
+                  render();
+                });
+              }
+            });
+          });
+        }
+        
+        render();
+        
+        if(typeof dialog.showModal === 'function') { dialog.showModal(); }
+        else { dialog.setAttribute('open', 'open'); }
+        
+        dialog.addEventListener('close', function() {
+          if(document.body.contains(dialog)) document.body.removeChild(dialog);
+        });
       }
       
       function performExport(selectedSeasonIds, includePictures, selectedSeparatorIds) {
