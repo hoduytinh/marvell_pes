@@ -13947,7 +13947,32 @@
         "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjNjBhNWZhIj4KICAgICAgPHBhdGggZD0iTTcuNSA1LjVDNS41IDUuNSA0IDcgNCA5djZjMCAyIDEuNSAzLjUgMy41IDMuNWg5YzIgMCAzLjUtMS41IDMuNS0zLjVWOWMwLTItMS41LTMuNS0zLjUtMy41aC05em0xIDNjLjUgMCAxIC41IDEgMXYxaDFjLjUgMCAxIC41IDEgMXMtLjUgMS0xIDFoLTF2MWMwIC41LS41IDEtMSAxcy0xLS41LTEtMXYtMWgtMWMtLjUgMC0xLS41LTEtMXMuNS0xIDEtMWgxdi0xYzAtLjUuNS0xIDEtMXptOCAxYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xem0tMiAzYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xeiIvPgogICAgPC9zdmc+CiAg",
         "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjNjBhNWZhIj4KICAgICAgPHBhdGggZD0iTTcuNSA1LjVDNS41IDUuNSA0IDcgNCA5djZjMCAyIDEuNSAzLjUgMy41IDMuNWg5YzIgMCAzLjUtMS41IDMuNS0zLjVWOWMwLTItMS41LTMuNS0zLjUtMy41aC05em0xIDNjLjUgMCAxIC41IDEgMXYxaDFjLjUgMCAxIC41IDEgMXMtLjUgMS0xIDFoLTF2MWMwIC41LS41IDEtMSAxcy0xLS41LTEtMXYtMWgtMWMtLjUgMC0xLS41LTEtMXMuNS0xIDEtMWgxdi0xYzAtLjUuNS0xIDEtMXptOCAxYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xem0tMiAzYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xeiIvPgogICAgPC9zdmc+CiAg"
       ],
-      "results": {},
+      "results": {
+        "group-A-0-0": {
+          "hg": 1,
+          "ag": 2
+        },
+        "group-A-0-1": {
+          "hg": 1,
+          "ag": 2
+        },
+        "group-B-0-0": {
+          "hg": 0,
+          "ag": 1
+        },
+        "group-B-0-1": {
+          "hg": 0,
+          "ag": 1
+        },
+        "group-C-0-0": {
+          "hg": 1,
+          "ag": 2
+        },
+        "group-C-0-1": {
+          "hg": 0,
+          "ag": 1
+        }
+      },
       "rounds": [
         [
           {
