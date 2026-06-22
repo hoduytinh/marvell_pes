@@ -5157,6 +5157,85 @@ function renderCupStandings(s){
       return qualifiers.slice(0, numKnockoutTeams);
     }
 
+    // Returns true only when every group match has a recorded result.
+    function isGroupStageComplete(season) {
+      if(!season || !season.groups) return false;
+      var groupNames = Object.keys(season.groups);
+      if(!groupNames.length) return false;
+      for(var gi = 0; gi < groupNames.length; gi++) {
+        var group = season.groups[groupNames[gi]];
+        if(!group || !group.fixtures) return false;
+        for(var r = 0; r < group.fixtures.length; r++) {
+          for(var m = 0; m < group.fixtures[r].length; m++) {
+            var key = 'group-' + groupNames[gi] + '-' + r + '-' + m;
+            var res = season.results[key];
+            if(!res || res.hg == null || res.ag == null) return false;
+          }
+        }
+      }
+      return true;
+    }
+
+    // Reorder qualifiers into a World Cup-style knockout bracket using standard
+    // tournament seeding. Stronger qualifiers (group winners first, then by
+    // points/GD/GF) are spread across the bracket slots like a real seeded draw
+    // (1 vs N, 2 in opposite half, etc.) so two group winners can never meet in
+    // the first round. A final pass swaps slots to avoid same-group round-1 ties.
+    // Works for any power-of-two knockout size (8, 16, 32...) and any group
+    // count, including odd group counts and brackets that include 3rd-place teams.
+    function seedTournamentBracket(qualifiers, numGroups) {
+      var n = qualifiers.length;
+      if(n < 2) return qualifiers.slice();
+      // Standard seeding only defined for power-of-two sizes; otherwise keep order.
+      if((n & (n - 1)) !== 0) return qualifiers.slice();
+      
+      // 1) Rank qualifiers into seeds: group rank first (1st > 2nd > 3rd...),
+      //    then by points, goal difference, goals for. seeds[0] is the strongest.
+      var seeds = qualifiers.slice().sort(function(a, b) {
+        return (a.position - b.position)
+            || (b.points - a.points)
+            || (b.gd - a.gd)
+            || (b.gf - a.gf);
+      });
+      
+      // 2) Build the standard seeding slot order (1-indexed seed numbers).
+      //    Pairs (order[0],order[1]), (order[2],order[3])... are the round-1 ties.
+      var order = [1, 2];
+      var rounds = Math.round(Math.log(n) / Math.log(2));
+      for(var r = 1; r < rounds; r++) {
+        var next = [];
+        var sum = order.length * 2 + 1;
+        for(var i = 0; i < order.length; i++) {
+          next.push(order[i]);
+          next.push(sum - order[i]);
+        }
+        order = next;
+      }
+      
+      // 3) Place each seed into its bracket slot.
+      var arranged = order.map(function(seedNum) { return seeds[seedNum - 1]; });
+      
+      // 4) Resolve same-group first-round matchups by swapping slots when safe.
+      function sameGroup(a, b) { return a && b && a.groupName === b.groupName; }
+      for(var p = 0; p < n; p += 2) {
+        if(!sameGroup(arranged[p], arranged[p + 1])) continue;
+        for(var j = 0; j < n; j++) {
+          if(j === p || j === p + 1) continue;
+          var partner = (j % 2 === 0) ? j + 1 : j - 1; // round-1 partner of slot j
+          var newPairA = arranged[j];           // moves into slot p+1
+          var newPairB = arranged[p + 1];        // moves into slot j
+          if(!sameGroup(arranged[p], newPairA) && !sameGroup(arranged[partner], newPairB)) {
+            var tmp = arranged[p + 1];
+            arranged[p + 1] = arranged[j];
+            arranged[j] = tmp;
+            break;
+          }
+        }
+      }
+      
+      return arranged;
+    }
+
     // Generate knockout bracket for tournament (flexible team count from group stage)
     function generateTournamentKnockout(season) {
       var qualifiers = getTournamentQualifiers(season);
@@ -5166,6 +5245,10 @@ function renderCupStandings(s){
       
       // Take only the required number of qualifiers
       qualifiers = qualifiers.slice(0, numKnockoutTeams);
+      
+      // Apply World Cup-style cross-group seeding so two group winners never meet
+      // in the first round, and same-group teams stay in opposite halves.
+      qualifiers = seedTournamentBracket(qualifiers, season.numGroups || 4);
       
       // Map qualifier team indices (0 to numKnockoutTeams-1) to original season indices
       var teamIndexMap = qualifiers.map(function(q) { return q.teamIdx; });
@@ -5208,7 +5291,8 @@ function renderCupStandings(s){
         rounds: remappedRounds,
         stageNames: cupBracket.stageNames,
         qualifiers: qualifiers,
-        teamIndices: teamIndexMap
+        teamIndices: teamIndexMap,
+        seedVersion: 3
       };
       
       return bracket;
@@ -5645,6 +5729,10 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
       $('seasonTitle').textContent='— '+s.name+' (TOURNAMENT)';
       $('leagueLogo').style.backgroundImage=s.logo?('url("'+s.logo+'")'):'none';
       
+      // Self-heal: generate/regenerate the knockout bracket if the group stage is
+      // complete and no knockout match has been played yet (applies correct seeding).
+      checkAndGenerateKnockout(s);
+      
       // Update table header for Tournament mode
       var thead = document.querySelector('#tblStandings thead tr');
       if(thead) {
@@ -5856,17 +5944,28 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
       });
       
       // Update stages based on qualification and knockout results
-      var qualifiers = getTournamentQualifiers(s);
-      var qualifiedIndices = qualifiers.map(function(q) { return q.teamIdx; });
-      
-      standings.forEach(function(row) {
-        if(qualifiedIndices.indexOf(row.idx) === -1) {
+      // Only decide qualification AFTER the group stage is fully played, so the
+      // Stage column doesn't show predicted/placeholder results beforehand.
+      var groupStageDone = isGroupStageComplete(s);
+      if(groupStageDone) {
+        var qualifiers = getTournamentQualifiers(s);
+        var qualifiedIndices = qualifiers.map(function(q) { return q.teamIdx; });
+        
+        standings.forEach(function(row) {
+          if(qualifiedIndices.indexOf(row.idx) === -1) {
+            row.stage = 'Group Stage';
+            row.eliminated = true;
+          } else {
+            row.stage = 'Qualified';
+          }
+        });
+      } else {
+        // Group stage still in progress: keep everyone neutral (no qualification yet).
+        standings.forEach(function(row) {
           row.stage = 'Group Stage';
-          row.eliminated = true;
-        } else {
-          row.stage = 'Qualified';
-        }
-      });
+          row.eliminated = false;
+        });
+      }
       
       // Add knockout stage results and update stages
       if(s.knockoutBracket) {
@@ -6003,11 +6102,31 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
 
     // Check if group stage is complete and generate knockout bracket
     function checkAndGenerateKnockout(s) {
-      if(s.mode !== 'tournament' || s.knockoutBracket) return;
+      if(s.mode !== 'tournament') return;
+      
+      // Has any knockout match already been played?
+      var hasKnockoutResult = false;
+      if(s.knockoutBracket && s.knockoutBracket.rounds) {
+        for(var r = 0; r < s.knockoutBracket.rounds.length && !hasKnockoutResult; r++) {
+          for(var m = 0; m < s.knockoutBracket.rounds[r].length; m++) {
+            if(s.results['knockout-' + r + '-' + m]) { hasKnockoutResult = true; break; }
+          }
+        }
+      }
+      
+      // If a bracket already exists and a knockout match has been played, never
+      // rebuild it (that would discard played results / seeding decisions).
+      if(s.knockoutBracket && hasKnockoutResult) return;
+      
+      // If a bracket already exists with the current seeding version and no
+      // knockout match played yet, it's already correct — nothing to do.
+      // (This guard prevents an infinite regenerate/refresh loop on render.)
+      if(s.knockoutBracket && s.knockoutBracket.seedVersion === 3) return;
       
       // Check if all group matches are complete
       var allGroupsComplete = true;
       var groupNames = Object.keys(s.groups || {});
+      if(!groupNames.length) allGroupsComplete = false;
       
       groupNames.forEach(function(groupName) {
         if(!s.groups[groupName]) {
@@ -6027,6 +6146,8 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
       });
       
       if(allGroupsComplete) {
+        // Generate (or regenerate, when no knockout match has been played yet) the
+        // bracket so the corrected World Cup seeding is applied.
         s.knockoutBracket = generateTournamentKnockout(s);
         s.tournamentPhase = 'knockout';
         saveAll();
