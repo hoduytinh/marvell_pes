@@ -18047,7 +18047,7 @@
           "ag": 1
         },
         "group-H-5-0": {
-          "hg": 0,
+          "hg": 1,
           "ag": 3
         }
       },
@@ -21004,8 +21004,290 @@
         }
       },
       "groupStandings": {},
-      "knockoutBracket": null,
-      "tournamentPhase": "group"
+      "knockoutBracket": {
+        "rounds": [
+          [
+            {
+              "home": 18,
+              "away": 24
+            },
+            {
+              "home": 17,
+              "away": 19
+            },
+            {
+              "home": 6,
+              "away": 11
+            },
+            {
+              "home": 23,
+              "away": 10
+            },
+            {
+              "home": 14,
+              "away": 22
+            },
+            {
+              "home": 2,
+              "away": 20
+            },
+            {
+              "home": 1,
+              "away": 16
+            },
+            {
+              "home": 13,
+              "away": 21
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 0,
+                "matchId": 0
+              },
+              "away": {
+                "fromRound": 0,
+                "matchId": 1
+              }
+            },
+            {
+              "home": {
+                "fromRound": 0,
+                "matchId": 2
+              },
+              "away": {
+                "fromRound": 0,
+                "matchId": 3
+              }
+            },
+            {
+              "home": {
+                "fromRound": 0,
+                "matchId": 4
+              },
+              "away": {
+                "fromRound": 0,
+                "matchId": 5
+              }
+            },
+            {
+              "home": {
+                "fromRound": 0,
+                "matchId": 6
+              },
+              "away": {
+                "fromRound": 0,
+                "matchId": 7
+              }
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 1,
+                "matchId": 0
+              },
+              "away": {
+                "fromRound": 1,
+                "matchId": 1
+              }
+            },
+            {
+              "home": {
+                "fromRound": 1,
+                "matchId": 2
+              },
+              "away": {
+                "fromRound": 1,
+                "matchId": 3
+              }
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 2,
+                "matchId": 0,
+                "isLoser": true
+              },
+              "away": {
+                "fromRound": 2,
+                "matchId": 1,
+                "isLoser": true
+              }
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 2,
+                "matchId": 0
+              },
+              "away": {
+                "fromRound": 2,
+                "matchId": 1
+              }
+            }
+          ]
+        ],
+        "stageNames": [
+          "Vòng 1/8",
+          "Tứ kết",
+          "Bán kết",
+          "Tranh hạng 3",
+          "Chung kết"
+        ],
+        "qualifiers": [
+          {
+            "teamIdx": 18,
+            "groupName": "A",
+            "position": 1,
+            "points": 11,
+            "gd": 2,
+            "gf": 10
+          },
+          {
+            "teamIdx": 24,
+            "groupName": "B",
+            "position": 1,
+            "points": 10,
+            "gd": 4,
+            "gf": 6
+          },
+          {
+            "teamIdx": 17,
+            "groupName": "C",
+            "position": 1,
+            "points": 7,
+            "gd": 2,
+            "gf": 7
+          },
+          {
+            "teamIdx": 19,
+            "groupName": "D",
+            "position": 1,
+            "points": 8,
+            "gd": 3,
+            "gf": 5
+          },
+          {
+            "teamIdx": 6,
+            "groupName": "E",
+            "position": 1,
+            "points": 9,
+            "gd": 4,
+            "gf": 8
+          },
+          {
+            "teamIdx": 11,
+            "groupName": "F",
+            "position": 1,
+            "points": 7,
+            "gd": 1,
+            "gf": 9
+          },
+          {
+            "teamIdx": 23,
+            "groupName": "G",
+            "position": 1,
+            "points": 7,
+            "gd": 3,
+            "gf": 10
+          },
+          {
+            "teamIdx": 10,
+            "groupName": "H",
+            "position": 1,
+            "points": 9,
+            "gd": 3,
+            "gf": 5
+          },
+          {
+            "teamIdx": 14,
+            "groupName": "A",
+            "position": 2,
+            "points": 10,
+            "gd": 3,
+            "gf": 13
+          },
+          {
+            "teamIdx": 22,
+            "groupName": "B",
+            "position": 2,
+            "points": 4,
+            "gd": -1,
+            "gf": 5
+          },
+          {
+            "teamIdx": 2,
+            "groupName": "C",
+            "position": 2,
+            "points": 6,
+            "gd": 2,
+            "gf": 8
+          },
+          {
+            "teamIdx": 20,
+            "groupName": "D",
+            "position": 2,
+            "points": 8,
+            "gd": 2,
+            "gf": 5
+          },
+          {
+            "teamIdx": 1,
+            "groupName": "E",
+            "position": 2,
+            "points": 9,
+            "gd": 3,
+            "gf": 8
+          },
+          {
+            "teamIdx": 16,
+            "groupName": "F",
+            "position": 2,
+            "points": 6,
+            "gd": 1,
+            "gf": 7
+          },
+          {
+            "teamIdx": 13,
+            "groupName": "G",
+            "position": 2,
+            "points": 7,
+            "gd": 0,
+            "gf": 6
+          },
+          {
+            "teamIdx": 21,
+            "groupName": "H",
+            "position": 2,
+            "points": 6,
+            "gd": 0,
+            "gf": 6
+          }
+        ],
+        "teamIndices": [
+          18,
+          24,
+          17,
+          19,
+          6,
+          11,
+          23,
+          10,
+          14,
+          22,
+          2,
+          20,
+          1,
+          16,
+          13,
+          21
+        ]
+      },
+      "tournamentPhase": "knockout"
     }
   },
   "current": "sttdbo6b",
