@@ -4172,6 +4172,14 @@ function renderCupStandings(s){
         return 'https://api.github.com/repos/' + CLOUD_CONFIG.owner + '/' + CLOUD_CONFIG.repo + '/contents/' + CLOUD_CONFIG.dataPath;
       },
 
+      // Direct raw CDN URL for READING the data file. Unlike the Contents API
+      // (which caps at ~1 MB and is rate-limited for unauthenticated viewers),
+      // raw.githubusercontent.com serves public files up to 100 MB with generous
+      // limits — required now that data.json exceeds 1 MB.
+      rawUrl: function() {
+        return 'https://raw.githubusercontent.com/' + CLOUD_CONFIG.owner + '/' + CLOUD_CONFIG.repo + '/' + CLOUD_CONFIG.branch + '/' + CLOUD_CONFIG.dataPath;
+      },
+
       setStatus: function(s, text) {
         this.status = s;
         this.statusText = text || '';
@@ -4215,38 +4223,73 @@ function renderCupStandings(s){
       load: function() {
         var self = this;
         self.setStatus('loading');
-        var url = self.apiUrl() + '?ref=' + encodeURIComponent(CLOUD_CONFIG.branch) + '&_t=' + Date.now();
-        // Use 'raw' media type to support files > 1 MB (limit is 100 MB)
-        var headers = { 'Accept': 'application/vnd.github.raw' };
-        if(self.pat) headers['Authorization'] = 'Bearer ' + self.pat;
-        return fetch(url, { headers: headers, cache: 'no-store' })
+
+        // Parse + record hash, then refresh sha for future writes.
+        function handleJsonText(jsonText) {
+          if(!jsonText) return null;
+          var parsed = JSON.parse(jsonText);
+          self.lastSyncedHash = self.hash(jsonText);
+          // sha is only needed for admin PUT writes. Skip the extra Contents API
+          // call for plain viewers (no PAT) so they don't consume the 60 req/hour
+          // unauthenticated API rate limit at all.
+          if(self.pat) {
+            self._refreshSha().finally(function() {
+              self.setStatus('synced');
+            });
+          } else {
+            self.setStatus('synced');
+          }
+          return parsed;
+        }
+
+        // Fallback: GitHub Contents API (raw media type). Used only if the raw
+        // CDN read fails. Works for files up to 100 MB but is rate-limited for
+        // unauthenticated viewers, so it is the secondary option.
+        function loadViaApi() {
+          var url = self.apiUrl() + '?ref=' + encodeURIComponent(CLOUD_CONFIG.branch) + '&_t=' + Date.now();
+          var headers = { 'Accept': 'application/vnd.github.raw' };
+          if(self.pat) headers['Authorization'] = 'Bearer ' + self.pat;
+          return fetch(url, { headers: headers, cache: 'no-store' })
+            .then(function(r) {
+              if(r.status === 404) {
+                self.sha = null;
+                self.setStatus('idle', 'data.json chưa tồn tại trên GitHub - sẽ tạo khi admin lưu lần đầu');
+                return null;
+              }
+              if(r.status === 401 || r.status === 403) {
+                self.setStatus('error', 'PAT không hợp lệ hoặc thiếu quyền (HTTP ' + r.status + ')');
+                return null;
+              }
+              if(!r.ok) throw new Error('HTTP ' + r.status);
+              return r.text();
+            })
+            .then(handleJsonText)
+            .catch(function(err) {
+              console.warn('CloudSync.load (API) failed:', err);
+              self.setStatus('offline', String(err.message || err));
+              return null;
+            });
+        }
+
+        // PRIMARY: read directly from raw.githubusercontent.com (no 1 MB cap,
+        // no per-IP API rate limit) with cache-busting so viewers always get the
+        // latest committed data.json.
+        var rawFetchUrl = self.rawUrl() + '?_t=' + Date.now();
+        var rawHeaders = {};
+        if(self.pat) rawHeaders['Authorization'] = 'Bearer ' + self.pat;
+        return fetch(rawFetchUrl, { headers: rawHeaders, cache: 'no-store' })
           .then(function(r) {
             if(r.status === 404) {
               self.sha = null;
               self.setStatus('idle', 'data.json chưa tồn tại trên GitHub - sẽ tạo khi admin lưu lần đầu');
               return null;
             }
-            if(r.status === 401 || r.status === 403) {
-              self.setStatus('error', 'PAT không hợp lệ hoặc thiếu quyền (HTTP ' + r.status + ')');
-              return null;
-            }
             if(!r.ok) throw new Error('HTTP ' + r.status);
-            return r.text();
-          })
-          .then(function(jsonText) {
-            if(!jsonText) return null;
-            var parsed = JSON.parse(jsonText);
-            self.lastSyncedHash = self.hash(jsonText);
-            // Fetch sha separately (small request) — needed for future PUTs
-            self._refreshSha().finally(function() {
-              self.setStatus('synced');
-            });
-            return parsed;
+            return r.text().then(handleJsonText);
           })
           .catch(function(err) {
-            console.warn('CloudSync.load failed:', err);
-            self.setStatus('offline', String(err.message || err));
-            return null;
+            console.warn('CloudSync.load (raw CDN) failed, trying Contents API:', err);
+            return loadViaApi();
           });
       },
 
