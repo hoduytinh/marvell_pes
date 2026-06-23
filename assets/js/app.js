@@ -4797,6 +4797,18 @@ function renderCupStandings(s){
     }
     function activeSeason(){return state.seasons[state.current]}
     
+    // Normalize a string for searching: lowercase, strip diacritics (Vietnamese
+    // accents, đ -> d), and keep only alphanumeric characters. Lets users match
+    // by plain letters regardless of case, accents, spaces or punctuation.
+    function normalizeSearch(str){
+      return String(str == null ? '' : str)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd').replace(/Đ/g, 'd')
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '');
+    }
+
     // Helper function to calculate max team name width
     function getMaxTeamNameWidth(teamNames) {
       if (!teamNames || !teamNames.length) return 150; // Default fallback
@@ -10076,13 +10088,15 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
             selectDialog.style.cssText = 'width: 300px; border: none; border-radius: 8px; padding: 20px; background: var(--card); color: var(--text);';
             
             selectDialog.innerHTML = 
-              '<h4 style="margin: 0 0 16px 0; color: var(--accent);">Select Team from Master List</h4>' +
-              '<div style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; background: var(--bg);">' +
+              '<h4 style="margin: 0 0 12px 0; color: var(--accent);">Select Team from Master List</h4>' +
+              '<input type="text" class="team-search" placeholder="🔍 Tìm theo tên..." style="width: 100%; box-sizing: border-box; padding: 8px 10px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text);" />' +
+              '<div class="team-list" style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; background: var(--bg);">' +
               state.teamMasterList.slice().sort(function(a, b) {
                 return a.toLowerCase().localeCompare(b.toLowerCase());
               }).map(function(teamName, idx) { 
                 return '<div class="team-option" style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid var(--border); color: var(--text);" data-team="' + teamName + '">' + teamName + '</div>'; 
               }).join('') +
+              '<div class="team-empty" style="padding: 12px; text-align: center; color: var(--muted); display: none;">Không tìm thấy đội nào</div>' +
               '</div>' +
               '<div style="margin-top: 16px; text-align: right;">' +
               '<button type="button" onclick="this.closest(\'dialog\').close()" style="padding: 8px 16px; background: var(--muted); color: white; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>' +
@@ -10107,12 +10121,28 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
               });
             });
             
+            // Live search filter: ignore case, strip diacritics, keep only
+            // alphanumeric characters before comparing.
+            var teamSearchInput = selectDialog.querySelector('.team-search');
+            var teamEmptyMsg = selectDialog.querySelector('.team-empty');
+            teamSearchInput.addEventListener('input', function() {
+              var q = normalizeSearch(this.value);
+              var visibleCount = 0;
+              teamOptions.forEach(function(option) {
+                var match = normalizeSearch(option.getAttribute('data-team')).indexOf(q) !== -1;
+                option.style.display = match ? '' : 'none';
+                if(match) visibleCount++;
+              });
+              teamEmptyMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+            });
+            
             document.body.appendChild(selectDialog);
             if(typeof selectDialog.showModal === 'function') { 
               selectDialog.showModal(); 
             } else { 
               selectDialog.setAttribute('open', 'open'); 
             }
+            setTimeout(function(){ teamSearchInput.focus(); }, 50);
             
             selectDialog.addEventListener('close', function() {
               if(document.body.contains(selectDialog)) {
@@ -10176,8 +10206,9 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
             selectLogoDialog.style.cssText = 'width: 400px; border: none; border-radius: 8px; padding: 20px; background: var(--card); color: var(--text);';
             
             selectLogoDialog.innerHTML = 
-              '<h4 style="margin: 0 0 16px 0; color: var(--accent);">Select Team Logo</h4>' +
-              '<div style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; background: var(--bg);">' +
+              '<h4 style="margin: 0 0 12px 0; color: var(--accent);">Select Team Logo</h4>' +
+              '<input type="text" class="logo-search" placeholder="🔍 Tìm theo tên..." style="width: 100%; box-sizing: border-box; padding: 8px 10px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text);" />' +
+              '<div class="logo-list" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; background: var(--bg);">' +
               teamLogoOptions.slice().sort(function(a, b) {
                 return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
               }).map(function(logo, idx) { 
@@ -10186,6 +10217,7 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
                   '<span>' + logo.name + '</span>' +
                 '</div>'; 
               }).join('') +
+              '<div class="logo-empty" style="padding: 12px; text-align: center; color: var(--muted); display: none;">Không tìm thấy logo nào</div>' +
               '</div>' +
               '<div style="margin-top: 16px; text-align: right;">' +
               '<button type="button" onclick="this.closest(\'dialog\').close()" style="padding: 8px 16px; background: var(--muted); color: white; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>' +
@@ -10212,12 +10244,28 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
               });
             });
             
+            // Live search filter: ignore case, strip diacritics, keep only
+            // alphanumeric characters before comparing.
+            var logoSearchInput = selectLogoDialog.querySelector('.logo-search');
+            var logoEmptyMsg = selectLogoDialog.querySelector('.logo-empty');
+            logoSearchInput.addEventListener('input', function() {
+              var q = normalizeSearch(this.value);
+              var visibleCount = 0;
+              logoOptions.forEach(function(option) {
+                var match = normalizeSearch(option.getAttribute('data-logo-name')).indexOf(q) !== -1;
+                option.style.display = match ? '' : 'none';
+                if(match) visibleCount++;
+              });
+              logoEmptyMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+            });
+            
             document.body.appendChild(selectLogoDialog);
             if(typeof selectLogoDialog.showModal === 'function') { 
               selectLogoDialog.showModal(); 
             } else { 
               selectLogoDialog.setAttribute('open', 'open'); 
             }
+            setTimeout(function(){ logoSearchInput.focus(); }, 50);
             
             selectLogoDialog.addEventListener('close', function() {
               if(document.body.contains(selectLogoDialog)) {
