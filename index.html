@@ -3,6 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>Marvell Pes Club – Single‑file</title>
   <script type="application/json" id="EMBEDDED_DATA">{
     "seasons": {
@@ -424,8 +427,30 @@
 
   <div id="toast" class="toast"></div>
 
-  <script src="assets/js/app.js?v=20260602b"></script>
-  <script src="assets/js/teo-widget.js?v=20260604a"></script>
+  <!--
+    Cache-busting loader: luôn tải bản JS mới nhất.
+    - Ctrl+F5 (hard reload): dùng Date.now() => URL khác nhau mỗi lần => bỏ qua
+      cache trình duyệt LẪN cache CDN của GitHub Pages, luôn lấy latest.
+    - Tải thường (F5 / mở lại): dùng mốc theo PHÚT để vẫn tận dụng cache trong
+      ~1 phút, tránh tải lại file lớn liên tục.
+    Không cần đổi version thủ công khi sửa app.js nữa.
+  -->
+  <script>
+    (function(){
+      var nav = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || null;
+      var navType = nav ? nav.type : (performance.navigation ? ['navigate','reload','back_forward','prerender'][performance.navigation.type] : 'navigate');
+      // Reload (F5 / Ctrl+F5) => unique mỗi lần (luôn latest); mở thường => theo phút (tận dụng cache ngắn).
+      var v = (navType === 'reload') ? Date.now() : Math.floor(Date.now() / 60000);
+      function load(src){
+        var s = document.createElement('script');
+        s.src = src + '?v=' + v;
+        s.async = false; // giữ thứ tự thực thi như thẻ script tĩnh
+        document.body.appendChild(s);
+      }
+      load('assets/js/app.js');
+      load('assets/js/teo-widget.js');
+    })();
+  </script>
 
 </body>
 </html>
