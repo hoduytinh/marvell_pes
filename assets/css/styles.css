@@ -67,6 +67,8 @@
     .band-euro{box-shadow:inset 3px 0 0 0 #f59e0b}
     .band-playoff{box-shadow:inset 3px 0 0 0 #a855f7}
     .band-rel{box-shadow:inset 3px 0 0 0 #ef4444}
+    .band-champion{background:rgba(255,215,0,0.18);font-weight:700}
+    .band-champion.band-top{box-shadow:inset 3px 0 0 0 #facc15}
     .spark{width:90px;height:26px}
     dialog{background:var(--panel);border:1px solid var(--border);border-radius:16px;color:var(--text);padding:18px;max-width:1200px}
     dialog::backdrop{background:rgba(0,0,0,.45)}
@@ -362,6 +364,19 @@ td.delta {
 }
 .fixture .prob{ margin-left: 20px !important; text-align: right; white-space: nowrap; }
 .fixture .predScore{ text-align: right; font-weight: 900; letter-spacing: 0.2px; }
+.fixture .teamCell{ overflow: hidden; }
+.fixture .csPts{
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0 5px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 4px;
+  flex: 0 0 auto;
+}
 
 /* === Double Elimination Bracket Styles === */
 #doubleEliminationBracket {
@@ -576,6 +591,18 @@ td.delta {
   gap: 8px;
   max-width: 450px;
   flex-shrink: 1;
+}
+
+/* Chess-Swiss round wrapper: full width so League .fixture grid fits (no 450px cap) */
+.cswiss-round {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+.cswiss-round .cup-round-title {
+  margin: 0 0 4px 0;
 }
 
 .cup-round-title {

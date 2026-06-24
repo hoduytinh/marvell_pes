@@ -249,7 +249,7 @@
       <section class="card grow">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:0">
           <div>
-            <div class="small muted">Xác suất (Vô địch / Top4 / Rớt hạng)</div>
+            <div class="small muted" id="simProbLabel">Xác suất (Vô địch / Top4 / Rớt hạng)</div>
             <button id="btnSimulate" class="primary" style="margin-bottom:8px">Dự đoán đội vô địch</button>
             <table class="table-mini" id="simTable"></table>
           </div>
@@ -334,6 +334,7 @@
         <option value="double-elimination">Double Elimination</option>
         <option value="tournament">Tournament</option>
         <option value="swiss">Swiss System</option>
+        <option value="chess-swiss">Chess-Swiss</option>
         <option value="legend">Legend</option>
         <option value="ranking">Ranking</option>
       </select>
@@ -358,6 +359,13 @@
           <span>Đấu 2 lượt</span>
         </label>
       </div>
+    </div>
+    <div id="chessSwissOption" style="margin-bottom:10px;display:none">
+      <label style="display:flex;align-items:center;gap:8px">
+        <span>Số vòng đấu:</span>
+        <input type="number" id="numChessSwissRounds" min="1" max="20" step="1" value="5" style="width:80px" />
+      </label>
+      <div style="font-size:12px;color:var(--muted);margin-top:6px">Nếu số đội lẻ sẽ tự thêm kỳ thủ ảo “BYE”.</div>
     </div>
     <div id="thirdPlaceOption" style="margin-bottom:10px;display:none">
       <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
