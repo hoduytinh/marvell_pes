@@ -241,6 +241,18 @@
       '#chatFab{position:fixed;right:18px;bottom:74px;z-index:9999;border:none;background:linear-gradient(135deg,var(--c-fab1),var(--c-fab2));color:#fff;padding:12px 18px;border-radius:999px;font-weight:800;font-size:14px;letter-spacing:.2px;cursor:pointer;box-shadow:0 10px 24px var(--c-fab-shadow);display:flex;align-items:center;gap:6px}',
       '#chatFab .chat-badge{background:#ef4444;color:#fff;border-radius:999px;font-size:11px;font-weight:800;padding:1px 6px;min-width:18px;text-align:center;display:none}',
       '#chatFab .chat-badge.show{display:inline-block}',
+      // Attention: pulsing glow ring + occasional wiggle to draw the eye
+      '#chatFab.chat-attn{animation:chatWiggle 1.1s ease-in-out infinite}',
+      '#chatFab.chat-attn::after{content:"";position:absolute;inset:-4px;border-radius:999px;border:2px solid var(--c-fab2,#ec4899);opacity:.0;animation:chatRing 1.6s ease-out infinite;pointer-events:none}',
+      '@keyframes chatWiggle{0%,88%,100%{transform:translateY(0) rotate(0)}90%{transform:translateY(-3px) rotate(-7deg)}93%{transform:translateY(-3px) rotate(7deg)}96%{transform:translateY(-2px) rotate(-4deg)}}',
+      '@keyframes chatRing{0%{transform:scale(.85);opacity:.55}100%{transform:scale(1.5);opacity:0}}',
+      '#chatFab.chat-ping{animation:chatPing .5s ease-out 2}',
+      '@keyframes chatPing{0%{transform:scale(1)}30%{transform:scale(1.16)}60%{transform:scale(.94)}100%{transform:scale(1)}}',
+      // Invite speech bubble that pops near the FAB
+      '#chatInvite{position:fixed;right:18px;bottom:120px;z-index:9998;max-width:230px;background:linear-gradient(135deg,var(--c-fab1,#8b5cf6),var(--c-fab2,#ec4899));color:#fff;padding:10px 30px 10px 12px;border-radius:14px;font-size:13px;font-weight:600;line-height:1.4;box-shadow:0 12px 28px rgba(139,92,246,.4);cursor:pointer;opacity:0;transform:translateY(8px) scale(.96);transition:opacity .25s,transform .25s;pointer-events:none}',
+      '#chatInvite.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}',
+      '#chatInvite::after{content:"";position:absolute;right:30px;bottom:-7px;width:14px;height:14px;background:var(--c-fab2,#ec4899);transform:rotate(45deg)}',
+      '#chatInvite .chat-invite-x{position:absolute;top:5px;right:8px;font-size:14px;font-weight:800;opacity:.85;line-height:1}',
       '#chatPanel{position:fixed;right:18px;bottom:132px;z-index:9999;width:380px;max-width:calc(100vw - 24px);height:520px;max-height:72vh;overflow:hidden;background:linear-gradient(160deg,var(--c-bg1) 0%,var(--c-bg2) 45%,var(--c-bg3) 100%);color:var(--c-text);border:1px solid var(--c-border);border-radius:16px;box-shadow:0 24px 50px rgba(2,132,199,.22);display:none;flex-direction:column}',
       '#chatPanel.open{display:flex;animation:chatPop .16s ease-out}',
       '@keyframes chatPop{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}',
@@ -280,13 +292,24 @@
       '#chatSendBtn{flex:0 0 auto;border:none;border-radius:10px;padding:9px 14px;background:linear-gradient(135deg,var(--c-send1,#22c55e),var(--c-send2,#06b6d4));color:#fff;font-weight:800;cursor:pointer}',
       '#chatSendBtn:disabled{opacity:.5;cursor:not-allowed}',
       '#chatNotice{font-size:11px;color:var(--c-muted);padding:0 2px}',
-      '@media (max-width:700px){#chatFab{right:12px;bottom:64px}#chatPanel{right:12px;bottom:118px;width:calc(100vw - 16px);height:70vh}}'
+      '@media (max-width:700px){#chatFab{right:12px;bottom:64px}#chatPanel{right:12px;bottom:118px;width:calc(100vw - 16px);height:70vh}#chatInvite{right:12px;bottom:110px;max-width:200px}}'
     ].join('');
     document.head.appendChild(style);
   }
 
   var pollTimer = null;
   var lastRenderedCount = 0;
+  var bgTimer = null;
+  var inviteTimer = null;
+  var SEEN_KEY = 'pesChatSeenTs';
+  var INVITE_MSGS = [
+    '💬 Vào tám chuyện nào!',
+    '🔥 Có người đang chờ bạn chat!',
+    '⚽ Cùng chém gió bóng đá đi!',
+    '🎮 Khẩu chiến PES tại đây!',
+    '😎 Đừng im lặng, vào chat thôi!',
+    '🏆 Trash-talk trước trận nào!'
+  ];
 
   function mountChat() {
     if(document.getElementById('chatFab')) return;
@@ -334,6 +357,12 @@
 
     document.body.appendChild(fab);
     document.body.appendChild(panel);
+
+    // Bong bóng lời mời chat (gây chú ý)
+    var invite = createEl('div', '', '<span class="chat-invite-x" id="chatInviteX">×</span><span id="chatInviteText"></span>');
+    invite.id = 'chatInvite';
+    invite.setAttribute('data-theme', theme);
+    document.body.appendChild(invite);
 
     // Tránh nút Chat đè lên panel Tèo Robot: khi panel Tèo mở thì ẩn nút Chat
     // (và đóng panel Chat nếu đang mở). Khi panel Chat mở thì ẩn nút Tèo.
@@ -470,6 +499,11 @@
       fetchMessages().then(function(list){
         renderMessages(list);
         if(scrollDown) messagesEl.scrollTop = messagesEl.scrollHeight;
+        // Panel đang mở => coi như đã xem tới tin mới nhất
+        if(list && list.length) {
+          var maxTs = list.reduce(function(mx, m){ return Math.max(mx, (m && m.ts) || 0); }, 0);
+          if(maxTs) { try { localStorage.setItem(SEEN_KEY, String(maxTs)); } catch(_) {} }
+        }
       }).catch(function(err){
         if(err && err.message === 'not-configured') return;
         noticeEl.textContent = '⚠️ Lỗi tải tin nhắn: ' + (err && err.message ? err.message : 'không rõ');
@@ -549,8 +583,122 @@
       } else {
         stopPolling();
       }
+      stopAttention();
+      markAllSeen();
+      hideInvite();
       syncFabVisibility();
     });
+
+    // ---------- Tính năng gây chú ý ----------
+    var inviteTextEl = document.getElementById('chatInviteText');
+    var inviteXEl = document.getElementById('chatInviteX');
+
+    function getSeenTs() {
+      try { return Number(localStorage.getItem(SEEN_KEY) || 0) || 0; } catch(_) { return 0; }
+    }
+    function setSeenTs(ts) {
+      try { localStorage.setItem(SEEN_KEY, String(ts || 0)); } catch(_) {}
+    }
+    function markAllSeen() {
+      setSeenTs(Date.now());
+      badgeEl.classList.remove('show');
+      badgeEl.textContent = '';
+    }
+
+    function startAttention() {
+      fab.classList.add('chat-attn');
+    }
+    function stopAttention() {
+      fab.classList.remove('chat-attn');
+    }
+    function pingFab() {
+      fab.classList.remove('chat-ping');
+      // force reflow to restart animation
+      void fab.offsetWidth;
+      fab.classList.add('chat-ping');
+    }
+
+    function showInvite(text) {
+      if(panel.classList.contains('open')) return;
+      // Không hiện khi panel Tèo Robot đang mở (FAB đang ẩn)
+      var teoPanel = document.getElementById('teoPanel');
+      if(teoPanel && teoPanel.classList.contains('open')) return;
+      if(inviteTextEl) inviteTextEl.textContent = text || INVITE_MSGS[0];
+      invite.setAttribute('data-theme', loadTheme());
+      invite.classList.add('show');
+      clearTimeout(invite._hideT);
+      invite._hideT = setTimeout(hideInvite, 6000);
+    }
+    function hideInvite() {
+      invite.classList.remove('show');
+    }
+    if(inviteXEl) inviteXEl.addEventListener('click', function(e){
+      e.stopPropagation();
+      hideInvite();
+      // Tắt lời mời tự động cho phiên này
+      if(inviteTimer) { clearInterval(inviteTimer); inviteTimer = null; }
+    });
+    invite.addEventListener('click', function(){
+      hideInvite();
+      if(!panel.classList.contains('open')) fab.click();
+    });
+
+    // Poll nền: kiểm tra tin mới kể cả khi panel đóng → cập nhật badge + nảy FAB
+    function backgroundCheck() {
+      if(!backendReady()) return;
+      if(panel.classList.contains('open')) return;
+      fetchMessages().then(function(list){
+        if(!list || !list.length) return;
+        var me = (getName() || '').toLowerCase();
+        var seen = getSeenTs();
+        var unread = list.filter(function(m){
+          return m && m.ts > seen && (m.name || '').toLowerCase() !== me;
+        });
+        if(unread.length) {
+          badgeEl.textContent = unread.length > 99 ? '99+' : String(unread.length);
+          badgeEl.classList.add('show');
+          startAttention();
+          pingFab();
+          var last = unread[unread.length - 1];
+          var preview = (last.name ? last.name + ': ' : '') + (last.text || '');
+          if(preview.length > 60) preview = preview.slice(0, 60) + '…';
+          showInvite('💬 ' + preview);
+        }
+      }).catch(function(){});
+    }
+    function startBackgroundPolling() {
+      stopBackgroundPolling();
+      if(!backendReady()) return;
+      // Lần đầu set mốc "đã xem" nếu chưa có, để không báo dồn toàn bộ lịch sử
+      if(!getSeenTs()) setSeenTs(Date.now());
+      backgroundCheck();
+      bgTimer = setInterval(backgroundCheck, Math.max(5000, CHAT_CONFIG.pollMs * 2));
+    }
+    function stopBackgroundPolling() {
+      if(bgTimer) { clearInterval(bgTimer); bgTimer = null; }
+    }
+
+    // Lời mời định kỳ để kéo người dùng (chỉ khi panel đóng)
+    function startInviteRotation() {
+      if(inviteTimer) return;
+      var idx = 0;
+      // Lời chào đầu tiên sau khi tải trang ~3.5s
+      setTimeout(function(){
+        if(!panel.classList.contains('open')) { startAttention(); pingFab(); showInvite(INVITE_MSGS[0]); }
+      }, 3500);
+      inviteTimer = setInterval(function(){
+        if(panel.classList.contains('open')) return;
+        if(!badgeEl.classList.contains('show')) {
+          idx = (idx + 1) % INVITE_MSGS.length;
+          showInvite(INVITE_MSGS[idx]);
+          pingFab();
+        }
+      }, 45000);
+    }
+
+    // Khởi động các tính năng chú ý
+    startBackgroundPolling();
+    startInviteRotation();
   }
 
   if(document.readyState === 'loading') {
