@@ -5031,7 +5031,16 @@ function renderCupStandings(s){
     window.pesSetTeoVisibleTeams = function(list){
       if(Array.isArray(list) && list.length){ state.teoVisibleTeams = list.slice(); }
       else { delete state.teoVisibleTeams; }
-      saveAll();
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(_){}
+      // Đẩy NGAY lên cloud (không chờ debounce 2s) để tránh mất cấu hình khi
+      // đóng tab sớm hoặc bị reload ghi đè. Chỉ được khi có PAT + sync bật.
+      var cloudSync = (typeof CloudSync !== 'undefined' && CloudSync.hasPAT() && CloudSync.isEnabled());
+      if(cloudSync){ try{ CloudSync.push(state); }catch(_){ CloudSync.schedulePush(state); } }
+      return { savedLocal: true, cloudSync: cloudSync };
+    };
+    // Cho widget biết trạng thái cloud sync (có đẩy được lên server cho mọi người không)
+    window.pesCloudSyncActive = function(){
+      return (typeof CloudSync !== 'undefined' && CloudSync.hasPAT() && CloudSync.isEnabled());
     };
 
     // =================== CLOUD SYNC (GitHub Pages) ===================

@@ -1087,7 +1087,12 @@
       }
       saveVisibleTeams(selected);
       renderTeamOptions();
-      setTeamManagerStatus('Đã lưu: ' + selected.length + ' team hiển thị.');
+      var cloudOn = (typeof window.pesCloudSyncActive === 'function') ? window.pesCloudSyncActive() : false;
+      if(cloudOn) {
+        setTeamManagerStatus('✅ Đã lưu & đồng bộ lên server: ' + selected.length + ' team. Mọi người sẽ thấy sau khi tải lại trang.');
+      } else {
+        setTeamManagerStatus('⚠️ Đã lưu trên máy này (' + selected.length + ' team) nhưng CHƯA đồng bộ lên server — cần bật Cloud Sync (PAT admin) thì người khác mới thấy.');
+      }
     });
 
     resetVisibleTeamsBtnEl.addEventListener('click', function() {

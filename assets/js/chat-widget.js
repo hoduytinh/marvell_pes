@@ -91,8 +91,16 @@
   var VISIBLE_TEAMS_KEY = 'teoVisibleTeams';
   function loadVisibleTeamsSet(state) {
     try {
-      var arr = (state && Array.isArray(state.teoVisibleTeams)) ? state.teoVisibleTeams : null;
-      if(!arr) {
+      // Ưu tiên cấu hình LIVE trong bộ nhớ app (luôn mới nhất sau khi đồng bộ
+      // cloud) qua bridge của app.js; tránh đọc localStorage bị trễ/cũ.
+      var arr = null;
+      if(typeof window.pesGetTeoVisibleTeams === 'function') {
+        try { arr = window.pesGetTeoVisibleTeams(); } catch(_) { arr = null; }
+      }
+      if(!Array.isArray(arr) || !arr.length) {
+        arr = (state && Array.isArray(state.teoVisibleTeams)) ? state.teoVisibleTeams : null;
+      }
+      if(!Array.isArray(arr) || !arr.length) {
         var raw = localStorage.getItem(VISIBLE_TEAMS_KEY);
         if(raw) {
           var parsed = JSON.parse(raw);
@@ -327,6 +335,30 @@
     document.body.appendChild(fab);
     document.body.appendChild(panel);
 
+    // Tránh nút Chat đè lên panel Tèo Robot: khi panel Tèo mở thì ẩn nút Chat
+    // (và đóng panel Chat nếu đang mở). Khi panel Chat mở thì ẩn nút Tèo.
+    function syncFabVisibility() {
+      var teoPanel = document.getElementById('teoPanel');
+      var teoFab = document.getElementById('teoFab');
+      var teoOpen = !!(teoPanel && teoPanel.classList.contains('open'));
+      var chatOpen = panel.classList.contains('open');
+      fab.style.display = teoOpen ? 'none' : '';
+      if(teoFab) teoFab.style.display = chatOpen ? 'none' : '';
+      if(teoOpen && chatOpen) {
+        panel.classList.remove('open');
+        stopPolling();
+      }
+    }
+    function observeTeoPanel() {
+      var teoPanel = document.getElementById('teoPanel');
+      if(!teoPanel) { setTimeout(observeTeoPanel, 500); return; }
+      try {
+        new MutationObserver(syncFabVisibility).observe(teoPanel, { attributes: true, attributeFilter: ['class'] });
+      } catch(_) {}
+      syncFabVisibility();
+    }
+    observeTeoPanel();
+
     var whoEl = document.getElementById('chatWho');
     var gateEl = document.getElementById('chatGate');
     var gateErrEl = document.getElementById('chatGateErr');
@@ -517,6 +549,7 @@
       } else {
         stopPolling();
       }
+      syncFabVisibility();
     });
   }
 
