@@ -13947,7 +13947,12 @@
         "logos/Canada.jpg",
         "logos/Germany.jpg"
       ],
-      "results": {},
+      "results": {
+        "group-A-0-0": {
+          "hg": 3,
+          "ag": 0
+        }
+      },
       "rounds": [
         [
           {
