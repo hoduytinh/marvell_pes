@@ -56,9 +56,16 @@
 
   function loadVisibleTeamsSet(state) {
     try {
-      // Shared admin config (synced via cloud) takes precedence over any legacy
-      // per-browser override, so an admin change propagates to everyone.
-      var arr = (state && Array.isArray(state.teoVisibleTeams)) ? state.teoVisibleTeams : null;
+      // Ưu tiên cấu hình LIVE trong bộ nhớ app (luôn mới nhất sau khi đồng bộ
+      // cloud) qua bridge của app.js; tránh đọc localStorage bị trễ/cũ — đây là
+      // nguyên nhân "local vẫn hiện full list sau khi admin chỉnh".
+      var arr = null;
+      if(typeof window.pesGetTeoVisibleTeams === 'function') {
+        try { arr = window.pesGetTeoVisibleTeams(); } catch(_) { arr = null; }
+      }
+      if(!Array.isArray(arr) || !arr.length) {
+        arr = (state && Array.isArray(state.teoVisibleTeams)) ? state.teoVisibleTeams : null;
+      }
       if(!arr) {
         var raw = localStorage.getItem(VISIBLE_TEAMS_KEY);
         if(raw) {
@@ -694,6 +701,12 @@
       '#teoResult .teo-history li{margin-bottom:4px}',
       '#teoResult .teo-trophies{list-style:none;padding:0;margin:6px 0 8px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}',
       '#teoResult .teo-trophies li{background:var(--teo-summary-alt);border:1px solid var(--teo-summary-border);border-radius:8px;padding:5px 8px;font-size:12px;line-height:1.4}',
+      '#teoResult .teo-trophies li.medal-gold{background:linear-gradient(135deg,rgba(250,204,21,.42),rgba(234,179,8,.22));border-color:rgba(234,179,8,.95);box-shadow:0 0 10px rgba(250,204,21,.35),inset 0 0 0 1px rgba(250,204,21,.45);font-weight:700}',
+      '#teoResult .teo-trophies li.medal-silver{background:linear-gradient(135deg,rgba(203,213,225,.34),rgba(148,163,184,.18));border-color:rgba(148,163,184,.9);box-shadow:0 0 6px rgba(203,213,225,.25),inset 0 0 0 1px rgba(203,213,225,.4);font-weight:600}',
+      '#teoResult .teo-trophies li.medal-bronze{background:linear-gradient(135deg,rgba(217,119,6,.08),rgba(180,83,9,.03));border-color:rgba(180,83,9,.32);box-shadow:none}',
+      '#teoResult .teo-trophies li.medal-gold .trophy-year{color:#b45309}',
+      '#teoResult .teo-trophies li.medal-silver .trophy-year{color:#64748b}',
+      '#teoResult .teo-trophies li.medal-bronze .trophy-year{color:#b45309}',
       '#teoResult .teo-trophies .trophy-year{display:block;font-size:10px;color:var(--teo-muted);margin-top:2px}',
       '#teoCaptureBtn{margin-top:8px;background:linear-gradient(135deg,var(--teo-capture1),var(--teo-capture2));border-color:var(--teo-capture2);color:#fff;font-weight:700;cursor:pointer}',
       '#teoAdminWrap{margin-top:10px;padding:10px;border:1px solid var(--teo-desc-border);border-radius:10px;background:var(--teo-desc-bg)}',
@@ -1042,7 +1055,8 @@
         summary.trophies.length
           ? '<ul class="teo-trophies">' + summary.trophies.map(function(t) {
               var icon = t.medal === 'gold' ? '🥇' : t.medal === 'silver' ? '🥈' : '🥉';
-              return '<li>' + icon + ' ' + t.eventName + (t.year ? '<span class="trophy-year">' + t.year + '</span>' : '') + '</li>';
+              var medalClass = t.medal === 'gold' ? 'medal-gold' : t.medal === 'silver' ? 'medal-silver' : 'medal-bronze';
+              return '<li class="' + medalClass + '">' + icon + ' ' + t.eventName + (t.year ? '<span class="trophy-year">' + t.year + '</span>' : '') + '</li>';
             }).join('') + '</ul>'
           : '<div class="muted" style="margin:4px 0 8px">Chưa có danh hiệu nào.</div>',
         '<div class="teo-section"><h5>Tổng hợp theo chế độ</h5></div>',
