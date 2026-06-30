@@ -8971,7 +8971,8 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
       if(prev !== '' && Number(prev) < s.teamCount) teamFilter.value = prev;
       
       var filterTeam = teamFilter.value !== '' ? Number(teamFilter.value) : null; 
-      var showOnlyDone = $('onlyDone').checked ? true : false;
+      var showOnlyDone = $('onlyDone') && $('onlyDone').checked ? true : false;
+      var showOnlyPending = $('onlyPending') && $('onlyPending').checked ? true : false;
       var fixturesDiv = $('fixtures'); 
       fixturesDiv.innerHTML = '';
       
@@ -8981,12 +8982,12 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
       var roundNumber = parseInt(roundParts[1], 10);
       
       if(roundType === 'group') {
-        renderGroupStageFixtures(s, roundNumber, filterTeam, showOnlyDone, fixturesDiv);
+        renderGroupStageFixtures(s, roundNumber, filterTeam, showOnlyDone, fixturesDiv, showOnlyPending);
       }
     }
     
     // Render group stage fixtures for a specific round
-    function renderGroupStageFixtures(s, roundNumber, filterTeam, showOnlyDone, fixturesDiv) {
+    function renderGroupStageFixtures(s, roundNumber, filterTeam, showOnlyDone, fixturesDiv, showOnlyPending) {
       var groupNames = Object.keys(s.groups || {});
       
       groupNames.forEach(function(groupName) {
@@ -9012,9 +9013,11 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
           
           var key = 'group-' + groupName + '-' + roundNumber + '-' + matchIdx;
           var result = s.results[key] || {};
+          var isDone = !(result.hg == null || result.ag == null);
           
-          // Apply done filter
-          if(showOnlyDone && (result.hg == null || result.ag == null)) return;
+          // Apply done/pending filters
+          if(showOnlyDone && !isDone) return;
+          if(showOnlyPending && isDone) return;
           
           var matchEl = createTournamentGroupMatch(s, homeTeamIdx, awayTeamIdx, key, result);
           groupDiv.appendChild(matchEl);
