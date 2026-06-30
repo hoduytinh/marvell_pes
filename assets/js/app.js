@@ -5001,15 +5001,25 @@ function renderCupStandings(s){
     function isAdmin(){try{return sessionStorage.getItem('pesAdmin')==='1'}catch(e){return false}}
     function ensureAdmin(){
       if(isAdmin()) return true;
-      var pw=prompt('Nhập password quản trị:');
-      if(pw==='tinhteo123'){
-        try{sessionStorage.setItem('pesAdmin','1')}catch(_){}
-        showAdmin(true);
-        refreshSeasonUI();
-        return true;
-      }
-      alert('Sai password');
+      openAdminLogin();
       return false;
+    }
+    function openAdminLogin(){
+      var dlg=$('adminLoginDialog');
+      if(!dlg){
+        // Fallback if dialog markup missing
+        var pw=prompt('Nhập password quản trị:');
+        if(pw==='tinhteo123'){
+          try{sessionStorage.setItem('pesAdmin','1')}catch(_){}
+          showAdmin(true); updateCustomLinks(); refreshSeasonUI();
+        } else if(pw!==null){ alert('Sai password'); }
+        return;
+      }
+      var input=$('adminPassInput'), err=$('adminPassError');
+      if(input) input.value='';
+      if(err) err.style.display='none';
+      if(typeof dlg.showModal==='function'){ dlg.showModal(); } else { dlg.setAttribute('open','open'); }
+      if(input){ setTimeout(function(){ input.focus(); }, 50); }
     }
     function showAdmin(on){[].forEach.call(document.querySelectorAll('.adminOnly'),function(el){el.classList.toggle('hidden',!on)})}
     function toast(msg){var t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(function(){t.classList.remove('show')},1400)}
@@ -10672,13 +10682,33 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
           updateCustomLinks();
           refreshSeasonUI();
         }else{
-          if (ensureAdmin()) {
+          openAdminLogin();
+        }
+      });
+      // Admin login dialog confirm handler
+      (function(){
+        var dlg=$('adminLoginDialog');
+        if(!dlg) return;
+        var input=$('adminPassInput'), err=$('adminPassError'), confirmBtn=$('adminPassConfirm');
+        function tryLogin(e){
+          if(e) e.preventDefault();
+          var pw=input ? input.value : '';
+          if(pw==='tinhteo123'){
+            try{sessionStorage.setItem('pesAdmin','1')}catch(_){}
+            if(input) input.value='';
+            if(err) err.style.display='none';
+            if(typeof dlg.close==='function'){ dlg.close(); } else { dlg.removeAttribute('open'); }
             showAdmin(true);
             updateCustomLinks();
             refreshSeasonUI();
+          }else{
+            if(err) err.style.display='block';
+            if(input){ input.focus(); input.select(); }
           }
         }
-      });
+        if(confirmBtn) confirmBtn.addEventListener('click', tryLogin);
+        if(input) input.addEventListener('keydown', function(e){ if(e.key==='Enter'){ tryLogin(e); } });
+      })();
       $('btnCloudSyncToggle').addEventListener('click', function() {
         if(!isAdmin()) { toast('Chỉ admin được phép đổi trạng thái sync'); return; }
         var nextState = !CloudSync.isEnabled();

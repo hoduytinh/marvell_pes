@@ -425,6 +425,16 @@
 
   <dialog id="nameDialog"></dialog>
 
+  <dialog id="adminLoginDialog"><form method="dialog">
+    <h3>Đăng nhập quản trị</h3>
+    <input id="adminPassInput" type="password" placeholder="Nhập password quản trị" autocomplete="current-password" style="width:100%;margin:6px 0" />
+    <div id="adminPassError" style="color:#f87171;font-size:13px;display:none;margin-bottom:6px">Sai password</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+      <button value="cancel">Hủy</button>
+      <button id="adminPassConfirm" class="primary" value="confirm">Đăng nhập</button>
+    </div>
+  </form></dialog>
+
   <div id="toast" class="toast"></div>
 
   <!--
