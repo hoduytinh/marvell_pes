@@ -15,6 +15,25 @@
     return m ? Number(m[0]) : -1;
   }
 
+  // Build a season-name -> position map following the header bar order
+  // (state.seasonOrder). Falls back to the natural seasons object order.
+  function buildSeasonOrderIndex(state) {
+    var idx = {};
+    if(!state || !state.seasons) return idx;
+    var order = (state.seasonOrder && state.seasonOrder.length)
+      ? state.seasonOrder
+      : Object.keys(state.seasons);
+    var counter = 0;
+    order.forEach(function(id) {
+      if(typeof id === 'string' && id.indexOf('separator-') === 0) return;
+      var season = state.seasons[id];
+      if(!season) return;
+      var name = season.name || '(Unnamed)';
+      if(!(name in idx)) idx[name] = counter++;
+    });
+    return idx;
+  }
+
   function parseStageOrder(stage) {
     var txt = String(stage || '');
     var m = txt.match(/(\d+)/);
@@ -615,7 +634,8 @@
       byMode: byMode,
       bySeason: bySeason,
       matches: details,
-      trophies: getTeamTrophies(state, teamName)
+      trophies: getTeamTrophies(state, teamName),
+      seasonOrderIndex: buildSeasonOrderIndex(state)
     };
   }
 
@@ -990,7 +1010,12 @@
       var modeKeys = Object.keys(summary.byMode).sort();
       var modeRows = buildSummaryRows(summary.byMode, modeKeys);
 
+      var orderIndex = summary.seasonOrderIndex || {};
       var seasonKeys = Object.keys(summary.bySeason).sort(function(a, b) {
+        var ai = (a in orderIndex) ? orderIndex[a] : Infinity;
+        var bi = (b in orderIndex) ? orderIndex[b] : Infinity;
+        if(ai !== bi) return ai - bi;
+        // Fallback for seasons not present in the header bar order
         var ay = parseSeasonYear(a);
         var by = parseSeasonYear(b);
         if(by !== ay) return by - ay;
