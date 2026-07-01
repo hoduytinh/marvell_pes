@@ -6095,14 +6095,92 @@ function renderCupStandings(s){
         });
       });
       
-      // Sort by points, then goal difference, then goals for
+      // Sort by points, then goal difference, then goals for.
       standings.sort(function(a, b) {
         if(a.Pts !== b.Pts) return b.Pts - a.Pts;
         if(a.GD !== b.GD) return b.GD - a.GD;
         return b.GF - a.GF;
       });
+
+      // If head-to-head tiebreak is enabled, reorder teams that are level on
+      // points using only the matches played between the tied teams.
+      if(season.settings && season.settings.h2h) {
+        standings = applyGroupH2HTiebreak(standings, season, group, groupName);
+      }
       
       return standings;
+    }
+
+    // Collect head-to-head results between two teams within a group, from teamA's
+    // perspective: [{ gfA, gaA }, ...].
+    function getGroupPairResults(season, group, groupName, teamIdxA, teamIdxB) {
+      var results = [];
+      group.fixtures.forEach(function(round, roundIdx) {
+        round.forEach(function(match, matchIdx) {
+          var homeTeamIdx = group.teamIndices[match.home];
+          var awayTeamIdx = group.teamIndices[match.away];
+          var involvesPair =
+            (homeTeamIdx === teamIdxA && awayTeamIdx === teamIdxB) ||
+            (homeTeamIdx === teamIdxB && awayTeamIdx === teamIdxA);
+          if(!involvesPair) return;
+          var key = 'group-' + groupName + '-' + roundIdx + '-' + matchIdx;
+          var result = season.results[key];
+          if(!result || result.hg == null || result.ag == null) return;
+          if(homeTeamIdx === teamIdxA) {
+            results.push({ gfA: Number(result.hg), gaA: Number(result.ag) });
+          } else {
+            results.push({ gfA: Number(result.ag), gaA: Number(result.hg) });
+          }
+        });
+      });
+      return results;
+    }
+
+    // Head-to-head mini-league tiebreaker. Reorders groups of teams that are level
+    // on points using only matches BETWEEN those tied teams (H2H Pts -> H2H GD ->
+    // H2H GF), then falls back to overall GD -> GF -> name.
+    function applyGroupH2HTiebreak(standings, season, group, groupName) {
+      function h2hStatsFor(tiedRows) {
+        var stats = {};
+        tiedRows.forEach(function(r) { stats[r.idx] = { Pts: 0, GD: 0, GF: 0 }; });
+        for(var i = 0; i < tiedRows.length; i++) {
+          for(var j = i + 1; j < tiedRows.length; j++) {
+            var a = tiedRows[i], b = tiedRows[j];
+            var pairResults = getGroupPairResults(season, group, groupName, a.idx, b.idx);
+            pairResults.forEach(function(m) {
+              stats[a.idx].GF += m.gfA; stats[a.idx].GD += (m.gfA - m.gaA);
+              stats[b.idx].GF += m.gaA; stats[b.idx].GD += (m.gaA - m.gfA);
+              if(m.gfA > m.gaA) { stats[a.idx].Pts += 3; }
+              else if(m.gfA < m.gaA) { stats[b.idx].Pts += 3; }
+              else { stats[a.idx].Pts += 1; stats[b.idx].Pts += 1; }
+            });
+          }
+        }
+        return stats;
+      }
+
+      var out = [];
+      var i = 0;
+      while(i < standings.length) {
+        var j = i + 1;
+        while(j < standings.length && standings[j].Pts === standings[i].Pts) j++;
+        var tied = standings.slice(i, j);
+        if(tied.length > 1) {
+          var hstats = h2hStatsFor(tied);
+          tied.sort(function(a, b) {
+            var ha = hstats[a.idx], hb = hstats[b.idx];
+            if(ha.Pts !== hb.Pts) return hb.Pts - ha.Pts;
+            if(ha.GD !== hb.GD) return hb.GD - ha.GD;
+            if(ha.GF !== hb.GF) return hb.GF - ha.GF;
+            if(a.GD !== b.GD) return b.GD - a.GD;
+            if(a.GF !== b.GF) return b.GF - a.GF;
+            return a.team.localeCompare(b.team);
+          });
+        }
+        out = out.concat(tied);
+        i = j;
+      }
+      return out;
     }
 
     // Get qualified teams from all groups with flexible knockout team count
@@ -8985,6 +9063,15 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
       var showOnlyPending = $('onlyPending') && $('onlyPending').checked ? true : false;
       var fixturesDiv = $('fixtures'); 
       fixturesDiv.innerHTML = '';
+      
+      // When a team filter is active, show that team's matches across ALL rounds
+      // (giống league mode) thay vì chỉ vòng đang chọn.
+      if(filterTeam !== null) {
+        for(var gr = 0; gr < totalGroupRounds; gr++) {
+          renderGroupStageFixtures(s, gr, filterTeam, showOnlyDone, fixturesDiv, showOnlyPending);
+        }
+        return;
+      }
       
       // Parse selected round - only group stage rounds are available now
       var roundParts = selectedRound.split('-');
