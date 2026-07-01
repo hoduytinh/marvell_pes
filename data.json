@@ -16564,7 +16564,7 @@
         "euro": 6,
         "playoff": 0,
         "rel": 3,
-        "h2h": false,
+        "h2h": true,
         "enableRegen": false
       },
       "createdAt": 1782103880628,
