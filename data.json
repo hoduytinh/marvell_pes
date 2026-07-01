@@ -14031,6 +14031,42 @@
         "group-C-1-1": {
           "hg": 4,
           "ag": 0
+        },
+        "group-E-3-0": {
+          "hg": 0,
+          "ag": 0
+        },
+        "group-B-3-0": {
+          "hg": 3,
+          "ag": 3
+        },
+        "group-D-3-0": {
+          "hg": 1,
+          "ag": 2
+        },
+        "group-A-3-1": {
+          "hg": 0,
+          "ag": 2
+        },
+        "group-A-3-0": {
+          "hg": 1,
+          "ag": 3
+        },
+        "group-C-2-1": {
+          "hg": 0,
+          "ag": 3
+        },
+        "group-A-2-0": {
+          "hg": 3,
+          "ag": 0
+        },
+        "group-B-3-1": {
+          "hg": 1,
+          "ag": 1
+        },
+        "group-E-2-0": {
+          "hg": 3,
+          "ag": 2
         }
       },
       "rounds": [
@@ -16540,7 +16576,7 @@
         "euro": 6,
         "playoff": 0,
         "rel": 3,
-        "h2h": false,
+        "h2h": true,
         "enableRegen": false
       },
       "createdAt": 1782103880628,
