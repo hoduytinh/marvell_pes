@@ -130,15 +130,11 @@
   }
 
   function getAllTeamNames(state) {
-    var names = [];
-    if(!state || !state.seasons) return names;
-    Object.keys(state.seasons).forEach(function(sk) {
-      var s = state.seasons[sk];
-      if(!s) return;
-      if(Array.isArray(s.teams)) names = names.concat(s.teams);
-      if(Array.isArray(state.teamMasterList)) names = names.concat(state.teamMasterList);
-    });
-    return uniqSorted(names);
+    // Chỉ lấy từ Team Master List (state.teamMasterList) để khớp 100% với
+    // danh sách team chuẩn mà admin quản lý — không gộp thêm team rời rạc từ
+    // các mùa cũ.
+    if(!state || !Array.isArray(state.teamMasterList)) return [];
+    return uniqSorted(state.teamMasterList);
   }
 
   function getVisibleTeamNames(state) {
