@@ -14147,10 +14147,6 @@
         "group-C-4-1": {
           "hg": 0,
           "ag": 3
-        },
-        "knockout-0-3": {
-          "hg": 2,
-          "ag": 1
         }
       },
       "rounds": [
@@ -17069,7 +17065,10 @@
                 "fromRound": 0,
                 "matchId": 2
               },
-              "away": 19
+              "away": {
+                "fromRound": 0,
+                "matchId": 3
+              }
             },
             {
               "home": {
