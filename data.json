@@ -14171,6 +14171,10 @@
         "knockout-0-4": {
           "hg": 2,
           "ag": 0
+        },
+        "knockout-0-2": {
+          "hg": 1,
+          "ag": 0
         }
       },
       "rounds": [
@@ -17079,10 +17083,7 @@
               "away": 11
             },
             {
-              "home": {
-                "fromRound": 0,
-                "matchId": 2
-              },
+              "home": 16,
               "away": 19
             },
             {
