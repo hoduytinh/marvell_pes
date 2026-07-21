@@ -14203,6 +14203,10 @@
         "knockout-2-0": {
           "hg": 1,
           "ag": 2
+        },
+        "knockout-3-0": {
+          "hg": 1,
+          "ag": 0
         }
       },
       "rounds": [
