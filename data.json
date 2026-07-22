@@ -245,7 +245,7 @@
                   "Thái"
                 ],
                 "bronze": [
-                  ""
+                  "Em Kiên"
                 ]
               }
             },
@@ -263,20 +263,6 @@
                 "bronze": [
                   "",
                   ""
-                ]
-              }
-            },
-            {
-              "name": "World Cup",
-              "medals": {
-                "gold": [
-                  "Phong"
-                ],
-                "silver": [
-                  "Thái"
-                ],
-                "bronze": [
-                  "Em Kiên"
                 ]
               }
             }
