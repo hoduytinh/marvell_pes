@@ -12206,6 +12206,91 @@
                   "rate": 1
                 }
               ]
+            },
+            {
+              "name": "World Cup",
+              "rankings": [
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                }
+              ]
             }
           ],
           "pictures": []
@@ -17314,7 +17399,7 @@
       "tournamentPhase": "knockout"
     }
   },
-  "current": "s5fhf2z5",
+  "current": "sn3pex2x",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
