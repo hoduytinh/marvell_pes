@@ -17397,9 +17397,515 @@
         "seedVersion": 3
       },
       "tournamentPhase": "knockout"
+    },
+    "su8gwuph": {
+      "name": "2026 Dual",
+      "logo": null,
+      "teamCount": 8,
+      "teams": [
+        "Team 1",
+        "Team 2",
+        "Team 3",
+        "Team 4",
+        "Team 5",
+        "Team 6",
+        "Team 7",
+        "Team 8"
+      ],
+      "teamColors": [
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550"
+      ],
+      "teamLogos": [
+        "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjNjBhNWZhIj4KICAgICAgPHBhdGggZD0iTTcuNSA1LjVDNS41IDUuNSA0IDcgNCA5djZjMCAyIDEuNSAzLjUgMy41IDMuNWg5YzIgMCAzLjUtMS41IDMuNS0zLjVWOWMwLTItMS41LTMuNS0zLjUtMy41aC05em0xIDNjLjUgMCAxIC41IDEgMXYxaDFjLjUgMCAxIC41IDEgMXMtLjUgMS0xIDFoLTF2MWMwIC41LS41IDEtMSAxcy0xLS41LTEtMXYtMWgtMWMtLjUgMC0xLS41LTEtMXMuNS0xIDEtMWgxdi0xYzAtLjUuNS0xIDEtMXptOCAxYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xem0tMiAzYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xeiIvPgogICAgPC9zdmc+CiAg",
+        "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjNjBhNWZhIj4KICAgICAgPHBhdGggZD0iTTcuNSA1LjVDNS41IDUuNSA0IDcgNCA5djZjMCAyIDEuNSAzLjUgMy41IDMuNWg5YzIgMCAzLjUtMS41IDMuNS0zLjVWOWMwLTItMS41LTMuNS0zLjUtMy41aC05em0xIDNjLjUgMCAxIC41IDEgMXYxaDFjLjUgMCAxIC41IDEgMXMtLjUgMS0xIDFoLTF2MWMwIC41LS41IDEtMSAxcy0xLS41LTEtMXYtMWgtMWMtLjUgMC0xLS41LTEtMXMuNS0xIDEtMWgxdi0xYzAtLjUuNS0xIDEtMXptOCAxYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xem0tMiAzYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xeiIvPgogICAgPC9zdmc+CiAg",
+        "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjNjBhNWZhIj4KICAgICAgPHBhdGggZD0iTTcuNSA1LjVDNS41IDUuNSA0IDcgNCA5djZjMCAyIDEuNSAzLjUgMy41IDMuNWg5YzIgMCAzLjUtMS41IDMuNS0zLjVWOWMwLTItMS41LTMuNS0zLjUtMy41aC05em0xIDNjLjUgMCAxIC41IDEgMXYxaDFjLjUgMCAxIC41IDEgMXMtLjUgMS0xIDFoLTF2MWMwIC41LS41IDEtMSAxcy0xLS41LTEtMXYtMWgtMWMtLjUgMC0xLS41LTEtMXMuNS0xIDEtMWgxdi0xYzAtLjUuNS0xIDEtMXptOCAxYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xem0tMiAzYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xeiIvPgogICAgPC9zdmc+CiAg",
+        "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjNjBhNWZhIj4KICAgICAgPHBhdGggZD0iTTcuNSA1LjVDNS41IDUuNSA0IDcgNCA5djZjMCAyIDEuNSAzLjUgMy41IDMuNWg5YzIgMCAzLjUtMS41IDMuNS0zLjVWOWMwLTItMS41LTMuNS0zLjUtMy41aC05em0xIDNjLjUgMCAxIC41IDEgMXYxaDFjLjUgMCAxIC41IDEgMXMtLjUgMS0xIDFoLTF2MWMwIC41LS41IDEtMSAxcy0xLS41LTEtMXYtMWgtMWMtLjUgMC0xLS41LTEtMXMuNS0xIDEtMWgxdi0xYzAtLjUuNS0xIDEtMXptOCAxYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xem0tMiAzYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xeiIvPgogICAgPC9zdmc+CiAg",
+        "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjNjBhNWZhIj4KICAgICAgPHBhdGggZD0iTTcuNSA1LjVDNS41IDUuNSA0IDcgNCA5djZjMCAyIDEuNSAzLjUgMy41IDMuNWg5YzIgMCAzLjUtMS41IDMuNS0zLjVWOWMwLTItMS41LTMuNS0zLjUtMy41aC05em0xIDNjLjUgMCAxIC41IDEgMXYxaDFjLjUgMCAxIC41IDEgMXMtLjUgMS0xIDFoLTF2MWMwIC41LS41IDEtMSAxcy0xLS41LTEtMXYtMWgtMWMtLjUgMC0xLS41LTEtMXMuNS0xIDEtMWgxdi0xYzAtLjUuNS0xIDEtMXptOCAxYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xem0tMiAzYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xeiIvPgogICAgPC9zdmc+CiAg",
+        "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjNjBhNWZhIj4KICAgICAgPHBhdGggZD0iTTcuNSA1LjVDNS41IDUuNSA0IDcgNCA5djZjMCAyIDEuNSAzLjUgMy41IDMuNWg5YzIgMCAzLjUtMS41IDMuNS0zLjVWOWMwLTItMS41LTMuNS0zLjUtMy41aC05em0xIDNjLjUgMCAxIC41IDEgMXYxaDFjLjUgMCAxIC41IDEgMXMtLjUgMS0xIDFoLTF2MWMwIC41LS41IDEtMSAxcy0xLS41LTEtMXYtMWgtMWMtLjUgMC0xLS41LTEtMXMuNS0xIDEtMWgxdi0xYzAtLjUuNS0xIDEtMXptOCAxYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xem0tMiAzYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xeiIvPgogICAgPC9zdmc+CiAg",
+        "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjNjBhNWZhIj4KICAgICAgPHBhdGggZD0iTTcuNSA1LjVDNS41IDUuNSA0IDcgNCA5djZjMCAyIDEuNSAzLjUgMy41IDMuNWg5YzIgMCAzLjUtMS41IDMuNS0zLjVWOWMwLTItMS41LTMuNS0zLjUtMy41aC05em0xIDNjLjUgMCAxIC41IDEgMXYxaDFjLjUgMCAxIC41IDEgMXMtLjUgMS0xIDFoLTF2MWMwIC41LS41IDEtMSAxcy0xLS41LTEtMXYtMWgtMWMtLjUgMC0xLS41LTEtMXMuNS0xIDEtMWgxdi0xYzAtLjUuNS0xIDEtMXptOCAxYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xem0tMiAzYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xeiIvPgogICAgPC9zdmc+CiAg",
+        "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjNjBhNWZhIj4KICAgICAgPHBhdGggZD0iTTcuNSA1LjVDNS41IDUuNSA0IDcgNCA5djZjMCAyIDEuNSAzLjUgMy41IDMuNWg5YzIgMCAzLjUtMS41IDMuNS0zLjVWOWMwLTItMS41LTMuNS0zLjUtMy41aC05em0xIDNjLjUgMCAxIC41IDEgMXYxaDFjLjUgMCAxIC41IDEgMXMtLjUgMS0xIDFoLTF2MWMwIC41LS41IDEtMSAxcy0xLS41LTEtMXYtMWgtMWMtLjUgMC0xLS41LTEtMXMuNS0xIDEtMWgxdi0xYzAtLjUuNS0xIDEtMXptOCAxYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xem0tMiAzYy41IDAgMSAuNSAxIDFzLS41IDEtMSAxLTEtLjUtMS0xIC41LTEgMS0xeiIvPgogICAgPC9zdmc+CiAg"
+      ],
+      "results": {},
+      "rounds": [
+        [
+          {
+            "home": 0,
+            "away": 7
+          },
+          {
+            "home": 1,
+            "away": 6
+          },
+          {
+            "home": 2,
+            "away": 5
+          },
+          {
+            "home": 3,
+            "away": 4
+          }
+        ],
+        [
+          {
+            "home": 1,
+            "away": 0
+          },
+          {
+            "home": 7,
+            "away": 2
+          },
+          {
+            "home": 6,
+            "away": 3
+          },
+          {
+            "home": 5,
+            "away": 4
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 2
+          },
+          {
+            "home": 3,
+            "away": 1
+          },
+          {
+            "home": 4,
+            "away": 7
+          },
+          {
+            "home": 5,
+            "away": 6
+          }
+        ],
+        [
+          {
+            "home": 3,
+            "away": 0
+          },
+          {
+            "home": 2,
+            "away": 4
+          },
+          {
+            "home": 1,
+            "away": 5
+          },
+          {
+            "home": 7,
+            "away": 6
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 4
+          },
+          {
+            "home": 5,
+            "away": 3
+          },
+          {
+            "home": 6,
+            "away": 2
+          },
+          {
+            "home": 7,
+            "away": 1
+          }
+        ],
+        [
+          {
+            "home": 5,
+            "away": 0
+          },
+          {
+            "home": 4,
+            "away": 6
+          },
+          {
+            "home": 3,
+            "away": 7
+          },
+          {
+            "home": 2,
+            "away": 1
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 6
+          },
+          {
+            "home": 7,
+            "away": 5
+          },
+          {
+            "home": 1,
+            "away": 4
+          },
+          {
+            "home": 2,
+            "away": 3
+          }
+        ],
+        [
+          {
+            "home": 7,
+            "away": 0
+          },
+          {
+            "home": 6,
+            "away": 1
+          },
+          {
+            "home": 5,
+            "away": 2
+          },
+          {
+            "home": 4,
+            "away": 3
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 1
+          },
+          {
+            "home": 2,
+            "away": 7
+          },
+          {
+            "home": 3,
+            "away": 6
+          },
+          {
+            "home": 4,
+            "away": 5
+          }
+        ],
+        [
+          {
+            "home": 2,
+            "away": 0
+          },
+          {
+            "home": 1,
+            "away": 3
+          },
+          {
+            "home": 7,
+            "away": 4
+          },
+          {
+            "home": 6,
+            "away": 5
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 3
+          },
+          {
+            "home": 4,
+            "away": 2
+          },
+          {
+            "home": 5,
+            "away": 1
+          },
+          {
+            "home": 6,
+            "away": 7
+          }
+        ],
+        [
+          {
+            "home": 4,
+            "away": 0
+          },
+          {
+            "home": 3,
+            "away": 5
+          },
+          {
+            "home": 2,
+            "away": 6
+          },
+          {
+            "home": 1,
+            "away": 7
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 5
+          },
+          {
+            "home": 6,
+            "away": 4
+          },
+          {
+            "home": 7,
+            "away": 3
+          },
+          {
+            "home": 1,
+            "away": 2
+          }
+        ],
+        [
+          {
+            "home": 6,
+            "away": 0
+          },
+          {
+            "home": 5,
+            "away": 7
+          },
+          {
+            "home": 4,
+            "away": 1
+          },
+          {
+            "home": 3,
+            "away": 2
+          }
+        ]
+      ],
+      "settings": {
+        "top": 4,
+        "euro": 6,
+        "playoff": 0,
+        "rel": 3,
+        "h2h": false,
+        "enableRegen": false
+      },
+      "createdAt": 1787213259234,
+      "mode": "double-elimination",
+      "has3rdPlace": false,
+      "numGroups": 4,
+      "numKnockoutTeams": 8,
+      "groupRoundRobin": "double",
+      "doubleElimination": {
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "playoffRound": null,
+        "playoffName": "",
+        "winnersRounds": [
+          [
+            {
+              "home": 0,
+              "away": 1,
+              "bracket": "winners"
+            },
+            {
+              "home": 2,
+              "away": 3,
+              "bracket": "winners"
+            },
+            {
+              "home": 4,
+              "away": 5,
+              "bracket": "winners"
+            },
+            {
+              "home": 6,
+              "away": 7,
+              "bracket": "winners"
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 0,
+                "matchId": 0,
+                "bracket": "winners"
+              },
+              "away": {
+                "fromRound": 0,
+                "matchId": 1,
+                "bracket": "winners"
+              },
+              "bracket": "winners"
+            },
+            {
+              "home": {
+                "fromRound": 0,
+                "matchId": 2,
+                "bracket": "winners"
+              },
+              "away": {
+                "fromRound": 0,
+                "matchId": 3,
+                "bracket": "winners"
+              },
+              "bracket": "winners"
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 1,
+                "matchId": 0,
+                "bracket": "winners"
+              },
+              "away": {
+                "fromRound": 1,
+                "matchId": 1,
+                "bracket": "winners"
+              },
+              "bracket": "winners"
+            }
+          ]
+        ],
+        "winnersNames": [
+          "WB Vòng 1",
+          "WB Bán kết",
+          "WB Chung kết"
+        ],
+        "losersRounds": [
+          [
+            {
+              "home": {
+                "fromRound": 0,
+                "matchId": 0,
+                "bracket": "winners",
+                "position": "loser"
+              },
+              "away": {
+                "fromRound": 0,
+                "matchId": 1,
+                "bracket": "winners",
+                "position": "loser"
+              },
+              "bracket": "losers"
+            },
+            {
+              "home": {
+                "fromRound": 0,
+                "matchId": 2,
+                "bracket": "winners",
+                "position": "loser"
+              },
+              "away": {
+                "fromRound": 0,
+                "matchId": 3,
+                "bracket": "winners",
+                "position": "loser"
+              },
+              "bracket": "losers"
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 0,
+                "matchId": 0,
+                "bracket": "losers"
+              },
+              "away": {
+                "fromRound": 1,
+                "matchId": 0,
+                "bracket": "winners",
+                "position": "loser"
+              },
+              "bracket": "losers"
+            },
+            {
+              "home": {
+                "fromRound": 0,
+                "matchId": 1,
+                "bracket": "losers"
+              },
+              "away": {
+                "fromRound": 1,
+                "matchId": 1,
+                "bracket": "winners",
+                "position": "loser"
+              },
+              "bracket": "losers"
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 1,
+                "matchId": 0,
+                "bracket": "losers"
+              },
+              "away": {
+                "fromRound": 1,
+                "matchId": 1,
+                "bracket": "losers"
+              },
+              "bracket": "losers"
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 2,
+                "matchId": 0,
+                "bracket": "losers"
+              },
+              "away": {
+                "fromRound": 2,
+                "matchId": 0,
+                "bracket": "winners",
+                "position": "loser"
+              },
+              "bracket": "losers"
+            }
+          ]
+        ],
+        "losersNames": [
+          "LB Vòng 1",
+          "LB Vòng 2",
+          "LB Vòng 3",
+          "LB Vòng 4"
+        ],
+        "grandFinals": [
+          {
+            "home": {
+              "fromRound": 2,
+              "matchId": 0,
+              "bracket": "winners"
+            },
+            "away": {
+              "fromRound": 3,
+              "matchId": 0,
+              "bracket": "losers"
+            },
+            "bracket": "grand-final"
+          }
+        ]
+      }
     }
   },
-  "current": "s74dil3z",
+  "current": "su8gwuph",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
@@ -17878,7 +18384,8 @@
     "strxh7hr",
     "separator-1764608568805",
     "snox8vos",
-    "sdmvg88v"
+    "sdmvg88v",
+    "su8gwuph"
   ],
   "teoVisibleTeams": [
     "Ánh VIP",
