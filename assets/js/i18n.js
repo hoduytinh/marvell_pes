@@ -203,7 +203,6 @@
     '❌ Lỗi': '❌ Error',
     'Hạng (↓ tốt hơn)': 'Rank (↓ better)',
     'Nhập password quản trị:': 'Enter admin password:',
-    'Rớt Losers Bracket': 'Dropped to Losers Bracket',
     'Tên ghi chú:': 'Note name:',
     'Tên mùa:': 'Season name:',
     'Tiếp tục Import?': 'Continue import?',
@@ -325,8 +324,12 @@
     '(Thắng)': '(Won)',
     '(Hòa)': '(Draw)',
     '(chưa đá)': '(not played)',
-    'Thắng ': 'Win ',
-    'Thua ': 'Loss ',
+    // Bracket placeholder labels: "Thắng WB 1-2" = winner of that match
+    'Thắng ': 'Winner ',
+    'Thua ': 'Loser ',
+    // Cup / bracket standings status column
+    'Tham gia': 'In progress',
+    'Rớt Losers Bracket': 'Dropped to Losers Bracket',
 
     // Insights labels
     'Hàng công tốt nhất:': 'Best attack:',
