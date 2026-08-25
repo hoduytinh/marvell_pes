@@ -18071,6 +18071,11 @@
       "source": "scan"
     },
     {
+      "name": "Default",
+      "data": "logos/Default.jpg",
+      "source": "scan"
+    },
+    {
       "name": "Dortmund",
       "data": "logos/Dortmund.jpg",
       "source": "scan"
@@ -18178,11 +18183,6 @@
     {
       "name": "New_Zealand",
       "data": "logos/New_Zealand.jpg",
-      "source": "scan"
-    },
-    {
-      "name": "nh_VIP",
-      "data": "logos/nh_VIP.svg",
       "source": "scan"
     },
     {
