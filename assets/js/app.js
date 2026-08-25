@@ -4774,12 +4774,27 @@ function renderCupStandings(s){
     var THEME_KEY='pes-theme';
   var state={seasons:{},current:null,teamMasterList:[],logoMasterList:[]};
   
-  // Default gamepad icon for teams
+  // Default PlayStation "PS" logo for teams
   var DEFAULT_TEAM_LOGO = 'data:image/svg+xml;base64,' + btoa(`
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#60a5fa">
-      <path d="M7.5 5.5C5.5 5.5 4 7 4 9v6c0 2 1.5 3.5 3.5 3.5h9c2 0 3.5-1.5 3.5-3.5V9c0-2-1.5-3.5-3.5-3.5h-9zm1 3c.5 0 1 .5 1 1v1h1c.5 0 1 .5 1 1s-.5 1-1 1h-1v1c0 .5-.5 1-1 1s-1-.5-1-1v-1h-1c-.5 0-1-.5-1-1s.5-1 1-1h1v-1c0-.5.5-1 1-1zm8 1c.5 0 1 .5 1 1s-.5 1-1 1-1-.5-1-1 .5-1 1-1zm-2 3c.5 0 1 .5 1 1s-.5 1-1 1-1-.5-1-1 .5-1 1-1z"/>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <rect width="24" height="24" rx="4" fill="#003791"/>
+      <text x="12" y="17.5" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-style="italic" font-size="12" fill="#ffffff" text-anchor="middle">PS</text>
     </svg>
   `);
+
+  // Ensure every team without a manually chosen logo uses the default logo.
+  function normalizeTeamLogos(st){
+    if(!st || !st.seasons) return;
+    Object.keys(st.seasons).forEach(function(key){
+      var se = st.seasons[key];
+      if(!se) return;
+      var count = (se.teams && se.teams.length) || se.teamCount || 0;
+      if(!Array.isArray(se.teamLogos)) se.teamLogos = [];
+      for(var i=0;i<count;i++){
+        if(!se.teamLogos[i]) se.teamLogos[i] = DEFAULT_TEAM_LOGO;
+      }
+    });
+  }
   var homeLink = localStorage.getItem('pesHomeLink') || '';
   var homeLabel = localStorage.getItem('pesHomeLabel') || 'Home';
   var customLinks = JSON.parse(localStorage.getItem('pesCustomLinks') || '[]');
@@ -5656,6 +5671,7 @@ function renderCupStandings(s){
       function applyState(obj, source) {
         if(obj && obj.seasons) {
           state = obj;
+          normalizeTeamLogos(state);
           console.log('Loaded data from ' + source);
           return true;
         }
@@ -5786,6 +5802,7 @@ function renderCupStandings(s){
         
         // Load new state
         state = objE; 
+        normalizeTeamLogos(state);
         console.log('Force refreshed data from file (EMBEDDED_DATA)');
         console.log('Loaded seasons:', Object.keys(state.seasons));
         
