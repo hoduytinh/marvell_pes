@@ -17942,6 +17942,11 @@
   ],
   "logoMasterList": [
     {
+      "name": "_ps_preview",
+      "data": "logos/_ps_preview.png",
+      "source": "scan"
+    },
+    {
       "name": "AC_Milan",
       "data": "logos/AC_Milan.jpg",
       "source": "scan"
