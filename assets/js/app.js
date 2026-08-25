@@ -4774,15 +4774,22 @@ function renderCupStandings(s){
     var THEME_KEY='pes-theme';
   var state={seasons:{},current:null,teamMasterList:[],logoMasterList:[]};
   
-  // Default PlayStation "PS" logo for teams
-  var DEFAULT_TEAM_LOGO = 'data:image/svg+xml;base64,' + btoa(`
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-      <rect width="24" height="24" rx="4" fill="#003791"/>
-      <text x="12" y="17.5" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-style="italic" font-size="12" fill="#ffffff" text-anchor="middle">PS</text>
-    </svg>
-  `);
+  // Default team logo — dùng file ảnh trong repo để dễ thay đổi sau này.
+  var DEFAULT_TEAM_LOGO = 'logos/Default.jpg';
 
   // Ensure every team without a manually chosen logo uses the default logo.
+  // Also upgrades previous baked-in defaults (gamepad / PS monogram SVG) to the new one.
+  function isAutoDefaultLogo(val){
+    if(!val || typeof val !== 'string') return false;
+    if(val === DEFAULT_TEAM_LOGO) return true;
+    var m = val.match(/^data:image\/svg\+xml;base64,(.*)$/);
+    if(!m) return false;
+    try {
+      var svg = atob(m[1]);
+      // Old auto defaults: gamepad icon (#60a5fa) or PlayStation "PS" monogram (#003791).
+      return svg.indexOf('#60a5fa') !== -1 || svg.indexOf('#003791') !== -1;
+    } catch(_) { return false; }
+  }
   function normalizeTeamLogos(st){
     if(!st || !st.seasons) return;
     Object.keys(st.seasons).forEach(function(key){
@@ -4791,7 +4798,7 @@ function renderCupStandings(s){
       var count = (se.teams && se.teams.length) || se.teamCount || 0;
       if(!Array.isArray(se.teamLogos)) se.teamLogos = [];
       for(var i=0;i<count;i++){
-        if(!se.teamLogos[i]) se.teamLogos[i] = DEFAULT_TEAM_LOGO;
+        if(!se.teamLogos[i] || isAutoDefaultLogo(se.teamLogos[i])) se.teamLogos[i] = DEFAULT_TEAM_LOGO;
       }
     });
   }
@@ -11319,7 +11326,8 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
               }).join('') +
               '<div class="logo-empty" style="padding: 12px; text-align: center; color: var(--muted); display: none;">Không tìm thấy logo nào</div>' +
               '</div>' +
-              '<div style="margin-top: 16px; text-align: right;">' +
+              '<div style="margin-top: 16px; display: flex; justify-content: space-between; align-items: center;">' +
+              '<button type="button" class="logo-reset-btn" style="padding: 8px 16px; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer;">🔄 Reset về mặc định</button>' +
               '<button type="button" onclick="this.closest(\'dialog\').close()" style="padding: 8px 16px; background: var(--muted); color: white; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>' +
               '</div>';
             
@@ -11343,6 +11351,18 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
                 this.style.backgroundColor = '';
               });
             });
+            
+            // Reset to default logo
+            var resetBtn = selectLogoDialog.querySelector('.logo-reset-btn');
+            if(resetBtn) {
+              resetBtn.addEventListener('click', function() {
+                s.teamLogos[i] = DEFAULT_TEAM_LOGO;
+                saveAll();
+                toast('Reset logo to default for ' + (s.teams[i] || ('Team ' + (i + 1))));
+                selectLogoDialog.close();
+                document.body.removeChild(selectLogoDialog);
+              });
+            }
             
             // Live search filter: ignore case, strip diacritics, keep only
             // alphanumeric characters before comparing.
