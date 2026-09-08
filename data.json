@@ -17432,7 +17432,12 @@
         "logos/Default.jpg",
         "logos/Default.jpg"
       ],
-      "results": {},
+      "results": {
+        "de-winners-0-2": {
+          "hg": 1,
+          "ag": 2
+        }
+      },
       "rounds": [
         [
           {
