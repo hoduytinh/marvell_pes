@@ -17400,7 +17400,7 @@
     },
     "su8gwuph": {
       "name": "2026 - Dual",
-      "logo": null,
+      "logo": "logos/season_2023_-_Dual.jpg",
       "teamCount": 8,
       "teams": [
         "Tĩnh - Linh",
@@ -17432,7 +17432,20 @@
         "logos/Default.jpg",
         "logos/Default.jpg"
       ],
-      "results": {},
+      "results": {
+        "de-winners-0-2": {
+          "hg": 1,
+          "ag": 2
+        },
+        "de-winners-0-0": {
+          "hg": 2,
+          "ag": 1
+        },
+        "de-winners-0-3": {
+          "hg": 1,
+          "ag": 2
+        }
+      },
       "rounds": [
         [
           {
@@ -17905,7 +17918,7 @@
       }
     }
   },
-  "current": "s61o8upo",
+  "current": "su8gwuph",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
