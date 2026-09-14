@@ -17456,6 +17456,10 @@
         "de-winners-1-1": {
           "hg": 1,
           "ag": 2
+        },
+        "de-losers-0-0": {
+          "hg": 0,
+          "ag": 1
         }
       },
       "rounds": [
