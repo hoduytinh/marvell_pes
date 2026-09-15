@@ -390,27 +390,45 @@ function buildDoubleEliminationBracket(s){
     currentWinners = nextWinners;
   }
   
-  // Build Losers Bracket
-  // Losers bracket has (2 * numWinnerRounds - 1) rounds
+  var losersBuilt = deBuildLosersBracket(winnersRounds);
+  losersRounds = losersBuilt.losersRounds;
+  losersNames = losersBuilt.losersNames;
+  
+  return {
+    seeds: ids,
+    playoffRound: playoffRound,
+    playoffName: playoffName,
+    winnersRounds: winnersRounds,
+    winnersNames: winnersNames,
+    losersRounds: losersRounds,
+    losersNames: losersNames,
+    grandFinals: losersBuilt.grandFinals,
+    bracketVersion: DE_BRACKET_VERSION
+  };
+}
+
+// Builds the Losers Bracket (+ Grand Final match) pairing from an EXISTING
+// Winners Bracket structure. Extracted so it can be re-run standalone (by
+// checkAndFixDoubleEliminationBracket) to self-heal a stale losers-bracket
+// pairing algorithm WITHOUT touching/discarding the Winners Bracket — which
+// may contain admin-customized Round-1 pairings.
+function deBuildLosersBracket(winnersRounds) {
+  var numWinnerRounds = winnersRounds.length;
   var numLoserRounds = 2 * numWinnerRounds - 1;
+  var losersRounds = [];
+  var losersNames = [];
   var loserRoundIdx = 0;
   
-  // First round of losers: losers from WB Round 1
-  // Round 1 is split into 2 hidden branches: Branch A = first half of the
-  // Round-1 matches, Branch B = second half. Teams within the same branch
-  // NEVER meet each other in WB Round 1 (they only meet teams in the other
-  // branch), so cross-pairing losers here (branch A loser vs branch B loser)
-  // guarantees a team dropping to LB never re-faces a same-branch opponent
-  // and, since the two teams have never played before, avoids an early rematch.
+  // First round of losers: losers from WB Round 1.
+  // Any two WB Round-1 losers come from DIFFERENT R1 matches, so pairing them
+  // adjacently (loser(m0) vs loser(m1), loser(m2) vs loser(m3), ...) can never
+  // itself be a rematch — none of these teams have played each other yet.
   if(winnersRounds[0] && winnersRounds[0].length > 0) {
     var firstLoserRound = [];
-    var r1Matches = winnersRounds[0];
-    var branchHalf = Math.floor(r1Matches.length / 2);
-    for(var i = 0; i < branchHalf; i++) {
-      var j = i + branchHalf; // corresponding match in the other branch
+    for(var i = 0; i < winnersRounds[0].length; i += 2) {
       firstLoserRound.push({
         home: {fromRound: 0, matchId: i, bracket: 'winners', position: 'loser'},
-        away: {fromRound: 0, matchId: j, bracket: 'winners', position: 'loser'},
+        away: {fromRound: 0, matchId: i+1, bracket: 'winners', position: 'loser'},
         bracket: 'losers'
       });
     }
@@ -428,18 +446,34 @@ function buildDoubleEliminationBracket(s){
     var loserRound = [];
     
     if(lr % 2 === 1) {
-      // Odd rounds: previous LB winners play against new losers from WB
+      // Odd rounds: previous LB winners play against new losers from WB.
+      // IMPORTANT: LB round (loserRoundIdx-1) match m and WB round
+      // wbRoundToLose match m are built from the EXACT SAME "family" of
+      // original bracket slots (e.g. LB Round-1 match 0 = losers of WB R1
+      // matches 0&1, and WB Round-2 match 0 = winners of those SAME WB R1
+      // matches 0&1). Pairing them at the same index m would very likely put
+      // a team back against someone it already faced (the "cùng nhánh"
+      // rematch the user reported: WB R2 loser landing on the exact LB
+      // survivor from its own bracket half). So we pair LB match m against
+      // WB match (m XOR 1) instead — i.e. swap within adjacent pairs
+      // (0<->1, 2<->3, ...) — which always crosses to a DIFFERENT, so-far
+      // untouched family. Falls back to same-index when the WB round has an
+      // odd/1 match count (e.g. the WB Final's lone loser) since there is no
+      // other match to cross with at that point.
       var wbRoundToLose = Math.floor(lr / 2) + 1;
       if(wbRoundToLose < winnersRounds.length) {
         var numMatches = Math.max(
           losersRounds[loserRoundIdx - 1] ? losersRounds[loserRoundIdx - 1].length : 0,
           winnersRounds[wbRoundToLose] ? winnersRounds[wbRoundToLose].length : 0
         );
+        var wbMatchCount = winnersRounds[wbRoundToLose] ? winnersRounds[wbRoundToLose].length : 0;
+        var canCross = wbMatchCount >= 2 && wbMatchCount % 2 === 0;
         
         for(var m = 0; m < numMatches; m++) {
+          var wbMatchId = canCross ? (m % 2 === 0 ? m + 1 : m - 1) : m;
           loserRound.push({
             home: {fromRound: loserRoundIdx - 1, matchId: m, bracket: 'losers'},
-            away: {fromRound: wbRoundToLose, matchId: m, bracket: 'winners', position: 'loser'},
+            away: {fromRound: wbRoundToLose, matchId: wbMatchId, bracket: 'winners', position: 'loser'},
             bracket: 'losers'
           });
         }
@@ -474,16 +508,45 @@ function buildDoubleEliminationBracket(s){
     bracket: 'grand-final'
   }];
   
-  return {
-    seeds: ids,
-    playoffRound: playoffRound,
-    playoffName: playoffName,
-    winnersRounds: winnersRounds,
-    winnersNames: winnersNames,
-    losersRounds: losersRounds,
-    losersNames: losersNames,
-    grandFinals: grandFinals
-  };
+  return { losersRounds: losersRounds, losersNames: losersNames, grandFinals: grandFinals };
+}
+
+// Bump when buildDoubleEliminationBracket's PAIRING LOGIC changes (not when
+// only display/labels change), so checkAndFixDoubleEliminationBracket can
+// self-heal brackets generated by an older, buggy version — but ONLY when
+// safe to do so (see that function).
+var DE_BRACKET_VERSION = 2; // v2: LB round pairing crosses WB-round "families" (fixes same-branch rematches beyond LB Round 1)
+
+// Self-heal a double-elimination bracket that was generated by an older,
+// buggy pairing algorithm. Mirrors checkAndGenerateKnockout's pattern: only
+// regenerate when it's provably safe — i.e. no Losers Bracket or Grand Final
+// match has a recorded result yet. Rebuilds ONLY losersRounds/losersNames/
+// grandFinals via deBuildLosersBracket(de.winnersRounds) — the EXISTING
+// Winners Bracket (which may contain admin-customized Round-1 pairings) is
+// left completely untouched, so no WB result or manual pairing is lost.
+function checkAndFixDoubleEliminationBracket(s) {
+  if(s.mode !== 'double-elimination' || !s.doubleElimination) return;
+  var de = s.doubleElimination;
+  if(de.bracketVersion === DE_BRACKET_VERSION) return;
+  
+  var hasLbOrFinalResult = false;
+  if(de.losersRounds) {
+    for(var r = 0; r < de.losersRounds.length && !hasLbOrFinalResult; r++) {
+      for(var m = 0; m < de.losersRounds[r].length; m++) {
+        if(s.results['de-losers-' + r + '-' + m]) { hasLbOrFinalResult = true; break; }
+      }
+    }
+  }
+  if(!hasLbOrFinalResult && s.results['de-grand-final-0']) hasLbOrFinalResult = true;
+  
+  if(hasLbOrFinalResult) { de.bracketVersion = DE_BRACKET_VERSION; saveAll(); return; } // not safe to re-pair — just mark as seen so we stop checking every render
+  
+  var rebuilt = deBuildLosersBracket(de.winnersRounds);
+  de.losersRounds = rebuilt.losersRounds;
+  de.losersNames = rebuilt.losersNames;
+  de.grandFinals = rebuilt.grandFinals;
+  de.bracketVersion = DE_BRACKET_VERSION;
+  saveAll();
 }
 
 // Render horizontal CUP bracket with simple column layout
@@ -1116,6 +1179,16 @@ function getTeamNameForMatch(s, team){
 function renderDoubleEliminationBracket(s){
   var host = document.getElementById('doubleEliminationBracket');
   if(!host || !s.doubleElimination) return;
+  
+  // Self-heal #1: upgrade a losers-bracket built by an older, buggy pairing
+  // version (only when no LB/Grand-Final result exists yet — safe to re-pair).
+  checkAndFixDoubleEliminationBracket(s);
+  
+  // Self-heal #2: if any losers-bracket round's pairing has become a rematch of
+  // an already-played match (can happen because LB slot assignment depends on
+  // WHO wins earlier rounds, which isn't known until results come in), try to
+  // permute that round's pairings to avoid it, before rendering.
+  deAutoAvoidRematches(s);
   
   host.innerHTML = '';
   
@@ -1829,6 +1902,100 @@ function deHasPlayedBefore(s, teamA, teamB, excludeBracket, excludeRoundIdx, exc
   if(teamA == null || teamB == null || teamA === teamB) return false;
   var pairs = deGetPlayedPairs(s, excludeBracket, excludeRoundIdx, excludeMatchIdx);
   return !!pairs[Math.min(teamA, teamB) + '-' + Math.max(teamA, teamB)];
+}
+
+// Given two equal-length arrays of resolved team indices (leftIdxs paired by
+// position with rightIdxs), find a permutation of rightIdxs such that NO pair
+// (leftIdxs[i], rightIdxs[perm[i]]) has played before. Prefers keeping each
+// item in its original slot (tries identity mapping first) to minimize
+// unnecessary churn. Returns an array of indices into rightIdxs (the new
+// order), or null if no fully rematch-free assignment exists.
+function deFindNoRematchAssignment(s, leftIdxs, rightIdxs) {
+  var n = leftIdxs.length;
+  var usedRight = new Array(n).fill(false);
+  var assignment = new Array(n).fill(-1);
+  function candidateOrder(i) {
+    // Try original slot i first, then the rest in order
+    var order = [i];
+    for(var j = 0; j < n; j++) { if(j !== i) order.push(j); }
+    return order;
+  }
+  function backtrack(i) {
+    if(i === n) return true;
+    var order = candidateOrder(i);
+    for(var k = 0; k < order.length; k++) {
+      var j = order[k];
+      if(usedRight[j]) continue;
+      if(deHasPlayedBefore(s, leftIdxs[i], rightIdxs[j])) continue;
+      usedRight[j] = true;
+      assignment[i] = j;
+      if(backtrack(i + 1)) return true;
+      usedRight[j] = false;
+      assignment[i] = -1;
+    }
+    return false;
+  }
+  if(backtrack(0)) return assignment;
+  return null;
+}
+
+// Self-heal a single losers-bracket round: if all its matches are resolvable
+// (both sides known) and none has a result yet, check whether any pairing in
+// the round is a rematch of an already-completed match. If so, try to find an
+// alternative assignment (permuting who plays whom WITHIN the round, since all
+// "away" slots in a given LB round share the same source type — either
+// "new WB loser" or "previous LB round survivor") that eliminates the rematch.
+// Returns true if the round's pairings were changed.
+function deAutoAvoidRematchesInRound(s, bracket, roundIdx) {
+  var rounds = s.doubleElimination && s.doubleElimination[bracket + 'Rounds'];
+  if(!rounds || !rounds[roundIdx]) return false;
+  var round = rounds[roundIdx];
+  if(round.length < 2) return false; // nothing to permute against
+
+  // Don't touch a round where any match already has a recorded result.
+  for(var i = 0; i < round.length; i++) {
+    if(s.results['de-' + bracket + '-' + roundIdx + '-' + i]) return false;
+  }
+
+  var homeIdxs = [], awayIdxs = [];
+  for(var i = 0; i < round.length; i++) {
+    var h = resolveDoubleEliminationTeam(s, round[i].home);
+    var a = resolveDoubleEliminationTeam(s, round[i].away);
+    if(h == null || a == null) return false; // not all resolved yet
+    homeIdxs.push(h);
+    awayIdxs.push(a);
+  }
+
+  var hasConflict = false;
+  for(var i = 0; i < round.length; i++) {
+    if(deHasPlayedBefore(s, homeIdxs[i], awayIdxs[i])) { hasConflict = true; break; }
+  }
+  if(!hasConflict) return false;
+
+  var assignment = deFindNoRematchAssignment(s, homeIdxs, awayIdxs);
+  if(!assignment) return false; // impossible to fully avoid — leave as-is (UI warning + manual swap remain available)
+
+  var newAways = assignment.map(function(j) { return round[j].away; });
+  var changed = false;
+  for(var i = 0; i < round.length; i++) {
+    if(round[i].away !== newAways[i]) changed = true;
+    round[i].away = newAways[i];
+  }
+  return changed;
+}
+
+// Runs deAutoAvoidRematchesInRound over every losers-bracket round (self-heal,
+// same pattern as checkAndGenerateKnockout). Persists via saveAll() if any
+// round's pairing was adjusted. Safe to call on every render — idempotent
+// once no conflicts remain.
+function deAutoAvoidRematches(s) {
+  var de = s.doubleElimination;
+  if(!de || !de.losersRounds) return;
+  var anyChanged = false;
+  for(var r = 0; r < de.losersRounds.length; r++) {
+    if(deAutoAvoidRematchesInRound(s, 'losers', r)) anyChanged = true;
+  }
+  if(anyChanged) saveAll();
 }
 
 // Manual pairing adjustment: lets an admin swap the team currently occupying
