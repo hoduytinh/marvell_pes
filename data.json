@@ -17406,7 +17406,7 @@
         "Tĩnh - Linh",
         "Phát - Hưng",
         "Thiện - Toàn",
-        "Truồng - Ánh",
+        "Ánh - Hoàng",
         "Đức - Kiên",
         "Tùng - Tú",
         "Phong - Vỹ",
@@ -17443,6 +17443,14 @@
         },
         "de-winners-0-3": {
           "hg": 1,
+          "ag": 2
+        },
+        "de-winners-0-1": {
+          "hg": 0,
+          "ag": 2
+        },
+        "de-winners-1-0": {
+          "hg": 0,
           "ag": 2
         }
       },
