@@ -396,12 +396,21 @@ function buildDoubleEliminationBracket(s){
   var loserRoundIdx = 0;
   
   // First round of losers: losers from WB Round 1
+  // Round 1 is split into 2 hidden branches: Branch A = first half of the
+  // Round-1 matches, Branch B = second half. Teams within the same branch
+  // NEVER meet each other in WB Round 1 (they only meet teams in the other
+  // branch), so cross-pairing losers here (branch A loser vs branch B loser)
+  // guarantees a team dropping to LB never re-faces a same-branch opponent
+  // and, since the two teams have never played before, avoids an early rematch.
   if(winnersRounds[0] && winnersRounds[0].length > 0) {
     var firstLoserRound = [];
-    for(var i = 0; i < winnersRounds[0].length; i += 2) {
+    var r1Matches = winnersRounds[0];
+    var branchHalf = Math.floor(r1Matches.length / 2);
+    for(var i = 0; i < branchHalf; i++) {
+      var j = i + branchHalf; // corresponding match in the other branch
       firstLoserRound.push({
         home: {fromRound: 0, matchId: i, bracket: 'winners', position: 'loser'},
-        away: {fromRound: 0, matchId: i+1, bracket: 'winners', position: 'loser'},
+        away: {fromRound: 0, matchId: j, bracket: 'winners', position: 'loser'},
         bracket: 'losers'
       });
     }
@@ -1319,6 +1328,21 @@ function renderDoubleEliminationBracket(s){
           homeSection.appendChild(homeLogo);
           homeSection.appendChild(homeTeamDisplay);
           
+          // Manual pairing adjustment (round > 0 only; Round 1 already has team dropdowns)
+          var canManualSwap = isAdmin() && roundIdx > 0 && match.bracket !== 'grand-final' && round.length > 1 && !s.results[key];
+          if(canManualSwap && homeIdx != null) {
+            var swapHomeBtn = document.createElement('button');
+            swapHomeBtn.type = 'button';
+            swapHomeBtn.textContent = '🔀';
+            swapHomeBtn.title = 'Đổi cặp đấu thủ công';
+            swapHomeBtn.style.cssText = 'width:18px;height:18px;padding:0;margin-left:2px;border:1px solid var(--border);border-radius:3px;background:var(--card);color:var(--text);cursor:pointer;font-size:10px;line-height:1;flex:none;';
+            swapHomeBtn.addEventListener('click', function(e){
+              e.preventDefault();
+              openDeSwapDialog(s, match.bracket, roundIdx, matchIdx, 'home', round);
+            });
+            homeSection.appendChild(swapHomeBtn);
+          }
+          
           // Create scores section
           var scoresSection = document.createElement('div');
           scoresSection.style.cssText = `display: flex; align-items: center; gap: 8px; justify-content: center;`;
@@ -1388,6 +1412,18 @@ function renderDoubleEliminationBracket(s){
           // Create away section
           var awaySection = document.createElement('div');
           awaySection.style.cssText = `display: flex; align-items: center; gap: 8px; justify-content: flex-end; width: ${sectionWidth}px;`;
+          if(canManualSwap && awayIdx != null) {
+            var swapAwayBtn = document.createElement('button');
+            swapAwayBtn.type = 'button';
+            swapAwayBtn.textContent = '🔀';
+            swapAwayBtn.title = 'Đổi cặp đấu thủ công';
+            swapAwayBtn.style.cssText = 'width:18px;height:18px;padding:0;margin-right:2px;border:1px solid var(--border);border-radius:3px;background:var(--card);color:var(--text);cursor:pointer;font-size:10px;line-height:1;flex:none;';
+            swapAwayBtn.addEventListener('click', function(e){
+              e.preventDefault();
+              openDeSwapDialog(s, match.bracket, roundIdx, matchIdx, 'away', round);
+            });
+            awaySection.appendChild(swapAwayBtn);
+          }
           awaySection.appendChild(awayTeamDisplay);
           awaySection.appendChild(awayLogo);
           
@@ -1395,6 +1431,17 @@ function renderDoubleEliminationBracket(s){
           matchRow.appendChild(scoresSection);
           matchRow.appendChild(awaySection);
           el.appendChild(matchRow);
+          
+          // Rematch warning: flag if these two teams have already faced each other
+          // (Grand Final is exempt - a rematch there is expected/allowed)
+          if(match.bracket !== 'grand-final' && !s.results[key] && homeIdx != null && awayIdx != null) {
+            if(deHasPlayedBefore(s, homeIdx, awayIdx, match.bracket, roundIdx, matchIdx)) {
+              var rematchWarn = document.createElement('div');
+              rematchWarn.textContent = '⚠️ Hai đội đã từng gặp nhau trước đó';
+              rematchWarn.style.cssText = 'text-align:center; color:#e74c3c; font-size:11px; padding:2px 4px 4px;';
+              el.appendChild(rematchWarn);
+            }
+          }
           
           // Admin permissions
           if (isAdmin() && bothTeamsDetermined) {
@@ -1744,6 +1791,116 @@ function getResolvedTeamName(s, team, position) {
     return s.teams[teamIdx] || ('Team ' + (teamIdx + 1));
   }
   return getTeamNameForDoubleElimination(s, team);
+}
+
+// Build a set of "已played" pairs (team indices) from ALL completed double-elimination
+// matches (playoff + winners + losers), so we can detect if two teams already met.
+// Grand Final is intentionally EXCLUDED: two teams ARE allowed to meet again there.
+// Pass excludeBracket/excludeRoundIdx/excludeMatchIdx to skip a specific slot (e.g. the
+// match currently being checked/edited) so it doesn't count against itself.
+function deGetPlayedPairs(s, excludeBracket, excludeRoundIdx, excludeMatchIdx) {
+  var pairs = {};
+  var de = s.doubleElimination;
+  if(!de) return pairs;
+  function scan(rounds, bracketName) {
+    if(!rounds) return;
+    rounds.forEach(function(round, rIdx) {
+      round.forEach(function(m, mIdx) {
+        if(bracketName === excludeBracket && rIdx === excludeRoundIdx && mIdx === excludeMatchIdx) return;
+        var key = 'de-' + bracketName + '-' + rIdx + '-' + mIdx;
+        var res = s.results[key];
+        if(!res || res.hg == null || res.ag == null) return;
+        var h = resolveDoubleEliminationTeam(s, m.home);
+        var a = resolveDoubleEliminationTeam(s, m.away);
+        if(h == null || a == null) return;
+        pairs[Math.min(h, a) + '-' + Math.max(h, a)] = true;
+      });
+    });
+  }
+  if(de.playoffRound) scan([de.playoffRound], 'playoff');
+  scan(de.winnersRounds, 'winners');
+  scan(de.losersRounds, 'losers');
+  return pairs;
+}
+
+// Returns true if teamA and teamB have already faced each other in a previous
+// (non grand-final) double-elimination match.
+function deHasPlayedBefore(s, teamA, teamB, excludeBracket, excludeRoundIdx, excludeMatchIdx) {
+  if(teamA == null || teamB == null || teamA === teamB) return false;
+  var pairs = deGetPlayedPairs(s, excludeBracket, excludeRoundIdx, excludeMatchIdx);
+  return !!pairs[Math.min(teamA, teamB) + '-' + Math.max(teamA, teamB)];
+}
+
+// Manual pairing adjustment: lets an admin swap the team currently occupying
+// (bracket, roundIdx, matchIdx, side) with any OTHER not-yet-played slot in the
+// SAME round + bracket. This is the escape hatch for when the automatic
+// anti-rematch / branch-separation logic still produces a bad pairing.
+function openDeSwapDialog(s, bracket, roundIdx, matchIdx, side, round) {
+  if(!isAdmin()) { toast('Chỉ admin được phép sửa'); return; }
+  var currentMatch = round[matchIdx];
+  var currentKey = 'de-' + bracket + '-' + roundIdx + '-' + matchIdx;
+  if(s.results[currentKey]) {
+    toast('Trận này đã có kết quả — hãy xoá kết quả trước khi đổi cặp thủ công');
+    return;
+  }
+  var currentTeamIdx = resolveDoubleEliminationTeam(s, currentMatch[side]);
+  var currentTeamName = currentTeamIdx != null ? (s.teams[currentTeamIdx] || ('Team ' + (currentTeamIdx + 1))) : getTeamNameForDoubleElimination(s, currentMatch[side]);
+
+  var candidates = [];
+  round.forEach(function(m, mIdx) {
+    if(mIdx === matchIdx) return;
+    var mKey = 'de-' + bracket + '-' + roundIdx + '-' + mIdx;
+    if(s.results[mKey]) return; // don't disturb already-played matches
+    ['home', 'away'].forEach(function(sd) {
+      var idx = resolveDoubleEliminationTeam(s, m[sd]);
+      if(idx == null) return;
+      candidates.push({ matchIdx: mIdx, side: sd, teamIdx: idx, teamName: s.teams[idx] || ('Team ' + (idx + 1)) });
+    });
+  });
+
+  if(candidates.length === 0) { toast('Không có đối thủ nào khác để đổi trong vòng này'); return; }
+
+  var dlg = document.createElement('dialog');
+  dlg.style.cssText = 'width:320px; max-width:90vw; border:none; border-radius:8px; padding:20px; background:var(--card); color:var(--text);';
+  dlg.innerHTML =
+    '<h4 style="margin:0 0 12px 0; color:var(--accent);">🔀 Đổi cặp đấu thủ công</h4>' +
+    '<div style="margin-bottom:12px; font-size:13px;">Đội hiện tại: <b>' + (currentTeamName || 'TBD') + '</b><br>Chọn đội muốn đổi vào vị trí này:</div>' +
+    '<div style="max-height:240px; overflow-y:auto; border:1px solid var(--border); border-radius:4px; background:var(--bg);">' +
+    candidates.map(function(c, i) {
+      return '<div class="de-swap-option" data-i="' + i + '" style="padding:8px 12px; cursor:pointer; border-bottom:1px solid var(--border);">' +
+        c.teamName + ' <span style="color:var(--muted); font-size:11px;">(Trận ' + (c.matchIdx + 1) + ' - ' + (c.side === 'home' ? 'Đội nhà' : 'Đội khách') + ')</span></div>';
+    }).join('') +
+    '</div>' +
+    '<div style="margin-top:16px; text-align:right;">' +
+    '<button type="button" class="de-swap-cancel" style="padding:8px 16px; background:var(--muted); color:white; border:none; border-radius:4px; cursor:pointer;">Huỷ</button>' +
+    '</div>';
+
+  document.body.appendChild(dlg);
+
+  dlg.querySelectorAll('.de-swap-option').forEach(function(el) {
+    el.addEventListener('mouseenter', function() { this.style.background = 'var(--hover)'; });
+    el.addEventListener('mouseleave', function() { this.style.background = ''; });
+    el.addEventListener('click', function() {
+      var c = candidates[parseInt(this.getAttribute('data-i'), 10)];
+      var otherMatch = round[c.matchIdx];
+      var tmp = currentMatch[side];
+      currentMatch[side] = otherMatch[c.side];
+      otherMatch[c.side] = tmp;
+      saveAll();
+      if(typeof dlg.close === 'function') dlg.close(); else dlg.removeAttribute('open');
+      toast('Đã đổi cặp đấu');
+      renderDoubleEliminationBracket(s);
+      renderCupStandings(s);
+    });
+  });
+  dlg.querySelector('.de-swap-cancel').addEventListener('click', function() {
+    if(typeof dlg.close === 'function') dlg.close(); else dlg.removeAttribute('open');
+  });
+  dlg.addEventListener('close', function() {
+    if(dlg.parentNode) document.body.removeChild(dlg);
+  });
+
+  if(typeof dlg.showModal === 'function') { dlg.showModal(); } else { dlg.setAttribute('open', 'open'); }
 }
 
 // Save double elimination match scores
