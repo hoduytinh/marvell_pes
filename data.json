@@ -17849,7 +17849,7 @@
               },
               "away": {
                 "fromRound": 1,
-                "matchId": 0,
+                "matchId": 1,
                 "bracket": "winners",
                 "position": "loser"
               },
@@ -17863,7 +17863,7 @@
               },
               "away": {
                 "fromRound": 1,
-                "matchId": 1,
+                "matchId": 0,
                 "bracket": "winners",
                 "position": "loser"
               },
@@ -17922,7 +17922,8 @@
             },
             "bracket": "grand-final"
           }
-        ]
+        ],
+        "bracketVersion": 2
       }
     }
   },
