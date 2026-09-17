@@ -17458,8 +17458,12 @@
           "ag": 0
         },
         "de-losers-0-1": {
-          "hg": 1,
+          "hg": 2,
           "ag": 0
+        },
+        "de-winners-1-1": {
+          "hg": 2,
+          "ag": 1
         }
       },
       "rounds": [
@@ -17857,7 +17861,7 @@
               },
               "away": {
                 "fromRound": 1,
-                "matchId": 1,
+                "matchId": 0,
                 "bracket": "winners",
                 "position": "loser"
               },
@@ -17871,7 +17875,7 @@
               },
               "away": {
                 "fromRound": 1,
-                "matchId": 0,
+                "matchId": 1,
                 "bracket": "winners",
                 "position": "loser"
               },
@@ -17930,8 +17934,7 @@
             },
             "bracket": "grand-final"
           }
-        ],
-        "bracketVersion": 2
+        ]
       }
     }
   },
