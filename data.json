@@ -17484,6 +17484,10 @@
         "de-losers-3-0": {
           "hg": 2,
           "ag": 0
+        },
+        "de-grand-final-0": {
+          "hg": 3,
+          "ag": 2
         }
       },
       "rounds": [
