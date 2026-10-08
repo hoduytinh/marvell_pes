@@ -12291,6 +12291,91 @@
                   "rate": 1
                 }
               ]
+            },
+            {
+              "name": "DUAL",
+              "rankings": [
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                },
+                {
+                  "name": "",
+                  "point": 0,
+                  "rate": 1
+                }
+              ]
             }
           ],
           "pictures": []
