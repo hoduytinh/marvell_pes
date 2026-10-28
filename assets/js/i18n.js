@@ -212,6 +212,7 @@
     'Tự động scan từ logos/': 'Auto-scan from logos/',
     '🔄 Quét lại ngay': '🔄 Rescan now',
     '🔍 Tìm theo tên...': '🔍 Search by name...',
+    'Không có kết quả': 'No results',
     'Xóa bằng cách remove file trong logos/ trên repo': 'Remove by deleting the file in logos/ on the repo',
     'Lưu base64 trong data.json (legacy, có thể xóa nếu file đã có trên repo)': 'Store base64 in data.json (legacy; can be removed once the file exists on the repo)',
 

@@ -2032,7 +2032,7 @@ function openDeSwapDialog(s, bracket, roundIdx, matchIdx, side, round) {
   dlg.innerHTML =
     '<h4 style="margin:0 0 12px 0; color:var(--accent);">🔀 Đổi cặp đấu thủ công</h4>' +
     '<div style="margin-bottom:12px; font-size:13px;">Đội hiện tại: <b>' + (currentTeamName || 'TBD') + '</b><br>Chọn đội muốn đổi vào vị trí này:</div>' +
-    '<div style="max-height:240px; overflow-y:auto; border:1px solid var(--border); border-radius:4px; background:var(--bg);">' +
+    '<div class="de-swap-list" style="max-height:240px; overflow-y:auto; border:1px solid var(--border); border-radius:4px; background:var(--bg);">' +
     candidates.map(function(c, i) {
       return '<div class="de-swap-option" data-i="' + i + '" style="padding:8px 12px; cursor:pointer; border-bottom:1px solid var(--border);">' +
         c.teamName + ' <span style="color:var(--muted); font-size:11px;">(Trận ' + (c.matchIdx + 1) + ' - ' + (c.side === 'home' ? 'Đội nhà' : 'Đội khách') + ')</span></div>';
@@ -2043,6 +2043,9 @@ function openDeSwapDialog(s, bracket, roundIdx, matchIdx, side, round) {
     '</div>';
 
   document.body.appendChild(dlg);
+  addListSearch(dlg.querySelector('.de-swap-list'), '.de-swap-option', function(el) {
+    return candidates[parseInt(el.getAttribute('data-i'), 10)].teamName;
+  });
 
   dlg.querySelectorAll('.de-swap-option').forEach(function(el) {
     el.addEventListener('mouseenter', function() { this.style.background = 'var(--hover)'; });
@@ -6093,6 +6096,259 @@ function renderCupStandings(s){
         .replace(/[^a-z0-9]/g, '');
     }
 
+    // Insert a live search box right above `listEl` and filter its items
+    // (matched by `itemSelector`) using normalizeSearch. Hidden items get the
+    // `ls-hidden` class so their own inline display (flex, etc.) is preserved.
+    function addListSearch(listEl, itemSelector, getText, opts) {
+      opts = opts || {};
+      if(!listEl || !listEl.parentNode) return null;
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'list-search-input';
+      input.placeholder = '🔍 Tìm theo tên...';
+      input.setAttribute('autocomplete', 'off');
+      listEl.parentNode.insertBefore(input, listEl);
+      var empty = document.createElement('div');
+      empty.className = 'list-search-empty';
+      empty.textContent = 'Không có kết quả';
+      empty.style.display = 'none';
+      listEl.appendChild(empty);
+      input.addEventListener('input', function() {
+        var q = normalizeSearch(this.value);
+        var visible = 0;
+        listEl.querySelectorAll(itemSelector).forEach(function(el) {
+          var match = !q || normalizeSearch(getText(el)).indexOf(q) !== -1;
+          el.classList.toggle('ls-hidden', !match);
+          if(match) visible++;
+        });
+        empty.style.display = visible === 0 ? 'block' : 'none';
+      });
+      if(opts.autofocus !== false) setTimeout(function() { try { input.focus(); } catch(_) {} }, 50);
+      return input;
+    }
+
+    // ===== Searchable <select> =====
+    // Any single-choice <select> with >= SELECT_SEARCH_MIN options opens a
+    // popup with a search box instead of the native dropdown. The <select>
+    // stays the source of truth: picking an item sets selectedIndex and fires
+    // 'change', so every existing listener keeps working. Opt out with
+    // the `data-no-search` attribute.
+    var SELECT_SEARCH_MIN = 8;
+    var selectSearchState = null;
+
+    function isSearchableSelect(sel) {
+      return !!sel && sel.tagName === 'SELECT' && !sel.multiple && !(sel.size > 1) && !sel.disabled &&
+        !sel.hasAttribute('data-no-search') && sel.options.length >= SELECT_SEARCH_MIN;
+    }
+
+    function closeSelectSearch() {
+      var st = selectSearchState;
+      if(!st) return;
+      selectSearchState = null;
+      try { if(st.pop.hidePopover && st.pop.matches(':popover-open')) st.pop.hidePopover(); } catch(_) {}
+      if(st.pop.parentNode) st.pop.parentNode.removeChild(st.pop);
+      document.removeEventListener('mousedown', st.onOutside, true);
+      document.removeEventListener('touchstart', st.onOutside, true);
+      window.removeEventListener('scroll', st.onScroll, true);
+      window.removeEventListener('resize', st.onResize);
+    }
+
+    function openSelectSearch(sel, fromTouch) {
+      closeSelectSearch();
+      var pop = document.createElement('div');
+      pop.className = 'sel-search-pop';
+      var usePopover = typeof pop.showPopover === 'function';
+      if(usePopover) pop.setAttribute('popover', 'manual');
+
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'sel-search-input';
+      input.placeholder = '🔍 Tìm theo tên...';
+      input.setAttribute('autocomplete', 'off');
+      var list = document.createElement('div');
+      list.className = 'sel-search-list';
+      var empty = document.createElement('div');
+      empty.className = 'sel-search-empty';
+      empty.textContent = 'Không có kết quả';
+      empty.style.display = 'none';
+      pop.appendChild(input);
+      pop.appendChild(list);
+      pop.appendChild(empty);
+
+      var items = [];
+      Array.prototype.forEach.call(sel.options, function(opt, i) {
+        if(opt.hidden) return;
+        var el = document.createElement('div');
+        el.className = 'sel-search-item';
+        if(opt.disabled) el.classList.add('disabled');
+        if(i === sel.selectedIndex) el.classList.add('selected');
+        el.textContent = opt.text;
+        var grp = (opt.parentNode && opt.parentNode.tagName === 'OPTGROUP') ? opt.parentNode.label : '';
+        var item = { el: el, idx: i, disabled: opt.disabled, key: normalizeSearch(opt.text + ' ' + grp) };
+        el.addEventListener('mousedown', function(e) { e.preventDefault(); });
+        el.addEventListener('click', function() { choose(item); });
+        items.push(item);
+        list.appendChild(el);
+      });
+
+      var visible = items.slice();
+      var active = -1;
+      function ensureVisible(el) {
+        var top = el.offsetTop, bottom = top + el.offsetHeight;
+        if(top < list.scrollTop) list.scrollTop = top;
+        else if(bottom > list.scrollTop + list.clientHeight) list.scrollTop = bottom - list.clientHeight;
+      }
+      function setActive(n) {
+        if(active >= 0 && visible[active]) visible[active].el.classList.remove('active');
+        active = n;
+        if(active >= 0 && visible[active]) {
+          visible[active].el.classList.add('active');
+          ensureVisible(visible[active].el);
+        }
+      }
+      function filter() {
+        var q = normalizeSearch(input.value);
+        visible = [];
+        items.forEach(function(it) {
+          var match = !q || it.key.indexOf(q) !== -1;
+          it.el.style.display = match ? '' : 'none';
+          it.el.classList.remove('active');
+          if(match) visible.push(it);
+        });
+        empty.style.display = visible.length ? 'none' : 'block';
+        active = -1;
+        var firstEnabled = -1;
+        for(var k = 0; k < visible.length; k++) { if(!visible[k].disabled) { firstEnabled = k; break; } }
+        if(q && firstEnabled >= 0) setActive(firstEnabled);
+      }
+      function choose(item) {
+        if(!item || item.disabled) return;
+        var changed = sel.selectedIndex !== item.idx;
+        closeSelectSearch();
+        if(changed) {
+          sel.selectedIndex = item.idx;
+          sel.dispatchEvent(new Event('input', { bubbles: true }));
+          sel.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        try { sel.focus({ preventScroll: true }); } catch(_) {}
+      }
+      input.addEventListener('input', filter);
+      input.addEventListener('keydown', function(e) {
+        if(e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          if(!visible.length) return;
+          var step = e.key === 'ArrowDown' ? 1 : -1;
+          var n = active;
+          for(var tries = 0; tries < visible.length; tries++) {
+            n = (n + step + visible.length) % visible.length;
+            if(!visible[n].disabled) break;
+          }
+          setActive(n);
+        } else if(e.key === 'Enter') {
+          e.preventDefault();
+          if(active >= 0) choose(visible[active]);
+          else if(visible.length === 1) choose(visible[0]);
+        } else if(e.key === 'Escape' || e.key === 'Tab') {
+          if(e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); }
+          closeSelectSearch();
+          try { sel.focus({ preventScroll: true }); } catch(_) {}
+        }
+      });
+
+      // Mount: popover → browser top layer (above modal dialogs / widgets).
+      var host = usePopover ? document.body : (sel.closest('dialog[open]') || document.body);
+      host.appendChild(pop);
+      if(usePopover) { try { pop.showPopover(); } catch(_) {} }
+
+      // Position under (or above) the select, clamped to the viewport.
+      var r = sel.getBoundingClientRect();
+      var vw = window.innerWidth, vh = window.innerHeight;
+      var width = Math.min(Math.max(r.width, 240), 360, vw - 16);
+      var left = Math.max(8, Math.min(r.left, vw - width - 8));
+      pop.style.width = width + 'px';
+      pop.style.left = left + 'px';
+      var spaceBelow = vh - r.bottom - 8, spaceAbove = r.top - 8;
+      if(spaceBelow < 220 && spaceAbove > spaceBelow) {
+        pop.style.bottom = (vh - r.top + 2) + 'px';
+        pop.style.maxHeight = Math.min(360, spaceAbove) + 'px';
+      } else {
+        pop.style.top = (r.bottom + 2) + 'px';
+        pop.style.maxHeight = Math.min(360, Math.max(160, spaceBelow)) + 'px';
+      }
+
+      var selItem = items.filter(function(it) { return it.idx === sel.selectedIndex; })[0];
+      if(selItem) list.scrollTop = Math.max(0, selItem.el.offsetTop - list.clientHeight / 2);
+
+      var startWidth = vw;
+      var st = {
+        pop: pop,
+        sel: sel,
+        onOutside: function(e) {
+          if(pop.contains(e.target) || e.target === sel) return;
+          closeSelectSearch();
+        },
+        onScroll: function(e) {
+          if(e.target && e.target.nodeType === 1 && pop.contains(e.target)) return;
+          // Mobile keyboard opening may scroll the page while typing
+          if(document.activeElement === input) return;
+          closeSelectSearch();
+        },
+        onResize: function() {
+          if(window.innerWidth !== startWidth) closeSelectSearch();
+        }
+      };
+      selectSearchState = st;
+      document.addEventListener('mousedown', st.onOutside, true);
+      document.addEventListener('touchstart', st.onOutside, true);
+      window.addEventListener('scroll', st.onScroll, true);
+      window.addEventListener('resize', st.onResize);
+
+      if(!fromTouch) setTimeout(function() { try { input.focus(); } catch(_) {} }, 0);
+    }
+
+    (function initSearchableSelects() {
+      // Desktop: replace the native dropdown on left mouse button
+      document.addEventListener('mousedown', function(e) {
+        if(e.button !== 0) return;
+        var sel = e.target && e.target.closest ? e.target.closest('select') : null;
+        if(!sel) return;
+        if(selectSearchState && selectSearchState.sel === sel) {
+          e.preventDefault();
+          closeSelectSearch();
+          return;
+        }
+        if(!isSearchableSelect(sel)) return;
+        e.preventDefault();
+        try { sel.focus({ preventScroll: true }); } catch(_) {}
+        openSelectSearch(sel, false);
+      }, true);
+
+      // Touch: open on tap (not on scroll gestures)
+      var touchStart = null;
+      document.addEventListener('touchstart', function(e) {
+        var t = e.touches && e.touches[0];
+        touchStart = t ? { x: t.clientX, y: t.clientY } : null;
+      }, { capture: true, passive: true });
+      document.addEventListener('touchend', function(e) {
+        var sel = e.target && e.target.closest ? e.target.closest('select') : null;
+        if(!sel || !isSearchableSelect(sel) || !touchStart) return;
+        var t = e.changedTouches && e.changedTouches[0];
+        if(t && (Math.abs(t.clientX - touchStart.x) > 10 || Math.abs(t.clientY - touchStart.y) > 10)) return;
+        e.preventDefault();
+        openSelectSearch(sel, true);
+      }, { capture: true, passive: false });
+
+      // Keyboard: Space / Enter / Alt+ArrowDown / F4 open the search popup
+      document.addEventListener('keydown', function(e) {
+        var sel = e.target;
+        if(!sel || sel.tagName !== 'SELECT' || !isSearchableSelect(sel)) return;
+        if(e.key === ' ' || e.key === 'Enter' || e.key === 'F4' || (e.altKey && e.key === 'ArrowDown')) {
+          e.preventDefault();
+          openSelectSearch(sel, false);
+        }
+      }, true);
+    })();
+
     // Helper function to calculate max team name width
     function getMaxTeamNameWidth(teamNames) {
       if (!teamNames || !teamNames.length) return 150; // Default fallback
@@ -8398,7 +8654,7 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
           
           selectDialog.innerHTML = 
             '<h4 style="margin: 0 0 16px 0; color: var(--accent);">Select Team</h4>' +
-            '<div style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; background: var(--bg);">' +
+            '<div class="team-list" style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; background: var(--bg);">' +
             state.teamMasterList.slice().sort(function(a, b) {
               return a.toLowerCase().localeCompare(b.toLowerCase());
             }).map(function(team) { 
@@ -8430,6 +8686,7 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
           });
           
           document.body.appendChild(selectDialog);
+          addListSearch(selectDialog.querySelector('.team-list'), '.team-option', function(el) { return el.getAttribute('data-team'); });
           if(typeof selectDialog.showModal === 'function') { 
             selectDialog.showModal(); 
           } else { 
@@ -8530,9 +8787,134 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
         return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
       });
       
+      // Admin can hide teams that no longer participate (s.rankingHidden)
+      stats.allParticipants = stats.championsList.slice();
+      var hiddenSet = getRankingHiddenSet(s);
+      stats.championsList = stats.championsList.filter(function(c) { return !hiddenSet[c.name]; });
+      stats.hiddenCount = stats.allParticipants.length - stats.championsList.length;
+      
       stats.totalChampions = stats.championsList.length;
       
       return stats;
+    }
+
+    function getRankingHiddenSet(s) {
+      var set = Object.create(null);
+      (s.rankingHidden || []).forEach(function(n) { if(n) set[String(n).trim()] = true; });
+      return set;
+    }
+
+    // Admin dialog: tick which participants are shown in the Ranking table
+    function openRankingVisibilityDialog(s, participants) {
+      if(!participants || participants.length === 0) {
+        alert('No participants in the latest timeline yet.');
+        return;
+      }
+      var hiddenSet = getRankingHiddenSet(s);
+      var sorted = participants.slice().sort(function(a, b) {
+        return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+      });
+
+      var dlg = document.createElement('dialog');
+      dlg.style.cssText = 'width: 420px; max-width: 92vw; border: none; border-radius: 8px; padding: 20px; background: var(--card); color: var(--text);';
+
+      var title = document.createElement('h4');
+      title.textContent = '👥 Select teams shown in Ranking';
+      title.style.cssText = 'margin: 0 0 8px 0; color: var(--accent);';
+      dlg.appendChild(title);
+
+      var hint = document.createElement('div');
+      hint.textContent = 'Unchecked teams are hidden from the Ranking table. Event data in Year is kept.';
+      hint.style.cssText = 'font-size: 12px; color: var(--muted); margin-bottom: 10px;';
+      dlg.appendChild(hint);
+
+      var actions = document.createElement('div');
+      actions.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-bottom: 8px;';
+      var btnAll = document.createElement('button');
+      btnAll.type = 'button';
+      btnAll.textContent = 'Chọn tất cả';
+      var btnNone = document.createElement('button');
+      btnNone.type = 'button';
+      btnNone.textContent = 'Bỏ tất cả';
+      var counter = document.createElement('span');
+      counter.style.cssText = 'margin-left: auto; font-size: 12px; color: var(--muted);';
+      actions.appendChild(btnAll);
+      actions.appendChild(btnNone);
+      actions.appendChild(counter);
+
+      var list = document.createElement('div');
+      list.style.cssText = 'max-height: 320px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; background: var(--bg);';
+      sorted.forEach(function(p) {
+        var label = document.createElement('label');
+        label.className = 'rank-vis-item';
+        label.setAttribute('data-name', p.name);
+        label.style.cssText = 'display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--border); cursor: pointer;';
+        var cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.checked = !hiddenSet[p.name];
+        cb.addEventListener('change', updateCounter);
+        var nameSpan = document.createElement('span');
+        nameSpan.textContent = p.name;
+        nameSpan.style.cssText = 'flex: 1;';
+        var ptsSpan = document.createElement('span');
+        ptsSpan.textContent = p.points.toFixed(2);
+        ptsSpan.style.cssText = 'color: var(--muted); font-size: 12px;';
+        label.appendChild(cb);
+        label.appendChild(nameSpan);
+        label.appendChild(ptsSpan);
+        list.appendChild(label);
+      });
+      dlg.appendChild(actions);
+      dlg.appendChild(list);
+
+      var footer = document.createElement('div');
+      footer.style.cssText = 'margin-top: 16px; display: flex; justify-content: flex-end; gap: 8px;';
+      var btnCancel = document.createElement('button');
+      btnCancel.type = 'button';
+      btnCancel.textContent = 'Hủy';
+      var btnSave = document.createElement('button');
+      btnSave.type = 'button';
+      btnSave.className = 'primary';
+      btnSave.textContent = 'Lưu';
+      footer.appendChild(btnCancel);
+      footer.appendChild(btnSave);
+      dlg.appendChild(footer);
+
+      function allBoxes() { return Array.prototype.slice.call(list.querySelectorAll('.rank-vis-item input[type="checkbox"]')); }
+      function visibleBoxes() {
+        return allBoxes().filter(function(cb) { return !cb.closest('.rank-vis-item').classList.contains('ls-hidden'); });
+      }
+      function updateCounter() {
+        var boxes = allBoxes();
+        var shown = boxes.filter(function(cb) { return cb.checked; }).length;
+        counter.textContent = shown + ' / ' + boxes.length;
+      }
+      // Select/Deselect all apply to the currently filtered (visible) rows
+      btnAll.onclick = function() { visibleBoxes().forEach(function(cb) { cb.checked = true; }); updateCounter(); };
+      btnNone.onclick = function() { visibleBoxes().forEach(function(cb) { cb.checked = false; }); updateCounter(); };
+      btnCancel.onclick = function() { dlg.close(); };
+      btnSave.onclick = function() {
+        // Keep previously hidden names that are not in the current list
+        var currentNames = Object.create(null);
+        sorted.forEach(function(p) { currentNames[p.name] = true; });
+        var hidden = (s.rankingHidden || []).filter(function(n) { return !currentNames[String(n).trim()]; });
+        var shownCount = 0;
+        list.querySelectorAll('.rank-vis-item').forEach(function(item) {
+          if(item.querySelector('input').checked) shownCount++;
+          else hidden.push(item.getAttribute('data-name'));
+        });
+        s.rankingHidden = hidden;
+        saveAll();
+        dlg.close();
+        renderRankingMode(s);
+        toast('Ranking: ' + shownCount + ' / ' + sorted.length + ' teams shown');
+      };
+      dlg.addEventListener('close', function() { if(dlg.parentNode) dlg.parentNode.removeChild(dlg); });
+
+      updateCounter();
+      document.body.appendChild(dlg);
+      addListSearch(list, '.rank-vis-item', function(el) { return el.getAttribute('data-name'); });
+      if(typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', 'open');
     }
 
     // Render Ranking mode - timeline with events and medals
@@ -8633,7 +9015,16 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
       
       var standingsTitle = document.createElement('h3');
       standingsTitle.textContent = '🏅 Ranking';
-      standingsTitle.style.cssText = 'margin: 0 0 20px 0; color: var(--accent); font-size: 22px; font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 12px;';
+      standingsTitle.style.cssText = 'margin: 0 0 20px 0; color: var(--accent); font-size: 22px; font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 12px; display: flex; align-items: center; gap: 12px;';
+      if(isAdmin()) {
+        var visBtn = document.createElement('button');
+        visBtn.type = 'button';
+        visBtn.textContent = '👥 Select teams' + (stats.hiddenCount ? ' (' + stats.hiddenCount + ' hidden)' : '');
+        visBtn.title = 'Tick which teams are shown in the Ranking table';
+        visBtn.style.cssText = 'margin-left: auto; padding: 6px 12px; font-size: 13px; font-weight: 600;';
+        visBtn.onclick = function() { openRankingVisibilityDialog(s, stats.allParticipants); };
+        standingsTitle.appendChild(visBtn);
+      }
       standingsCard.appendChild(standingsTitle);
       
       // Create container for multiple tables (side by side)
@@ -9231,7 +9622,7 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
             
             selectDialog.innerHTML = 
               '<h4 style="margin: 0 0 16px 0; color: var(--accent);">Select Team</h4>' +
-              '<div style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; background: var(--bg);">' +
+              '<div class="team-list" style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; background: var(--bg);">' +
               state.teamMasterList.slice().sort(function(a, b) {
                 return a.toLowerCase().localeCompare(b.toLowerCase());
               }).map(function(team) { 
@@ -9263,6 +9654,7 @@ function fullFormSeq(s,teamIdx){ var out=[]; for(var r=0;r<s.rounds.length;r++){
             });
             
             document.body.appendChild(selectDialog);
+            addListSearch(selectDialog.querySelector('.team-list'), '.team-option', function(el) { return el.getAttribute('data-team'); });
             if(typeof selectDialog.showModal === 'function') { 
               selectDialog.showModal(); 
             } else { 
@@ -11803,7 +12195,7 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
         dlg.innerHTML =
           '<h4 style="margin: 0 0 12px 0; color: var(--accent);">Logo giải đấu</h4>' +
           '<div style="font-size: 12px; color: var(--muted); margin-bottom: 10px;">Chọn từ danh sách Season Logos hoặc upload file mới (sẽ được lưu vào <code>logos/</code> với tiền tố <code>season_</code>).</div>' +
-          '<div style="max-height: 260px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; background: var(--bg);">' + listHtml + '</div>' +
+          '<div class="season-logo-list" style="max-height: 260px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; background: var(--bg);">' + listHtml + '</div>' +
           '<div style="display: flex; gap: 8px; justify-content: space-between; align-items: center; margin-top: 14px;">' +
             '<button type="button" id="seasonLogoClearBtn" style="padding: 8px 14px; background: #dc2626; color: white; border: none; border-radius: 4px; cursor: pointer;">Xoá logo</button>' +
             '<div style="display: flex; gap: 8px;">' +
@@ -11813,6 +12205,9 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
           '</div>';
 
         document.body.appendChild(dlg);
+        if(seasonLogoOptions.length > 0) {
+          addListSearch(dlg.querySelector('.season-logo-list'), '.season-logo-option', function(el) { return el.getAttribute('data-logo-name'); });
+        }
 
         function closeDlg(){ try { dlg.close(); } catch(_){} if(document.body.contains(dlg)) document.body.removeChild(dlg); }
 
@@ -11884,7 +12279,7 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
               teamList.slice().sort(function(a, b) {
                 return a.toLowerCase().localeCompare(b.toLowerCase());
               }).map(function(team, idx) { 
-                return '<div style="padding: 4px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">' + 
+                return '<div class="tml-item" data-name="' + String(team).replace(/"/g, '&quot;') + '" style="padding: 4px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">' + 
                   '<span>' + (idx + 1) + '. ' + team + '</span>' + 
                   '<button type="button" onclick="removeTeam(' + teamList.indexOf(team) + ')" style="padding: 2px 8px; background: #e74c3c; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 12px;">Delete</button>' +
                 '</div>'; 
@@ -11900,6 +12295,9 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
         // Add event listeners
         document.body.appendChild(teamDialog);
         console.log('Dialog added to body');
+        if(teamList.length > 0) {
+          addListSearch(teamDialog.querySelector('#teamListDisplay'), '.tml-item', function(el) { return el.getAttribute('data-name'); }, { autofocus: false });
+        }
         
         var addBtn = teamDialog.querySelector('#addTeamBtn');
         var newInput = teamDialog.querySelector('#newTeamInput');
@@ -12001,7 +12399,7 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
             var deleteBtn = isScan
               ? '<button type="button" disabled title="Xóa bằng cách remove file trong logos/ trên repo" style="padding: 2px 8px; background: #9ca3af; color: white; border: none; border-radius: 3px; cursor: not-allowed; font-size: 12px;">Delete</button>'
               : '<button type="button" onclick="removeLogo(' + logoList.indexOf(logo) + ')" style="padding: 2px 8px; background: #e74c3c; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 12px;">Delete</button>';
-            return '<div style="padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">' +
+            return '<div class="lml-item" data-name="' + String(logo.name).replace(/"/g, '&quot;') + '" style="padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">' +
               '<div style="display: flex; align-items: center; gap: 10px;">' +
                 '<img src="' + logo.data + '" style="width: 32px; height: 32px; object-fit: cover; border-radius: 4px;" />' +
                 '<span>' + (idx + 1) + '. ' + logo.name + badge + '</span>' +
@@ -12043,6 +12441,9 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
         // Add event listeners
         document.body.appendChild(logoDialog);
         console.log('Dialog added to body');
+        if(teamLogos.length + seasonLogos.length > 0) {
+          addListSearch(logoDialog.querySelector('#logoListDisplay'), '.lml-item', function(el) { return el.getAttribute('data-name'); }, { autofocus: false });
+        }
         
         var addBtn = logoDialog.querySelector('#addLogoBtn');
         var newInput = logoDialog.querySelector('#newLogoInput');

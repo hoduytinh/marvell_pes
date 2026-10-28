@@ -72,6 +72,19 @@
     .spark{width:90px;height:26px}
     dialog{background:var(--panel);border:1px solid var(--border);border-radius:16px;color:var(--text);padding:18px;max-width:1200px}
     dialog::backdrop{background:rgba(0,0,0,.45)}
+    /* Shared list search (dialogs) */
+    .list-search-input{width:100%;box-sizing:border-box;padding:8px 10px;margin-bottom:10px;border:1px solid var(--border);border-radius:4px;background:var(--bg);color:var(--text)}
+    .list-search-empty{padding:12px;text-align:center;color:var(--muted)}
+    .ls-hidden{display:none !important}
+    /* Searchable <select> popup */
+    .sel-search-pop{position:fixed;inset:auto;margin:0;z-index:100000;display:flex;flex-direction:column;box-sizing:border-box;padding:6px;overflow:hidden;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;box-shadow:0 12px 32px rgba(0,0,0,.4);font-size:14px}
+    .sel-search-input{width:100%;box-sizing:border-box;padding:7px 9px;margin:0 0 6px 0;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:14px}
+    .sel-search-list{position:relative;flex:1 1 auto;min-height:0;overflow-y:auto}
+    .sel-search-item{padding:6px 10px;border-radius:4px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .sel-search-item:hover,.sel-search-item.active{background:rgba(96,165,250,.22)}
+    .sel-search-item.selected{color:var(--accent);font-weight:700}
+    .sel-search-item.disabled{opacity:.45;cursor:default}
+    .sel-search-empty{padding:10px;text-align:center;color:var(--muted)}
     .grid-names{display:grid;grid-template-columns:40px 1fr 90px 140px;gap:8px;align-items:center}
     .small{font-size:12px}
     .toast{position:fixed;inset:auto 16px 16px auto;background:#0b1433;border:1px solid var(--border);padding:10px 12px;border-radius:10px;opacity:0;transform:translateY(6px);transition:.25s}

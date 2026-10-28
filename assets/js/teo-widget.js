@@ -713,6 +713,8 @@
       '#teoTeamManager .actions button{flex:1;padding:7px 8px;font-size:12px}',
       '#teoTeamChecklist{max-height:180px;overflow:auto;background:var(--teo-control-bg);border:1px solid var(--teo-control-border);border-radius:8px;padding:8px}',
       '#teoTeamChecklist label{display:flex;align-items:center;gap:8px;margin:4px 0;color:var(--teo-text);font-size:13px;font-weight:500;text-transform:none;letter-spacing:0}',
+      '#teoTeamChecklist label.teo-filtered{display:none}',
+      '#teoTeamSearch{width:100%;box-sizing:border-box;padding:8px 10px;margin-bottom:8px;border-radius:8px;border:1px solid var(--teo-control-border);background:var(--teo-control-bg);color:var(--teo-control-text)}',
       '#teoTeamManager .status{font-size:12px;color:var(--teo-label);margin-top:6px}',
       '@media (max-width: 700px){#teoFab{right:12px;bottom:12px}#teoPanel{right:12px;bottom:62px;width:calc(100vw - 16px);max-height:82vh}#teoBody{max-height:calc(82vh - 62px)}#teoResult{max-height:44vh}#teoResult .teo-metrics{grid-template-columns:1fr}#teoResult .teo-summary li{grid-template-columns:1.2fr .5fr .85fr .85fr .65fr .65fr;padding:7px 8px;gap:6px;font-size:12px}}',
       '@media (max-width: 480px){#teoTopRow{grid-template-columns:1fr}#teoTeamsRow{grid-template-columns:1fr}}'
@@ -770,6 +772,7 @@
             '<button id="teoSelectAllTeamsBtn" type="button">Chọn tất cả</button>' +
             '<button id="teoClearAllTeamsBtn" type="button">Bỏ tất cả</button>' +
           '</div>' +
+          '<input id="teoTeamSearch" type="text" placeholder="🔍 Tìm theo tên..." autocomplete="off"/>' +
           '<div id="teoTeamChecklist"></div>' +
           '<div class="actions" style="margin-top:8px;">' +
             '<button id="teoSaveVisibleTeamsBtn" type="button">Lưu danh sách</button>' +
@@ -800,6 +803,7 @@
     var teamManageBtnEl = document.getElementById('teoTeamManageBtn');
     var teamManagerEl = document.getElementById('teoTeamManager');
     var teamChecklistEl = document.getElementById('teoTeamChecklist');
+    var teamSearchEl = document.getElementById('teoTeamSearch');
     var selectAllTeamsBtnEl = document.getElementById('teoSelectAllTeamsBtn');
     var clearAllTeamsBtnEl = document.getElementById('teoClearAllTeamsBtn');
     var saveVisibleTeamsBtnEl = document.getElementById('teoSaveVisibleTeamsBtn');
@@ -845,6 +849,31 @@
       }).join('');
 
       setTeamManagerStatus('Đang chọn ' + Object.keys(selectedSet).length + ' / ' + allTeams.length + ' team hiển thị.');
+      applyTeamSearch();
+    }
+
+    // Same matching rule as the main app: ignore case, accents, punctuation
+    function normalizeSearchText(str) {
+      return String(str == null ? '' : str)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd').replace(/Đ/g, 'd')
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '');
+    }
+
+    function applyTeamSearch() {
+      var q = normalizeSearchText(teamSearchEl.value);
+      teamChecklistEl.querySelectorAll('.teo-team-cb').forEach(function(cb) {
+        var match = !q || normalizeSearchText(cb.getAttribute('data-team')).indexOf(q) !== -1;
+        cb.parentNode.classList.toggle('teo-filtered', !match);
+      });
+    }
+
+    function getFilteredTeamCheckboxes() {
+      return Array.prototype.filter.call(teamChecklistEl.querySelectorAll('.teo-team-cb'), function(cb) {
+        return !cb.parentNode.classList.contains('teo-filtered');
+      });
     }
 
     function collectCheckedTeams() {
@@ -1104,13 +1133,15 @@
       if(!teamManagerEl.classList.contains('teo-hidden')) renderTeamManager();
     });
 
+    teamSearchEl.addEventListener('input', applyTeamSearch);
+
     selectAllTeamsBtnEl.addEventListener('click', function() {
-      teamChecklistEl.querySelectorAll('.teo-team-cb').forEach(function(cb) { cb.checked = true; });
+      getFilteredTeamCheckboxes().forEach(function(cb) { cb.checked = true; });
       setTeamManagerStatus('Đã chọn tất cả team. Nhấn Lưu danh sách để áp dụng.');
     });
 
     clearAllTeamsBtnEl.addEventListener('click', function() {
-      teamChecklistEl.querySelectorAll('.teo-team-cb').forEach(function(cb) { cb.checked = false; });
+      getFilteredTeamCheckboxes().forEach(function(cb) { cb.checked = false; });
       setTeamManagerStatus('Đã bỏ tất cả team. Nhấn Lưu danh sách để áp dụng.');
     });
 
