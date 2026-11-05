@@ -19713,6 +19713,11 @@
       "source": "scan"
     },
     {
+      "name": "Al_Nassr",
+      "data": "logos/Al_Nassr.jpg",
+      "source": "scan"
+    },
+    {
       "name": "Algeria",
       "data": "logos/Algeria.jpg",
       "source": "scan"
@@ -19730,6 +19735,11 @@
     {
       "name": "Aston_Villa",
       "data": "logos/Aston_Villa.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Atletico_Madrid",
+      "data": "logos/Atletico_Madrid.jpg",
       "source": "scan"
     },
     {
@@ -19772,6 +19782,11 @@
       "source": "scan"
     },
     {
+      "name": "Bologna",
+      "data": "logos/Bologna.jpg",
+      "source": "scan"
+    },
+    {
       "name": "Bosnia_and_Herzegovina",
       "data": "logos/Bosnia_and_Herzegovina.jpg",
       "source": "scan"
@@ -19789,6 +19804,11 @@
     {
       "name": "Brazil",
       "data": "logos/Brazil.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Brighton",
+      "data": "logos/Brighton.jpg",
       "source": "scan"
     },
     {
@@ -19862,8 +19882,18 @@
       "source": "scan"
     },
     {
+      "name": "Flamengo",
+      "data": "logos/Flamengo.jpg",
+      "source": "scan"
+    },
+    {
       "name": "France",
       "data": "logos/France.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Galatasaray",
+      "data": "logos/Galatasaray.jpg",
       "source": "scan"
     },
     {
@@ -19879,6 +19909,11 @@
     {
       "name": "Haiti",
       "data": "logos/Haiti.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Inter_Milan",
+      "data": "logos/Inter_Milan.jpg",
       "source": "scan"
     },
     {
@@ -19909,6 +19944,16 @@
     {
       "name": "Jordan",
       "data": "logos/Jordan.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Juventus",
+      "data": "logos/Juventus.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Lille",
+      "data": "logos/Lille.jpg",
       "source": "scan"
     },
     {
@@ -19967,6 +20012,11 @@
       "source": "scan"
     },
     {
+      "name": "Porto",
+      "data": "logos/Porto.jpg",
+      "source": "scan"
+    },
+    {
       "name": "Portugal",
       "data": "logos/Portugal.jpg",
       "source": "scan"
@@ -19984,6 +20034,11 @@
     {
       "name": "Real-madrid",
       "data": "logos/Real-madrid.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Rennes",
+      "data": "logos/Rennes.jpg",
       "source": "scan"
     },
     {
@@ -20104,6 +20159,11 @@
     {
       "name": "Uzbekistan",
       "data": "logos/Uzbekistan.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Valencia",
+      "data": "logos/Valencia.jpg",
       "source": "scan"
     }
   ],
