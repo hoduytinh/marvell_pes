@@ -49,29 +49,1626 @@
         "#1b2550"
       ],
       "teamLogos": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg"
       ],
       "results": {},
-      "rounds": [],
+      "rounds": [
+        [
+          {
+            "home": 0,
+            "away": 19
+          },
+          {
+            "home": 1,
+            "away": 18
+          },
+          {
+            "home": 2,
+            "away": 17
+          },
+          {
+            "home": 3,
+            "away": 16
+          },
+          {
+            "home": 4,
+            "away": 15
+          },
+          {
+            "home": 5,
+            "away": 14
+          },
+          {
+            "home": 6,
+            "away": 13
+          },
+          {
+            "home": 7,
+            "away": 12
+          },
+          {
+            "home": 8,
+            "away": 11
+          },
+          {
+            "home": 9,
+            "away": 10
+          }
+        ],
+        [
+          {
+            "home": 1,
+            "away": 0
+          },
+          {
+            "home": 19,
+            "away": 2
+          },
+          {
+            "home": 18,
+            "away": 3
+          },
+          {
+            "home": 17,
+            "away": 4
+          },
+          {
+            "home": 16,
+            "away": 5
+          },
+          {
+            "home": 15,
+            "away": 6
+          },
+          {
+            "home": 14,
+            "away": 7
+          },
+          {
+            "home": 13,
+            "away": 8
+          },
+          {
+            "home": 12,
+            "away": 9
+          },
+          {
+            "home": 11,
+            "away": 10
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 2
+          },
+          {
+            "home": 3,
+            "away": 1
+          },
+          {
+            "home": 4,
+            "away": 19
+          },
+          {
+            "home": 5,
+            "away": 18
+          },
+          {
+            "home": 6,
+            "away": 17
+          },
+          {
+            "home": 7,
+            "away": 16
+          },
+          {
+            "home": 8,
+            "away": 15
+          },
+          {
+            "home": 9,
+            "away": 14
+          },
+          {
+            "home": 10,
+            "away": 13
+          },
+          {
+            "home": 11,
+            "away": 12
+          }
+        ],
+        [
+          {
+            "home": 3,
+            "away": 0
+          },
+          {
+            "home": 2,
+            "away": 4
+          },
+          {
+            "home": 1,
+            "away": 5
+          },
+          {
+            "home": 19,
+            "away": 6
+          },
+          {
+            "home": 18,
+            "away": 7
+          },
+          {
+            "home": 17,
+            "away": 8
+          },
+          {
+            "home": 16,
+            "away": 9
+          },
+          {
+            "home": 15,
+            "away": 10
+          },
+          {
+            "home": 14,
+            "away": 11
+          },
+          {
+            "home": 13,
+            "away": 12
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 4
+          },
+          {
+            "home": 5,
+            "away": 3
+          },
+          {
+            "home": 6,
+            "away": 2
+          },
+          {
+            "home": 7,
+            "away": 1
+          },
+          {
+            "home": 8,
+            "away": 19
+          },
+          {
+            "home": 9,
+            "away": 18
+          },
+          {
+            "home": 10,
+            "away": 17
+          },
+          {
+            "home": 11,
+            "away": 16
+          },
+          {
+            "home": 12,
+            "away": 15
+          },
+          {
+            "home": 13,
+            "away": 14
+          }
+        ],
+        [
+          {
+            "home": 5,
+            "away": 0
+          },
+          {
+            "home": 4,
+            "away": 6
+          },
+          {
+            "home": 3,
+            "away": 7
+          },
+          {
+            "home": 2,
+            "away": 8
+          },
+          {
+            "home": 1,
+            "away": 9
+          },
+          {
+            "home": 19,
+            "away": 10
+          },
+          {
+            "home": 18,
+            "away": 11
+          },
+          {
+            "home": 17,
+            "away": 12
+          },
+          {
+            "home": 16,
+            "away": 13
+          },
+          {
+            "home": 15,
+            "away": 14
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 6
+          },
+          {
+            "home": 7,
+            "away": 5
+          },
+          {
+            "home": 8,
+            "away": 4
+          },
+          {
+            "home": 9,
+            "away": 3
+          },
+          {
+            "home": 10,
+            "away": 2
+          },
+          {
+            "home": 11,
+            "away": 1
+          },
+          {
+            "home": 12,
+            "away": 19
+          },
+          {
+            "home": 13,
+            "away": 18
+          },
+          {
+            "home": 14,
+            "away": 17
+          },
+          {
+            "home": 15,
+            "away": 16
+          }
+        ],
+        [
+          {
+            "home": 7,
+            "away": 0
+          },
+          {
+            "home": 6,
+            "away": 8
+          },
+          {
+            "home": 5,
+            "away": 9
+          },
+          {
+            "home": 4,
+            "away": 10
+          },
+          {
+            "home": 3,
+            "away": 11
+          },
+          {
+            "home": 2,
+            "away": 12
+          },
+          {
+            "home": 1,
+            "away": 13
+          },
+          {
+            "home": 19,
+            "away": 14
+          },
+          {
+            "home": 18,
+            "away": 15
+          },
+          {
+            "home": 17,
+            "away": 16
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 8
+          },
+          {
+            "home": 9,
+            "away": 7
+          },
+          {
+            "home": 10,
+            "away": 6
+          },
+          {
+            "home": 11,
+            "away": 5
+          },
+          {
+            "home": 12,
+            "away": 4
+          },
+          {
+            "home": 13,
+            "away": 3
+          },
+          {
+            "home": 14,
+            "away": 2
+          },
+          {
+            "home": 15,
+            "away": 1
+          },
+          {
+            "home": 16,
+            "away": 19
+          },
+          {
+            "home": 17,
+            "away": 18
+          }
+        ],
+        [
+          {
+            "home": 9,
+            "away": 0
+          },
+          {
+            "home": 8,
+            "away": 10
+          },
+          {
+            "home": 7,
+            "away": 11
+          },
+          {
+            "home": 6,
+            "away": 12
+          },
+          {
+            "home": 5,
+            "away": 13
+          },
+          {
+            "home": 4,
+            "away": 14
+          },
+          {
+            "home": 3,
+            "away": 15
+          },
+          {
+            "home": 2,
+            "away": 16
+          },
+          {
+            "home": 1,
+            "away": 17
+          },
+          {
+            "home": 19,
+            "away": 18
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 10
+          },
+          {
+            "home": 11,
+            "away": 9
+          },
+          {
+            "home": 12,
+            "away": 8
+          },
+          {
+            "home": 13,
+            "away": 7
+          },
+          {
+            "home": 14,
+            "away": 6
+          },
+          {
+            "home": 15,
+            "away": 5
+          },
+          {
+            "home": 16,
+            "away": 4
+          },
+          {
+            "home": 17,
+            "away": 3
+          },
+          {
+            "home": 18,
+            "away": 2
+          },
+          {
+            "home": 19,
+            "away": 1
+          }
+        ],
+        [
+          {
+            "home": 11,
+            "away": 0
+          },
+          {
+            "home": 10,
+            "away": 12
+          },
+          {
+            "home": 9,
+            "away": 13
+          },
+          {
+            "home": 8,
+            "away": 14
+          },
+          {
+            "home": 7,
+            "away": 15
+          },
+          {
+            "home": 6,
+            "away": 16
+          },
+          {
+            "home": 5,
+            "away": 17
+          },
+          {
+            "home": 4,
+            "away": 18
+          },
+          {
+            "home": 3,
+            "away": 19
+          },
+          {
+            "home": 2,
+            "away": 1
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 12
+          },
+          {
+            "home": 13,
+            "away": 11
+          },
+          {
+            "home": 14,
+            "away": 10
+          },
+          {
+            "home": 15,
+            "away": 9
+          },
+          {
+            "home": 16,
+            "away": 8
+          },
+          {
+            "home": 17,
+            "away": 7
+          },
+          {
+            "home": 18,
+            "away": 6
+          },
+          {
+            "home": 19,
+            "away": 5
+          },
+          {
+            "home": 1,
+            "away": 4
+          },
+          {
+            "home": 2,
+            "away": 3
+          }
+        ],
+        [
+          {
+            "home": 13,
+            "away": 0
+          },
+          {
+            "home": 12,
+            "away": 14
+          },
+          {
+            "home": 11,
+            "away": 15
+          },
+          {
+            "home": 10,
+            "away": 16
+          },
+          {
+            "home": 9,
+            "away": 17
+          },
+          {
+            "home": 8,
+            "away": 18
+          },
+          {
+            "home": 7,
+            "away": 19
+          },
+          {
+            "home": 6,
+            "away": 1
+          },
+          {
+            "home": 5,
+            "away": 2
+          },
+          {
+            "home": 4,
+            "away": 3
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 14
+          },
+          {
+            "home": 15,
+            "away": 13
+          },
+          {
+            "home": 16,
+            "away": 12
+          },
+          {
+            "home": 17,
+            "away": 11
+          },
+          {
+            "home": 18,
+            "away": 10
+          },
+          {
+            "home": 19,
+            "away": 9
+          },
+          {
+            "home": 1,
+            "away": 8
+          },
+          {
+            "home": 2,
+            "away": 7
+          },
+          {
+            "home": 3,
+            "away": 6
+          },
+          {
+            "home": 4,
+            "away": 5
+          }
+        ],
+        [
+          {
+            "home": 15,
+            "away": 0
+          },
+          {
+            "home": 14,
+            "away": 16
+          },
+          {
+            "home": 13,
+            "away": 17
+          },
+          {
+            "home": 12,
+            "away": 18
+          },
+          {
+            "home": 11,
+            "away": 19
+          },
+          {
+            "home": 10,
+            "away": 1
+          },
+          {
+            "home": 9,
+            "away": 2
+          },
+          {
+            "home": 8,
+            "away": 3
+          },
+          {
+            "home": 7,
+            "away": 4
+          },
+          {
+            "home": 6,
+            "away": 5
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 16
+          },
+          {
+            "home": 17,
+            "away": 15
+          },
+          {
+            "home": 18,
+            "away": 14
+          },
+          {
+            "home": 19,
+            "away": 13
+          },
+          {
+            "home": 1,
+            "away": 12
+          },
+          {
+            "home": 2,
+            "away": 11
+          },
+          {
+            "home": 3,
+            "away": 10
+          },
+          {
+            "home": 4,
+            "away": 9
+          },
+          {
+            "home": 5,
+            "away": 8
+          },
+          {
+            "home": 6,
+            "away": 7
+          }
+        ],
+        [
+          {
+            "home": 17,
+            "away": 0
+          },
+          {
+            "home": 16,
+            "away": 18
+          },
+          {
+            "home": 15,
+            "away": 19
+          },
+          {
+            "home": 14,
+            "away": 1
+          },
+          {
+            "home": 13,
+            "away": 2
+          },
+          {
+            "home": 12,
+            "away": 3
+          },
+          {
+            "home": 11,
+            "away": 4
+          },
+          {
+            "home": 10,
+            "away": 5
+          },
+          {
+            "home": 9,
+            "away": 6
+          },
+          {
+            "home": 8,
+            "away": 7
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 18
+          },
+          {
+            "home": 19,
+            "away": 17
+          },
+          {
+            "home": 1,
+            "away": 16
+          },
+          {
+            "home": 2,
+            "away": 15
+          },
+          {
+            "home": 3,
+            "away": 14
+          },
+          {
+            "home": 4,
+            "away": 13
+          },
+          {
+            "home": 5,
+            "away": 12
+          },
+          {
+            "home": 6,
+            "away": 11
+          },
+          {
+            "home": 7,
+            "away": 10
+          },
+          {
+            "home": 8,
+            "away": 9
+          }
+        ],
+        [
+          {
+            "home": 19,
+            "away": 0
+          },
+          {
+            "home": 18,
+            "away": 1
+          },
+          {
+            "home": 17,
+            "away": 2
+          },
+          {
+            "home": 16,
+            "away": 3
+          },
+          {
+            "home": 15,
+            "away": 4
+          },
+          {
+            "home": 14,
+            "away": 5
+          },
+          {
+            "home": 13,
+            "away": 6
+          },
+          {
+            "home": 12,
+            "away": 7
+          },
+          {
+            "home": 11,
+            "away": 8
+          },
+          {
+            "home": 10,
+            "away": 9
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 1
+          },
+          {
+            "home": 2,
+            "away": 19
+          },
+          {
+            "home": 3,
+            "away": 18
+          },
+          {
+            "home": 4,
+            "away": 17
+          },
+          {
+            "home": 5,
+            "away": 16
+          },
+          {
+            "home": 6,
+            "away": 15
+          },
+          {
+            "home": 7,
+            "away": 14
+          },
+          {
+            "home": 8,
+            "away": 13
+          },
+          {
+            "home": 9,
+            "away": 12
+          },
+          {
+            "home": 10,
+            "away": 11
+          }
+        ],
+        [
+          {
+            "home": 2,
+            "away": 0
+          },
+          {
+            "home": 1,
+            "away": 3
+          },
+          {
+            "home": 19,
+            "away": 4
+          },
+          {
+            "home": 18,
+            "away": 5
+          },
+          {
+            "home": 17,
+            "away": 6
+          },
+          {
+            "home": 16,
+            "away": 7
+          },
+          {
+            "home": 15,
+            "away": 8
+          },
+          {
+            "home": 14,
+            "away": 9
+          },
+          {
+            "home": 13,
+            "away": 10
+          },
+          {
+            "home": 12,
+            "away": 11
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 3
+          },
+          {
+            "home": 4,
+            "away": 2
+          },
+          {
+            "home": 5,
+            "away": 1
+          },
+          {
+            "home": 6,
+            "away": 19
+          },
+          {
+            "home": 7,
+            "away": 18
+          },
+          {
+            "home": 8,
+            "away": 17
+          },
+          {
+            "home": 9,
+            "away": 16
+          },
+          {
+            "home": 10,
+            "away": 15
+          },
+          {
+            "home": 11,
+            "away": 14
+          },
+          {
+            "home": 12,
+            "away": 13
+          }
+        ],
+        [
+          {
+            "home": 4,
+            "away": 0
+          },
+          {
+            "home": 3,
+            "away": 5
+          },
+          {
+            "home": 2,
+            "away": 6
+          },
+          {
+            "home": 1,
+            "away": 7
+          },
+          {
+            "home": 19,
+            "away": 8
+          },
+          {
+            "home": 18,
+            "away": 9
+          },
+          {
+            "home": 17,
+            "away": 10
+          },
+          {
+            "home": 16,
+            "away": 11
+          },
+          {
+            "home": 15,
+            "away": 12
+          },
+          {
+            "home": 14,
+            "away": 13
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 5
+          },
+          {
+            "home": 6,
+            "away": 4
+          },
+          {
+            "home": 7,
+            "away": 3
+          },
+          {
+            "home": 8,
+            "away": 2
+          },
+          {
+            "home": 9,
+            "away": 1
+          },
+          {
+            "home": 10,
+            "away": 19
+          },
+          {
+            "home": 11,
+            "away": 18
+          },
+          {
+            "home": 12,
+            "away": 17
+          },
+          {
+            "home": 13,
+            "away": 16
+          },
+          {
+            "home": 14,
+            "away": 15
+          }
+        ],
+        [
+          {
+            "home": 6,
+            "away": 0
+          },
+          {
+            "home": 5,
+            "away": 7
+          },
+          {
+            "home": 4,
+            "away": 8
+          },
+          {
+            "home": 3,
+            "away": 9
+          },
+          {
+            "home": 2,
+            "away": 10
+          },
+          {
+            "home": 1,
+            "away": 11
+          },
+          {
+            "home": 19,
+            "away": 12
+          },
+          {
+            "home": 18,
+            "away": 13
+          },
+          {
+            "home": 17,
+            "away": 14
+          },
+          {
+            "home": 16,
+            "away": 15
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 7
+          },
+          {
+            "home": 8,
+            "away": 6
+          },
+          {
+            "home": 9,
+            "away": 5
+          },
+          {
+            "home": 10,
+            "away": 4
+          },
+          {
+            "home": 11,
+            "away": 3
+          },
+          {
+            "home": 12,
+            "away": 2
+          },
+          {
+            "home": 13,
+            "away": 1
+          },
+          {
+            "home": 14,
+            "away": 19
+          },
+          {
+            "home": 15,
+            "away": 18
+          },
+          {
+            "home": 16,
+            "away": 17
+          }
+        ],
+        [
+          {
+            "home": 8,
+            "away": 0
+          },
+          {
+            "home": 7,
+            "away": 9
+          },
+          {
+            "home": 6,
+            "away": 10
+          },
+          {
+            "home": 5,
+            "away": 11
+          },
+          {
+            "home": 4,
+            "away": 12
+          },
+          {
+            "home": 3,
+            "away": 13
+          },
+          {
+            "home": 2,
+            "away": 14
+          },
+          {
+            "home": 1,
+            "away": 15
+          },
+          {
+            "home": 19,
+            "away": 16
+          },
+          {
+            "home": 18,
+            "away": 17
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 9
+          },
+          {
+            "home": 10,
+            "away": 8
+          },
+          {
+            "home": 11,
+            "away": 7
+          },
+          {
+            "home": 12,
+            "away": 6
+          },
+          {
+            "home": 13,
+            "away": 5
+          },
+          {
+            "home": 14,
+            "away": 4
+          },
+          {
+            "home": 15,
+            "away": 3
+          },
+          {
+            "home": 16,
+            "away": 2
+          },
+          {
+            "home": 17,
+            "away": 1
+          },
+          {
+            "home": 18,
+            "away": 19
+          }
+        ],
+        [
+          {
+            "home": 10,
+            "away": 0
+          },
+          {
+            "home": 9,
+            "away": 11
+          },
+          {
+            "home": 8,
+            "away": 12
+          },
+          {
+            "home": 7,
+            "away": 13
+          },
+          {
+            "home": 6,
+            "away": 14
+          },
+          {
+            "home": 5,
+            "away": 15
+          },
+          {
+            "home": 4,
+            "away": 16
+          },
+          {
+            "home": 3,
+            "away": 17
+          },
+          {
+            "home": 2,
+            "away": 18
+          },
+          {
+            "home": 1,
+            "away": 19
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 11
+          },
+          {
+            "home": 12,
+            "away": 10
+          },
+          {
+            "home": 13,
+            "away": 9
+          },
+          {
+            "home": 14,
+            "away": 8
+          },
+          {
+            "home": 15,
+            "away": 7
+          },
+          {
+            "home": 16,
+            "away": 6
+          },
+          {
+            "home": 17,
+            "away": 5
+          },
+          {
+            "home": 18,
+            "away": 4
+          },
+          {
+            "home": 19,
+            "away": 3
+          },
+          {
+            "home": 1,
+            "away": 2
+          }
+        ],
+        [
+          {
+            "home": 12,
+            "away": 0
+          },
+          {
+            "home": 11,
+            "away": 13
+          },
+          {
+            "home": 10,
+            "away": 14
+          },
+          {
+            "home": 9,
+            "away": 15
+          },
+          {
+            "home": 8,
+            "away": 16
+          },
+          {
+            "home": 7,
+            "away": 17
+          },
+          {
+            "home": 6,
+            "away": 18
+          },
+          {
+            "home": 5,
+            "away": 19
+          },
+          {
+            "home": 4,
+            "away": 1
+          },
+          {
+            "home": 3,
+            "away": 2
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 13
+          },
+          {
+            "home": 14,
+            "away": 12
+          },
+          {
+            "home": 15,
+            "away": 11
+          },
+          {
+            "home": 16,
+            "away": 10
+          },
+          {
+            "home": 17,
+            "away": 9
+          },
+          {
+            "home": 18,
+            "away": 8
+          },
+          {
+            "home": 19,
+            "away": 7
+          },
+          {
+            "home": 1,
+            "away": 6
+          },
+          {
+            "home": 2,
+            "away": 5
+          },
+          {
+            "home": 3,
+            "away": 4
+          }
+        ],
+        [
+          {
+            "home": 14,
+            "away": 0
+          },
+          {
+            "home": 13,
+            "away": 15
+          },
+          {
+            "home": 12,
+            "away": 16
+          },
+          {
+            "home": 11,
+            "away": 17
+          },
+          {
+            "home": 10,
+            "away": 18
+          },
+          {
+            "home": 9,
+            "away": 19
+          },
+          {
+            "home": 8,
+            "away": 1
+          },
+          {
+            "home": 7,
+            "away": 2
+          },
+          {
+            "home": 6,
+            "away": 3
+          },
+          {
+            "home": 5,
+            "away": 4
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 15
+          },
+          {
+            "home": 16,
+            "away": 14
+          },
+          {
+            "home": 17,
+            "away": 13
+          },
+          {
+            "home": 18,
+            "away": 12
+          },
+          {
+            "home": 19,
+            "away": 11
+          },
+          {
+            "home": 1,
+            "away": 10
+          },
+          {
+            "home": 2,
+            "away": 9
+          },
+          {
+            "home": 3,
+            "away": 8
+          },
+          {
+            "home": 4,
+            "away": 7
+          },
+          {
+            "home": 5,
+            "away": 6
+          }
+        ],
+        [
+          {
+            "home": 16,
+            "away": 0
+          },
+          {
+            "home": 15,
+            "away": 17
+          },
+          {
+            "home": 14,
+            "away": 18
+          },
+          {
+            "home": 13,
+            "away": 19
+          },
+          {
+            "home": 12,
+            "away": 1
+          },
+          {
+            "home": 11,
+            "away": 2
+          },
+          {
+            "home": 10,
+            "away": 3
+          },
+          {
+            "home": 9,
+            "away": 4
+          },
+          {
+            "home": 8,
+            "away": 5
+          },
+          {
+            "home": 7,
+            "away": 6
+          }
+        ],
+        [
+          {
+            "home": 0,
+            "away": 17
+          },
+          {
+            "home": 18,
+            "away": 16
+          },
+          {
+            "home": 19,
+            "away": 15
+          },
+          {
+            "home": 1,
+            "away": 14
+          },
+          {
+            "home": 2,
+            "away": 13
+          },
+          {
+            "home": 3,
+            "away": 12
+          },
+          {
+            "home": 4,
+            "away": 11
+          },
+          {
+            "home": 5,
+            "away": 10
+          },
+          {
+            "home": 6,
+            "away": 9
+          },
+          {
+            "home": 7,
+            "away": 8
+          }
+        ],
+        [
+          {
+            "home": 18,
+            "away": 0
+          },
+          {
+            "home": 17,
+            "away": 19
+          },
+          {
+            "home": 16,
+            "away": 1
+          },
+          {
+            "home": 15,
+            "away": 2
+          },
+          {
+            "home": 14,
+            "away": 3
+          },
+          {
+            "home": 13,
+            "away": 4
+          },
+          {
+            "home": 12,
+            "away": 5
+          },
+          {
+            "home": 11,
+            "away": 6
+          },
+          {
+            "home": 10,
+            "away": 7
+          },
+          {
+            "home": 9,
+            "away": 8
+          }
+        ]
+      ],
       "settings": {
         "top": 4,
         "euro": 6,
@@ -83,7 +1680,468 @@
   },
   "current": "s_default",
   "teamMasterList": [],
-  "logoMasterList": [],
+  "logoMasterList": [
+    {
+      "name": "AC_Milan",
+      "data": "logos/AC_Milan.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Ai_cp",
+      "data": "logos/Ai_cp.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Al_Nassr",
+      "data": "logos/Al_Nassr.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Algeria",
+      "data": "logos/Algeria.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Argentina",
+      "data": "logos/Argentina.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Arsenal",
+      "data": "logos/Arsenal.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Aston_Villa",
+      "data": "logos/Aston_Villa.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Atletico_Madrid",
+      "data": "logos/Atletico_Madrid.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Australia",
+      "data": "logos/Australia.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Austria",
+      "data": "logos/Austria.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Ba_lan",
+      "data": "logos/Ba_lan.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Barca",
+      "data": "logos/Barca.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Bayern_Munchen",
+      "data": "logos/Bayern_Munchen.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Belgium",
+      "data": "logos/Belgium.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Bo_bien_nga",
+      "data": "logos/Bo_bien_nga.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Bologna",
+      "data": "logos/Bologna.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Bosnia_and_Herzegovina",
+      "data": "logos/Bosnia_and_Herzegovina.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Botafogo",
+      "data": "logos/Botafogo.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Bournemouth",
+      "data": "logos/Bournemouth.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Brazil",
+      "data": "logos/Brazil.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Brighton",
+      "data": "logos/Brighton.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Cameroon",
+      "data": "logos/Cameroon.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Canada",
+      "data": "logos/Canada.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Cape_Verde",
+      "data": "logos/Cape_Verde.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Chelsea",
+      "data": "logos/Chelsea.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Colombia",
+      "data": "logos/Colombia.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Croatia",
+      "data": "logos/Croatia.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Curacao",
+      "data": "logos/Curacao.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Czech_Republic",
+      "data": "logos/Czech_Republic.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Default",
+      "data": "logos/Default.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Dortmund",
+      "data": "logos/Dortmund.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "DR_Congo",
+      "data": "logos/DR_Congo.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Ecuador",
+      "data": "logos/Ecuador.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Egypt",
+      "data": "logos/Egypt.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "England",
+      "data": "logos/England.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Flamengo",
+      "data": "logos/Flamengo.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "France",
+      "data": "logos/France.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Galatasaray",
+      "data": "logos/Galatasaray.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Germany",
+      "data": "logos/Germany.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Ghana",
+      "data": "logos/Ghana.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Haiti",
+      "data": "logos/Haiti.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Inter_Milan",
+      "data": "logos/Inter_Milan.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Iran",
+      "data": "logos/Iran.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Iraq",
+      "data": "logos/Iraq.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Italia",
+      "data": "logos/Italia.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Ivory_Coast",
+      "data": "logos/Ivory_Coast.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Japan",
+      "data": "logos/Japan.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Jordan",
+      "data": "logos/Jordan.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Juventus",
+      "data": "logos/Juventus.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Lille",
+      "data": "logos/Lille.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Liverpool",
+      "data": "logos/Liverpool.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Man_Utd",
+      "data": "logos/Man_Utd.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Manchester-City",
+      "data": "logos/Manchester-City.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Mexico",
+      "data": "logos/Mexico.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Morocco",
+      "data": "logos/Morocco.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Netherlands",
+      "data": "logos/Netherlands.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "New_Zealand",
+      "data": "logos/New_Zealand.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Nigeria",
+      "data": "logos/Nigeria.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Norway",
+      "data": "logos/Norway.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Panama",
+      "data": "logos/Panama.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Paraguay",
+      "data": "logos/Paraguay.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Porto",
+      "data": "logos/Porto.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Portugal",
+      "data": "logos/Portugal.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "PSG",
+      "data": "logos/PSG.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Qatar",
+      "data": "logos/Qatar.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Real-madrid",
+      "data": "logos/Real-madrid.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Rennes",
+      "data": "logos/Rennes.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Saudi_Arabia",
+      "data": "logos/Saudi_Arabia.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Scotland",
+      "data": "logos/Scotland.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "season_2023_-_CUP",
+      "data": "logos/season_2023_-_CUP.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "season_2023_-_Dual",
+      "data": "logos/season_2023_-_Dual.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "season_2023_-_Single",
+      "data": "logos/season_2023_-_Single.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "season_2024_-_Euro",
+      "data": "logos/season_2024_-_Euro.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "season_2024_-_Single",
+      "data": "logos/season_2024_-_Single.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "season_2025_-_Seri_A",
+      "data": "logos/season_2025_-_Seri_A.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "season_2025_Summer_-_PlayOff",
+      "data": "logos/season_2025_Summer_-_PlayOff.png",
+      "source": "scan"
+    },
+    {
+      "name": "season_2025_Winter_-_PlayOff",
+      "data": "logos/season_2025_Winter_-_PlayOff.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "season_2026_-_WorldCup",
+      "data": "logos/season_2026_-_WorldCup.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "season_Hall_of_Champions",
+      "data": "logos/season_Hall_of_Champions.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Senegal",
+      "data": "logos/Senegal.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "South_Africa",
+      "data": "logos/South_Africa.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "South_Korea",
+      "data": "logos/South_Korea.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Spain",
+      "data": "logos/Spain.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Sweden",
+      "data": "logos/Sweden.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Switzerland",
+      "data": "logos/Switzerland.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Thy_in",
+      "data": "logos/Thy_in.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Tunisia",
+      "data": "logos/Tunisia.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Turkey",
+      "data": "logos/Turkey.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "United_States",
+      "data": "logos/United_States.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Uruguay",
+      "data": "logos/Uruguay.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Uzbekistan",
+      "data": "logos/Uzbekistan.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Valencia",
+      "data": "logos/Valencia.jpg",
+      "source": "scan"
+    }
+  ],
   "systemId": "football-club",
   "schemaVersion": 1
 }
