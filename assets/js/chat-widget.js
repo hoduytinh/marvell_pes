@@ -29,7 +29,7 @@
     pollMs: 3000
   };
 
-  var STORAGE_KEY = 'pes-league-v15';
+  var STORAGE_KEY = (typeof window.STORAGE_KEY === 'string' && window.STORAGE_KEY) || 'pes-league-v15';
   var THEME_KEY = 'pes-theme';
   var NAME_KEY = 'pesChatName';
 

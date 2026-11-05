@@ -1,5 +1,5 @@
 // Marvell PES Club - core/state.js (split from app.js; shared global scope, load order set in index.html)
-    var STORAGE_KEY='pes-league-v15';
+    var STORAGE_KEY=systemStorageKey(PES_SYSTEM_ID);
     var THEME_KEY='pes-theme';
   var state={seasons:{},current:null,teamMasterList:[],logoMasterList:[]};
   
@@ -61,7 +61,7 @@
       try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(_){}
       if(typeof scheduleOverviewRefresh === 'function') scheduleOverviewRefresh();
       // Trigger debounced push to GitHub if PAT configured
-      if(typeof CloudSync !== 'undefined' && CloudSync.hasPAT() && CloudSync.isEnabled()) {
+      if(typeof CloudSync !== 'undefined' && CloudSync.canPush()) {
         CloudSync.schedulePush(state);
       }
     }
@@ -77,13 +77,13 @@
       try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(_){}
       // Đẩy NGAY lên cloud (không chờ debounce 2s) để tránh mất cấu hình khi
       // đóng tab sớm hoặc bị reload ghi đè. Chỉ được khi có PAT + sync bật.
-      var cloudSync = (typeof CloudSync !== 'undefined' && CloudSync.hasPAT() && CloudSync.isEnabled());
+      var cloudSync = (typeof CloudSync !== 'undefined' && CloudSync.canPush());
       if(cloudSync){ try{ CloudSync.push(state); }catch(_){ CloudSync.schedulePush(state); } }
       return { savedLocal: true, cloudSync: cloudSync };
     };
     // Cho widget biết trạng thái cloud sync (có đẩy được lên server cho mọi người không)
     window.pesCloudSyncActive = function(){
-      return (typeof CloudSync !== 'undefined' && CloudSync.hasPAT() && CloudSync.isEnabled());
+      return (typeof CloudSync !== 'undefined' && CloudSync.canPush());
     };
 
     function loadAll(){
@@ -118,7 +118,7 @@
           var txt = $('EMBEDDED_DATA').textContent || '';
           var objE = JSON.parse(txt);
           if(applyState(objE, 'EMBEDDED_DATA fallback')) {
-            try { sessionStorage.removeItem('pesAdmin'); } catch(_) {}
+            if(PES_SYSTEM_ID === DEFAULT_SYSTEM_ID) authLogout(true);
             if(objE.homeLink !== undefined) {
               try { localStorage.setItem('pesHomeLink', objE.homeLink); } catch(_){}
               homeLink = objE.homeLink;

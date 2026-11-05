@@ -4,7 +4,7 @@
       owner: 'hoduytinh',
       repo: 'marvell_pes',
       branch: 'main',
-      dataPath: 'data.json'
+      dataPath: systemDataPath(PES_SYSTEM_ID)
     };
 
     var CloudSync = {
@@ -18,8 +18,14 @@
       status: 'idle',
       statusText: '',
 
+      patFromSession: false,
+
       init: function() {
-        try { this.pat = localStorage.getItem('pesGitHubPAT') || null; } catch(_){}
+        var localPat = null, sessPat = null;
+        try { localPat = localStorage.getItem('pesGitHubPAT') || null; } catch(_){}
+        try { sessPat = sessionStorage.getItem('pesSessPAT') || null; } catch(_){}
+        this.pat = localPat || sessPat;
+        this.patFromSession = !localPat && !!sessPat;
         try { this.enabled = localStorage.getItem('pesCloudSyncEnabled') !== '0'; } catch(_) { this.enabled = true; }
         this.updateUI();
       },
@@ -42,8 +48,38 @@
         this.updateUI();
       },
 
+      // PAT unlocked at login (encrypted grant in systems.json); kept for this tab only.
+      setSessionPAT: function(pat) {
+        if(!pat) { this.clearSessionPAT(); return; }
+        this.pat = pat;
+        this.patFromSession = true;
+        try { sessionStorage.setItem('pesSessPAT', pat); } catch(_){}
+        this._refreshSha();
+        this.updateUI();
+      },
+
+      clearSessionPAT: function() {
+        try { sessionStorage.removeItem('pesSessPAT'); } catch(_){}
+        if(!this.patFromSession) return;
+        var localPat = null;
+        try { localPat = localStorage.getItem('pesGitHubPAT') || null; } catch(_){}
+        this.pat = localPat;
+        this.patFromSession = false;
+        if(this.pushTimer) { clearTimeout(this.pushTimer); this.pushTimer = null; }
+        this.pendingState = null;
+        this.updateUI();
+      },
+
+      // A PAT unlocked by login may only push for systems the user can edit.
+      canPush: function() {
+        if(!this.pat || !this.enabled) return false;
+        if(this.patFromSession && !isAdmin()) return false;
+        return true;
+      },
+
       setPAT: function(pat) {
         this.pat = pat ? pat.trim() : null;
+        this.patFromSession = false;
         try {
           if(this.pat) localStorage.setItem('pesGitHubPAT', this.pat);
           else localStorage.removeItem('pesGitHubPAT');
@@ -178,7 +214,7 @@
 
       schedulePush: function(stateRef) {
         var self = this;
-        if(!self.pat || !self.enabled) return;
+        if(!self.canPush()) return;
         self.pendingState = stateRef;
         if(self.pushTimer) clearTimeout(self.pushTimer);
         self.pushTimer = setTimeout(function() {
@@ -189,7 +225,7 @@
 
       push: function(stateRef) {
         var self = this;
-        if(!self.pat || !self.enabled) return Promise.resolve(false);
+        if(!self.canPush()) return Promise.resolve(false);
         if(!stateRef) return Promise.resolve(false);
         if(self.pushInProgress) {
           // Will be re-pushed via schedulePush after current completes
@@ -217,7 +253,7 @@
         }
 
         var body = {
-          message: 'Update data.json ' + new Date().toISOString(),
+          message: 'Update ' + CLOUD_CONFIG.dataPath + ' ' + new Date().toISOString(),
           content: contentBase64,
           branch: CLOUD_CONFIG.branch
         };

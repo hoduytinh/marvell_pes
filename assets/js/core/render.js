@@ -27,10 +27,7 @@
         console.log('Loaded seasons:', Object.keys(state.seasons));
         
         // Clear admin mode when refreshing from file to prevent UI/functionality mismatch
-        try { 
-          sessionStorage.removeItem('pesAdmin'); 
-          console.log('Cleared admin mode during file refresh');
-        } catch(e){}
+        authLogout(true);
         
         // Restore Note and Link data if available in embedded data
         if(objE.homeLink !== undefined) {

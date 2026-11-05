@@ -8,6 +8,7 @@
         attachFilterListeners(); 
         initEvents();
         wireCloudConfigDialog();
+        initSystems();
 
         // Auto-scan logos/ folder and merge into Logo Master List.
         // Use cached result first for instant UI, then refresh in background.
@@ -61,7 +62,7 @@
       var pushNowBtn = $('cloudPushNowBtn');
 
       btn.addEventListener('click', function() {
-        if(!isAdmin()) { toast('Chỉ admin được phép cấu hình cloud'); return; }
+        if(!isSuperAdmin()) { toast('Chỉ admin được phép cấu hình cloud'); return; }
         patInput.value = CloudSync.pat || '';
         if(typeof dialog.showModal === 'function') dialog.showModal();
         else dialog.setAttribute('open', '');

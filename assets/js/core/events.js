@@ -77,39 +77,49 @@
         $('homeLinkDialog').removeAttribute('data-edit-idx');
       });
       $('btnAdmin').addEventListener('click',function(){
-        if(isAdmin()){
-          // Toggle admin mode off
-          try{sessionStorage.removeItem('pesAdmin');}catch(_){}
+        if(authSession()){
+          authLogout();
           showAdmin(false);
           updateCustomLinks();
           refreshSeasonUI();
+          renderSystemSwitcher();
         }else{
           openAdminLogin();
         }
       });
-      // Admin login dialog confirm handler
+      // Login dialog confirm handler (username + password, verified against systems.json hashes)
       (function(){
         var dlg=$('adminLoginDialog');
         if(!dlg) return;
-        var input=$('adminPassInput'), err=$('adminPassError'), confirmBtn=$('adminPassConfirm');
+        var userInput=$('adminUserInput'), input=$('adminPassInput'), err=$('adminPassError'), confirmBtn=$('adminPassConfirm');
+        var busy=false;
         function tryLogin(e){
           if(e) e.preventDefault();
-          var pw=input ? input.value : '';
-          if(pw==='tinhteo123'){
-            try{sessionStorage.setItem('pesAdmin','1')}catch(_){}
-            if(input) input.value='';
-            if(err) err.style.display='none';
-            if(typeof dlg.close==='function'){ dlg.close(); } else { dlg.removeAttribute('open'); }
-            showAdmin(true);
-            updateCustomLinks();
-            refreshSeasonUI();
-          }else{
-            if(err) err.style.display='block';
-            if(input){ input.focus(); input.select(); }
-          }
+          if(busy) return;
+          busy=true;
+          if(confirmBtn) confirmBtn.disabled=true;
+          authLogin(userInput ? userInput.value : '', input ? input.value : '').then(function(res){
+            if(res.ok){
+              if(input) input.value='';
+              if(err) err.style.display='none';
+              if(typeof dlg.close==='function'){ dlg.close(); } else { dlg.removeAttribute('open'); }
+              showAdmin(isAdmin());
+              updateCustomLinks();
+              refreshSeasonUI();
+              renderSystemSwitcher();
+              if(!isAdmin()) toast('Tài khoản không có quyền chỉnh sửa hệ thống này');
+            }else{
+              if(err){ err.textContent=res.error || 'Sai tên đăng nhập hoặc mật khẩu'; err.style.display='block'; }
+              if(input){ input.focus(); input.select(); }
+            }
+          }).then(function(){
+            busy=false;
+            if(confirmBtn) confirmBtn.disabled=false;
+          });
         }
         if(confirmBtn) confirmBtn.addEventListener('click', tryLogin);
         if(input) input.addEventListener('keydown', function(e){ if(e.key==='Enter'){ tryLogin(e); } });
+        if(userInput) userInput.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); if(input) input.focus(); } });
       })();
       $('btnCloudSyncToggle').addEventListener('click', function() {
         if(!isAdmin()) { toast('Chỉ admin được phép đổi trạng thái sync'); return; }
@@ -1769,7 +1779,7 @@
       // Snapshot blobs are stored in IndexedDB (large quota, hundreds of MB) instead
       // of localStorage (~5MB), because the full state with base64 images is several MB.
       // Only small metadata is kept in localStorage for a quick listing.
-      var BACKUP_INDEX_KEY = 'pesBackupIndex';
+      var BACKUP_INDEX_KEY = PES_SYSTEM_ID === DEFAULT_SYSTEM_ID ? 'pesBackupIndex' : 'pesBackupIndex@' + PES_SYSTEM_ID;
       var BACKUP_EXTRA_KEYS = ['pesHomeLink', 'pesHomeLabel', 'pesCustomLinks', 'pesNotes'];
       var MAX_BACKUPS = 3;
       var BACKUP_DB_NAME = 'pesBackupDB';

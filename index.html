@@ -58,7 +58,7 @@
     <div class="container header-bar">
       <div class="brand">
         <span id="leagueLogo" class="logo" title="Logo giải"></span>
-        <h1>Marvell Pes Club <span id="seasonTitle" class="muted"></span></h1>
+        <h1><span id="brandName" class="no-i18n">Marvell Pes Club</span> <span id="seasonTitle" class="muted"></span></h1>
       </div>
       <div class="right header-actions">
   <span id="customLinks"></span>
@@ -104,7 +104,8 @@
     <div class="hmenu-panel">
         <button id="btnAddLink" class="ghost">+Link</button>
         <button id="btnAddNote" class="ghost">+Note</button>
-        <button id="btnCloudConfig" class="ghost" title="Cấu hình GitHub Cloud Sync">☁️ Cloud</button>
+        <button id="btnCloudConfig" class="ghost superAdminOnly hidden" title="Cấu hình GitHub Cloud Sync">☁️ Cloud</button>
+        <button id="btnSystems" class="ghost superAdminOnly hidden" title="Quản lý hệ thống và tài khoản mod">🗂️ Hệ thống &amp; User</button>
         <button id="btnCloudSyncToggle" class="ghost" title="Bật/tắt tự động đồng bộ dữ liệu lên server">Sync: ON</button>
     </div>
   </details>
@@ -117,6 +118,7 @@
     <option value="white">Theme: White</option>
     <option value="blue" selected>Theme: Blue</option>
   </select>
+  <select id="systemSel" class="no-i18n hidden" title="Hệ thống"></select>
   <select id="seasonSel" title="Chọn mùa"></select>
   <input id="logoFile" type="file" accept="image/*" hidden />
 
@@ -418,8 +420,9 @@
 
   <dialog id="adminLoginDialog"><form method="dialog">
     <h3>Đăng nhập quản trị</h3>
-    <input id="adminPassInput" type="password" placeholder="Nhập password quản trị" autocomplete="current-password" style="width:100%;margin:6px 0" />
-    <div id="adminPassError" style="color:#f87171;font-size:13px;display:none;margin-bottom:6px">Sai password</div>
+    <input id="adminUserInput" type="text" placeholder="Tên đăng nhập" autocomplete="username" autocapitalize="off" spellcheck="false" class="no-i18n" style="width:100%;margin:6px 0" />
+    <input id="adminPassInput" type="password" placeholder="Mật khẩu" autocomplete="current-password" style="width:100%;margin:6px 0" />
+    <div id="adminPassError" style="color:#f87171;font-size:13px;display:none;margin-bottom:6px">Sai tên đăng nhập hoặc mật khẩu</div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
       <button value="cancel">Hủy</button>
       <button id="adminPassConfirm" class="primary" value="confirm">Đăng nhập</button>
@@ -452,9 +455,11 @@
         s.async = false; // giữ thứ tự thực thi như thẻ script tĩnh
         document.body.appendChild(s);
       }
+      load('assets/js/core/systems.js'); // must be first: defines PES_SYSTEM_ID used by state/cloud
       load('assets/js/core/util.js');
       load('assets/js/core/state.js');
       load('assets/js/core/cloud.js');
+      load('assets/js/core/auth.js');
       load('assets/js/features/logos.js');
       load('assets/js/features/links-notes.js');
       load('assets/js/features/select-search.js');

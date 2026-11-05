@@ -735,3 +735,26 @@ main[data-view]:not([data-view="all"]) #tournamentGroups{margin-top:0 !important
   .ov-wide { grid-column: 1 / -1; }
 }
 
+
+/* ===== 8. Multi-system & accounts dialog ===== */
+#systemSel { max-width: 220px; }
+.sys-dialog { width: min(760px, 94vw); }
+.sys-dialog h4 { margin: 14px 0 8px; }
+.sys-hint { font-size: 12px; margin: 0 0 6px; }
+.sys-section { border-top: 1px solid var(--border); padding-top: 4px; }
+.sys-list { display: flex; flex-direction: column; gap: 6px; }
+.sys-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.sys-row input:not([type=checkbox]) { min-width: 0; }
+.sys-icon { width: 52px; text-align: center; }
+.sys-name { flex: 1 1 180px; }
+.sys-id { width: 140px; }
+.sys-pw { flex: 1 1 160px; }
+.sys-check { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; cursor: pointer; white-space: nowrap; }
+.sys-checks { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.sys-user { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); }
+.sys-user-head { display: flex; align-items: center; gap: 8px; }
+.sys-badge { font-size: 11px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+.sys-add { margin-top: 8px; border-style: dashed; }
+.sys-section > .sys-add.sys-row { padding: 8px 0; }
+.sys-footer { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 16px; position: sticky; bottom: -20px; background: var(--panel); padding: 10px 0; }
+.sys-status { flex: 1; font-size: 13px; }

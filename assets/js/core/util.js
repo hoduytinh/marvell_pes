@@ -17,30 +17,12 @@ function escapeHtml(v){
 
     function $(id){return document.getElementById(id)}
     function uid(){return 's'+Math.random().toString(36).slice(2,9)}
-    function isAdmin(){try{return sessionStorage.getItem('pesAdmin')==='1'}catch(e){return false}}
-    function ensureAdmin(){
-      if(isAdmin()) return true;
-      openAdminLogin();
-      return false;
+    // isAdmin / ensureAdmin / openAdminLogin live in core/auth.js
+    function showAdmin(on){
+      [].forEach.call(document.querySelectorAll('.adminOnly'),function(el){el.classList.toggle('hidden',!on)});
+      var sup = !!on && isSuperAdmin();
+      [].forEach.call(document.querySelectorAll('.superAdminOnly'),function(el){el.classList.toggle('hidden',!sup)});
     }
-    function openAdminLogin(){
-      var dlg=$('adminLoginDialog');
-      if(!dlg){
-        // Fallback if dialog markup missing
-        var pw=prompt('Nhập password quản trị:');
-        if(pw==='tinhteo123'){
-          try{sessionStorage.setItem('pesAdmin','1')}catch(_){}
-          showAdmin(true); updateCustomLinks(); refreshSeasonUI();
-        } else if(pw!==null){ alert('Sai password'); }
-        return;
-      }
-      var input=$('adminPassInput'), err=$('adminPassError');
-      if(input) input.value='';
-      if(err) err.style.display='none';
-      if(typeof dlg.showModal==='function'){ dlg.showModal(); } else { dlg.setAttribute('open','open'); }
-      if(input){ setTimeout(function(){ input.focus(); }, 50); }
-    }
-    function showAdmin(on){[].forEach.call(document.querySelectorAll('.adminOnly'),function(el){el.classList.toggle('hidden',!on)})}
     function toast(msg){var t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(function(){t.classList.remove('show')},1400)}
     function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
 

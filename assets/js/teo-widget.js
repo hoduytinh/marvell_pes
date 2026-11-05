@@ -1,11 +1,12 @@
 (function(){
   'use strict';
 
-  var STORAGE_KEY = 'pes-league-v15';
+  var STORAGE_KEY = (typeof window.STORAGE_KEY === 'string' && window.STORAGE_KEY) || 'pes-league-v15';
   var VISIBLE_TEAMS_KEY = 'teoVisibleTeams';
   var THEME_KEY = 'pes-theme';
 
   function isAdminSession() {
+    if (typeof window.isAdmin === 'function') return window.isAdmin();
     try { return sessionStorage.getItem('pesAdmin') === '1'; }
     catch(_) { return false; }
   }
