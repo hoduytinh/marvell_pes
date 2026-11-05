@@ -6256,7 +6256,9 @@ function renderCupStandings(s){
       });
 
       // Mount: popover → browser top layer (above modal dialogs / widgets).
-      var host = usePopover ? document.body : (sel.closest('dialog[open]') || document.body);
+      // Must live INSIDE an open modal dialog: everything outside the modal
+      // (incl. popovers appended to <body>) is inert and can't be clicked.
+      var host = sel.closest('dialog[open]') || document.body;
       host.appendChild(pop);
       if(usePopover) { try { pop.showPopover(); } catch(_) {} }
 
