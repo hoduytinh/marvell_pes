@@ -19698,7 +19698,24 @@
         "logos/Default.jpg",
         "logos/Default.jpg"
       ],
-      "results": {},
+      "results": {
+        "de-winners-0-0": {
+          "hg": 2,
+          "ag": 3
+        },
+        "de-winners-0-1": {
+          "hg": 3,
+          "ag": 1
+        },
+        "de-winners-0-2": {
+          "hg": 1,
+          "ag": 4
+        },
+        "de-winners-0-3": {
+          "hg": 2,
+          "ag": 1
+        }
+      },
       "rounds": [
         [
           {
