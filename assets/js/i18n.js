@@ -21,6 +21,11 @@
   var EXACT = {
     // Header menus
     '🏆 Mùa giải': '🏆 Seasons',
+    // Double-elimination tree view
+    '🌳 Sơ đồ nhánh': '🌳 Bracket tree',
+    '📋 Danh sách trận': '📋 Match list',
+    'Bấm vào trận để nhập tỉ số': 'Click a match to enter the score',
+    'Bấm vào trận để xem chi tiết': 'Click a match for details',
     '👥 Đội & Logo': '👥 Teams & Logos',
     '💾 Dữ liệu': '💾 Data',
     '☁️ Cloud & Trang': '☁️ Cloud & Page',
@@ -331,6 +336,7 @@
     // Cup / bracket standings status column
     'Tham gia': 'In progress',
     'Rớt Losers Bracket': 'Dropped to Losers Bracket',
+    'Rớt từ ': 'Dropped from ',
 
     // Insights labels
     'Hàng công tốt nhất:': 'Best attack:',
