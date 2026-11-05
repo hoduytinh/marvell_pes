@@ -1,0 +1,44 @@
+{
+  "systems": [
+    {
+      "id": "pes",
+      "name": "Marvell Pes Club",
+      "icon": "⚽",
+      "sport": "football"
+    },
+    {
+      "id": "football-club",
+      "name": "Football Club",
+      "icon": "🏆",
+      "sport": "football",
+      "createdAt": 1793868973681
+    }
+  ],
+  "users": [
+    {
+      "u": "admin",
+      "role": "admin",
+      "salt": "wSbx/aYviJf37dp0Gb/IPw==",
+      "hash": "P3KCaTEetxuzErrBomk0Wtvqc5M8QsVcPe76X6kBS3E=",
+      "iter": 150000
+    },
+    {
+      "u": "mod1",
+      "role": "mod",
+      "systems": [
+        "football-club"
+      ],
+      "createdAt": 1793868995729,
+      "salt": "NEylsVz++oDZZtbfIHEKMw==",
+      "hash": "61bHJcLHtLVl5y8k0Pm7ghJcKY6x3nUcdZH0QnWsCJE=",
+      "iter": 150000,
+      "tok": {
+        "salt": "cJbHMSx//3IjXc4cU7csOw==",
+        "iv": "fT+jqBeMoXmd0YTX",
+        "ct": "+UjBbA63zsyHZtHmSqsLgRKEkipltaCaB/2+X21qh2LW9jPizGLaW/23a5PnkutQ1983KmFygORiE9XuNH4I2aUcQr7RoH4z4xGj2yFtiu2sIzuAfAkXbotREd+oF5wW9UmUe0bAtG9lbSc/aQ==",
+        "iter": 150000
+      }
+    }
+  ],
+  "version": 1
+}
