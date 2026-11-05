@@ -20102,6 +20102,16 @@
       "source": "scan"
     },
     {
+      "name": "season_League-SeriA",
+      "data": "logos/season_League-SeriA.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "season_League-SeriB",
+      "data": "logos/season_League-SeriB.jpg",
+      "source": "scan"
+    },
+    {
       "name": "Senegal",
       "data": "logos/Senegal.jpg",
       "source": "scan"
