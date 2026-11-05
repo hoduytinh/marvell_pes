@@ -1,396 +1,282 @@
-/* ---- block 1 ---- */
-:root{--bg:#1a2332;--panel:#1f2937;--muted:#9ca3af;--text:#f3f4f6;--accent:#60a5fa;--danger:#ef4444;--warn:#f59e0b;--card:#374151;--border:#4b5563;--ok:#22c55e}
-    *{box-sizing:border-box}
-    body{margin:0;background:linear-gradient(180deg,#1e2a3a,#1a2332 55%);color:var(--text);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",sans-serif}
-    header{position:sticky;top:0;z-index:10;background:rgba(9,15,33,.9);backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid var(--border)}
-  .container{max-width:1800px;margin:0 auto;padding:16px}
-    h1{margin:0;font-size:20px}
-    .brand{display:flex;align-items:center;gap:10px}
-    .logo{width:84px;height:84px;border-radius:8px;border:1px solid var(--border);background:#0a1430 center/cover no-repeat}
-    .row{display:flex;gap:16px;flex-wrap:wrap}
-    .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:14px}
-    .grow{flex:1 1 680px}
-    .sm{flex:1 1 360px}
-    .toolbar{display:flex;flex-wrap:wrap;gap:8px}
-    button,select,input[type="number"],input[type="text"],input[type="color"],textarea{background:#2d3748;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
-    button{cursor:pointer}
-    button.primary{background:var(--accent);border-color:var(--accent);font-weight:700}
-    button.ghost{background:transparent;border:1px dashed var(--border)}
-    button.danger{background:#2a0c0c;border:1px solid #4c1d1d;color:#ffb4b4}
-    .hidden{display:none}
-    /* Header dropdown menus (admin toolbar grouping) */
-    .hmenu{position:relative}
-    .hmenu>summary{list-style:none;cursor:pointer;user-select:none;background:transparent;border:1px dashed var(--border);border-radius:10px;padding:8px 12px;color:var(--text);white-space:nowrap}
-    .hmenu>summary::-webkit-details-marker{display:none}
-    .hmenu>summary::after{content:" ▾";opacity:.7;font-size:11px}
-    .hmenu[open]>summary{background:var(--card);border-style:solid;border-color:var(--accent)}
-    .hmenu-panel{position:absolute;top:calc(100% + 6px);right:0;min-width:190px;display:flex;flex-direction:column;gap:6px;padding:8px;background:var(--panel);border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.4);z-index:30}
-    .hmenu-panel button{width:100%;text-align:left}
-    table{width:100%;border-collapse:separate;border-spacing:0}
-    th,td{padding:8px;border-bottom:1px solid #1b2548}
-    .table-wrap{overflow:visible;max-height:none;margin-top:10px;position:relative}
-    .table-wrap thead th{position:sticky;top:0;background:rgba(17,23,49,.98);backdrop-filter:blur(4px);z-index:1}
-    .pos{width:36px;text-align:center;color:#9fb4ff}
-    .team{display:flex;align-items:center;gap:8px}
-    .badge{
-      width:32px !important;
-      height:32px !important;
-      min-width:32px !important;
-      min-height:32px !important;
-      max-width:32px !important;
-      max-height:32px !important;
-      border-radius:6px;
-      border:1px solid var(--border);
-      display:grid;
-      place-items:center;
-      background:#0b1430;
-      overflow:hidden;
-    }
-    .badge img{
-      width:32px !important;
-      height:32px !important;
-      min-width:32px !important;
-      min-height:32px !important;
-      max-width:32px !important;
-      max-height:32px !important;
-      object-fit:cover;
-      display:block;
-    }
-    .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid var(--border);border-radius:999px;background:#0a1430}
-    .muted{color:var(--muted)}
-    .fixture{display:grid;grid-template-columns:auto 1fr 54px 54px 1fr auto auto 72px;gap:8px;align-items:center;padding:8px;border:1px solid var(--border);border-radius:12px;background:var(--card)}
-    .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin:0 2px;border:1px solid #0a0f20}
-    .dot.W{background:#16a34a}.dot.D{background:#64748b}.dot.L{background:#ef4444}
-    .formChunk{display:inline-flex;align-items:center;gap:4px;margin-right:4px}
-    .formChunk .ltr{font-size:11px;opacity:.9}
-    .band-top{box-shadow:inset 3px 0 0 0 #3b82f6}
-    .band-euro{box-shadow:inset 3px 0 0 0 #f59e0b}
-    .band-playoff{box-shadow:inset 3px 0 0 0 #a855f7}
-    .band-rel{box-shadow:inset 3px 0 0 0 #ef4444}
-    .band-champion{background:rgba(255,215,0,0.18);font-weight:700}
-    .band-champion.band-top{box-shadow:inset 3px 0 0 0 #facc15}
-    .spark{width:90px;height:26px}
-    dialog{background:var(--panel);border:1px solid var(--border);border-radius:16px;color:var(--text);padding:18px;max-width:1200px}
-    dialog::backdrop{background:rgba(0,0,0,.45)}
-    /* Shared list search (dialogs) */
-    .list-search-input{width:100%;box-sizing:border-box;padding:8px 10px;margin-bottom:10px;border:1px solid var(--border);border-radius:4px;background:var(--bg);color:var(--text)}
-    .list-search-empty{padding:12px;text-align:center;color:var(--muted)}
-    .ls-hidden{display:none !important}
-    /* Searchable <select> popup */
-    .sel-search-pop{position:fixed;inset:auto;margin:0;z-index:100000;display:flex;flex-direction:column;box-sizing:border-box;padding:6px;overflow:hidden;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;box-shadow:0 12px 32px rgba(0,0,0,.4);font-size:14px}
-    .sel-search-input{width:100%;box-sizing:border-box;padding:7px 9px;margin:0 0 6px 0;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:14px}
-    .sel-search-list{position:relative;flex:1 1 auto;min-height:0;overflow-y:auto}
-    .sel-search-item{padding:6px 10px;border-radius:4px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .sel-search-item:hover,.sel-search-item.active{background:rgba(96,165,250,.22)}
-    .sel-search-item.selected{color:var(--accent);font-weight:700}
-    .sel-search-item.disabled{opacity:.45;cursor:default}
-    .sel-search-empty{padding:10px;text-align:center;color:var(--muted)}
-    .grid-names{display:grid;grid-template-columns:40px 1fr 90px 140px;gap:8px;align-items:center}
-    .small{font-size:12px}
-    .toast{position:fixed;inset:auto 16px 16px auto;background:#0b1433;border:1px solid var(--border);padding:10px 12px;border-radius:10px;opacity:0;transform:translateY(6px);transition:.25s}
-    .toast.show{opacity:1;transform:translateY(0)}
-    #rankChart{width:100%;height:320px;border:1px dashed var(--border);border-radius:12px;background:var(--card)}
-    .prob{font-size:11px;color:#cbd5e1}
-    .season-reorder-item{display:flex;align-items:center;gap:10px;padding:10px;margin-bottom:6px;background:var(--card);border:1px solid var(--border);border-radius:8px;cursor:move;user-select:none}
-    .season-reorder-item:hover{background:#1e2a3a;border-color:#3b4d6b}
-    .season-reorder-item.dragging{opacity:0.5;background:#2a3b52}
+/* =============================================================================
+   Marvell PES Club — stylesheet
+   1. Design tokens (per theme)    2. Base / layout    3. Components
+   4. Standings & fixtures         5. Brackets (DE / Cup / Swiss)
+   6. Responsive
+   7. Section tabs, season overview, match card & standings polish
+   Theme is selected by <html data-theme="blue|dark|light"> — set early in
+   index.html <head> and kept in sync by applyTheme() (core/util.js).
+   ========================================================================== */
+
+/* ---- 1. Design tokens ---- */
+:root{
+  /* Blue (default) */
+  --bg:#0b1533; --panel:#0e1b44; --card:#0c1a3b; --surface-2:#13244f; --hover:#1a2f52;
+  --text:#e7eeff; --text-2:#cbd5e1; --muted:#7ba7d9; --border:#1e3a5f;
+  --accent:#38bdf8; --accent-2:#0ea5e9; --on-accent:#04203a; --focus-ring:rgba(56,189,248,.35);
+  --danger:#ef4444; --warn:#f59e0b; --ok:#22c55e;
+  --danger-bg:#2a0c0c; --danger-border:#4c1d1d; --danger-text:#ffb4b4;
+  --header-bg:rgba(9,18,46,.82); --th-bg:#0e1b44;
+  --row-line:rgba(148,163,184,.12); --row-hover:rgba(56,189,248,.06);
+  --chip-bg:rgba(255,255,255,.03); --logo-bg:#0b1430;
+  --body-bg:
+    radial-gradient(1100px 520px at 0% -10%, rgba(56,189,248,.14), transparent 60%),
+    radial-gradient(900px 480px at 100% 0%, rgba(34,197,94,.07), transparent 60%),
+    linear-gradient(180deg,#0b1533,#081029);
+  --shadow-1:0 1px 2px rgba(0,0,0,.25),0 8px 24px rgba(0,0,0,.18);
+  --shadow-2:0 24px 60px rgba(0,0,0,.5);
+  --win:#16a34a; --draw:#64748b; --loss:#ef4444; --gold:#facc15;
+  --band-top:#3b82f6; --band-euro:#f59e0b; --band-playoff:#a855f7; --band-rel:#ef4444;
+  --radius-sm:8px; --radius:12px; --radius-lg:16px;
+  --font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",sans-serif;
+  --league-logo-height:72px;
+  color-scheme:dark;
+}
+:root[data-theme="dark"]{
+  --bg:#0b1020; --panel:#111731; --card:#0f172a; --surface-2:#161f3d; --hover:#1e2a4a;
+  --text:#e7eeff; --text-2:#cbd5e1; --muted:#8aa0c5; --border:#223056;
+  --accent:#3b82f6; --accent-2:#2563eb; --on-accent:#ffffff; --focus-ring:rgba(59,130,246,.4);
+  --header-bg:rgba(8,12,26,.85); --th-bg:#111731; --row-hover:rgba(59,130,246,.07);
+  --logo-bg:#0a0f22;
+  --body-bg:
+    radial-gradient(1100px 520px at 0% -10%, rgba(59,130,246,.12), transparent 60%),
+    linear-gradient(180deg,#0b1020,#070b17);
+}
+:root[data-theme="light"]{
+  --bg:#f3f6fb; --panel:#ffffff; --card:#f8fafc; --surface-2:#ffffff; --hover:#eef2f7;
+  --text:#0f172a; --text-2:#475569; --muted:#64748b; --border:#e2e8f0;
+  --accent:#2563eb; --accent-2:#1d4ed8; --on-accent:#ffffff; --focus-ring:rgba(37,99,235,.25);
+  --danger:#dc2626; --warn:#d97706; --ok:#059669;
+  --danger-bg:#fef2f2; --danger-border:#fecaca; --danger-text:#dc2626;
+  --header-bg:rgba(255,255,255,.85); --th-bg:#f8fafc;
+  --row-line:#edf1f6; --row-hover:rgba(37,99,235,.05);
+  --chip-bg:#f1f5f9; --logo-bg:#f1f5f9;
+  --body-bg:linear-gradient(180deg,#eaf0f9,#f5f8fc 40%,#ffffff);
+  --shadow-1:0 1px 2px rgba(15,23,42,.05),0 6px 20px rgba(15,23,42,.06);
+  --shadow-2:0 24px 60px rgba(15,23,42,.2);
+  color-scheme:light;
+}
+
+/* ---- 2. Base / layout ---- */
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;background:var(--body-bg);background-color:var(--bg);background-attachment:fixed;color:var(--text);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+h1{margin:0;font-size:20px;font-weight:800;letter-spacing:.2px}
+::selection{background:var(--focus-ring)}
+*{scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:999px;border:2px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background-color:var(--muted)}
+.hidden{display:none}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+
+header{position:sticky;top:0;z-index:10;background:var(--header-bg);backdrop-filter:saturate(160%) blur(10px);-webkit-backdrop-filter:saturate(160%) blur(10px);border-bottom:1px solid var(--border)}
+.header-bar{display:flex;align-items:center;gap:12px}
+.header-actions{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.container{max-width:1800px;margin:0 auto;padding:16px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:84px;height:84px;flex:none;border-radius:var(--radius);border:1px solid var(--border);background:var(--logo-bg) center/cover no-repeat;box-shadow:var(--shadow-1)}
+.row{display:flex;gap:16px;flex-wrap:wrap}
+.grow{flex:1 1 680px}
+.sm{flex:1 1 360px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;box-shadow:var(--shadow-1)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ---- 3. Components ---- */
+/* Controls */
+button,select,textarea,
+input[type="number"],input[type="text"],input[type="password"],input[type="search"],input[type="url"],input[type="color"]{
+  background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:8px 10px;font:inherit;
+  transition:background-color .15s,border-color .15s,box-shadow .15s,filter .15s;
+}
+input[type="checkbox"],input[type="radio"]{accent-color:var(--accent)}
+button{cursor:pointer}
+button:hover:not(:disabled){border-color:var(--accent);background-color:var(--hover)}
+button:active:not(:disabled){transform:translateY(1px)}
+button:disabled{opacity:.55;cursor:not-allowed}
+button:focus-visible,select:focus-visible,summary:focus-visible{outline:none;box-shadow:0 0 0 3px var(--focus-ring)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--focus-ring)}
+button.primary{background:linear-gradient(180deg,var(--accent),var(--accent-2));border-color:transparent;color:var(--on-accent);font-weight:700}
+button.primary:hover:not(:disabled){background:linear-gradient(180deg,var(--accent),var(--accent-2));border-color:transparent;filter:brightness(1.08)}
+button.ghost{background:transparent;border:1px solid var(--border)}
+button.danger{background:var(--danger-bg);border:1px solid var(--danger-border);color:var(--danger-text)}
+button.danger:hover:not(:disabled){background:var(--danger-bg);border-color:var(--danger);filter:brightness(1.1)}
+
+/* Header dropdown menus (admin toolbar grouping) */
+.hmenu{position:relative}
+.hmenu>summary{list-style:none;cursor:pointer;user-select:none;background:transparent;border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;color:var(--text);white-space:nowrap;transition:background-color .15s,border-color .15s}
+.hmenu>summary:hover{background:var(--hover);border-color:var(--accent)}
+.hmenu>summary::-webkit-details-marker{display:none}
+.hmenu>summary::after{content:" ▾";opacity:.7;font-size:11px}
+.hmenu[open]>summary{background:var(--card);border-color:var(--accent)}
+.hmenu-panel{position:absolute;top:calc(100% + 6px);right:0;min-width:200px;display:flex;flex-direction:column;gap:4px;padding:8px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-2);z-index:30;animation:pesPopIn .14s ease-out}
+.hmenu-panel button{width:100%;text-align:left}
+.hmenu-panel button.ghost{border-color:transparent}
+.hmenu-panel button.ghost:hover:not(:disabled){border-color:var(--border)}
+
+/* Tables */
+table{width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
+th,td{padding:8px;border-bottom:1px solid var(--row-line)}
+th{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.2px}
+tbody tr{transition:background-color .12s}
+tbody tr:hover{background-color:var(--row-hover)}
+.table-wrap{overflow:visible;max-height:none;margin-top:10px;position:relative}
+.table-wrap thead th{position:sticky;top:0;background:var(--th-bg);z-index:1}
+.pos{width:36px;text-align:center;color:var(--muted);font-weight:700}
+.team{display:flex;align-items:center;gap:8px}
+.badge{
+  width:32px !important;height:32px !important;
+  min-width:32px !important;min-height:32px !important;
+  max-width:32px !important;max-height:32px !important;
+  border-radius:6px;border:1px solid var(--border);
+  display:grid;place-items:center;background:var(--logo-bg);overflow:hidden;
+}
+.badge img{
+  width:32px !important;height:32px !important;
+  min-width:32px !important;min-height:32px !important;
+  max-width:32px !important;max-height:32px !important;
+  object-fit:cover;display:block;
+}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid var(--border);border-radius:999px;background:var(--chip-bg)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin:0 2px;border:1px solid rgba(0,0,0,.35)}
+.dot.W{background:var(--win)}.dot.D{background:var(--draw)}.dot.L{background:var(--loss)}
+.formChunk{display:inline-flex;align-items:center;gap:4px;margin-right:4px}
+.formChunk .ltr{font-size:11px;opacity:.9}
+.band-top{box-shadow:inset 3px 0 0 0 var(--band-top)}
+.band-euro{box-shadow:inset 3px 0 0 0 var(--band-euro)}
+.band-playoff{box-shadow:inset 3px 0 0 0 var(--band-playoff)}
+.band-rel{box-shadow:inset 3px 0 0 0 var(--band-rel)}
+.band-champion{background:rgba(255,215,0,0.18);font-weight:700}
+.band-champion.band-top{box-shadow:inset 3px 0 0 0 var(--gold)}
+
+/* Dialogs */
+dialog{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);color:var(--text);padding:20px;max-width:min(1200px,94vw);max-height:90vh;overflow:auto;box-shadow:var(--shadow-2)}
+dialog[open]{animation:pesPopIn .18s ease-out}
+dialog::backdrop{background:rgba(2,6,23,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+@keyframes pesPopIn{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){dialog[open],.hmenu-panel{animation:none}}
+/* Shared list search (dialogs) */
+.list-search-input{width:100%;box-sizing:border-box;padding:8px 10px;margin-bottom:10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text)}
+.list-search-empty{padding:12px;text-align:center;color:var(--muted)}
+.ls-hidden{display:none !important}
+/* Searchable <select> popup */
+.sel-search-pop{position:fixed;inset:auto;margin:0;z-index:100000;display:flex;flex-direction:column;box-sizing:border-box;padding:6px;overflow:hidden;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);box-shadow:var(--shadow-2);font-size:14px}
+.sel-search-input{width:100%;box-sizing:border-box;padding:7px 9px;margin:0 0 6px 0;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:14px}
+.sel-search-list{position:relative;flex:1 1 auto;min-height:0;overflow-y:auto}
+.sel-search-item{padding:6px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sel-search-item:hover,.sel-search-item.active{background:var(--focus-ring)}
+.sel-search-item.selected{color:var(--accent);font-weight:700}
+.sel-search-item.disabled{opacity:.45;cursor:default}
+.sel-search-empty{padding:10px;text-align:center;color:var(--muted)}
+.grid-names{display:grid;grid-template-columns:40px 1fr 90px 140px;gap:8px;align-items:center}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:20px;z-index:100001;max-width:min(480px,calc(100vw - 32px));background:var(--panel);color:var(--text);border:1px solid var(--border);border-left:4px solid var(--accent);padding:10px 14px;border-radius:var(--radius);box-shadow:var(--shadow-2);opacity:0;transform:translate(-50%,8px);transition:opacity .2s,transform .2s;pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+
+#rankChart{width:100%;height:320px;border:1px solid var(--border);border-radius:var(--radius);background:var(--card)}
+.prob{font-size:11px;color:var(--text-2)}
+.season-reorder-item{display:flex;align-items:center;gap:10px;padding:10px;margin-bottom:6px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:move;user-select:none;transition:background-color .12s,border-color .12s}
+.season-reorder-item:hover{background:var(--hover);border-color:var(--accent)}
+.season-reorder-item.dragging{opacity:0.5;background:var(--hover)}
     .season-reorder-item .drag-handle{color:var(--muted);font-size:18px;cursor:grab}
     .season-reorder-item .drag-handle:active{cursor:grabbing}
     .season-reorder-item .season-name{flex:1;font-weight:500}
     .season-reorder-item .season-type{font-size:11px;color:var(--muted);text-transform:uppercase;padding:2px 6px;border-radius:4px;background:rgba(100,116,139,0.2)}
 
-/* ---- block 2 ---- */
-/* === Minimal patch 16-Oct v4d2 === */
-:root { --league-logo-height: 72px; }
 /* Keep logo ratio */
-.league-logo img, img.league-logo, .logo img, .logo-container img, header .logo img {
-  height: var(--league-logo-height); width: auto !important; max-width: 100%; object-fit: contain;
-}
-/* Team column width & alignment for standings tables */
-.table_wrap th, .table_wrap td, .table-wrap th, .table-wrap td { vertical-align: middle; }
-.table_wrap th:nth-child(2), .table_wrap td:nth-child(2),
-.table-wrap th:nth-child(2), .table-wrap td:nth-child(2) {
-  width: 180px; /* Increased width for team name column */
-  min-width: 140px;
-  max-width: 260px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.league-logo img, img.league-logo, .logo img, .logo-container img, header .logo img{
+  height:var(--league-logo-height); width:auto !important; max-width:100%; object-fit:contain;
 }
 /* Hide any legacy predictor box */
-#champion-prediction { display: none !important; visibility: hidden !important; }
+#champion-prediction{display:none !important;visibility:hidden !important}
 
-/* ---- block 3 ---- */
-/* === Rank Delta (between Form and Trend) === */
-.delta{ width:auto; min-width:0; padding:0 2px; text-align:center }
-.delta .pill{
-  display:inline-flex; align-items:center; justify-content:center;
-  min-width:28px; padding:2px 8px; border-radius:999px; font-weight:700;
-  line-height:1.2;
-}
-.delta .up{ background: var(--ok); color:#fff }     /* xanh */
-.delta .down{ background: var(--danger); color:#fff } /* đỏ */
-.delta .same{ color: var(--muted) } /* dấu '-' */
-
-/* ---- block 4 ---- */
-/* === Form boxes (W/D/L) as equal rectangles === */
-.formBox {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  font-weight: 800;
-  font-size: 12px;
-  line-height: 1;
-  color: #fff;
-  margin-right: 4px;
-  user-select: none;
-}
-.formBox.W { background: #16a34a; }  /* green */
-.formBox.D { background: #64748b; }  /* gray */
-.formBox.L { background: #ef4444; }  /* red */
-
-/* ---- block 5 ---- */
-/* === Reduce spacing between Form and Δ columns === */
-td:nth-child(11) {  /* Form column */
-  padding-right: 4px !important;
-}
-td.delta {
-  padding-left: 4px !important;
+/* ---- 4. Standings & fixtures ---- */
+/* Team column width & alignment for standings tables */
+.table-wrap th, .table-wrap td{vertical-align:middle}
+.table-wrap th:nth-child(2), .table-wrap td:nth-child(2){
+  width:180px; min-width:140px; max-width:260px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 
-/* Tighter spacing between form boxes */
-.formBox {
-  margin-right: 2px !important;
-}
+/* Numeric stat columns (P..Pts, Stage, Form) centered — !important beats inline text-align in renderers */
+#tblStandings th:nth-child(n+3):nth-child(-n+11),
+#tblStandings td:nth-child(n+3):nth-child(-n+11){text-align:center !important}
+/* Form (col 11) / Trend (col 12) widths */
+#tblStandings th:nth-child(11), #tblStandings td:nth-child(11){width:160px !important;max-width:160px !important;white-space:nowrap;overflow:hidden}
+#tblStandings th:nth-child(12), #tblStandings td:nth-child(12){width:70px !important;max-width:70px !important}
+#tblStandings tbody td:nth-child(11){padding-right:2px}
+#tblStandings tbody td:nth-child(13){padding-left:6px}
 
-/* ---- block 6 ---- */
-/* === Compact spacing between Form (col 11) and Δ (col 12) === */
-#tblStandings tbody td:nth-child(11){ padding-right: 2px !important; }
-#tblStandings tbody td.delta{ padding-left: 2px !important; padding-right: 2px !important; }
-/* Optional: reduce left padding of Trend to keep visual balance */
-#tblStandings tbody td:nth-child(13){ padding-left: 6px !important; }
-
-/* ---- block 7 ---- */
-/* === Strongly limit Form column width === */
-#tblStandings th:nth-child(11),
-#tblStandings td:nth-child(11){
-  width: 160px !important;
-  max-width: 160px !important;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-/* Smaller, tighter form boxes for a compact look */
+/* Form boxes (W/D/L) */
 .formBox{
-  width: 20px !important;
-  height: 20px !important;
-  margin-right: 1.5px !important;
-  font-size: 11px !important;
-  border-radius: 6px !important;
+  display:inline-flex; align-items:center; justify-content:center;
+  width:20px; height:20px; margin-right:1.5px; border-radius:6px;
+  font-weight:800; font-size:11px; line-height:1; color:#fff; user-select:none;
 }
+.formBox.W{background:var(--win)}
+.formBox.D{background:var(--draw)}
+.formBox.L{background:var(--loss)}
 
-/* ---- block 8 ---- */
-/* === Reduce Trend column width === */
-#tblStandings th:nth-child(12),
-#tblStandings td:nth-child(12){
-  width: 70px !important;
-  max-width: 70px !important;
-}
+/* Rank delta (Δ) — colored arrows, no pill background */
+td.delta{padding:0 2px;text-align:center}
+.delta{width:auto;min-width:0}
+.delta .pill{display:inline-flex;align-items:center;justify-content:center;min-width:28px;padding:0;border:none;border-radius:999px;background:transparent;font-size:16px;font-weight:900;line-height:1.2}
+.delta .up{color:var(--win)}
+.delta .down{color:var(--loss)}
+.delta .same{color:var(--muted)}
 
-/* Smaller sparkline Trend canvas */
-.spark{
-  width: 70px !important;
-  height: 24px !important;
-}
+/* Trend sparkline canvas */
+.spark{width:70px !important;height:24px !important}
 
-/* ---- block 9 ---- */
-/* === Δ column style update (no background, colored arrows) === */
-.delta .pill {
-  background: transparent !important;
-  border: none !important;
-  font-size: 16px !important;
-  font-weight: 900 !important;
-  padding: 0 !important;
-}
-.delta .up { color: #16a34a !important; }   /* green arrow */
-.delta .down { color: #ef4444 !important; } /* red arrow */
-.delta .same { color: var(--muted) !important; }
+/* Simulation table: center "Champion / Top4 / Relegation" */
+#simTable th:nth-child(n+2):nth-child(-n+4),
+#simTable td:nth-child(n+2):nth-child(-n+4){text-align:center !important}
 
-/* ---- block 10 ---- */
-/* === Center align numeric stat columns (P, W, D, L, GF, GA, GD, Pts) and Stage === */
-#tblStandings th:nth-child(3),
-#tblStandings th:nth-child(4),
-#tblStandings th:nth-child(5),
-#tblStandings th:nth-child(6),
-#tblStandings th:nth-child(7),
-#tblStandings th:nth-child(8),
-#tblStandings th:nth-child(9),
-#tblStandings th:nth-child(10),
-#tblStandings th:nth-child(11),
-#tblStandings td:nth-child(3),
-#tblStandings td:nth-child(4),
-#tblStandings td:nth-child(5),
-#tblStandings td:nth-child(6),
-#tblStandings td:nth-child(7),
-#tblStandings td:nth-child(8),
-#tblStandings td:nth-child(9),
-#tblStandings td:nth-child(10),
-#tblStandings td:nth-child(11){
-  text-align: center !important;
-}
-
-/* ---- block 11 ---- */
-/* === Center align "Vô địch / Top4 / Rớt hạng" in #simTable === */
-#simTable th:nth-child(2),
-#simTable th:nth-child(3),
-#simTable th:nth-child(4),
-#simTable td:nth-child(2),
-#simTable td:nth-child(3),
-#simTable td:nth-child(4){
-  text-align: center !important;
-}
-
-/* === Polish & unify Season Stats and Insights boxes === */
+/* Season Stats & Insights boxes */
 #seasonStats, #insights{
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 10px 14px;
-  list-style-type: disc;
-  list-style-position: inside;
-  margin: 0; /* unify spacing */
+  background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+  padding:10px 14px; list-style-type:disc; list-style-position:inside; margin:0;
 }
+#seasonStats li, #insights li{padding:4px 0;border-bottom:1px dashed var(--border)}
+#seasonStats li:last-child, #insights li:last-child{border-bottom:none}
+#seasonStatsTitle, #insightsTitle{font-weight:700;font-size:15px;margin:0 0 6px 0 !important;color:var(--text)}
+#seasonStats li strong, #insights li strong{color:var(--accent)}
 
-#seasonStats li, #insights li{
-  padding: 4px 0;
-  border-bottom: 1px dashed var(--border);
+/* Fixture row: code | home | H | – | A | away | prob | pred.
+   NOTE: bracket matches (.cup-match / .de-match) also carry .fixture but render an
+   inner grid row — keep this grid as-is for them (see responsive section). */
+.fixture{
+  display:grid;
+  grid-template-columns:56px minmax(160px,1fr) 56px 20px 56px minmax(160px,1fr) 120px 80px !important;
+  gap:6px; align-items:center; padding:6px 8px;
+  border:1px solid var(--border); border-radius:10px; background:var(--card);
+  transition:border-color .15s, box-shadow .15s;
 }
-
-#seasonStats li:last-child, #insights li:last-child{
-  border-bottom: none;
-}
-
-/* Titles unified */
-#seasonStatsTitle, #insightsTitle{
-  font-weight: 700;
-  font-size: 15px;
-  margin: 0 0 6px 0 !important;
-  color: var(--text);
-}
-
-/* Highlight key values */
-#seasonStats li strong, #insights li strong{
-  color: var(--accent);
-}
-
-/* ---- block 12 ---- */
-/* === Fixture alignment (with logos, no W/L/D column) === */
-.fixture {
-  display: grid;
-  grid-template-columns: 48px 1fr 40px 20px 40px 1fr 90px;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 8px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--card);
-}
-.fixture .teamCell {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-}
-.fixture .teamCell.right {
-  justify-content: flex-end;
-}
+.fixture:not(.cup-match):not(.de-match):hover{border-color:var(--accent);box-shadow:0 0 0 1px var(--focus-ring)}
+.fixture .teamCell{display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden}
+.fixture .teamCell.right{justify-content:flex-end;padding-right:20px}
 .fixture .fixture-logo,
-.tournament-fixture .fixture-logo {
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: #0b1430 center/cover no-repeat;
-}
-.fixture input[type=number] {
-  width: 38px;
-  text-align: center;
-}
-
-/* ---- block 13 ---- */
-/* === Enlarge score inputs and add spacing before probabilities === */
+.tournament-fixture .fixture-logo{width:26px;height:26px;flex:none;border-radius:6px;border:1px solid var(--border);background:var(--logo-bg) center/cover no-repeat}
+/* !important: overrides .cup-match.final / .de-match.grand-final input sizes */
 .fixture input[type=number]{
-  width: 48px !important;
-  height: 32px !important;
-  padding: 2px 6px !important;
-  font-size: 16px !important;
-  font-weight: 700 !important;
-  text-align: center !important;
-  border-radius: 8px !important;
+  width:56px !important; height:34px !important; padding:2px 6px !important;
+  font-size:18px !important; font-weight:800 !important; text-align:center !important; border-radius:8px !important;
 }
-/* spacing between away team and probabilities */
-.fixture .teamCell.right{ padding-right: 16px !important; }
-.fixture .prob{ margin-left: 16px !important; text-align: right; white-space: nowrap; }
-
-/* ---- block 14 ---- */
-/* === Center score numbers vertically & horizontally === */
-.fixture .scoreWrap{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* === Expand fixture grid to include Predicted Score column === */
-.fixture {
-  grid-template-columns: 48px 1fr 56px 20px 56px 1fr 110px 70px !important;
-}
-.fixture .prob{
-  margin-left: 24px !important;
-  text-align: right;
-  white-space: nowrap;
-}
-.fixture .predScore{
-  text-align: right;
-  font-weight: 800;
-  letter-spacing: 0.2px;
-}
-
-/* ---- block 15 ---- */
-/* === Consistent fixture grid widths (8 columns incl. Pred Score) === */
-.fixture{
-  grid-template-columns: 56px minmax(160px,1fr) 56px 20px 56px minmax(160px,1fr) 120px 72px !important;
-}
-/* Align numbers and spacing */
-.fixture .scoreWrap{ display:flex; align-items:center; justify-content:center; }
-.fixture input[type=number]{ width: 56px !important; height: 34px !important; font-size: 18px !important; font-weight: 800 !important; text-align:center !important; }
-.fixture .teamCell.right{ padding-right: 20px !important; }
-.fixture .prob{ margin-left: 18px !important; text-align:right; white-space:nowrap; }
-.fixture .predScore{ width: 72px; text-align:right; font-weight: 900; }
-
-/* ---- block 16 ---- */
-/* Ensure probability and predicted score spacing & widths */
-.fixture{
-  grid-template-columns: 56px minmax(160px,1fr) 56px 20px 56px minmax(160px,1fr) 120px 80px !important;
-}
-.fixture .prob{ margin-left: 20px !important; text-align: right; white-space: nowrap; }
-.fixture .predScore{ text-align: right; font-weight: 900; letter-spacing: 0.2px; }
-.fixture .teamCell{ overflow: hidden; }
+.fixture .scoreWrap{display:flex;align-items:center;justify-content:center}
+.fixture .prob{margin-left:20px;text-align:right;white-space:nowrap}
+.fixture .predScore{width:72px;text-align:right;font-weight:900;letter-spacing:.2px}
 .fixture .csPts{
-  display: inline-block;
-  margin-left: 4px;
-  padding: 0 5px;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 16px;
-  color: #fff;
-  background: var(--accent);
-  border-radius: 4px;
-  flex: 0 0 auto;
+  display:inline-block; flex:0 0 auto; margin-left:4px; padding:0 5px;
+  font-size:10px; font-weight:700; line-height:16px; color:#fff;
+  background:var(--accent); border-radius:4px;
 }
 
+/* ---- 5. Brackets ---- */
 /* === Double Elimination Bracket Styles === */
 #doubleEliminationBracket {
   display: flex;
@@ -467,7 +353,7 @@ td.delta {
 
 .de-bracket-title.playoff {
   background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  color: #faff;
+  color: #fff;
 }
 
 .de-bracket-title.losers {
@@ -733,50 +619,119 @@ td.delta {
   opacity: 0.5;
 }
 
-/* Light theme overrides */
-[data-theme="light"] body {
-  background: linear-gradient(180deg, #f8fafc, #ffffff 55%);
+/* Light theme: winner text needs more contrast on white */
+:root[data-theme="light"] .bracket-team-winner { color: #15803d; }
+
+/* ---- 7. Section tabs & season overview (features/overview.js) ---- */
+/* <main data-view="..."> hides [data-sec] blocks that don't belong to the active tab.
+   !important beats the inline display set by refreshSeasonUI(). */
+main[data-view="standings"] [data-sec]:not([data-sec="standings"]),
+main[data-view="fixtures"]  [data-sec]:not([data-sec="fixtures"]),
+main[data-view="bracket"]   [data-sec]:not([data-sec="bracket"]),
+main[data-view="stats"]     [data-sec]:not([data-sec="stats"]){display:none !important}
+main[data-view]:not([data-view="all"]) #cupBracketWrap,
+main[data-view]:not([data-view="all"]) #doubleEliminationWrap,
+main[data-view]:not([data-view="all"]) #chartsRow,
+main[data-view]:not([data-view="all"]) #statsRow,
+main[data-view]:not([data-view="all"]) #tournamentGroups{margin-top:0 !important}
+
+.view-tabs{display:flex;gap:4px;margin:0 0 14px;padding:4px;overflow-x:auto;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-1);scrollbar-width:none}
+.view-tabs::-webkit-scrollbar{display:none}
+.view-tabs[hidden]{display:none}
+.view-tab{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:transparent;border:1px solid transparent;border-radius:var(--radius);color:var(--text-2);font-weight:600;white-space:nowrap}
+.view-tab:hover:not(:disabled){background:var(--hover);border-color:transparent;color:var(--text)}
+.view-tab.active,.view-tab.active:hover:not(:disabled){background:linear-gradient(180deg,var(--accent),var(--accent-2));color:var(--on-accent);border-color:transparent}
+.view-tab-icon{font-size:15px;line-height:1}
+
+.overview{margin:0 0 16px;padding:16px;border:1px solid var(--border);border-radius:var(--radius-lg);background:linear-gradient(135deg,var(--focus-ring),transparent 55%),var(--panel);box-shadow:var(--shadow-1)}
+.overview[hidden]{display:none}
+.ov-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.ov-mode{padding:3px 9px;border-radius:999px;background:var(--accent);color:var(--on-accent);font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase}
+.ov-title{font-size:18px;font-weight:800}
+.ov-status{margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border:1px solid var(--border);border-radius:999px;font-size:12px;font-weight:700;color:var(--muted)}
+.ov-status::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.ov-status.live{color:var(--ok);border-color:var(--ok)}
+.ov-status.live::before{animation:ovPulse 1.6s ease-in-out infinite}
+.ov-status.done{color:var(--gold);border-color:var(--gold)}
+@keyframes ovPulse{0%,100%{opacity:1}50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.ov-status.live::before{animation:none}}
+.ov-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.ov-stat{min-width:0;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--card)}
+.ov-wide{grid-column:span 2}
+.ov-label{margin-bottom:4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--muted)}
+.ov-value{font-size:16px;font-weight:700;overflow:hidden;text-overflow:ellipsis}
+.ov-bar{height:6px;margin-top:6px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.ov-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),var(--ok));transition:width .4s ease}
+.ov-champ .ov-value{color:var(--gold)}
+.ov-next{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ov-round{padding:2px 7px;border:1px solid var(--border);border-radius:6px;background:var(--chip-bg);font-size:11px;font-weight:600;color:var(--muted)}
+.ov-vs{font-size:12px;font-weight:600;color:var(--muted)}
+:root[data-theme="light"] .ov-champ .ov-value,
+:root[data-theme="light"] .ov-status.done{color:#a16207;border-color:#eab308}
+
+/* Match cards: scoreboard look for read-only scores, no number spinners */
+.fixture input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.fixture input[type=number]::-webkit-inner-spin-button,
+.fixture input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.fixture input[type=number]:disabled{opacity:1;cursor:default;color:var(--text);background:var(--surface-2);-webkit-text-fill-color:var(--text)}
+.fixture:not(.cup-match):not(.de-match) > .muted:first-child{justify-self:start;padding:2px 6px;border:1px solid var(--border);border-radius:6px;background:var(--chip-bg);font-size:11px;font-weight:600}
+.fixture .teamCell{font-weight:600}
+
+/* Standings polish */
+#tblStandings thead th{font-size:11px;letter-spacing:.5px;text-transform:uppercase}
+#tblStandings tbody tr{cursor:pointer}
+#tblStandings tr.band-top .pos{color:var(--band-top)}
+#tblStandings tr.band-euro .pos{color:var(--band-euro)}
+#tblStandings tr.band-playoff .pos{color:var(--band-playoff)}
+#tblStandings tr.band-rel .pos{color:var(--band-rel)}
+#tblStandings tr.band-champion .pos{color:var(--gold)}
+
+/* Tournament group tables: 4 → 2 → 1 columns */
+@media (max-width: 1200px){ .groups-grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important} }
+@media (max-width: 700px){ .groups-grid{grid-template-columns:minmax(0,1fr) !important;gap:12px !important} }
+
+/* ---- 6. Responsive ---- */
+@media (max-width: 900px) {
+  .container { padding: 10px; }
+  .header-bar { flex-wrap: wrap; gap: 8px; }
+  .header-actions { margin-left: 0; width: 100%; }
+  .logo { width: 56px; height: 56px; }
+  :root { --league-logo-height: 48px; }
+  .row { gap: 12px; }
+  .card { padding: 12px; border-radius: var(--radius); }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .two-col { grid-template-columns: 1fr !important; }
+  dialog { padding: 14px; max-width: 96vw; }
+  #rankChart { height: 260px; }
 }
 
-[data-theme="light"] header {
-  background: rgba(248, 250, 252, 0.95);
-  backdrop-filter: saturate(140%) blur(6px);
+/* League / chess-swiss fixture rows stack into 3 lines on narrow screens:
+   [code] / [home H – A away] / [prob · pred]. Bracket matches keep their layout. */
+@media (max-width: 760px) {
+  .fixture:not(.cup-match):not(.de-match) {
+    grid-template-columns: minmax(0,1fr) 44px 12px 44px minmax(0,1fr) !important;
+    row-gap: 4px;
+  }
+  .fixture:not(.cup-match):not(.de-match) > :first-child { grid-column: 1 / -1; font-size: 11px; }
+  .fixture:not(.cup-match):not(.de-match) > div[style*="grid-column"] { grid-column: 2 / 5 !important; }
+  .fixture:not(.cup-match):not(.de-match) .teamCell.right { padding-right: 0; }
+  .fixture:not(.cup-match):not(.de-match) .prob { grid-column: 1 / 4; margin-left: 0; text-align: left; }
+  .fixture:not(.cup-match):not(.de-match) .predScore { grid-column: 4 / 6; width: auto; }
+  .fixture:not(.cup-match):not(.de-match) input[type=number] { width: 44px !important; height: 32px !important; font-size: 16px !important; padding: 2px 4px !important; }
 }
 
-[data-theme="light"] .logo {
-  background: #f1f5f9 center/cover no-repeat;
-}
-
-[data-theme="light"] button,
-[data-theme="light"] select,
-[data-theme="light"] input[type="number"],
-[data-theme="light"] input[type="text"],
-[data-theme="light"] input[type="color"],
-[data-theme="light"] textarea {
-  background: #ffffff;
-}
-
-[data-theme="light"] button.danger {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #dc2626;
-}
-
-[data-theme="light"] .table-wrap thead th {
-  background: rgba(248, 250, 252, 0.98);
-  backdrop-filter: blur(4px);
-}
-
-[data-theme="light"] .pos {
-  color: #475569;
-}
-
-[data-theme="light"] .chip {
-  background: #f1f5f9;
-}
-
-[data-theme="light"] .toast {
-  background: #ffffff;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+@media (max-width: 600px) {
+  body { font-size: 13px; }
+  h1 { font-size: 16px; }
+  .logo { width: 44px; height: 44px; }
+  .header-actions > * { flex: 0 1 auto; }
+  .grow, .sm { flex-basis: 100%; }
+  th, td { padding: 6px; }
+  .toast { bottom: 12px; }
+  .view-tab { padding: 7px 10px; }
+  .overview { padding: 12px; }
+  .ov-title { font-size: 16px; }
+  .ov-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .ov-wide { grid-column: 1 / -1; }
 }
 

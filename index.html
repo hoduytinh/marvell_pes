@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>Marvell Pes Club – Single‑file</title>
+  <title>Marvell PES Club</title>
   <script type="application/json" id="EMBEDDED_DATA">{
     "seasons": {
       "s_default": {
@@ -28,51 +28,39 @@
     },
     "current": "s_default"
   }</script>
-  <link rel="stylesheet" href="assets/css/styles.css" />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  <meta name="theme-color" content="#0b1533" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%BD%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" />
+  <!--
+    Early boot (runs before CSS):
+    - Apply saved theme on <html> to avoid a flash of the wrong theme.
+    - Cache-busted stylesheet using the same version stamp as the JS loader
+      at the bottom of <body> (Ctrl+F5 => always latest).
+  -->
+  <script>
+    (function(){
+      var nav = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || null;
+      var navType = nav ? nav.type : (performance.navigation ? ['navigate','reload','back_forward','prerender'][performance.navigation.type] : 'navigate');
+      var v = (navType === 'reload') ? Date.now() : Math.floor(Date.now() / 60000);
+      window.__pesAssetV = v;
+      var t = 'blue';
+      try { t = localStorage.getItem('pes-theme') || 'blue'; } catch(_) {}
+      document.documentElement.setAttribute('data-theme', t === 'white' ? 'light' : (t === 'dark' ? 'dark' : 'blue'));
+      document.write('<link rel="stylesheet" href="assets/css/styles.css?v=' + v + '" />');
+    })();
+  </script>
+  <noscript><link rel="stylesheet" href="assets/css/styles.css" /></noscript>
 </head>
 <body>
   <header>
-    <div class="container" style="display:flex;align-items:center;gap:12px">
+    <div class="container header-bar">
       <div class="brand">
         <span id="leagueLogo" class="logo" title="Logo giải"></span>
         <h1>Marvell Pes Club <span id="seasonTitle" class="muted"></span></h1>
       </div>
-      <div class="right" style="margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div class="right header-actions">
   <span id="customLinks"></span>
 
   <!-- Nhóm: Mùa giải -->
@@ -168,9 +156,11 @@
     </div>
   </header>
 
-  <main class="container">
+  <main class="container" data-view="all">
+    <nav id="viewTabs" class="view-tabs" role="tablist" hidden></nav>
+    <div id="seasonOverview" class="overview" data-sec="overview" hidden></div>
     <div class="row">
-      <section class="card grow">
+      <section class="card grow" data-sec="standings">
         <div style="display:flex;align-items:center;justify-content:space-between">
           <div class="toolbar">
             <div class="chip"><span>Xem:</span>
@@ -199,7 +189,7 @@
         </div>
       </section>
 
-      <section class="card sm">
+      <section class="card sm" data-sec="fixtures">
         <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
           <h3 style="margin:0">Lịch thi đấu</h3>
           <div class="right" style="display:flex;gap:8px;align-items:center">
@@ -231,7 +221,7 @@
       </section>
     </div>
 
-    <div class="row" style="margin-top:16px">
+    <div class="row" id="chartsRow" data-sec="stats" style="margin-top:16px">
       <section class="card grow">
         <div style="display:flex;align-items:center;justify-content:space-between">
           <!-- moved btnSimulate below -->
@@ -249,9 +239,9 @@
       <!-- merged into the next section below -->
     </div>
 
-    <div class="row" style="margin-top:16px">
+    <div class="row" id="statsRow" data-sec="stats" style="margin-top:16px">
       <section class="card grow">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:0">
+        <div class="two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:0">
           <div>
             <div class="small muted" id="simProbLabel">Xác suất (Vô địch / Top4 / Rớt hạng)</div>
             <button id="btnSimulate" class="primary" style="margin-bottom:8px">Dự đoán đội vô địch</button>
@@ -272,13 +262,13 @@
         </div>
       </section>
     </div>
-    <div id="cupBracketWrap" class="hidden" style="margin-top:16px">
+    <div id="cupBracketWrap" class="hidden" data-sec="bracket" style="margin-top:16px">
       <div class="card">
         <h3 style="margin:8px 0">Knock-out Stage</h3>
         <div id="cupBracket" style="display:flex;gap:20px;overflow-x:auto;padding:10px"></div>
       </div>
     </div>
-    <div id="doubleEliminationWrap" class="hidden" style="margin-top:16px">
+    <div id="doubleEliminationWrap" class="hidden" data-sec="bracket" style="margin-top:16px">
       <div class="card">
         <h3 style="margin:8px 0">Double Elimination Bracket</h3>
         <div id="doubleEliminationBracket" style="padding:10px"></div>
@@ -306,7 +296,7 @@
       </details>
       <details style="margin-top:8px">
         <summary><strong>Thống kê nâng cao</strong></summary>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div>
             <div class="small muted">Sân nhà</div>
             <table class="table-mini" id="homeStats"></table>
@@ -394,7 +384,7 @@
 
   <dialog id="settingsDialog"><form method="dialog">
     <h3>Cài đặt giải</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <label>Top xanh: <input id="cfgTop" type="number" min="1" max="10" value="4"/></label>
       <label>Suất châu Âu: <input id="cfgEuro" type="number" min="0" max="10" value="6"/></label>
       <label>Playoff: <input id="cfgPlayoff" type="number" min="0" max="8" value="0"/></label>
@@ -444,21 +434,45 @@
       cache trình duyệt LẪN cache CDN của GitHub Pages, luôn lấy latest.
     - Tải thường (F5 / mở lại): dùng mốc theo PHÚT để vẫn tận dụng cache trong
       ~1 phút, tránh tải lại file lớn liên tục.
-    Không cần đổi version thủ công khi sửa app.js nữa.
+    Không cần đổi version thủ công khi sửa JS nữa.
   -->
   <script>
     (function(){
-      var nav = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || null;
-      var navType = nav ? nav.type : (performance.navigation ? ['navigate','reload','back_forward','prerender'][performance.navigation.type] : 'navigate');
-      // Reload (F5 / Ctrl+F5) => unique mỗi lần (luôn latest); mở thường => theo phút (tận dụng cache ngắn).
-      var v = (navType === 'reload') ? Date.now() : Math.floor(Date.now() / 60000);
+      // Dùng chung version với stylesheet (set trong <head>); fallback nếu thiếu.
+      var v = window.__pesAssetV;
+      if (!v) {
+        var nav = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || null;
+        var navType = nav ? nav.type : (performance.navigation ? ['navigate','reload','back_forward','prerender'][performance.navigation.type] : 'navigate');
+        // Reload (F5 / Ctrl+F5) => unique mỗi lần (luôn latest); mở thường => theo phút (tận dụng cache ngắn).
+        v = (navType === 'reload') ? Date.now() : Math.floor(Date.now() / 60000);
+      }
       function load(src){
         var s = document.createElement('script');
         s.src = src + '?v=' + v;
         s.async = false; // giữ thứ tự thực thi như thẻ script tĩnh
         document.body.appendChild(s);
       }
-      load('assets/js/app.js');
+      load('assets/js/core/util.js');
+      load('assets/js/core/state.js');
+      load('assets/js/core/cloud.js');
+      load('assets/js/features/logos.js');
+      load('assets/js/features/links-notes.js');
+      load('assets/js/features/select-search.js');
+      load('assets/js/features/bracket-tree.js');
+      load('assets/js/features/prediction.js');
+      load('assets/js/features/overview.js');
+      load('assets/js/modes/cup.js');
+      load('assets/js/modes/double-elim.js');
+      load('assets/js/modes/swiss.js');
+      load('assets/js/modes/chess-swiss.js');
+      load('assets/js/modes/tournament.js');
+      load('assets/js/modes/league.js');
+      load('assets/js/modes/legend.js');
+      load('assets/js/modes/ranking.js');
+      load('assets/js/core/registry.js');
+      load('assets/js/core/render.js');
+      load('assets/js/core/events.js');
+      load('assets/js/core/main.js'); // must stay last of the app files: calls init()
       load('assets/js/teo-widget.js');
       load('assets/js/chat-widget.js');
       load('assets/js/i18n.js');
