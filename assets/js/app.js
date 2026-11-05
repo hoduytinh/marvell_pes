@@ -12448,7 +12448,7 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
         if(!ensureAdmin()) return; 
         var s=activeSeason(); 
         var nameDialog=$('nameDialog'); 
-        nameDialog.innerHTML='<form method="dialog"><h3>Team setup (<span id="nameCount"></span>)</h3><div class="grid-names" id="nameGrid"></div><div style="display:flex;justify-content:space-between;margin-top:12px"><div class="muted small">Đặt tên, màu, logo (PNG/JPG 1:1). Click [↓] to select from Team List.</div><div style="display:flex;gap:8px"><button value="cancel">Hủy</button><button id="saveNames" class="primary" value="confirm">Lưu</button></div></div></form>'; 
+        nameDialog.innerHTML='<form method="dialog"><h3>Team setup (<span id="nameCount"></span>)</h3><div class="grid-names" id="nameGrid"></div><div style="display:flex;justify-content:space-between;margin-top:12px"><div class="muted small">Đặt tên, màu, logo (PNG/JPG 1:1). Bấm [↓] để chọn từ danh sách đội.</div><div style="display:flex;gap:8px"><button value="cancel">Hủy</button><button id="saveNames" class="primary" value="confirm">Lưu</button></div></div></form>'; 
         nameDialog.querySelector('#nameCount').textContent=s.teamCount+' đội'; 
         var grid=nameDialog.querySelector('#nameGrid'); 
         grid.innerHTML=''; 

@@ -1,8 +1,12 @@
 /*
- * Lightweight runtime i18n for Marvell Pes Club.
- * The source app is written in Vietnamese. This module translates the UI to
- * English at runtime (VI -> EN) by walking the DOM, watching for dynamically
- * rendered content, and patching alert/confirm/prompt messages.
+ * Lightweight runtime i18n for Marvell Pes Club (bidirectional).
+ * The source app mixes Vietnamese and English literals. At runtime the DOM is
+ * walked (plus a MutationObserver for dynamic content, and patched
+ * alert/confirm/prompt) and translated into the selected language:
+ *   - 'en': VI -> EN using EXACT / PHRASES_RAW / EN_PATTERNS
+ *   - 'vi': EN -> VI using VI_EXACT / VI_PHRASES_RAW / VI_PATTERNS / VI_SHORT
+ * Elements with class `no-i18n` or attribute `data-i18n-skip` are left as-is
+ * (use for user-generated content such as chat messages).
  *
  * Language is stored in localStorage under 'pesLang' ('en' | 'vi').
  * Default: 'en'. Toggling reloads the page so the original Vietnamese markup
@@ -15,7 +19,7 @@
   'use strict';
 
   var LANG_KEY = 'pesLang';
-  var lang = localStorage.getItem(LANG_KEY) || 'en';
+  var lang = localStorage.getItem(LANG_KEY) === 'vi' ? 'vi' : 'en';
 
   // ---- Whole-string translations (matched against trimmed text) -------------
   var EXACT = {
@@ -299,7 +303,52 @@
     '💬 Chat phòng chung': '💬 Group chat',
     '💬 Vào tám chuyện nào!': '💬 Come and chat!',
     '🔥 Có người đang chờ bạn chat!': '🔥 Someone is waiting to chat with you!',
-    '😎 Đừng im lặng, vào chat thôi!': '😎 Don\'t stay quiet — come chat!'
+    '😎 Đừng im lặng, vào chat thôi!': '😎 Don\'t stay quiet — come chat!',
+
+    // Leftovers found in audit
+    '. Token chỉ lưu trong trình duyệt của bạn.': '. The token is stored only in your browser.',
+    'trên repo': 'on the repo',
+    'ghp_xxx hoặc github_pat_xxx': 'ghp_xxx or github_pat_xxx',
+    'Đổi cặp đấu thủ công': 'Swap pairing manually',
+    '🔀 Đổi cặp đấu thủ công': '🔀 Swap pairing manually',
+    'Đã đổi cặp đấu': 'Pairing swapped',
+    'Không có đối thủ nào khác để đổi trong vòng này': 'No other opponents to swap in this round',
+    'Trận này đã có kết quả — hãy xoá kết quả trước khi đổi cặp thủ công': 'This match already has a result — clear it before swapping manually',
+    'Huỷ': 'Cancel',
+    'Đang tắt tự động đồng bộ lên server': 'Automatic sync to the server is off',
+    'Ghi chú': 'Note',
+    'Ghi chú:': 'Note:',
+    'Xoá ghi chú': 'Delete note',
+    'Xoá liên kết': 'Delete link',
+    'Xoá nút Home': 'Delete Home button',
+    'Xoá logo': 'Remove logo',
+    'Nội dung (có thể định dạng HTML):': 'Content (HTML formatting allowed):',
+    'Không tìm thấy logo nào': 'No logos found',
+    '🔄 Reset về mặc định': '🔄 Reset to default',
+    'Upload mới...': 'Upload new...',
+    'Chọn từ danh sách Season Logos hoặc upload file mới (sẽ được lưu vào': 'Choose from the Season Logos list or upload a new file (saved to',
+    'với tiền tố': 'with the prefix',
+    'vào': 'to',
+    '💡 Cách thêm logo mới (khuyến nghị):': '💡 How to add a new logo (recommended):',
+    'Push file ảnh vào thư mục': 'Push the image file to the',
+    'trên GitHub repo. File có tên bắt đầu bằng': 'folder on the GitHub repo. Files whose names start with',
+    'sẽ vào nhóm': 'go into',
+    ', còn lại vào nhóm': ', the rest into',
+    'Thắng': 'Won',
+    'Vòng': 'Round',
+    'đội': 'teams',
+    'Đặt tên, màu, logo (PNG/JPG 1:1). Bấm [↓] để chọn từ danh sách đội.': 'Set name, color, logo (PNG/JPG 1:1). Click [↓] to pick from the Team List.',
+    'Đã lưu ảnh BXH thành công!': 'Standings image saved successfully!',
+    'Đang chụp...': 'Capturing...',
+    'Không tìm thấy bảng xếp hạng': 'Standings table not found',
+    'Lỗi khi chụp ảnh BXH': 'Failed to capture the standings image',
+    '📸 Chụp BXH': '📸 Capture standings',
+    '➕ Tạo backup mới': '➕ Create new backup',
+    '⚠️ Hai đội đã từng gặp nhau trước đó': '⚠️ These two teams have already met',
+    'Chọn đội muốn đổi vào vị trí này:': 'Choose the team to swap into this slot:',
+    'Đội hiện tại:': 'Current team:',
+    'Không tìm thấy đội nào': 'No teams found',
+    'Logo giải đấu': 'League logo'
   };
 
   // ---- Fragment translations (substring replacement, longest first) ---------
@@ -422,38 +471,451 @@
 
     // Chat widget (interpolated)
     'Tên phải có trong ': 'The name must be in ',
-    '. Hãy chọn tên của bạn từ danh sách bên dưới.': '. Please choose your name from the list below.'
+    '. Hãy chọn tên của bạn từ danh sách bên dưới.': '. Please choose your name from the list below.',
+
+    // Leftovers found in audit
+    '(Trận ': '(Match ',
+    'Đội nhà': 'Home',
+    'Đội khách': 'Away',
+    'Lỗi khi lưu file: ': 'Error saving file: ',
+    'Tạo lại các cặp đấu cho Swiss Round ': 'Regenerate pairings for Swiss Round '
   };
 
-  var PHRASES = Object.keys(PHRASES_RAW)
-    .map(function (k) { return [k, PHRASES_RAW[k]]; })
-    .sort(function (a, b) { return b[0].length - a[0].length; });
+  // Regex rules (applied to the trimmed string, before PHRASES).
+  var EN_PATTERNS = [
+    [/\((\d+)đ\)/g, '($1 pts)']
+  ];
+
+  // ===========================================================================
+  // EN -> VI: parts of the source app are written in English. In Vietnamese
+  // mode these are translated so the UI never mixes the two languages.
+  // ===========================================================================
+  var VI_EXACT = {
+    // Header / menus (index.html)
+    'Team setup': 'Thiết lập đội',
+    'Team setup (': 'Thiết lập đội (',
+    'Team List': 'Danh sách đội',
+    'Logo List': 'Danh sách logo',
+    '💾 Backup': '💾 Sao lưu',
+    '📤 Export Data': '📤 Xuất dữ liệu',
+    '📥 Import Data': '📥 Nhập dữ liệu',
+    '☁️ Cloud': '☁️ Đám mây',
+    'Sync: ON': 'Đồng bộ: BẬT',
+    'Sync: OFF': 'Đồng bộ: TẮT',
+    'Admin': 'Quản trị',
+    '+Link': '+Liên kết',
+    '+Note': '+Ghi chú',
+    'Theme': 'Giao diện',
+    'Theme: Dark': 'Giao diện: Tối',
+    'Theme: White': 'Giao diện: Sáng',
+    'Theme: Blue': 'Giao diện: Xanh',
+    '☁️ GitHub Cloud Sync': '☁️ Đồng bộ đám mây GitHub',
+    'Repo:': 'Kho:',
+    '· branch': '· nhánh',
+    '· file': '· tệp',
+    'Personal Access Token (PAT)': 'Mã truy cập cá nhân (PAT)',
+    'Knock-out Stage': 'Vòng loại trực tiếp',
+    'Double Elimination Bracket': 'Sơ đồ loại kép',
+    'Live form': 'Phong độ gần đây',
+    'Playoff:': 'Suất play-off:',
+    'Enable Re-gen:': 'Cho phép tạo lại cặp đấu:',
+
+    // Game modes (create-season options, season list, export list)
+    'League': 'Vòng tròn tính điểm',
+    'Knock-out': 'Loại trực tiếp',
+    'Double Elimination': 'Loại kép',
+    'Tournament': 'Vòng bảng + Loại trực tiếp',
+    'Swiss System': 'Hệ Thụy Sĩ',
+    'Chess-Swiss': 'Thụy Sĩ (kiểu cờ vua)',
+    'Legend': 'Huyền thoại',
+    'Ranking': 'Bảng xếp hạng',
+    'Cup': 'Cúp',
+    'Swiss': 'Thụy Sĩ',
+    'DE': 'Loại kép',
+
+    // Table headers / stats
+    'Team': 'Đội',
+    'Name': 'Tên',
+    'Pts': 'Điểm',
+    'GF': 'BT',
+    'GA': 'BB',
+    'GD': 'HS',
+    'Form': 'Phong độ',
+    'Trend': 'Xu hướng',
+    'Record': 'Thành tích',
+    'Stage': 'Giai đoạn',
+    'Status': 'Trạng thái',
+    'Champion': 'Vô địch',
+    'Total': 'Tổng',
+    'Top4': 'Top 4',
+    'GF/GA': 'BT/BB',
+    'GF/GA/GD': 'BT/BB/HS',
+    'W-D-L': 'T-H-B',
+    'WR': '% thắng',
+    'Win Rate': 'Tỉ lệ thắng',
+    '• GF/GA:': '• BT/BB:',
+
+    // Stages / statuses
+    'Winner': 'Vô địch',
+    'Runner-up': 'Á quân',
+    '3rd Place': 'Hạng 3',
+    '4th Place': 'Hạng 4',
+    'Final': 'Chung kết',
+    '3rd Place Match': 'Tranh hạng 3',
+    'Semi-finals': 'Bán kết',
+    'Quarter-finals': 'Tứ kết',
+    'Group Stage': 'Vòng bảng',
+    'Qualified': 'Đi tiếp',
+    'Eliminated': 'Bị loại',
+    'Decider Match': 'Trận quyết định',
+    'One Win Away': 'Còn 1 trận thắng',
+    'One Loss Away': 'Còn 1 trận thua',
+    'Active': 'Đang thi đấu',
+    '🏆 Winner': '🏆 Vô địch',
+    '🥈 Runner-up': '🥈 Á quân',
+    '🥉 3rd Place': '🥉 Hạng 3',
+    '✓ Qualified': '✓ Đi tiếp',
+    '✗ Eliminated': '✗ Bị loại',
+    '2-2 Decider': 'Quyết định 2-2',
+    '1 Win To Qualify': 'Thắng 1 trận để đi tiếp',
+    '1 Loss To Eliminate': 'Thua 1 trận là bị loại',
+    'TBD': 'Chưa xác định',
+    'Unknown Team': 'Đội không xác định',
+
+    // Brackets
+    '🏆 Winners Bracket': '🏆 Nhánh thắng',
+    '💀 Losers Bracket': '💀 Nhánh thua',
+    '👑 Grand Final': '👑 Chung kết tổng',
+    '👑 Grand Finals': '👑 Chung kết tổng',
+    'Grand Finals': 'Chung kết tổng',
+    'Playoff Round': 'Vòng sơ loại',
+    '⚡ Playoff Round': '⚡ Vòng sơ loại',
+    'Playoff': 'Sơ loại',
+    '🎯 Swiss System Rounds': '🎯 Các vòng hệ Thụy Sĩ',
+    '⚡ Pre-Swiss Playoff': '⚡ Vòng sơ loại trước hệ Thụy Sĩ',
+    '🏆 Knock-out stage': '🏆 Vòng loại trực tiếp',
+    '🔄 Regenerate': '🔄 Tạo lại',
+    'Random Result': 'Tỉ số ngẫu nhiên',
+    'Group Stage Tables': 'Bảng xếp hạng vòng bảng',
+    '⏳ Complete all group stage matches to advance to knockout stage': '⏳ Hoàn thành tất cả trận vòng bảng để vào vòng loại trực tiếp',
+    '⏳ Complete all group stage matches to unlock knockout bracket': '⏳ Hoàn thành tất cả trận vòng bảng để mở nhánh loại trực tiếp',
+    '🏆 Knockout stage has begun! Check the bracket below for knockout matches.': '🏆 Vòng loại trực tiếp đã bắt đầu! Xem sơ đồ nhánh bên dưới.',
+    'This match is locked because dependent matches have results. Changing this will clear those matches. Continue?': 'Trận này đang bị khoá vì các trận phụ thuộc đã có kết quả. Thay đổi sẽ xoá kết quả các trận đó. Tiếp tục?',
+    'This round is locked because subsequent rounds have results. Changing this will clear dependent matches. Continue?': 'Vòng này đang bị khoá vì các vòng sau đã có kết quả. Thay đổi sẽ xoá kết quả các trận phụ thuộc. Tiếp tục?',
+    'This round is locked because subsequent rounds have been generated. Changing this result will clear all subsequent rounds. Continue?': 'Vòng này đang bị khoá vì các vòng sau đã được tạo. Thay đổi kết quả này sẽ xoá tất cả các vòng sau. Tiếp tục?',
+
+    // Season creation validation
+    'Double Elimination requires minimum 3 teams': 'Thể thức loại kép cần tối thiểu 3 đội',
+    'Double Elimination requires minimum 4 teams': 'Thể thức loại kép cần tối thiểu 4 đội',
+    'Cup mode requires at least 2 teams.': 'Thể thức loại trực tiếp cần ít nhất 2 đội.',
+    'Swiss System requires at least 8 teams': 'Hệ Thụy Sĩ cần ít nhất 8 đội',
+
+    // Legend / Ranking modes
+    '📊 Statistics': '📊 Thống kê',
+    '🏅 All-Time Champions': '🏅 Các nhà vô địch mọi thời đại',
+    '🏅 Ranking': '🏅 Bảng xếp hạng',
+    'Total Years': 'Tổng số năm',
+    'Total Events': 'Tổng số giải',
+    'Gold Medals': 'Huy chương vàng',
+    'Silver Medals': 'Huy chương bạc',
+    'Bronze Medals': 'Huy chương đồng',
+    '🏆 Hall of Champions': '🏆 Đại sảnh vô địch',
+    '🏆 Year': '🏆 Năm',
+    '📅 Add Timeline': '📅 Thêm mốc thời gian',
+    '➕ Add Event': '➕ Thêm giải',
+    '🗑️ Delete Year': '🗑️ Xoá năm',
+    '📸 Photo Gallery': '📸 Thư viện ảnh',
+    '➕ Add Photo': '➕ Thêm ảnh',
+    'Enter year:': 'Nhập năm:',
+    'Rename timeline:': 'Đổi tên mốc thời gian:',
+    'Delete this photo?': 'Xoá ảnh này?',
+    'Enter event name:': 'Nhập tên giải:',
+    'Rename event:': 'Đổi tên giải:',
+    'Enter number of rows in ranking table:': 'Nhập số dòng của bảng xếp hạng:',
+    'Number of rows must be between 1 and 100': 'Số dòng phải từ 1 đến 100',
+    'Enter default rate for all rows:': 'Nhập hệ số mặc định cho tất cả các dòng:',
+    'Enter name': 'Nhập tên',
+    'Team name...': 'Tên đội...',
+    'Team List is empty. Add teams to Team List first.': 'Danh sách đội đang trống. Hãy thêm đội vào danh sách trước.',
+    'No participants in the latest timeline yet.': 'Mốc thời gian mới nhất chưa có người tham gia.',
+    'Unchecked teams are hidden from the Ranking table. Event data in Year is kept.': 'Đội bỏ chọn sẽ bị ẩn khỏi bảng xếp hạng. Dữ liệu giải trong năm vẫn được giữ nguyên.',
+    '👥 Select teams': '👥 Chọn đội',
+    '👥 Select teams shown in Ranking': '👥 Chọn đội hiển thị trong bảng xếp hạng',
+    'Tick which teams are shown in the Ranking table': 'Đánh dấu các đội hiển thị trong bảng xếp hạng',
+
+    // Generic dialog buttons
+    'Cancel': 'Huỷ',
+    'Close': 'Đóng',
+    'Add': 'Thêm',
+    'Delete': 'Xoá',
+    '🗑️ Delete': '🗑️ Xoá',
+    'None': 'Không có',
+
+    // Team setup / team & logo lists
+    'Select Team': 'Chọn đội',
+    'Select Team from Master List': 'Chọn đội từ danh sách tổng',
+    'Select Team Logo': 'Chọn logo đội',
+    'Select from Team List': 'Chọn từ danh sách đội',
+    'Select from Team Logo List': 'Chọn từ danh sách logo đội',
+    'Reset to Default Logo': 'Đặt lại logo mặc định',
+    'Team Logo List is empty. Add logos to Logo List first.': 'Danh sách logo đội đang trống. Hãy thêm logo vào danh sách trước.',
+    'Click to rename': 'Bấm để đổi tên',
+    'Enter team name...': 'Nhập tên đội...',
+    'Season logo': 'Logo mùa giải',
+    'No teams added yet': 'Chưa có đội nào',
+    'Team already exists!': 'Đội đã tồn tại!',
+    'No logos in this group': 'Không có logo nào trong nhóm này',
+    'auto': 'tự động',
+    'manual': 'thủ công',
+    'Upload to logos/': 'Tải lên logos/',
+    'Please select a logo file first.': 'Vui lòng chọn file logo trước.',
+    'Please select an image file.': 'Vui lòng chọn file ảnh.',
+    '⏳ Uploading...': '⏳ Đang tải lên...',
+    '➕ Add Separator Line': '➕ Thêm dòng phân cách',
+
+    // Export / import / refresh / backup
+    'Select All Seasons': 'Chọn tất cả mùa giải',
+    'Include Pictures': 'Bao gồm hình ảnh',
+    'Uncheck to reduce export file size': 'Bỏ chọn để giảm dung lượng file xuất',
+    '────── separator ──────': '────── phân cách ──────',
+    'Select seasons to include in export': 'Chọn các mùa giải cần xuất',
+    'Export Selected': 'Xuất mục đã chọn',
+    'Please select at least one season to export.': 'Vui lòng chọn ít nhất một mùa giải để xuất.',
+    '✅ Exported successfully!': '✅ Xuất thành công!',
+    '✅ File exported to Downloads folder!': '✅ Đã xuất file vào thư mục Downloads!',
+    '✓ File location saved for next export': '✓ Đã lưu vị trí file cho lần xuất sau',
+    '📥 Import Data from File': '📥 Nhập dữ liệu từ file',
+    'Select an exported HTML file to import all data': 'Chọn file HTML đã xuất để nhập toàn bộ dữ liệu',
+    '📁 Drop HTML file here or click to browse': '📁 Thả file HTML vào đây hoặc bấm để chọn',
+    'Browse Files': 'Chọn file',
+    'Import Preview:': 'Xem trước dữ liệu nhập:',
+    'Import Data': 'Nhập dữ liệu',
+    'File:': 'Tệp:',
+    'Seasons:': 'Số mùa giải:',
+    'Team Master List:': 'Danh sách đội tổng:',
+    'Logo Master List:': 'Danh sách logo tổng:',
+    'Notes:': 'Ghi chú:',
+    'Custom Links:': 'Liên kết tùy chỉnh:',
+    'Home Link:': 'Liên kết Home:',
+    'Please select a valid HTML file': 'Vui lòng chọn file HTML hợp lệ',
+    'No embedded data found in this file. Please select a valid exported HTML file.': 'Không tìm thấy dữ liệu trong file này. Vui lòng chọn file HTML đã xuất hợp lệ.',
+    'Refresh from File - Admin Mode': 'Làm mới từ file - Chế độ quản trị',
+    '📊 Current State Information': '📊 Thông tin trạng thái hiện tại',
+    'Total Seasons:': 'Tổng số mùa giải:',
+    'Current Season:': 'Mùa giải hiện tại:',
+    'Teams in Current Season:': 'Số đội mùa hiện tại:',
+    'Data Source:': 'Nguồn dữ liệu:',
+    'Last Action:': 'Thao tác gần nhất:',
+    'Browser Storage + File': 'Bộ nhớ trình duyệt + File',
+    'File Only': 'Chỉ file',
+    '⚠️ Warning': '⚠️ Cảnh báo',
+    'Confirm Refresh': 'Xác nhận làm mới',
+    '💾 Backup Data': '💾 Sao lưu dữ liệu',
+    '↩️ Restore': '↩️ Khôi phục',
+    '⚠️ Offline': '⚠️ Ngoại tuyến',
+
+    // Teo Robot widget
+    '(Unnamed)': '(Chưa đặt tên)',
+    'Team A': 'Đội A',
+    'Team B': 'Đội B',
+    '📸 Capture': '📸 Chụp ảnh'
+  };
+
+  var VI_PHRASES_RAW = {
+    'Grand Finals': 'Chung kết tổng',
+    'Grand Final': 'Chung kết tổng',
+    'Rớt Losers Bracket': 'Rớt xuống nhánh thua',
+    'Losers Bracket': 'Nhánh thua',
+    'Winners Bracket': 'Nhánh thắng',
+    'WB Vòng ': 'Nhánh thắng - Vòng ',
+    'LB Vòng ': 'Nhánh thua - Vòng ',
+    'Thua WB ': 'Thua nhánh thắng ',
+    'Rớt từ WB ': 'Rớt từ nhánh thắng ',
+    'Season Logos': 'Logo mùa giải',
+    'Team Logos': 'Logo đội',
+    'Team Master List': 'danh sách đội tổng',
+    'Logo Master List': 'danh sách logo tổng',
+    'Team List': 'danh sách đội',
+    'Team list': 'danh sách đội',
+    'Export failed: ': 'Xuất thất bại: ',
+    'Error saving file: ': 'Lỗi khi lưu file: ',
+    'Error reading file: ': 'Lỗi khi đọc file: ',
+    ' team • ': ' đội • ',
+    'Playoff (': 'Play-off (',
+    'Sync: ON': 'Đồng bộ: BẬT',
+    'Sync: OFF': 'Đồng bộ: TẮT',
+    'Cloud sync: ': 'Đồng bộ đám mây: ',
+    'This action cannot be undone.': 'Không thể hoàn tác.',
+
+    // English loanwords inside Vietnamese source strings
+    'Chưa có bản backup nào.': 'Chưa có bản sao lưu nào.',
+    'bản backup': 'bản sao lưu',
+    'dữ liệu backup': 'dữ liệu sao lưu',
+    'để lưu backup': 'để lưu bản sao lưu',
+    'bớt backup cũ': 'bớt bản sao lưu cũ',
+    'trong backup': 'trong bản sao lưu',
+    'Tạo backup': 'Tạo bản sao lưu',
+    'Đã tạo backup': 'Đã tạo bản sao lưu',
+    'Đã xoá backup': 'Đã xoá bản sao lưu',
+    'Chọn team': 'Chọn đội',
+    'Chọn 1 team': 'Chọn 1 đội',
+    'Chọn 2 team': 'Chọn 2 đội',
+    'giữa 2 team': 'giữa 2 đội',
+    '2 team khác nhau': '2 đội khác nhau',
+    'đủ 2 team': 'đủ 2 đội',
+    'chọn team.': 'chọn đội.',
+    'ít nhất 1 team': 'ít nhất 1 đội',
+    'tất cả team': 'tất cả đội',
+    ' team hiển thị': ' đội hiển thị',
+    ' team) nhưng': ' đội) nhưng',
+    ' team. Mọi người': ' đội. Mọi người',
+    'dữ liệu team': 'dữ liệu đội',
+    'Hồ sơ team': 'Hồ sơ đội',
+    'thông tin team': 'thông tin đội',
+    'Cloud Sync (PAT admin)': 'đồng bộ đám mây (PAT quản trị)',
+    '⏸️ Sync tắt': '⏸️ Đồng bộ tắt',
+    'Đang tắt sync.': 'Đang tắt đồng bộ.',
+    ' để push.': ' để đẩy dữ liệu lên.',
+    'lên server': 'lên máy chủ',
+    'lên cloud': 'lên đám mây',
+    'Đã reset về mặc định': 'Đã đặt lại về mặc định',
+    'Reset về mặc định': 'Đặt lại về mặc định',
+    'Reset mặc định': 'Đặt lại mặc định',
+    'Reset mùa': 'Đặt lại mùa',
+    'Upload mới hoặc push file': 'Tải lên mới hoặc đẩy file',
+    'Chưa có season logo nào.': 'Chưa có logo mùa giải nào.',
+    'Upload mới...': 'Tải lên mới...',
+    'Upload ảnh thất bại: ': 'Tải ảnh lên thất bại: ',
+    'Upload thất bại: ': 'Tải lên thất bại: ',
+    'Push file ảnh': 'Đẩy file ảnh',
+    '✅ Import thành công!': '✅ Nhập dữ liệu thành công!',
+    'đã được import và lưu': 'đã được nhập và lưu',
+    '❌ Import thất bại: ': '❌ Nhập dữ liệu thất bại: ',
+    'muốn Import dữ liệu?': 'muốn nhập dữ liệu?',
+    'Tiếp tục Import?': 'Tiếp tục nhập dữ liệu?',
+    'Chess-Swiss yêu cầu': 'Thụy Sĩ (kiểu cờ vua) yêu cầu',
+    'lịch Chess-Swiss': 'lịch Thụy Sĩ (kiểu cờ vua)',
+    'Swiss bracket': 'nhánh Thụy Sĩ',
+    'cho Swiss Round ': 'cho vòng Thụy Sĩ ',
+    'thứ hạng Swiss': 'thứ hạng Thụy Sĩ',
+    'nhánh knock-out': 'nhánh loại trực tiếp',
+    'vòng knock-out': 'vòng loại trực tiếp',
+    '(kể cả playoff)': '(kể cả play-off)',
+    'Random lại cả vòng': 'Ngẫu nhiên lại cả vòng',
+    'Random tỉ số': 'Tạo tỉ số ngẫu nhiên',
+    'Random cả vòng': 'Ngẫu nhiên cả vòng',
+    'Snapshot toàn bộ dữ liệu': 'Ảnh chụp toàn bộ dữ liệu'
+  };
+
+  var VI_MODE_TAG = {
+    'LEAGUE': 'VÒNG TRÒN', 'CUP': 'LOẠI TRỰC TIẾP', 'DOUBLE ELIMINATION': 'LOẠI KÉP',
+    'TOURNAMENT': 'VÒNG BẢNG', 'SWISS SYSTEM': 'HỆ THỤY SĨ', 'CHESS-SWISS': 'THỤY SĨ CỜ VUA',
+    'LEGEND': 'HUYỀN THOẠI', 'RANKING': 'XẾP HẠNG'
+  };
+  var VI_RESULT = { W: 'T', D: 'H', L: 'B' };
+
+  var VI_PATTERNS = [
+    [/^Team (\d+)$/, 'Đội $1'],
+    [/^Round (\d+)$/, 'Vòng $1'],
+    [/^Knockout Round (\d+)$/, 'Vòng loại trực tiếp $1'],
+    [/^Group Stage - Round (\d+)$/, 'Vòng bảng - Lượt $1'],
+    [/^Group ([A-Z]) - Round (\d+)$/, 'Bảng $1 - Lượt $2'],
+    [/^Group ([A-Z])$/, 'Bảng $1'],
+    [/^Group ([A-Z]) #(\d+)$/, 'Hạng $2 bảng $1'],
+    [/^Winner of R(\d+)M(\d+)$/, 'Thắng V$1-T$2'],
+    [/^(\d+) teams$/, '$1 đội'],
+    [/^(\d+) logos$/, '$1 logo'],
+    [/^Win Rate \(([\s\S]+)\)$/, 'Tỉ lệ thắng ($1)'],
+    [/^Team Master List \((\d+) teams\)$/, 'Danh sách đội tổng ($1 đội)'],
+    [/^Logo Master List \((\d+) logos\)$/, 'Danh sách logo tổng ($1 logo)'],
+    [/^Export Seasons \((\d+) total\)$/, 'Xuất mùa giải (tổng $1)'],
+    [/^Export (\d+) Seasons?(?: \+ (\d+) Separators?)?$/, function (m, a, b) {
+      return 'Xuất ' + a + ' mùa giải' + (b ? ' + ' + b + ' dòng phân cách' : '');
+    }],
+    [/^(\d+) teams • ([\s\S]+)$/, function (m, n, mode) {
+      return n + ' đội • ' + (VI_EXACT[mode] || mode);
+    }],
+    [/^Ranking: (\d+) \/ (\d+) teams shown$/, 'Bảng xếp hạng: hiển thị $1 / $2 đội'],
+    [/^👥 Select teams \((\d+) hidden\)$/, '👥 Chọn đội ($1 bị ẩn)'],
+    [/^Delete timeline for ([\s\S]+)\?$/, 'Xoá mốc thời gian $1?'],
+    [/^Delete event "([\s\S]+)"\?$/, 'Xoá giải "$1"?'],
+    [/^Tournament with (\d+) groups requires minimum (\d+) teams$/, 'Thể thức vòng bảng với $1 bảng cần tối thiểu $2 đội'],
+    [/^Tournament mode with (\d+) groups requires at least (\d+) teams\.$/, 'Thể thức vòng bảng với $1 bảng cần ít nhất $2 đội.'],
+    [/^With (\d+) groups, maximum knockout teams is (\d+)\.$/, 'Với $1 bảng, số đội vào vòng loại trực tiếp tối đa là $2.'],
+    [/^Are you sure you want to delete "([\s\S]+)" from the Team Master List\?\s+This action cannot be undone\.$/, 'Bạn có chắc muốn xoá "$1" khỏi danh sách đội tổng?\n\nKhông thể hoàn tác.'],
+    [/^Are you sure you want to delete logo "([\s\S]+)" from the Logo Master List\?\s+This action cannot be undone\.$/, 'Bạn có chắc muốn xoá logo "$1" khỏi danh sách logo tổng?\n\nKhông thể hoàn tác.'],
+    [/^Selected logo "([\s\S]+)" for ([\s\S]+)$/, 'Đã chọn logo "$1" cho $2'],
+    [/^Reset logo to default for ([\s\S]+)$/, 'Đã đặt lại logo mặc định cho $1'],
+    // Fragments inside longer strings (Teo Robot history, season titles)
+    [/\bDE Winners R(\d+)/g, 'Loại kép - Nhánh thắng V$1'],
+    [/\bDE Losers R(\d+)/g, 'Loại kép - Nhánh thua V$1'],
+    [/\bDE Playoff\b/g, 'Loại kép - Sơ loại'],
+    [/\bDE Grand Final\b/g, 'Loại kép - Chung kết tổng'],
+    [/\bSwiss Playoff Round (\d+)/g, 'Play-off Thụy Sĩ - Vòng $1'],
+    [/\bSwiss Round (\d+)/g, 'Vòng Thụy Sĩ $1'],
+    [/\bKnockout R(\d+)/g, 'Loại trực tiếp - Vòng $1'],
+    [/\bLeague Round (\d+)/g, 'Vòng $1'],
+    [/\bCup Round (\d+)/g, 'Cúp - Vòng $1'],
+    [/\bGroup ([A-Z]) R(\d+)/g, 'Bảng $1 - Lượt $2'],
+    [/\| (W|D|L)\]/g, function (m, r) { return '| ' + VI_RESULT[r] + ']'; }],
+    [/\((LEAGUE|CUP|DOUBLE ELIMINATION|TOURNAMENT|SWISS SYSTEM|CHESS-SWISS|LEGEND|RANKING)\)/g, function (m, k) { return '(' + VI_MODE_TAG[k] + ')'; }]
+  ];
+
+  // Single-letter column headers / form badges (only inside <th> or .formBox).
+  var VI_SHORT = { P: 'Tr', W: 'T', D: 'H', L: 'B' };
+
+  function sortPhrases(raw) {
+    return Object.keys(raw)
+      .map(function (k) { return [k, raw[k]]; })
+      .sort(function (a, b) { return b[0].length - a[0].length; });
+  }
+
+  var DICTS = {
+    en: { exact: EXACT, phrases: sortPhrases(PHRASES_RAW), patterns: EN_PATTERNS, short: null },
+    vi: { exact: VI_EXACT, phrases: sortPhrases(VI_PHRASES_RAW), patterns: VI_PATTERNS, short: VI_SHORT }
+  };
+  var D = DICTS[lang] || DICTS.en;
 
   function translateExact(str) {
     var key = str.trim();
-    if (Object.prototype.hasOwnProperty.call(EXACT, key)) {
+    if (Object.prototype.hasOwnProperty.call(D.exact, key)) {
       // Preserve surrounding whitespace of the original text node.
-      return str.replace(key, EXACT[key]);
+      return str.replace(key, D.exact[key]);
     }
     return null;
   }
 
+  function translatePatterns(str) {
+    var key = str.trim();
+    if (!key) return str;
+    var out = key;
+    for (var i = 0; i < D.patterns.length; i++) {
+      out = out.replace(D.patterns[i][0], D.patterns[i][1]);
+    }
+    return out === key ? str : str.replace(key, function () { return out; });
+  }
+
   function translatePhrases(str) {
     var out = str;
-    for (var i = 0; i < PHRASES.length; i++) {
-      var vi = PHRASES[i][0];
-      if (out.indexOf(vi) !== -1) {
-        out = out.split(vi).join(PHRASES[i][1]);
+    for (var i = 0; i < D.phrases.length; i++) {
+      var src = D.phrases[i][0];
+      if (out.indexOf(src) !== -1) {
+        out = out.split(src).join(D.phrases[i][1]);
       }
     }
     return out;
   }
 
   function tr(str) {
-    if (lang !== 'en' || !str) return str;
+    if (!str) return str;
     var e = translateExact(str);
     if (e !== null) return e;
-    return translatePhrases(str);
+    return translatePhrases(translatePatterns(str));
+  }
+
+  function isShortContext(el) {
+    return !!(el && el.nodeType === 1 &&
+      (el.tagName === 'TH' || (el.classList && el.classList.contains('formBox'))));
   }
 
   // ---- DOM translation ------------------------------------------------------
@@ -475,6 +937,13 @@
     var val = tn.nodeValue;
     if (!val || !val.trim()) return;
     if (shouldSkip(tn.parentNode)) return;
+    if (D.short && isShortContext(tn.parentNode)) {
+      var k = val.trim();
+      if (Object.prototype.hasOwnProperty.call(D.short, k)) {
+        tn.nodeValue = val.replace(k, D.short[k]);
+        return;
+      }
+    }
     var t = tr(val);
     if (t !== val) tn.nodeValue = t;
   }
@@ -493,7 +962,7 @@
   }
 
   function translateSubtree(root) {
-    if (lang !== 'en' || !root) return;
+    if (!root) return;
     if (root.nodeType === 3) { translateTextNode(root); return; }
     if (root.nodeType !== 1) return;
 
@@ -516,7 +985,6 @@
   }
 
   var observer = new MutationObserver(function (mutations) {
-    if (lang !== 'en') return;
     guarded(function () {
       mutations.forEach(function (m) {
         if (m.type === 'childList') {
@@ -580,16 +1048,15 @@
   function start() {
     injectLangButton();
     patchDialogs();
-    if (lang === 'en') {
-      guarded(function () { translateSubtree(document.body); });
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        characterData: true,
-        attributes: true,
-        attributeFilter: ['title', 'placeholder']
-      });
-    }
+    document.documentElement.lang = lang === 'en' ? 'en' : 'vi';
+    guarded(function () { translateSubtree(document.body); });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+      attributes: true,
+      attributeFilter: ['title', 'placeholder']
+    });
   }
 
   if (document.readyState === 'loading') {

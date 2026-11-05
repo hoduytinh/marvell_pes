@@ -476,9 +476,9 @@
       messagesEl.innerHTML = list.map(function(m){
         var mine = (m.name || '').toLowerCase() === me;
         return '<div class="chat-msg' + (mine ? ' me' : '') + '">' +
-          '<div class="chat-meta"><span class="chat-name">' + escapeHtml(m.name || '?') + '</span>' +
+          '<div class="chat-meta"><span class="chat-name no-i18n">' + escapeHtml(m.name || '?') + '</span>' +
           '<span class="chat-time">' + fmtTime(m.ts) + '</span></div>' +
-          '<div class="chat-text">' + emojifyHtml(escapeHtml(m.text || '')) + '</div>' +
+          '<div class="chat-text no-i18n">' + emojifyHtml(escapeHtml(m.text || '')) + '</div>' +
         '</div>';
       }).join('');
       if(atBottom || list.length !== lastRenderedCount) {
