@@ -2077,6 +2077,16 @@
       "source": "scan"
     },
     {
+      "name": "season_League-SeriA",
+      "data": "logos/season_League-SeriA.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "season_League-SeriB",
+      "data": "logos/season_League-SeriB.jpg",
+      "source": "scan"
+    },
+    {
       "name": "Senegal",
       "data": "logos/Senegal.jpg",
       "source": "scan"
@@ -2109,6 +2119,11 @@
     {
       "name": "Thy_in",
       "data": "logos/Thy_in.jpg",
+      "source": "scan"
+    },
+    {
+      "name": "Tottenham_Hotspur",
+      "data": "logos/Tottenham_Hotspur.jpg",
       "source": "scan"
     },
     {
