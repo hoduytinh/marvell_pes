@@ -18759,16 +18759,7 @@
         "logos/Brazil.jpg",
         "logos/PSG.jpg"
       ],
-      "results": {
-        "0-4": {
-          "hg": 1,
-          "ag": 0
-        },
-        "1-5": {
-          "hg": 6,
-          "ag": 2
-        }
-      },
+      "results": {},
       "rounds": [
         [
           {
@@ -19687,7 +19678,7 @@
       "groupRoundRobin": "double"
     }
   },
-  "current": "s4fvc53z",
+  "current": "scsml9z1",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
