@@ -91,7 +91,52 @@
         "logos/Default.jpg",
         "logos/Default.jpg"
       ],
-      "results": {},
+      "results": {
+        "group-A-0-0": {
+          "hg": 1,
+          "ag": 3
+        },
+        "group-A-0-1": {
+          "hg": 3,
+          "ag": 0
+        },
+        "group-B-0-0": {
+          "hg": 1,
+          "ag": 1
+        },
+        "group-B-0-1": {
+          "hg": 2,
+          "ag": 3
+        },
+        "group-C-0-0": {
+          "hg": 0,
+          "ag": 3
+        },
+        "group-C-0-1": {
+          "hg": 2,
+          "ag": 2
+        },
+        "group-D-0-0": {
+          "hg": 1,
+          "ag": 0
+        },
+        "group-E-0-0": {
+          "hg": 3,
+          "ag": 0
+        },
+        "group-F-0-0": {
+          "hg": 0,
+          "ag": 3
+        },
+        "group-G-0-0": {
+          "hg": 2,
+          "ag": 0
+        },
+        "group-H-0-0": {
+          "hg": 3,
+          "ag": 3
+        }
+      },
       "rounds": [
         [
           {
