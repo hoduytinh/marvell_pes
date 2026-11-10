@@ -18101,7 +18101,12 @@
         "logos/Juventus.jpg",
         "logos/Inter_Milan.jpg"
       ],
-      "results": {},
+      "results": {
+        "0-4": {
+          "hg": 0,
+          "ag": 4
+        }
+      },
       "rounds": [
         [
           {
