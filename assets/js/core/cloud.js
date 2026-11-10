@@ -27,7 +27,25 @@
         this.pat = localPat || sessPat;
         this.patFromSession = !localPat && !!sessPat;
         try { this.enabled = localStorage.getItem('pesCloudSyncEnabled') !== '0'; } catch(_) { this.enabled = true; }
+        if(!this._lifecycleBound) {
+          // Mobile browsers freeze/discard background tabs: push pending edits
+          // right away instead of waiting for the debounce timer.
+          var self = this;
+          this._lifecycleBound = true;
+          document.addEventListener('visibilitychange', function() {
+            if(document.visibilityState === 'hidden') self.flush();
+            else if(self.status === 'error' && self.pendingState) self.schedulePush(self.pendingState);
+          });
+          window.addEventListener('pagehide', function() { self.flush(); });
+        }
         this.updateUI();
+      },
+
+      flush: function() {
+        if(!this.pushTimer) return;
+        clearTimeout(this.pushTimer);
+        this.pushTimer = null;
+        this.push(this.pendingState);
       },
 
       hasPAT: function() { return !!this.pat; },
@@ -121,6 +139,12 @@
           el.title = 'Đang tắt tự động đồng bộ lên server';
           return;
         }
+        if(!this.pat && this.status !== 'loading' && typeof isAdmin === 'function' && isAdmin()) {
+          el.textContent = '⚠️ Chỉ lưu trên máy';
+          el.style.color = '#f59e0b';
+          el.title = 'Thiết bị này chưa có quyền ghi cloud: thay đổi chỉ lưu trên máy, không đồng bộ lên server';
+          return;
+        }
         var labels = {
           idle: this.pat ? '☁️ Sẵn sàng' : '☁️ Chưa có PAT',
           loading: '⏳ Đang tải cloud...',
@@ -161,10 +185,9 @@
           return parsed;
         }
 
-        // Fallback: GitHub Contents API (raw media type). Used only if the raw
-        // CDN read fails. Works for files up to 100 MB but is rate-limited for
-        // unauthenticated viewers, so it is the secondary option.
-        function loadViaApi() {
+        // GitHub Contents API (raw media type): always fresh, up to 100 MB.
+        // Primary for PAT holders (5000 req/h); fallback for viewers (60 req/h).
+        function loadViaApi(fallback) {
           var url = self.apiUrl() + '?ref=' + encodeURIComponent(CLOUD_CONFIG.branch) + '&_t=' + Date.now();
           var headers = { 'Accept': 'application/vnd.github.raw' };
           if(self.pat) headers['Authorization'] = 'Bearer ' + self.pat;
@@ -175,41 +198,55 @@
                 self.setStatus('idle', 'data.json chưa tồn tại trên GitHub - sẽ tạo khi admin lưu lần đầu');
                 return null;
               }
-              if(r.status === 401 || r.status === 403) {
+              if(!fallback && (r.status === 401 || r.status === 403)) {
                 self.setStatus('error', 'PAT không hợp lệ hoặc thiếu quyền (HTTP ' + r.status + ')');
                 return null;
               }
               if(!r.ok) throw new Error('HTTP ' + r.status);
-              return r.text();
+              return r.text().then(handleJsonText);
             })
-            .then(handleJsonText)
             .catch(function(err) {
+              if(fallback) {
+                console.warn('CloudSync.load (API) failed, trying raw CDN:', err);
+                return fallback();
+              }
               console.warn('CloudSync.load (API) failed:', err);
               self.setStatus('offline', String(err.message || err));
               return null;
             });
         }
 
-        // PRIMARY: read directly from raw.githubusercontent.com (no 1 MB cap,
-        // no per-IP API rate limit) with cache-busting so viewers always get the
-        // latest committed data.json.
-        var rawFetchUrl = self.rawUrl() + '?_t=' + Date.now();
-        var rawHeaders = {};
-        if(self.pat) rawHeaders['Authorization'] = 'Bearer ' + self.pat;
-        return fetch(rawFetchUrl, { headers: rawHeaders, cache: 'no-store' })
-          .then(function(r) {
-            if(r.status === 404) {
-              self.sha = null;
-              self.setStatus('idle', 'data.json chưa tồn tại trên GitHub - sẽ tạo khi admin lưu lần đầu');
+        // raw.githubusercontent.com: no API rate limit, but the CDN caches the
+        // file for ~5 minutes (query string is ignored), so it can be stale.
+        function loadViaRaw(fallback) {
+          var rawFetchUrl = self.rawUrl() + '?_t=' + Date.now();
+          var rawHeaders = {};
+          if(self.pat) rawHeaders['Authorization'] = 'Bearer ' + self.pat;
+          return fetch(rawFetchUrl, { headers: rawHeaders, cache: 'no-store' })
+            .then(function(r) {
+              if(r.status === 404) {
+                self.sha = null;
+                self.setStatus('idle', 'data.json chưa tồn tại trên GitHub - sẽ tạo khi admin lưu lần đầu');
+                return null;
+              }
+              if(!r.ok) throw new Error('HTTP ' + r.status);
+              return r.text().then(handleJsonText);
+            })
+            .catch(function(err) {
+              if(fallback) {
+                console.warn('CloudSync.load (raw CDN) failed, trying Contents API:', err);
+                return fallback();
+              }
+              console.warn('CloudSync.load (raw CDN) failed:', err);
+              self.setStatus('offline', String(err.message || err));
               return null;
-            }
-            if(!r.ok) throw new Error('HTTP ' + r.status);
-            return r.text().then(handleJsonText);
-          })
-          .catch(function(err) {
-            console.warn('CloudSync.load (raw CDN) failed, trying Contents API:', err);
-            return loadViaApi();
-          });
+            });
+        }
+
+        // Editors must read the latest commit, otherwise a stale CDN copy would be
+        // pushed back over newer results.
+        if(self.pat) return loadViaApi(function() { return loadViaRaw(); });
+        return loadViaRaw(function() { return loadViaApi(); });
       },
 
       schedulePush: function(stateRef) {
@@ -294,6 +331,7 @@
           console.error('CloudSync.push failed:', err);
           self.pushInProgress = false;
           self.setStatus('error', String(err.message || err));
+          if(typeof toast === 'function') toast('❌ Đồng bộ lên server thất bại');
           return false;
         });
       },

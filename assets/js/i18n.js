@@ -209,6 +209,10 @@
     '☁️ Sẵn sàng': '☁️ Ready',
     '☁️ Chưa có PAT': '☁️ No PAT',
     '✅ Đã sync': '✅ Synced',
+    '⚠️ Chỉ lưu trên máy': '⚠️ Local only',
+    'Thiết bị này chưa có quyền ghi cloud: thay đổi chỉ lưu trên máy, không đồng bộ lên server': 'This device has no cloud write access: changes are saved locally only, not synced to the server',
+    '❌ Đồng bộ lên server thất bại': '❌ Sync to server failed',
+    'Thiết bị này chưa có quyền ghi cloud: tỉ số nhập ở đây chỉ lưu trên máy, KHÔNG đồng bộ lên server.\n\nCách bật: trên máy tính đã có PAT, mở Hệ thống → tài khoản này → tick "Ghi cloud", nhập mật khẩu rồi bấm 🔑 → Lưu. Sau đó đăng nhập lại trên thiết bị này.': 'This device has no cloud write access: scores entered here are saved locally only and NOT synced to the server.\n\nTo enable: on a computer that has the PAT, open Systems → this account → tick "Cloud write", enter the password, press 🔑 → Save. Then log in again on this device.',
 
     // Dynamic messages (whole-string)
     'Chỉ admin được phép sửa': 'Only admins can edit',

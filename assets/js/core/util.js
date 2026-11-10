@@ -22,6 +22,7 @@ function escapeHtml(v){
       [].forEach.call(document.querySelectorAll('.adminOnly'),function(el){el.classList.toggle('hidden',!on)});
       var sup = !!on && isSuperAdmin();
       [].forEach.call(document.querySelectorAll('.superAdminOnly'),function(el){el.classList.toggle('hidden',!sup)});
+      if(typeof CloudSync !== 'undefined') CloudSync.updateUI();
     }
     function toast(msg){var t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(function(){t.classList.remove('show')},1400)}
     function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
