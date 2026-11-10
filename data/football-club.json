@@ -178,6 +178,54 @@
         "group-F-1-1": {
           "hg": 2,
           "ag": 2
+        },
+        "group-A-2-0": {
+          "hg": 1,
+          "ag": 0
+        },
+        "group-A-2-1": {
+          "hg": 3,
+          "ag": 2
+        },
+        "group-B-2-0": {
+          "hg": 3,
+          "ag": 3
+        },
+        "group-B-2-1": {
+          "hg": 2,
+          "ag": 3
+        },
+        "group-C-2-0": {
+          "hg": 0,
+          "ag": 3
+        },
+        "group-C-2-1": {
+          "hg": 1,
+          "ag": 0
+        },
+        "group-D-2-0": {
+          "hg": 1,
+          "ag": 0
+        },
+        "group-D-2-1": {
+          "hg": 1,
+          "ag": 1
+        },
+        "group-E-2-0": {
+          "hg": 0,
+          "ag": 2
+        },
+        "group-E-2-1": {
+          "hg": 3,
+          "ag": 2
+        },
+        "group-F-2-0": {
+          "hg": 0,
+          "ag": 2
+        },
+        "group-F-2-1": {
+          "hg": 1,
+          "ag": 0
         }
       },
       "rounds": [
@@ -2781,8 +2829,285 @@
         }
       },
       "groupStandings": {},
-      "knockoutBracket": null,
-      "tournamentPhase": "group",
+      "knockoutBracket": {
+        "rounds": [
+          [
+            {
+              "home": 13,
+              "away": 16
+            },
+            {
+              "home": 8,
+              "away": 14
+            },
+            {
+              "home": 5,
+              "away": 6
+            },
+            {
+              "home": 19,
+              "away": 7
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 0,
+                "matchId": 0
+              },
+              "away": {
+                "fromRound": 0,
+                "matchId": 1
+              }
+            },
+            {
+              "home": {
+                "fromRound": 0,
+                "matchId": 2
+              },
+              "away": {
+                "fromRound": 0,
+                "matchId": 3
+              }
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 1,
+                "matchId": 0,
+                "isLoser": true
+              },
+              "away": {
+                "fromRound": 1,
+                "matchId": 1,
+                "isLoser": true
+              }
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 1,
+                "matchId": 0
+              },
+              "away": {
+                "fromRound": 1,
+                "matchId": 1
+              }
+            }
+          ]
+        ],
+        "stageNames": [
+          "Tứ kết",
+          "Bán kết",
+          "Tranh hạng 3",
+          "Chung kết"
+        ],
+        "qualifiers": [
+          {
+            "teamIdx": 13,
+            "groupName": "F",
+            "position": 1,
+            "points": 9,
+            "gd": 5,
+            "gf": 6
+          },
+          {
+            "teamIdx": 16,
+            "groupName": "E",
+            "position": 2,
+            "points": 6,
+            "gd": 0,
+            "gf": 7
+          },
+          {
+            "teamIdx": 8,
+            "groupName": "D",
+            "position": 1,
+            "points": 7,
+            "gd": 3,
+            "gf": 5
+          },
+          {
+            "teamIdx": 14,
+            "groupName": "E",
+            "position": 1,
+            "points": 6,
+            "gd": 2,
+            "gf": 7
+          },
+          {
+            "teamIdx": 5,
+            "groupName": "C",
+            "position": 1,
+            "points": 7,
+            "gd": 5,
+            "gf": 6
+          },
+          {
+            "teamIdx": 6,
+            "groupName": "A",
+            "position": 2,
+            "points": 6,
+            "gd": 1,
+            "gf": 6
+          },
+          {
+            "teamIdx": 19,
+            "groupName": "A",
+            "position": 1,
+            "points": 7,
+            "gd": 3,
+            "gf": 5
+          },
+          {
+            "teamIdx": 7,
+            "groupName": "B",
+            "position": 1,
+            "points": 5,
+            "gd": 1,
+            "gf": 6
+          }
+        ],
+        "teamIndices": [
+          13,
+          16,
+          8,
+          14,
+          5,
+          6,
+          19,
+          7
+        ],
+        "seedVersion": 3,
+        "serieB": {
+          "rounds": [
+            [
+              {
+                "home": 22,
+                "away": {
+                  "fromRound": 0,
+                  "matchId": 0,
+                  "isLoser": true,
+                  "series": "A"
+                },
+                "fromA": 0
+              },
+              {
+                "home": 17,
+                "away": {
+                  "fromRound": 0,
+                  "matchId": 1,
+                  "isLoser": true,
+                  "series": "A"
+                },
+                "fromA": 1
+              },
+              {
+                "home": 0,
+                "away": {
+                  "fromRound": 0,
+                  "matchId": 2,
+                  "isLoser": true,
+                  "series": "A"
+                },
+                "fromA": 2
+              },
+              {
+                "home": 12,
+                "away": {
+                  "fromRound": 0,
+                  "matchId": 3,
+                  "isLoser": true,
+                  "series": "A"
+                },
+                "fromA": 3
+              }
+            ],
+            [
+              {
+                "home": {
+                  "fromRound": 0,
+                  "matchId": 0
+                },
+                "away": {
+                  "fromRound": 0,
+                  "matchId": 1
+                }
+              },
+              {
+                "home": {
+                  "fromRound": 0,
+                  "matchId": 2
+                },
+                "away": {
+                  "fromRound": 0,
+                  "matchId": 3
+                }
+              }
+            ],
+            [
+              {
+                "home": {
+                  "fromRound": 1,
+                  "matchId": 0
+                },
+                "away": {
+                  "fromRound": 1,
+                  "matchId": 1
+                }
+              }
+            ]
+          ],
+          "stageNames": [
+            "Serie B - Tứ kết",
+            "Serie B - Bán kết",
+            "Serie B - Chung kết"
+          ],
+          "qualifiers": [
+            {
+              "teamIdx": 22,
+              "groupName": "D",
+              "position": 2,
+              "points": 5,
+              "gd": 1,
+              "gf": 5
+            },
+            {
+              "teamIdx": 17,
+              "groupName": "B",
+              "position": 2,
+              "points": 3,
+              "gd": 0,
+              "gf": 8
+            },
+            {
+              "teamIdx": 0,
+              "groupName": "F",
+              "position": 2,
+              "points": 4,
+              "gd": 0,
+              "gf": 5
+            },
+            {
+              "teamIdx": 12,
+              "groupName": "C",
+              "position": 2,
+              "points": 4,
+              "gd": 0,
+              "gf": 2
+            }
+          ],
+          "teamIndices": [
+            22,
+            17,
+            0,
+            12
+          ]
+        }
+      },
+      "tournamentPhase": "knockout",
       "knockoutFormat": "serieAB",
       "numSerieA": 8
     }
