@@ -32,7 +32,8 @@
       "u": "mod1",
       "role": "mod",
       "systems": [
-        "football-club"
+        "football-club",
+        "pes"
       ],
       "createdAt": 1793868995729,
       "salt": "NEylsVz++oDZZtbfIHEKMw==",
