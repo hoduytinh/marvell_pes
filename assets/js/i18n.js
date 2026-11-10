@@ -212,7 +212,7 @@
     '⚠️ Chỉ lưu trên máy': '⚠️ Local only',
     'Thiết bị này chưa có quyền ghi cloud: thay đổi chỉ lưu trên máy, không đồng bộ lên server': 'This device has no cloud write access: changes are saved locally only, not synced to the server',
     '❌ Đồng bộ lên server thất bại': '❌ Sync to server failed',
-    'Thiết bị này chưa có quyền ghi cloud: tỉ số nhập ở đây chỉ lưu trên máy, KHÔNG đồng bộ lên server.\n\nCách bật: trên máy tính đã có PAT, mở Hệ thống → tài khoản này → tick "Ghi cloud", nhập mật khẩu rồi bấm 🔑 → Lưu. Sau đó đăng nhập lại trên thiết bị này.': 'This device has no cloud write access: scores entered here are saved locally only and NOT synced to the server.\n\nTo enable: on a computer that has the PAT, open Systems → this account → tick "Cloud write", enter the password, press 🔑 → Save. Then log in again on this device.',
+    'Thiết bị này chưa có quyền ghi cloud: tỉ số nhập ở đây chỉ lưu trên máy, KHÔNG đồng bộ lên server.\n\nCách bật: trên máy tính đã có PAT, mở Hệ thống → tài khoản này → tick "Ghi cloud", nhập mật khẩu → Lưu. Sau đó đăng nhập lại trên thiết bị này.': 'This device has no cloud write access: scores entered here are saved locally only and NOT synced to the server.\n\nTo enable: on a computer that has the PAT, open Systems → this account → tick "Cloud write", enter the password → Save. Then log in again on this device.',
 
     // Dynamic messages (whole-string)
     'Chỉ admin được phép sửa': 'Only admins can edit',
@@ -415,6 +415,11 @@
   // ---- Fragment translations (substring replacement, longest first) ---------
   // Used for strings built dynamically with interpolation.
   var PHRASES_RAW = {
+    // Systems dialog: cloud grant (dynamic user name)
+    ' rồi bấm Lưu để cấp quyền ghi cloud': ' then click Save to grant cloud write',
+    'Nhập mật khẩu (tối thiểu 8 ký tự) cho ': 'Enter a password (min 8 characters) for ',
+    ' để cấp quyền ghi cloud': ' to grant cloud write',
+    'Nhập mật khẩu cho ': 'Enter the password for ',
     // Knockout / round labels
     'Vòng 1/16': 'Round of 32',
     'Vòng 1/8': 'Round of 16',

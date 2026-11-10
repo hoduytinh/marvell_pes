@@ -246,6 +246,7 @@ function buildSystemsDialog(draft){
     document.body.appendChild(dlg);
   }
   var newSystems = {};   // ids created in this dialog session -> need a data file
+  var pendingGrants = []; // [{user, cb, pwIn}] rows ticked "Ghi cloud" but not yet encrypted
   var dirty = false;
   var statusEl = sysEl('div', { class: 'sys-status muted' });
 
@@ -321,6 +322,7 @@ function buildSystemsDialog(draft){
   }
 
   function usersSection(){
+    pendingGrants = [];
     var rows = draft.users.map(function(user){
       var isAdm = user.role === 'admin';
       var pwIn = sysEl('input', { type: 'password', class: 'sys-pw', placeholder: 'Mật khẩu mới', autocomplete: 'new-password' });
@@ -328,9 +330,11 @@ function buildSystemsDialog(draft){
         on: { change: function(){
           if(!cloudCb.checked){ delete user.tok; markDirty(); return; }
           if(!cloudGrantAvailable()){ cloudCb.checked = false; setStatus('Trình duyệt này chưa có PAT để cấp', true); return; }
-          setStatus('Nhập mật khẩu mới rồi bấm 🔑 để cấp quyền ghi cloud');
+          dirty = true;
+          setStatus('Nhập mật khẩu cho ' + user.u + ' rồi bấm Lưu để cấp quyền ghi cloud');
           pwIn.focus();
         } } });
+      pendingGrants.push({ user: user, cb: cloudCb, pwIn: pwIn });
       var keyBtn = sysEl('button', { type: 'button', class: 'ghost', text: '🔑', title: 'Đặt mật khẩu mới', on: { click: function(){
         var pw = pwIn.value;
         if(pw.length < MIN_PASSWORD_LEN){ setStatus('Mật khẩu tối thiểu 8 ký tự', true); return; }
@@ -412,10 +416,21 @@ function buildSystemsDialog(draft){
   function save(){
     var pat = CloudSync.pat;
     if(!pat){ setStatus('Cần GitHub PAT để lưu (☁️ Cloud)', true); return; }
+    // Ticked "Ghi cloud" without pressing 🔑: encrypt the PAT now with the typed password.
+    var grants = pendingGrants.filter(function(g){ return g.cb.checked && !g.user.tok; });
+    var missing = grants.filter(function(g){ return g.pwIn.value.length < MIN_PASSWORD_LEN; })[0];
+    if(missing){
+      setStatus('Nhập mật khẩu (tối thiểu 8 ký tự) cho ' + missing.user.u + ' để cấp quyền ghi cloud', true);
+      missing.pwIn.focus();
+      return;
+    }
     saveBtn.disabled = true;
     setStatus('Đang lưu...');
     var created = Object.keys(newSystems);
     var chain = Promise.resolve();
+    grants.forEach(function(g){
+      chain = chain.then(function(){ return applyPassword(g.user, g.pwIn.value, true); });
+    });
     created.forEach(function(id){
       var path = systemDataPath(id);
       chain = chain.then(function(){ return ghGetSha(path, pat); }).then(function(sha){
