@@ -509,6 +509,8 @@ function renderCupBracket(s, customHost){
           }
           var hg = homeScore.value.trim();
           var ag = awayScore.value.trim();
+          // Only one side entered: wait for the other instead of clearing/re-rendering
+          if((hg === '') !== (ag === '') && !needsRerender) return;
           
           if(hg === '' || ag === '') { 
             delete s.results[key];

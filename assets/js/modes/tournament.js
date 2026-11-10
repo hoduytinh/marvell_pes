@@ -1660,6 +1660,8 @@
               
               var hg = (homeScore.value === '') ? null : Math.max(0, parseInt(homeScore.value, 10));
               var ag = (awayScore.value === '') ? null : Math.max(0, parseInt(awayScore.value, 10));
+              // Only one side entered: wait for the other instead of clearing/re-rendering
+              if((hg == null) !== (ag == null) && !needsRerender) return;
               
               // Store old winner to detect changes
               var oldResult = s.results[key];

@@ -377,6 +377,9 @@ function buildChessSwissRoundDiv(s, roundIdx, filters){
 
       var commit = function(){
         if(!isAdmin()){ toast('Chỉ admin được phép sửa'); return; }
+        var hv = homeScore.value.trim(), av = awayScore.value.trim();
+        // Only one side entered: wait for the other
+        if((hv === '') !== (av === '')) return;
         // If later rounds exist and this round was complete, editing reshuffles later rounds
         var hadLaterRounds = cs.rounds.length > roundIdx + 1;
         if(hadLaterRounds && s.results[key]){
@@ -386,7 +389,6 @@ function buildChessSwissRoundDiv(s, roundIdx, filters){
             return;
           }
         }
-        var hv = homeScore.value.trim(), av = awayScore.value.trim();
         if(hv === '' && av === ''){
           delete s.results[key];
         } else {

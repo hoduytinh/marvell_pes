@@ -521,13 +521,6 @@ el.innerHTML = `
             s.results[key]={hg:hg,ag:ag};
           }
           saveAll();
-          // Update input fields with latest values from s.results
-                    if(document.activeElement !== h) {
-            h.value = (s.results[key] && s.results[key].hg != null) ? s.results[key].hg : '';
-          }
-          if(document.activeElement !== a) {
-            a.value = (s.results[key] && s.results[key].ag != null) ? s.results[key].ag : '';
-          }
           renderStandings();
           renderInsights();
           renderSeasonStats();
