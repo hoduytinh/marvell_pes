@@ -439,6 +439,31 @@
         stageLabel: function(r) { return 'Knockout R' + (r + 1); },
         resolveTeam: knockoutResolve
       }, out);
+
+      // Serie A/B format: Serie B bracket (round-1 away = loser of a Serie A round-1 match)
+      var serieB = season.knockoutBracket.serieB;
+      if(serieB && Array.isArray(serieB.rounds)) {
+        var bRounds = serieB.rounds;
+        var fromA = function(ref) { return ref && typeof ref === 'object' && ref.series === 'A'; };
+        var bResolve = buildTeamResolver(
+          season,
+          function(fromRound, matchId) {
+            var round = bRounds[fromRound];
+            var m = Array.isArray(round) ? round[matchId] : null;
+            if(m && fromA(m.away)) return { home: m.home, away: knockoutResolve(m.away) };
+            return m || null;
+          },
+          function(fromRound, matchId) {
+            return 'knockoutB-' + fromRound + '-' + matchId;
+          }
+        );
+        addFromRoundArray(season, {
+          rounds: bRounds,
+          keyBuilder: function(r, m) { return 'knockoutB-' + r + '-' + m; },
+          stageLabel: function(r) { return 'Serie B R' + (r + 1); },
+          resolveTeam: function(ref) { return fromA(ref) ? knockoutResolve(ref) : bResolve(ref); }
+        }, out);
+      }
     }
   }
 

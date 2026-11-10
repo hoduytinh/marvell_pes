@@ -340,10 +340,27 @@
         <span>Số bảng:</span>
         <input type="number" id="numTournamentGroups" min="2" max="8" step="1" value="4" style="width:80px" />
       </label>
-      <label style="display:flex;align-items:center;gap:8px;margin-top:8px">
+      <label id="numKnockoutTeamsRow" style="display:flex;align-items:center;gap:8px;margin-top:8px">
         <span>Số đội vào vòng loại trực tiếp:</span>
         <input type="number" id="numKnockoutTeams" min="2" max="32" step="1" value="8" style="width:80px" />
       </label>
+      <label style="display:flex;align-items:center;gap:8px;margin-top:8px;cursor:pointer">
+        <input type="checkbox" id="enableSerieAB" />
+        <span>Knock-out kiểu Serie A/B</span>
+      </label>
+      <div id="serieABOption" style="display:none;margin-top:6px;padding-left:24px">
+        <label style="display:flex;align-items:center;gap:8px">
+          <span>Số đội vào Serie A:</span>
+          <select id="numSerieA" style="width:80px">
+            <option value="2">2</option>
+            <option value="4">4</option>
+            <option value="8" selected>8</option>
+            <option value="16">16</option>
+          </select>
+          <span id="serieBInfo" style="color:var(--muted)">Serie B: 4</span>
+        </label>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px">Serie A đá knock-out; đội thua vòng 1 xuống Serie B gặp các đội chờ sẵn.</div>
+      </div>
       <div style="margin-top:8px">
         <span style="margin-right:12px">Lượt đấu vòng bảng:</span>
         <label style="display:inline-flex;align-items:center;gap:4px;margin-right:12px;cursor:pointer">

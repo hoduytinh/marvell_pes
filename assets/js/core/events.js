@@ -155,6 +155,7 @@
           groupsDiv.style.display = 'none';
         }
         if(chessSwissDiv) chessSwissDiv.style.display = (type === 'chess-swiss') ? 'block' : 'none';
+        syncSerieABOption();
         
         var dlg=$('seasonDialog'); 
         if(dlg && typeof dlg.showModal==='function'){dlg.showModal()} else {dlg.setAttribute('open','open')} 
@@ -189,6 +190,16 @@
         if(chessSwissDiv) chessSwissDiv.style.display = (type === 'chess-swiss') ? 'block' : 'none';
       });
       
+      // Serie A/B knock-out option (tournament): replaces the plain knockout team count
+      function syncSerieABOption() {
+        var on = $('enableSerieAB').checked;
+        $('serieABOption').style.display = on ? 'block' : 'none';
+        $('numKnockoutTeamsRow').style.display = on ? 'none' : 'flex';
+        $('serieBInfo').textContent = 'Serie B: ' + ((parseInt($('numSerieA').value, 10) || 8) / 2);
+      }
+      $('enableSerieAB').addEventListener('change', syncSerieABOption);
+      $('numSerieA').addEventListener('change', syncSerieABOption);
+      
       $('createSeasonBtn').addEventListener('click',function(){
         if(!ensureAdmin()) return;
         var name=(($('newSeasonName').value)||'').trim()||'Mùa mới';
@@ -202,6 +213,9 @@
         var has3rdPlace = $('enable3rdPlace').checked;
         var numGroups = type === 'tournament' ? clamp(parseInt($('numTournamentGroups').value,10)||4,2,8) : 4;
         var numKnockoutTeams = type === 'tournament' ? clamp(parseInt($('numKnockoutTeams').value,10)||8,2,32) : 8;
+        var serieAB = type === 'tournament' && $('enableSerieAB').checked;
+        var numSerieA = serieAB ? (parseInt($('numSerieA').value, 10) || 8) : 0;
+        if(serieAB) numKnockoutTeams = numSerieA + numSerieA / 2;
         var groupRoundRobin = 'double'; // default
         if(type === 'tournament') {
           var radioButtons = document.getElementsByName('groupRoundRobin');
@@ -223,6 +237,10 @@
           }
           if(numKnockoutTeams > maxQualifiers) {
             alert('With ' + numGroups + ' groups, maximum knockout teams is ' + maxQualifiers + '.');
+            return;
+          }
+          if(serieAB && numKnockoutTeams > n) {
+            alert('Serie A/B cần ' + numKnockoutTeams + ' đội đi tiếp (A: ' + numSerieA + ', B: ' + (numSerieA / 2) + ') nhưng giải chỉ có ' + n + ' đội.');
             return;
           }
         } else if(type === 'cup') {
@@ -258,6 +276,10 @@
           season.numGroups = numGroups;
           season.numKnockoutTeams = numKnockoutTeams;
           season.groupRoundRobin = groupRoundRobin;
+          if(serieAB) {
+            season.knockoutFormat = 'serieAB';
+            season.numSerieA = numSerieA;
+          }
         }
         if(type === 'legend') {
           season.timelines = []; // Array of timeline years

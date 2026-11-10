@@ -129,6 +129,9 @@
     'Số vòng đấu:': 'Number of rounds:',
     'Nếu số đội lẻ sẽ tự thêm kỳ thủ ảo “BYE”.': 'If the number of players is odd, a virtual “BYE” player is added.',
     'Thêm trận tranh hạng 3': 'Add a 3rd place match',
+    'Knock-out kiểu Serie A/B': 'Serie A/B knock-out',
+    'Số đội vào Serie A:': 'Teams in Serie A:',
+    'Serie A đá knock-out; đội thua vòng 1 xuống Serie B gặp các đội chờ sẵn.': 'Serie A plays knock-out; round-1 losers drop to Serie B to face the waiting teams.',
     'Tạo': 'Create',
 
     // Team count dialog
@@ -612,6 +615,8 @@
     // Stages / statuses
     'Winner': 'Vô địch',
     'Runner-up': 'Á quân',
+    'Serie B Winner': 'Vô địch Serie B',
+    'Serie B Runner-up': 'Á quân Serie B',
     '3rd Place': 'Hạng 3',
     '4th Place': 'Hạng 4',
     'Final': 'Chung kết',
@@ -878,6 +883,8 @@
     [/^Group ([A-Z]) #(\d+)$/, 'Hạng $2 bảng $1'],
     [/^Winner of R(\d+)M(\d+)$/, 'Thắng V$1-T$2'],
     [/^Loser of R(\d+)M(\d+)$/, 'Thua V$1-T$2'],
+    [/^Winner of ([AB])-R(\d+)M(\d+)$/, 'Thắng $1 V$2-T$3'],
+    [/^Loser of ([AB])-R(\d+)M(\d+)$/, 'Thua $1 V$2-T$3'],
     [/^(\d+) teams$/, '$1 đội'],
     [/^(\d+) logos$/, '$1 logo'],
     [/^Win Rate \(([\s\S]+)\)$/, 'Tỉ lệ thắng ($1)'],

@@ -240,6 +240,15 @@
         });
       });
       
+      // Serie A/B: one ranked list (group position, then Pts/GD/GF) so the best
+      // 1st/2nd (or 3rd) placed teams fill Serie A and the next ones Serie B.
+      if(isSerieAB(season)) {
+        allStandings.sort(function(a, b) {
+          return (a.position - b.position) || (b.points - a.points) || (b.gd - a.gd) || (b.gf - a.gf);
+        });
+        return allStandings.slice(0, season.numSerieA + season.numSerieA / 2);
+      }
+      
       // Get 1st and 2nd place teams from each group
       var firstPlace = allStandings.filter(function(q) { return q.position === 1; });
       var secondPlace = allStandings.filter(function(q) { return q.position === 2; });
@@ -344,10 +353,84 @@
       return arranged;
     }
 
+    // ===== Serie A/B knock-out format =====
+    // Serie A: numSerieA teams (power of 2), normal knock-out.
+    // Serie B: numSerieA/2 teams wait; each Serie B round-1 match = waiting team
+    // vs the loser of Serie A round-1 match `fromA`. Stored as
+    // s.knockoutBracket.serieB, results keyed 'knockoutB-{r}-{m}'.
+    function isSerieAB(season) {
+      return !!season && season.knockoutFormat === 'serieAB' && season.numSerieA >= 2;
+    }
+    
+    function getSerieB(s) {
+      return (s && s.knockoutBracket && s.knockoutBracket.serieB && s.knockoutBracket.serieB.rounds) ? s.knockoutBracket.serieB : null;
+    }
+    
+    function serieBLoserRef(aMatchIdx) {
+      return {fromRound: 0, matchId: aMatchIdx, isLoser: true, series: 'A'};
+    }
+    
+    // Fill Serie B round-1 away slots with the actual Serie A round-1 losers
+    // (or back to a placeholder while that Serie A match has no result).
+    function syncSerieBEntrants(s) {
+      var B = getSerieB(s);
+      if(!B || !B.rounds[0]) return;
+      B.rounds[0].forEach(function(match) {
+        if(match.fromA == null) return;
+        var loser = resolveLoserFromMatch(s, 0, match.fromA);
+        match.away = (loser != null) ? loser : serieBLoserRef(match.fromA);
+      });
+    }
+    
+    function buildSerieBBracket(season, qualifiersB, arrangedA) {
+      var nB = qualifiersB.length;
+      if(nB < 1 || arrangedA.length !== nB * 2) return null;
+      var waiting = seedTournamentBracket(qualifiersB, season.numGroups || 4);
+      
+      // Serie B match j: waiting[j] vs loser of Serie A match src[j]. Avoid
+      // same-group meetings by swapping Serie A sources where possible.
+      var src = waiting.map(function(_, j) { return j; });
+      function clash(j, aj) {
+        var g = waiting[j].groupName;
+        return arrangedA[2 * aj].groupName === g || arrangedA[2 * aj + 1].groupName === g;
+      }
+      for(var j = 0; j < nB; j++) {
+        if(!clash(j, src[j])) continue;
+        for(var k = 0; k < nB; k++) {
+          if(k !== j && !clash(j, src[k]) && !clash(k, src[j])) {
+            var t = src[j]; src[j] = src[k]; src[k] = t;
+            break;
+          }
+        }
+      }
+      
+      var cup = buildCupBracket({ teams: new Array(nB * 2).fill(''), has3rdPlace: false });
+      if(!cup || !cup.rounds.length) return null;
+      var rounds = cup.rounds.map(function(round, r) {
+        return round.map(function(match, m) {
+          if(r === 0) return { home: waiting[m].teamIdx, away: serieBLoserRef(src[m]), fromA: src[m] };
+          return { home: match.home, away: match.away };
+        });
+      });
+      return {
+        rounds: rounds,
+        stageNames: cup.stageNames.map(function(n) { return 'Serie B - ' + n; }),
+        qualifiers: waiting,
+        teamIndices: waiting.map(function(q) { return q.teamIdx; })
+      };
+    }
+
     // Generate knockout bracket for tournament (flexible team count from group stage)
     function generateTournamentKnockout(season) {
       var qualifiers = getTournamentQualifiers(season);
       var numKnockoutTeams = season.numKnockoutTeams || 8;
+      var qualifiersB = null;
+      
+      if(isSerieAB(season)) {
+        numKnockoutTeams = season.numSerieA;
+        if(qualifiers.length < numKnockoutTeams + numKnockoutTeams / 2) return null;
+        qualifiersB = qualifiers.slice(numKnockoutTeams, numKnockoutTeams + numKnockoutTeams / 2);
+      }
       
       if(qualifiers.length < numKnockoutTeams) return null;
       
@@ -403,6 +486,11 @@
         seedVersion: 3
       };
       
+      if(qualifiersB) {
+        bracket.serieB = buildSerieBBracket(season, qualifiersB, qualifiers);
+        if(!bracket.serieB) return null;
+      }
+      
       return bracket;
     }
 
@@ -441,7 +529,7 @@
         // Add team logo and badge like in regular standings
         var logo = s.teamLogos && s.teamLogos[row.idx] ? '<img src="' + s.teamLogos[row.idx] + '" alt="logo"/>' : '';
         var badge = logo ? ('<span class="badge">' + logo + '</span>') : ('<span class="badge" style="background:' + (s.teamColors[row.idx] || '#1b2550') + '"></span>');
-        var medal = row.stage==='Winner'?' 🏆':row.stage==='Runner-up'?' 🥈':(row.stage==='3rd Place'||row.stage==='Tranh hạng 3')?' 🥉':'';
+        var medal = row.stage==='Winner'?' 🏆':row.stage==='Runner-up'?' 🥈':(row.stage==='3rd Place'||row.stage==='Tranh hạng 3')?' 🥉':row.stage==='Serie B Winner'?' 🏅':'';
         
         tr.innerHTML = '<td' + stageColor + '>' + (pos + 1) + '</td>' +
                       '<td' + stageColor + ' class="team">' + badge + escapeHtml(row.team) + medal + '</td>' +
@@ -632,14 +720,22 @@
       // Only decide qualification AFTER the group stage is fully played, so the
       // Stage column doesn't show predicted/placeholder results beforehand.
       var groupStageDone = isGroupStageComplete(s);
+      var serieAB = isSerieAB(s);
       if(groupStageDone) {
         var qualifiers = getTournamentQualifiers(s);
         var qualifiedIndices = qualifiers.map(function(q) { return q.teamIdx; });
+        var serieBIndices = [];
+        if(serieAB) {
+          var qB = getSerieB(s);
+          serieBIndices = qB ? qB.teamIndices : qualifiedIndices.slice(s.numSerieA);
+        }
         
         standings.forEach(function(row) {
           if(qualifiedIndices.indexOf(row.idx) === -1) {
             row.stage = 'Group Stage';
             row.eliminated = true;
+          } else if(serieAB) {
+            row.stage = serieBIndices.indexOf(row.idx) !== -1 ? 'Serie B' : 'Serie A';
           } else {
             row.stage = 'Qualified';
           }
@@ -653,10 +749,10 @@
       }
       
       // Add knockout stage results and update stages
-      if(s.knockoutBracket) {
-        s.knockoutBracket.rounds.forEach(function(round, roundIdx) {
+      function addKnockoutStats(kb, KP, isB) {
+        kb.rounds.forEach(function(round, roundIdx) {
           round.forEach(function(match, matchIdx) {
-            var key = 'knockout-' + roundIdx + '-' + matchIdx;
+            var key = KP + roundIdx + '-' + matchIdx;
             var result = s.results[key];
             
             // Resolve team indices - handle both direct indices and references (winner/loser)
@@ -669,10 +765,10 @@
               homeIdx = resolveLoserFromMatch(s, match.home.fromRound, match.home.matchId);
             } else if(match.home && match.home.fromRound != null) {
               // Resolve winner from previous match
-              var prevKey = 'knockout-' + match.home.fromRound + '-' + match.home.matchId;
+              var prevKey = KP + match.home.fromRound + '-' + match.home.matchId;
               var prevRes = s.results[prevKey];
               if(prevRes && prevRes.hg != null && prevRes.ag != null) {
-                var prevMatch = s.knockoutBracket.rounds[match.home.fromRound][match.home.matchId];
+                var prevMatch = kb.rounds[match.home.fromRound][match.home.matchId];
                 var prevHomeIdx = typeof prevMatch.home === 'number' ? prevMatch.home : null;
                 var prevAwayIdx = typeof prevMatch.away === 'number' ? prevMatch.away : null;
                 if(prevHomeIdx != null && prevAwayIdx != null) {
@@ -687,10 +783,10 @@
               awayIdx = resolveLoserFromMatch(s, match.away.fromRound, match.away.matchId);
             } else if(match.away && match.away.fromRound != null) {
               // Resolve winner from previous match
-              var prevKey = 'knockout-' + match.away.fromRound + '-' + match.away.matchId;
+              var prevKey = KP + match.away.fromRound + '-' + match.away.matchId;
               var prevRes = s.results[prevKey];
               if(prevRes && prevRes.hg != null && prevRes.ag != null) {
-                var prevMatch = s.knockoutBracket.rounds[match.away.fromRound][match.away.matchId];
+                var prevMatch = kb.rounds[match.away.fromRound][match.away.matchId];
                 var prevHomeIdx = typeof prevMatch.home === 'number' ? prevMatch.home : null;
                 var prevAwayIdx = typeof prevMatch.away === 'number' ? prevMatch.away : null;
                 if(prevHomeIdx != null && prevAwayIdx != null) {
@@ -709,38 +805,48 @@
               homeRow.GF += result.hg; homeRow.GA += result.ag;
               awayRow.GF += result.ag; awayRow.GA += result.hg;
               
-              var stageName = s.knockoutBracket.stageNames[roundIdx];
+              var stageName = kb.stageNames[roundIdx];
+              var isLastRound = roundIdx === kb.rounds.length - 1;
+              // Serie A/B: losing a Serie A round-1 match means dropping to Serie B
+              var dropsToB = serieAB && !isB && roundIdx === 0;
+              var loserStage = dropsToB ? 'Serie B' : stageName;
               
               if(result.hg > result.ag) {
                 homeRow.W++; homeRow.Pts += 3;
                 awayRow.L++;
                 // Update stages based on stage name
-                if(stageName === 'Final' || stageName === 'Chung kết') {
+                if(isB && isLastRound) {
+                  homeRow.stage = 'Serie B Winner';
+                  awayRow.stage = 'Serie B Runner-up';
+                } else if(stageName === 'Final' || stageName === 'Chung kết') {
                   homeRow.stage = 'Winner';
                   awayRow.stage = 'Runner-up';
                 } else if(stageName === '3rd Place Match' || stageName === 'Tranh hạng 3') {
                   homeRow.stage = '3rd Place';
                   awayRow.stage = '4th Place';
                 } else {
-                  homeRow.stage = s.knockoutBracket.stageNames[roundIdx + 1] || stageName;
-                  awayRow.stage = stageName;
+                  homeRow.stage = kb.stageNames[roundIdx + 1] || stageName;
+                  awayRow.stage = loserStage;
                 }
-                awayRow.eliminated = true;
+                awayRow.eliminated = !dropsToB;
               } else if(result.hg < result.ag) {
                 awayRow.W++; awayRow.Pts += 3;
                 homeRow.L++;
                 // Update stages based on stage name
-                if(stageName === 'Final' || stageName === 'Chung kết') {
+                if(isB && isLastRound) {
+                  awayRow.stage = 'Serie B Winner';
+                  homeRow.stage = 'Serie B Runner-up';
+                } else if(stageName === 'Final' || stageName === 'Chung kết') {
                   awayRow.stage = 'Winner';
                   homeRow.stage = 'Runner-up';
                 } else if(stageName === '3rd Place Match' || stageName === 'Tranh hạng 3') {
                   awayRow.stage = '3rd Place';
                   homeRow.stage = '4th Place';
                 } else {
-                  awayRow.stage = s.knockoutBracket.stageNames[roundIdx + 1] || stageName;
-                  homeRow.stage = stageName;
+                  awayRow.stage = kb.stageNames[roundIdx + 1] || stageName;
+                  homeRow.stage = loserStage;
                 }
-                homeRow.eliminated = true;
+                homeRow.eliminated = !dropsToB;
               } else {
                 // Tie - no winner advancement in knockout
                 homeRow.D++; homeRow.Pts += 1;
@@ -752,6 +858,15 @@
             }
           });
         });
+      }
+      
+      if(s.knockoutBracket && s.knockoutBracket.rounds) {
+        addKnockoutStats(s.knockoutBracket, 'knockout-', false);
+        var serieB = getSerieB(s);
+        if(serieB) {
+          syncSerieBEntrants(s);
+          addKnockoutStats(serieB, 'knockoutB-', true);
+        }
       }
       
       // Sort by stage reached, then points, then goal difference
@@ -767,9 +882,13 @@
         'Vòng 1/16',
         'Vòng 1', 'Vòng 2', 'Vòng 3', 'Vòng 4', 'Vòng 5', 'Vòng 6',
         'Playoff',
-        'Qualified', 
-        'Group Stage'
+        'Serie A'
       ];
+      if(serieAB) {
+        var bNames = (getSerieB(s) || {stageNames: []}).stageNames.slice().reverse();
+        stageOrder = stageOrder.concat(['Serie B Winner', 'Serie B Runner-up'], bNames, ['Serie B']);
+      }
+      stageOrder = stageOrder.concat(['Qualified', 'Group Stage']);
       standings.sort(function(a, b) {
         var stageA = stageOrder.indexOf(a.stage);
         var stageB = stageOrder.indexOf(b.stage);
@@ -1288,47 +1407,101 @@
       if(!container) return;
       
       var rerenderKO = function() { renderTournamentKnockoutBracket(s); };
+      var serieB = getSerieB(s);
+      if(serieB) syncSerieBEntrants(s);
+      var labelA = function(ref) { return getTeamNameForMatch(s, ref); };
+      var labelB = function(ref) {
+        if(ref && typeof ref === 'object' && !ref.series && ref.fromRound != null) {
+          return (ref.isLoser ? 'Loser' : 'Winner') + ' of B-R' + (ref.fromRound + 1) + 'M' + (ref.matchId + 1);
+        }
+        return getTeamNameForMatch(s, ref);
+      };
+      var sectionTitle = function(host, text, before) {
+        var h = document.createElement('h3');
+        h.className = 'serie-ab-title';
+        h.style.cssText = 'margin: 16px 0 8px; font-size: 16px;';
+        h.textContent = text;
+        host.insertBefore(h, before || null);
+      };
+      
       var listContainer = prepareBracketHost(container, 'cup-bracket-container', rerenderKO);
       if(!listContainer) {
-        renderKnockoutTree(container, s, {
+        var treeA = container;
+        if(serieB) {
+          sectionTitle(container, '🏆 Serie A');
+          treeA = document.createElement('div');
+          container.appendChild(treeA);
+        }
+        renderKnockoutTree(treeA, s, {
           rounds: s.knockoutBracket.rounds,
           names: s.knockoutBracket.stageNames || [],
           keyFor: function(r, m) { return 'knockout-' + r + '-' + m; },
           mapIdx: function(n) { return n; },
-          label: function(ref) { return getTeamNameForMatch(s, ref); },
+          label: labelA,
           code: function(r, m) { return 'R' + (r + 1) + 'M' + (m + 1); },
           rerender: rerenderKO
         });
+        if(serieB) {
+          sectionTitle(container, '🏅 Serie B');
+          var treeB = document.createElement('div');
+          container.appendChild(treeB);
+          renderKnockoutTree(treeB, s, {
+            rounds: serieB.rounds,
+            names: serieB.stageNames || [],
+            keyFor: function(r, m) { return 'knockoutB-' + r + '-' + m; },
+            mapIdx: function(n) { return n; },
+            label: labelB,
+            code: function(r, m) { return 'B-R' + (r + 1) + 'M' + (m + 1); },
+            rerender: rerenderKO
+          });
+        }
         return;
       }
-      container = listContainer;
       
-      s.knockoutBracket.rounds.forEach(function(round, roundIdx) {
+      if(!serieB) {
+        renderTournamentKOList(s, s.knockoutBracket, 'knockout-', listContainer, {label: labelA, editHome: true, editAway: true});
+        return;
+      }
+      // Serie A/B: two stacked list sections
+      var parent = listContainer.parentNode;
+      sectionTitle(parent, '🏆 Serie A', listContainer);
+      renderTournamentKOList(s, s.knockoutBracket, 'knockout-', listContainer, {label: labelA, editHome: true, editAway: true});
+      sectionTitle(parent, '🏅 Serie B');
+      var listB = document.createElement('div');
+      listB.className = listContainer.className;
+      parent.appendChild(listB);
+      renderTournamentKOList(s, serieB, 'knockoutB-', listB, {label: labelB, editHome: true, editAway: false});
+    }
+    
+    // List view of one knock-out bracket. kb = bracket object, KP = result key prefix.
+    function renderTournamentKOList(s, kb, KP, container, opt) {
+      var isFinalStage = function(r) {
+        var n = kb.stageNames[r];
+        return n === 'Final' || n === 'Chung kết' || (KP !== 'knockout-' && r === kb.rounds.length - 1);
+      };
+      kb.rounds.forEach(function(round, roundIdx) {
         var roundDiv = document.createElement('div');
         roundDiv.className = 'cup-round';
         
         var roundTitle = document.createElement('h4');
-        roundTitle.className = 'cup-round-title' + 
-          (s.knockoutBracket.stageNames[roundIdx] === 'Final' || 
-           s.knockoutBracket.stageNames[roundIdx] === 'Chung kết' ? ' final' : '');
-        roundTitle.textContent = s.knockoutBracket.stageNames[roundIdx] || ('Round ' + (roundIdx + 1));
+        roundTitle.className = 'cup-round-title' + (isFinalStage(roundIdx) ? ' final' : '');
+        roundTitle.textContent = kb.stageNames[roundIdx] || ('Round ' + (roundIdx + 1));
         roundDiv.appendChild(roundTitle);
         
         round.forEach(function(match, matchIdx) {
-          var key = 'knockout-' + roundIdx + '-' + matchIdx;
+          var key = KP + roundIdx + '-' + matchIdx;
           var result = s.results[key] || {};
           
-          var homeTeam = getTeamNameForMatch(s, match.home);
-          var awayTeam = getTeamNameForMatch(s, match.away);
+          var homeTeam = opt.label(match.home);
+          var awayTeam = opt.label(match.away);
           
           var shouldShowMatch = true;
           
           if(shouldShowMatch) {
             var el = document.createElement('div');
             el.className = 'fixture cup-match' +
-              (s.knockoutBracket.stageNames[roundIdx] === 'Final' || 
-               s.knockoutBracket.stageNames[roundIdx] === 'Chung kết' ? ' final' : '') +
-              (s.knockoutBracket.stageNames[roundIdx] === '3rd Place Match' ? ' third-place' : '');
+              (isFinalStage(roundIdx) ? ' final' : '') +
+              (kb.stageNames[roundIdx] === '3rd Place Match' ? ' third-place' : '');
             el.setAttribute('data-key', key);
             
             var vhg = (result.hg == null ? '' : result.hg);
@@ -1359,10 +1532,10 @@
               displayHomeIdx = resolveLoserFromMatch(s, match.home.fromRound, match.home.matchId);
             } else if(match.home && match.home.fromRound != null) {
               // Resolve winner from previous match
-              var prevKey = 'knockout-' + match.home.fromRound + '-' + match.home.matchId;
+              var prevKey = KP + match.home.fromRound + '-' + match.home.matchId;
               var prevRes = s.results[prevKey];
               if(prevRes && prevRes.hg != null && prevRes.ag != null) {
-                var prevMatch = s.knockoutBracket.rounds[match.home.fromRound][match.home.matchId];
+                var prevMatch = kb.rounds[match.home.fromRound][match.home.matchId];
                 var prevHomeIdx = typeof prevMatch.home === 'number' ? prevMatch.home : null;
                 var prevAwayIdx = typeof prevMatch.away === 'number' ? prevMatch.away : null;
                 if(prevHomeIdx != null && prevAwayIdx != null) {
@@ -1378,10 +1551,10 @@
               displayAwayIdx = resolveLoserFromMatch(s, match.away.fromRound, match.away.matchId);
             } else if(match.away && match.away.fromRound != null) {
               // Resolve winner from previous match
-              var prevKey = 'knockout-' + match.away.fromRound + '-' + match.away.matchId;
+              var prevKey = KP + match.away.fromRound + '-' + match.away.matchId;
               var prevRes = s.results[prevKey];
               if(prevRes && prevRes.hg != null && prevRes.ag != null) {
-                var prevMatch = s.knockoutBracket.rounds[match.away.fromRound][match.away.matchId];
+                var prevMatch = kb.rounds[match.away.fromRound][match.away.matchId];
                 var prevHomeIdx = typeof prevMatch.home === 'number' ? prevMatch.home : null;
                 var prevAwayIdx = typeof prevMatch.away === 'number' ? prevMatch.away : null;
                 if(prevHomeIdx != null && prevAwayIdx != null) {
@@ -1401,7 +1574,7 @@
             
             // Home team name or dropdown (allow editing in first knockout round)
             var homeTeamDisplay;
-            if(isAdmin() && roundIdx === 0 && typeof match.home === 'number') {
+            if(isAdmin() && opt.editHome && roundIdx === 0 && typeof match.home === 'number') {
               homeTeamDisplay = document.createElement('select');
               homeTeamDisplay.className = 'teamHome';
               homeTeamDisplay.style.cssText = `font-size: 12px; border: 1px solid var(--border); border-radius: 3px; background: var(--bg); width: ${maxTeamNameWidth}px; box-sizing: border-box; padding: 2px 4px;`;
@@ -1456,7 +1629,7 @@
             
             // Away team name or dropdown (allow editing in first knockout round)
             var awayTeamDisplay;
-            if(isAdmin() && roundIdx === 0 && typeof match.away === 'number') {
+            if(isAdmin() && opt.editAway && roundIdx === 0 && typeof match.away === 'number') {
               awayTeamDisplay = document.createElement('select');
               awayTeamDisplay.className = 'teamAway';
               awayTeamDisplay.style.cssText = `font-size: 12px; border: 1px solid var(--border); border-radius: 3px; background: var(--bg); width: ${maxTeamNameWidth}px; box-sizing: border-box; padding: 2px 4px;`;
@@ -1601,18 +1774,18 @@
               
               // Check if this round is locked (has results and next round has results)
               var isRoundLocked = false;
-              if(roundIdx < s.knockoutBracket.rounds.length - 1) {
+              if(roundIdx < kb.rounds.length - 1) {
                 // Check if current round is complete
-                var currentRoundComplete = s.knockoutBracket.rounds[roundIdx].every(function(m, idx) {
-                  var k = 'knockout-' + roundIdx + '-' + idx;
+                var currentRoundComplete = kb.rounds[roundIdx].every(function(m, idx) {
+                  var k = KP + roundIdx + '-' + idx;
                   return s.results[k] != null;
                 });
                 
                 // Check if any next round has results
                 if(currentRoundComplete) {
-                  for(var nextRoundIdx = roundIdx + 1; nextRoundIdx < s.knockoutBracket.rounds.length; nextRoundIdx++) {
-                    var hasNextRoundResults = s.knockoutBracket.rounds[nextRoundIdx].some(function(m, idx) {
-                      var k = 'knockout-' + nextRoundIdx + '-' + idx;
+                  for(var nextRoundIdx = roundIdx + 1; nextRoundIdx < kb.rounds.length; nextRoundIdx++) {
+                    var hasNextRoundResults = kb.rounds[nextRoundIdx].some(function(m, idx) {
+                      var k = KP + nextRoundIdx + '-' + idx;
                       return s.results[k] != null;
                     });
                     if(hasNextRoundResults) {
@@ -1642,17 +1815,17 @@
               // Handle team selection changes in first round
               var homeTeamSel = el.querySelector('.teamHome');
               var awayTeamSel = el.querySelector('.teamAway');
-              if(homeTeamSel && awayTeamSel && roundIdx === 0) {
-                var newHome = parseInt(homeTeamSel.value, 10);
-                var newAway = parseInt(awayTeamSel.value, 10);
+              if((homeTeamSel || awayTeamSel) && roundIdx === 0) {
+                var newHome = homeTeamSel ? parseInt(homeTeamSel.value, 10) : match.home;
+                var newAway = awayTeamSel ? parseInt(awayTeamSel.value, 10) : match.away;
                 if(newHome === newAway) {
                   toast('Không thể chọn cùng một đội cho cả hai bên');
-                  homeTeamSel.value = match.home;
-                  awayTeamSel.value = match.away;
+                  if(homeTeamSel) homeTeamSel.value = match.home;
+                  if(awayTeamSel) awayTeamSel.value = match.away;
                   return;
                 }
-                s.knockoutBracket.rounds[roundIdx][matchIdx].home = newHome;
-                s.knockoutBracket.rounds[roundIdx][matchIdx].away = newAway;
+                kb.rounds[roundIdx][matchIdx].home = newHome;
+                kb.rounds[roundIdx][matchIdx].away = newAway;
                 match.home = newHome;
                 match.away = newAway;
                 needsRerender = true;
@@ -1688,8 +1861,8 @@
               
               // Always propagate winner and loser to next rounds (not just when changed)
               // Check all subsequent rounds, not just immediate next (because 3rd place might be between semi and final)
-              for(var nextRoundIdx = roundIdx + 1; nextRoundIdx < s.knockoutBracket.rounds.length; nextRoundIdx++) {
-                var nextRound = s.knockoutBracket.rounds[nextRoundIdx];
+              for(var nextRoundIdx = roundIdx + 1; nextRoundIdx < kb.rounds.length; nextRoundIdx++) {
+                var nextRound = kb.rounds[nextRoundIdx];
                 
                 nextRound.forEach(function(nextMatch) {
                   // Check for WINNER references

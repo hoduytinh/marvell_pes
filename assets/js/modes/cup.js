@@ -1165,7 +1165,8 @@ function renderCupStandings(s){
         return s.teams[teamRef] || 'Unknown Team';
       } else if(teamRef && typeof teamRef === 'object') {
         if(teamRef.fromRound !== undefined && teamRef.matchId !== undefined) {
-          return (teamRef.isLoser ? 'Loser of R' : 'Winner of R') + (teamRef.fromRound + 1) + 'M' + (teamRef.matchId + 1);
+          var series = teamRef.series ? teamRef.series + '-' : '';
+          return (teamRef.isLoser ? 'Loser of ' : 'Winner of ') + series + 'R' + (teamRef.fromRound + 1) + 'M' + (teamRef.matchId + 1);
         } else if(teamRef.group && teamRef.position !== undefined) {
           return 'Group ' + teamRef.group + ' #' + (teamRef.position + 1);
         }
