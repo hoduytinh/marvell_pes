@@ -7,10 +7,76 @@
       dataPath: systemDataPath(PES_SYSTEM_ID)
     };
 
+    // ---- Conflict-safe sync helpers ----
+    // Git blob SHA-1 of a text, so the sha we send with a PUT always matches the
+    // exact data this device is based on (GitHub rejects the write with 409 if
+    // another device pushed in between, instead of silently overwriting it).
+    function cloudBlobSha(text) {
+      if(!(window.crypto && crypto.subtle && window.TextEncoder)) return Promise.reject(new Error('no WebCrypto'));
+      var enc = new TextEncoder();
+      var body = enc.encode(text);
+      var head = enc.encode('blob ' + body.length + '\0');
+      var all = new Uint8Array(head.length + body.length);
+      all.set(head); all.set(body, head.length);
+      return crypto.subtle.digest('SHA-1', all).then(function(buf) {
+        return Array.prototype.map.call(new Uint8Array(buf), function(b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+      });
+    }
+
+    function cloudIsObj(v) { return !!v && typeof v === 'object' && !Array.isArray(v); }
+
+    function cloudJsonEqual(a, b) {
+      if(a === b) return true;
+      if(!a || !b || typeof a !== 'object' || typeof b !== 'object') return false;
+      var aa = Array.isArray(a);
+      if(aa !== Array.isArray(b)) return false;
+      if(aa) {
+        if(a.length !== b.length) return false;
+        for(var i = 0; i < a.length; i++) if(!cloudJsonEqual(a[i], b[i])) return false;
+        return true;
+      }
+      var ka = Object.keys(a);
+      if(ka.length !== Object.keys(b).length) return false;
+      for(var j = 0; j < ka.length; j++) {
+        if(!Object.prototype.hasOwnProperty.call(b, ka[j]) || !cloudJsonEqual(a[ka[j]], b[ka[j]])) return false;
+      }
+      return true;
+    }
+
+    // 3-way merge: keep changes from both sides; if the same value was changed on
+    // both devices, this device wins. Objects (seasons, results 'r-m', ...) merge per key.
+    function cloudMerge3(base, local, remote) {
+      if(cloudJsonEqual(local, remote)) return local;
+      if(cloudJsonEqual(local, base)) return remote;
+      if(cloudJsonEqual(remote, base)) return local;
+      if(cloudIsObj(local) && cloudIsObj(remote)) {
+        var b = cloudIsObj(base) ? base : {};
+        var out = {};
+        var keys = Object.keys(local).concat(Object.keys(remote).filter(function(k) { return !(k in local); }));
+        keys.forEach(function(k) {
+          var v = cloudMerge3(b[k], local[k], remote[k]);
+          if(v !== undefined) out[k] = v;
+        });
+        return out;
+      }
+      return local;
+    }
+
+    // Copy src into target keeping object identities (open UI closures keep working).
+    function cloudApplyInPlace(target, src) {
+      Object.keys(target).forEach(function(k) { if(!(k in src)) delete target[k]; });
+      Object.keys(src).forEach(function(k) {
+        if(cloudIsObj(target[k]) && cloudIsObj(src[k])) cloudApplyInPlace(target[k], src[k]);
+        else if(!cloudJsonEqual(target[k], src[k])) target[k] = src[k];
+      });
+    }
+
     var CloudSync = {
       pat: null,
       enabled: true,
       sha: null,
+      baseText: null,
+      conflictRetries: 0,
       lastSyncedHash: null,
       pushTimer: null,
       pushInProgress: false,
@@ -35,6 +101,7 @@
           document.addEventListener('visibilitychange', function() {
             if(document.visibilityState === 'hidden') self.flush();
             else if(self.status === 'error' && self.pendingState) self.schedulePush(self.pendingState);
+            else self.pull();
           });
           window.addEventListener('pagehide', function() { self.flush(); });
         }
@@ -72,8 +139,9 @@
         this.pat = pat;
         this.patFromSession = true;
         try { sessionStorage.setItem('pesSessPAT', pat); } catch(_){}
-        this._refreshSha();
         this.updateUI();
+        // Data was read from the CDN before login and may be minutes old.
+        this.pull();
       },
 
       clearSessionPAT: function() {
@@ -172,16 +240,16 @@
           if(!jsonText) return null;
           var parsed = JSON.parse(jsonText);
           self.lastSyncedHash = self.hash(jsonText);
-          // sha is only needed for admin PUT writes. Skip the extra Contents API
-          // call for plain viewers (no PAT) so they don't consume the 60 req/hour
-          // unauthenticated API rate limit at all.
-          if(self.pat) {
-            self._refreshSha().finally(function() {
-              self.setStatus('synced');
-            });
-          } else {
-            self.setStatus('synced');
-          }
+          // Remember what this device is based on; the sha is computed locally
+          // (no API call) and sent with the next PUT for conflict detection.
+          self.baseText = jsonText;
+          self.sha = null;
+          cloudBlobSha(jsonText).then(function(sha) {
+            if(self.baseText === jsonText) self.sha = sha;
+          }).catch(function() {
+            if(self.pat) self._refreshSha();
+          });
+          self.setStatus('synced');
           return parsed;
         }
 
@@ -307,11 +375,18 @@
         })
         .then(function(r) {
           if(r.status === 409 || r.status === 422) {
-            // SHA conflict — refresh sha then retry once
-            return self._refreshSha().then(function() {
+            // Another device pushed since our base: merge its data, then push again.
+            self.conflictRetries++;
+            if(self.conflictRetries > 3) throw new Error('Xung đột dữ liệu (HTTP ' + r.status + ')');
+            return self._fetchRemote().then(function(remote) {
+              var needPush = true;
+              if(remote && remote.text) needPush = self._mergeRemote(stateRef, remote);
+              else if(remote) self.sha = remote.sha;
               self.pushInProgress = false;
-              self.schedulePush(stateRef);
-              return false;
+              if(needPush) return self.push(stateRef);
+              self.conflictRetries = 0;
+              self.setStatus('synced');
+              return true;
             });
           }
           if(!r.ok) {
@@ -321,7 +396,9 @@
           }
           return r.json().then(function(resp) {
             if(resp && resp.content) self.sha = resp.content.sha;
+            self.baseText = jsonText;
             self.lastSyncedHash = newHash;
+            self.conflictRetries = 0;
             self.pushInProgress = false;
             self.setStatus('synced');
             return true;
@@ -330,10 +407,72 @@
         .catch(function(err) {
           console.error('CloudSync.push failed:', err);
           self.pushInProgress = false;
+          self.conflictRetries = 0;
           self.setStatus('error', String(err.message || err));
           if(typeof toast === 'function') toast('❌ Đồng bộ lên server thất bại');
           return false;
         });
+      },
+
+      // Latest committed file: {sha, text} (text null when sha equals ours).
+      _fetchRemote: function() {
+        var self = this;
+        var auth = 'Bearer ' + self.pat;
+        var url = self.apiUrl() + '?ref=' + encodeURIComponent(CLOUD_CONFIG.branch) + '&_t=' + Date.now();
+        return fetch(url, { headers: { 'Accept': 'application/vnd.github.object', 'Authorization': auth }, cache: 'no-store' })
+          .then(function(r) {
+            if(r.status === 404) return null;
+            if(!r.ok) throw new Error('HTTP ' + r.status);
+            return r.json();
+          })
+          .then(function(meta) {
+            if(!meta || !meta.sha) return null;
+            if(meta.sha === self.sha) return { sha: meta.sha, text: null };
+            var blobUrl = 'https://api.github.com/repos/' + CLOUD_CONFIG.owner + '/' + CLOUD_CONFIG.repo + '/git/blobs/' + meta.sha;
+            return fetch(blobUrl, { headers: { 'Accept': 'application/vnd.github.raw', 'Authorization': auth }, cache: 'no-store' })
+              .then(function(r) {
+                if(!r.ok) throw new Error('HTTP ' + r.status);
+                return r.text();
+              })
+              .then(function(text) { return { sha: meta.sha, text: text }; });
+          });
+      },
+
+      // Merge remote into stateRef (in place). Returns true if the result still
+      // differs from remote, i.e. this device has changes to push.
+      _mergeRemote: function(stateRef, remote) {
+        var local = JSON.parse(JSON.stringify(stateRef));
+        var remoteObj = JSON.parse(remote.text);
+        var base;
+        try { base = this.baseText ? JSON.parse(this.baseText) : undefined; } catch(_) { base = undefined; }
+        var merged = cloudMerge3(base, local, remoteObj);
+        this.sha = remote.sha;
+        this.baseText = remote.text;
+        this.lastSyncedHash = this.hash(remote.text);
+        if(!cloudJsonEqual(merged, local)) {
+          cloudApplyInPlace(stateRef, merged);
+          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(stateRef)); } catch(_){}
+          try { if(typeof refreshAll === 'function') refreshAll(); } catch(e) { console.warn('refresh after merge failed:', e); }
+        }
+        return !cloudJsonEqual(merged, remoteObj);
+      },
+
+      // Bring this device up to date with the cloud (login, returning to the tab).
+      pull: function() {
+        var self = this;
+        if(!self.canPush() || self.pushInProgress || self._pulling) return Promise.resolve(false);
+        if(typeof state === 'undefined' || !state || !state.seasons) return Promise.resolve(false);
+        self._pulling = true;
+        return self._fetchRemote()
+          .then(function(remote) {
+            if(!remote || !remote.text) return false;
+            if(self.pushInProgress) return false;
+            if(self._mergeRemote(state, remote)) self.schedulePush(state);
+            else self.setStatus('synced');
+            return true;
+          })
+          .catch(function(e) { console.warn('CloudSync.pull failed:', e); return false; })
+          .then(function(r) { self._pulling = false; return r; });
       },
 
       _refreshSha: function() {
