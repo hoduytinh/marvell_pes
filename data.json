@@ -18759,7 +18759,12 @@
         "logos/Brazil.jpg",
         "logos/PSG.jpg"
       ],
-      "results": {},
+      "results": {
+        "1-5": {
+          "hg": 6,
+          "ag": 2
+        }
+      },
       "rounds": [
         [
           {
