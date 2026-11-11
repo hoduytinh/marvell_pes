@@ -212,6 +212,18 @@
     '⚠️ Chỉ lưu trên máy': '⚠️ Local only',
     'Thiết bị này chưa có quyền ghi cloud: thay đổi chỉ lưu trên máy, không đồng bộ lên server': 'This device has no cloud write access: changes are saved locally only, not synced to the server',
     '❌ Đồng bộ lên server thất bại': '❌ Sync to server failed',
+    // Round export (Slack)
+    'Export vòng đang chọn (text + ảnh) để gửi Slack': 'Export the selected round (text + image) for Slack',
+    '📤 Export vòng đấu': '📤 Export round',
+    'Chưa có trận nào để export': 'No matches to export',
+    'Đang tạo ảnh...': 'Creating image...',
+    '🖼️ Copy ảnh': '🖼️ Copy image',
+    '⬇️ Tải ảnh': '⬇️ Download image',
+    'Slack: copy text rồi dán vào ô tin nhắn, sau đó copy ảnh và dán tiếp vào cùng tin nhắn.': 'Slack: copy the text and paste it into the message box, then copy the image and paste it into the same message.',
+    '✅ Đã copy text': '✅ Text copied',
+    '❌ Không copy được text': '❌ Could not copy text',
+    '✅ Đã copy ảnh': '✅ Image copied',
+    'Trình duyệt không cho copy ảnh, đã tải ảnh xuống': 'The browser does not allow copying images, the image was downloaded instead',
     'Thiết bị này chưa có quyền ghi cloud: tỉ số nhập ở đây chỉ lưu trên máy, KHÔNG đồng bộ lên server.\n\nCách bật: trên máy tính đã có PAT, mở Hệ thống → tài khoản này → tick "Ghi cloud", nhập mật khẩu → Lưu. Sau đó đăng nhập lại trên thiết bị này.': 'This device has no cloud write access: scores entered here are saved locally only and NOT synced to the server.\n\nTo enable: on a computer that has the PAT, open Systems → this account → tick "Cloud write", enter the password → Save. Then log in again on this device.',
 
     // Dynamic messages (whole-string)
@@ -420,6 +432,9 @@
     'Nhập mật khẩu (tối thiểu 8 ký tự) cho ': 'Enter a password (min 8 characters) for ',
     ' để cấp quyền ghi cloud': ' to grant cloud write',
     'Nhập mật khẩu cho ': 'Enter the password for ',
+    // Round export errors
+    'Không tạo được ảnh': 'Could not create image',
+    'Không tải được thư viện chụp ảnh': 'Could not load the screenshot library',
     // Knockout / round labels
     'Vòng 1/16': 'Round of 32',
     'Vòng 1/8': 'Round of 16',

@@ -201,6 +201,7 @@
             
             <!-- League mode: checkbox-based selector -->
             <button id="roundSelToggle" class="leagueOnly" style="padding: 6px 12px; font-size: 12px; display:none;">Chọn vòng ▼</button>
+            <button id="btnExportRound" class="adminOnly hidden" style="padding: 6px 12px; font-size: 12px;" title="Export vòng đang chọn (text + ảnh) để gửi Slack">📤 Export</button>
           </div>
         </div>
         <div id="roundSelPanel" class="leagueOnly" style="display:none; margin-top:8px; padding:8px; border:1px solid var(--border); border-radius:8px; background:var(--bg); max-height:200px; overflow-y:auto;">
@@ -483,6 +484,7 @@
       load('assets/js/features/bracket-tree.js');
       load('assets/js/features/prediction.js');
       load('assets/js/features/overview.js');
+      load('assets/js/features/round-export.js');
       load('assets/js/modes/cup.js');
       load('assets/js/modes/double-elim.js');
       load('assets/js/modes/swiss.js');
