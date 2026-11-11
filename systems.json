@@ -18,15 +18,22 @@
     {
       "u": "admin",
       "role": "admin",
-      "salt": "wSbx/aYviJf37dp0Gb/IPw==",
-      "hash": "P3KCaTEetxuzErrBomk0Wtvqc5M8QsVcPe76X6kBS3E=",
-      "iter": 150000
+      "salt": "DI1JdO2W19B8/xvRtsA5qA==",
+      "hash": "9oaYiSFavpqFGOjb/9d2GOR42ACUW7stA6ioyRE1uxw=",
+      "iter": 150000,
+      "tok": {
+        "salt": "qY43bU7cNmZzed600qhuqA==",
+        "iv": "fg6CPDEkpL5MFzhw",
+        "ct": "Iz+HSFYC6PfZGapZLX9MkhJAs+/aZix6CvYH7Q+PRDpn3VtQtnHfsxt6LPqtSFdTS9Vb1eIJS+fqdW6kXPhEFXqvsxzwc+Os2JAyMu7IHf+tIGM+hbvhYNsY2GVYF/BGPvGIZCRAV6nO/VjU9A==",
+        "iter": 150000
+      }
     },
     {
       "u": "mod1",
       "role": "mod",
       "systems": [
-        "football-club"
+        "football-club",
+        "pes"
       ],
       "createdAt": 1793868995729,
       "salt": "NEylsVz++oDZZtbfIHEKMw==",
