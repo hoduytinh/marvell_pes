@@ -12379,6 +12379,162 @@
             }
           ],
           "pictures": []
+        },
+        {
+          "year": "2026-2027",
+          "events": [
+            {
+              "name": "25-26",
+              "rankings": [
+                {
+                  "name": "Tùng Mai",
+                  "point": 39.7,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Phong",
+                  "point": 37,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Đức",
+                  "point": 36.25,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Phát Cool",
+                  "point": 35.75,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Thái",
+                  "point": 35.25,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Tĩnh Tèo",
+                  "point": 26.95,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Thiện",
+                  "point": 22.5,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Truông",
+                  "point": 22.3,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Linh",
+                  "point": 20.5,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Tú",
+                  "point": 19,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Em Kiên",
+                  "point": 19,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Toàn T10",
+                  "point": 16,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Ánh VIP",
+                  "point": 14.3,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Vyyy",
+                  "point": 11,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Vi",
+                  "point": 10.25,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Tâm",
+                  "point": 9,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Hoàng",
+                  "point": 8,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Hưng",
+                  "point": 6,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Hùng Hổ",
+                  "point": 5,
+                  "rate": 0.5
+                },
+                {
+                  "name": "VCD",
+                  "point": 3.2,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Dũng Prô",
+                  "point": 1.3,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Duy Jj",
+                  "point": 1.2,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Trí",
+                  "point": 1,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Chính",
+                  "point": 1,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Hiển",
+                  "point": 1,
+                  "rate": 0.5
+                },
+                {
+                  "name": "NgọcNNNN",
+                  "point": 1,
+                  "rate": 0.5
+                },
+                {
+                  "name": "HPM",
+                  "point": 1,
+                  "rate": 0.5
+                },
+                {
+                  "name": "Lộc",
+                  "point": 0.75,
+                  "rate": 0.5
+                },
+                {
+                  "name": "NgọcT",
+                  "point": 0.7,
+                  "rate": 0.5
+                }
+              ]
+            }
+          ],
+          "pictures": []
         }
       ],
       "rankingHidden": [
