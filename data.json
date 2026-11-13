@@ -19901,9 +19901,131 @@
       "numGroups": 4,
       "numKnockoutTeams": 8,
       "groupRoundRobin": "double"
+    },
+    "shmtqys4": {
+      "name": "2026 W - Playoff",
+      "logo": null,
+      "teamCount": 8,
+      "teams": [
+        "Team 1",
+        "Team 2",
+        "Team 3",
+        "Team 4",
+        "Team 5",
+        "Team 6",
+        "Team 7",
+        "Team 8"
+      ],
+      "teamColors": [
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550"
+      ],
+      "teamLogos": [
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg"
+      ],
+      "results": {},
+      "rounds": [],
+      "settings": {
+        "top": 4,
+        "euro": 6,
+        "playoff": 0,
+        "rel": 3,
+        "h2h": false,
+        "enableRegen": false
+      },
+      "createdAt": 1794555873370,
+      "mode": "cup",
+      "has3rdPlace": false,
+      "numGroups": 4,
+      "numKnockoutTeams": 8,
+      "groupRoundRobin": "double",
+      "cup": {
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "rounds": [
+          [
+            {
+              "home": 0,
+              "away": 1
+            },
+            {
+              "home": 2,
+              "away": 3
+            },
+            {
+              "home": 4,
+              "away": 5
+            },
+            {
+              "home": 6,
+              "away": 7
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 0,
+                "matchId": 0
+              },
+              "away": {
+                "fromRound": 0,
+                "matchId": 1
+              }
+            },
+            {
+              "home": {
+                "fromRound": 0,
+                "matchId": 2
+              },
+              "away": {
+                "fromRound": 0,
+                "matchId": 3
+              }
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 1,
+                "matchId": 0
+              },
+              "away": {
+                "fromRound": 1,
+                "matchId": 1
+              }
+            }
+          ]
+        ],
+        "stageNames": [
+          "Tứ kết",
+          "Bán kết",
+          "Chung kết"
+        ]
+      }
     }
   },
-  "current": "scsml9z1",
+  "current": "shmtqys4",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
@@ -20461,7 +20583,8 @@
     "strxh7hr",
     "separator-1764608568805",
     "snox8vos",
-    "sdmvg88v"
+    "sdmvg88v",
+    "shmtqys4"
   ],
   "teoVisibleTeams": [
     "Ánh VIP",
