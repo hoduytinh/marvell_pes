@@ -19901,9 +19901,109 @@
       "numGroups": 4,
       "numKnockoutTeams": 8,
       "groupRoundRobin": "double"
+    },
+    "suizh3d1": {
+      "name": "2026 W - Playoff",
+      "logo": null,
+      "teamCount": 6,
+      "teams": [
+        "Team 1",
+        "Team 2",
+        "Team 3",
+        "Team 4",
+        "Team 5",
+        "Team 6"
+      ],
+      "teamColors": [
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550"
+      ],
+      "teamLogos": [
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg"
+      ],
+      "results": {},
+      "rounds": [],
+      "settings": {
+        "top": 4,
+        "euro": 6,
+        "playoff": 0,
+        "rel": 3,
+        "h2h": false,
+        "enableRegen": false
+      },
+      "createdAt": 1794555758101,
+      "mode": "cup",
+      "has3rdPlace": false,
+      "numGroups": 4,
+      "numKnockoutTeams": 8,
+      "groupRoundRobin": "double",
+      "cup": {
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "rounds": [
+          [
+            {
+              "home": 0,
+              "away": 1
+            },
+            {
+              "home": 2,
+              "away": 3
+            }
+          ],
+          [
+            {
+              "home": 4,
+              "away": {
+                "fromRound": 0,
+                "matchId": 0
+              }
+            },
+            {
+              "home": 5,
+              "away": {
+                "fromRound": 0,
+                "matchId": 1
+              }
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 1,
+                "matchId": 0
+              },
+              "away": {
+                "fromRound": 1,
+                "matchId": 1
+              }
+            }
+          ]
+        ],
+        "stageNames": [
+          "Playoff",
+          "Bán kết",
+          "Chung kết"
+        ]
+      }
     }
   },
-  "current": "scsml9z1",
+  "current": "suizh3d1",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
@@ -20461,7 +20561,8 @@
     "strxh7hr",
     "separator-1764608568805",
     "snox8vos",
-    "sdmvg88v"
+    "sdmvg88v",
+    "suizh3d1"
   ],
   "teoVisibleTeams": [
     "Ánh VIP",
