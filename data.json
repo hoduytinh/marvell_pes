@@ -18987,6 +18987,10 @@
         "0-0": {
           "hg": 3,
           "ag": 1
+        },
+        "2-3": {
+          "hg": 3,
+          "ag": 3
         }
       },
       "rounds": [
@@ -20284,7 +20288,7 @@
       }
     }
   },
-  "current": "scsml9z1",
+  "current": "shmtqys4",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
