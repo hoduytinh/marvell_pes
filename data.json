@@ -19936,7 +19936,12 @@
         "logos/Default.jpg",
         "logos/Default.jpg"
       ],
-      "results": {},
+      "results": {
+        "cup-0-1": {
+          "hg": 20,
+          "ag": 0
+        }
+      },
       "rounds": [
         [
           {
@@ -20241,10 +20246,7 @@
                 "fromRound": 0,
                 "matchId": 0
               },
-              "away": {
-                "fromRound": 0,
-                "matchId": 1
-              }
+              "away": 2
             },
             {
               "home": {
