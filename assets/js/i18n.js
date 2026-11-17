@@ -215,6 +215,9 @@
     // Round export (Slack)
     'Export vòng đang chọn (text + ảnh) để gửi Slack': 'Export the selected round (text + image) for Slack',
     '📤 Export vòng đấu': '📤 Export round',
+    // Season backup/restore
+    '🗂️ Backup/Restore mùa giải': '🗂️ Season Backup/Restore',
+    'Sao lưu / khôi phục tỉ số của mùa đang chọn': 'Back up / restore the scores of the current season',
     'Chưa có trận nào để export': 'No matches to export',
     'Đang tạo ảnh...': 'Creating image...',
     '🖼️ Copy ảnh': '🖼️ Copy image',

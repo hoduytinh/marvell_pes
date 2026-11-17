@@ -235,14 +235,49 @@ function buildExportPanel(doc, title, blob, dataUrl, onClose){
   function canWrite(){ return !!(clip() && clip().write && win.ClipboardItem); }
   function fileName(){ return roundExportFileName(textIn.value.split('\n')[0]); }
 
+  function errText(e){ return e ? (e.name && e.name !== 'Error' ? e.name + ': ' : '') + (e.message || e) : ''; }
+  // Synchronous copy via a hidden textarea: only needs the click's user gesture, not
+  // the async Clipboard API (which can be blocked by browser policy, an embedded
+  // browser or an unfocused document and then rejects/throws).
+  function execCopyText(text){
+    var ta = doc.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;';
+    root.appendChild(ta); // inside the panel: a modal <dialog> makes the rest of the page inert
+    ta.focus();
+    ta.select();
+    var ok = false;
+    try { ok = doc.execCommand('copy'); } catch(_) {}
+    ta.remove();
+    return ok;
+  }
   function copyText(){
-    if(clip() && clip().writeText) return clip().writeText(textIn.value);
-    textIn.focus(); textIn.select();
-    return doc.execCommand('copy') ? Promise.resolve() : Promise.reject(new Error('copy failed'));
+    var text = textIn.value;
+    if(execCopyText(text)) return Promise.resolve();
+    try {
+      if(clip() && clip().writeText) return clip().writeText(text);
+    } catch(e) { return Promise.reject(e); }
+    return Promise.reject(new Error('copy failed'));
   }
   function copyImage(){
-    if(!canWrite()) return Promise.reject(new Error('unsupported'));
-    return clip().write([new win.ClipboardItem({ 'image/png': blob })]);
+    try {
+      if(!canWrite()) return Promise.reject(new Error('Clipboard API not available'));
+      try { win.focus(); } catch(_) {}
+      // Blob re-created in the export window's own realm.
+      var png = new win.Blob([blob], { type: 'image/png' });
+      return clip().write([new win.ClipboardItem({ 'image/png': png })]);
+    } catch(e) { return Promise.reject(e); }
+  }
+  function imageFallback(e){
+    console.warn('Round export: image copy failed', e);
+    downloadBlob(doc, blob, fileName());
+    flash(exportL('Trình duyệt không cho copy ảnh (' + errText(e) + '), đã tải ảnh xuống',
+      'The browser does not allow copying images (' + errText(e) + '), the image was downloaded instead'));
+  }
+  function textFailed(e){
+    console.warn('Round export: text copy failed', e);
+    flash(exportL('❌ Không copy được text (' + errText(e) + ')', '❌ Could not copy text (' + errText(e) + ')'));
   }
 
   // Slack (like most chat apps) pastes only the text when the clipboard holds
@@ -258,31 +293,24 @@ function buildExportPanel(doc, title, blob, dataUrl, onClose){
         allBtn.textContent = allLabel2;
         flash(exportL('✅ Bước 1: đã copy text → dán (Ctrl+V) vào Slack, rồi quay lại bấm nút lần nữa để copy ảnh',
           '✅ Step 1: text copied → paste (Ctrl+V) into Slack, then come back and click again to copy the image'));
-      }, function(){ flash(exportL('❌ Không copy được text', '❌ Could not copy text')); });
+      }, textFailed);
       return;
     }
+    allStep = 1;
+    allBtn.textContent = allLabel1;
     copyImage().then(function(){
-      allStep = 1;
-      allBtn.textContent = allLabel1;
       flash(exportL('✅ Bước 2: đã copy ảnh → dán (Ctrl+V) tiếp vào cùng tin nhắn Slack rồi gửi',
         '✅ Step 2: image copied → paste (Ctrl+V) into the same Slack message and send'));
-    }, function(){
-      downloadBlob(doc, blob, fileName());
-      flash(exportL('Trình duyệt không cho copy ảnh, đã tải ảnh xuống', 'The browser does not allow copying images, the image was downloaded instead'));
-    });
+    }, imageFallback);
   } });
 
   var buttons = [
     allBtn,
     el('button', { type: 'button', text: '📝 Copy text', onclick: function(){
-      copyText().then(function(){ flash(exportL('✅ Đã copy text', '✅ Text copied')); },
-        function(){ flash(exportL('❌ Không copy được text', '❌ Could not copy text')); });
+      copyText().then(function(){ flash(exportL('✅ Đã copy text', '✅ Text copied')); }, textFailed);
     } }),
     el('button', { type: 'button', text: exportL('🖼️ Copy ảnh', '🖼️ Copy image'), onclick: function(){
-      copyImage().then(function(){ flash(exportL('✅ Đã copy ảnh', '✅ Image copied')); }, function(){
-        downloadBlob(doc, blob, fileName());
-        flash(exportL('Trình duyệt không cho copy ảnh, đã tải ảnh xuống', 'The browser does not allow copying images, the image was downloaded instead'));
-      });
+      copyImage().then(function(){ flash(exportL('✅ Đã copy ảnh', '✅ Image copied')); }, imageFallback);
     } }),
     el('button', { type: 'button', text: exportL('⬇️ Tải ảnh', '⬇️ Download image'), onclick: function(){
       downloadBlob(doc, blob, fileName());
@@ -290,7 +318,7 @@ function buildExportPanel(doc, title, blob, dataUrl, onClose){
     el('button', { type: 'button', text: exportL('Đóng', 'Close'), onclick: onClose })
   ];
 
-  return el('div', {}, [
+  var root = el('div', {}, [
     el('h3', { text: exportL('📤 Export vòng đấu', '📤 Export round') }),
     textIn,
     el('div', { class: 'actions' }, buttons),
@@ -300,6 +328,7 @@ function buildExportPanel(doc, title, blob, dataUrl, onClose){
       'Slack chỉ dán được text HOẶC ảnh mỗi lần, nên "Copy tất cả" gồm 2 bước: bấm → dán text vào Slack → bấm lại → dán ảnh vào cùng tin nhắn → gửi.',
       'Slack pastes either text OR an image at a time, so "Copy all" has 2 steps: click → paste the text into Slack → click again → paste the image into the same message → send.') })
   ]);
+  return root;
 }
 
 function openExportWindow(){
