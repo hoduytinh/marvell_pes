@@ -22713,7 +22713,7 @@
       "mode": "tournament",
       "has3rdPlace": true,
       "numGroups": 8,
-      "numKnockoutTeams": 8,
+      "numKnockoutTeams": 16,
       "groupRoundRobin": "double",
       "groups": {
         "A": {
