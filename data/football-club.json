@@ -5701,7 +5701,7 @@
       "mode": "tournament",
       "has3rdPlace": false,
       "numGroups": 8,
-      "numKnockoutTeams": 8,
+      "numKnockoutTeams": 16,
       "groupRoundRobin": "double",
       "groups": {
         "A": {
@@ -6119,19 +6119,35 @@
           [
             {
               "home": 11,
-              "away": 4
+              "away": 0
+            },
+            {
+              "home": 4,
+              "away": 8
             },
             {
               "home": 16,
-              "away": 18
+              "away": 22
+            },
+            {
+              "home": 18,
+              "away": 1
             },
             {
               "home": 12,
-              "away": 17
+              "away": 7
+            },
+            {
+              "home": 17,
+              "away": 6
             },
             {
               "home": 20,
-              "away": 3
+              "away": 21
+            },
+            {
+              "home": 3,
+              "away": 13
             }
           ],
           [
@@ -6154,6 +6170,26 @@
                 "fromRound": 0,
                 "matchId": 3
               }
+            },
+            {
+              "home": {
+                "fromRound": 0,
+                "matchId": 4
+              },
+              "away": {
+                "fromRound": 0,
+                "matchId": 5
+              }
+            },
+            {
+              "home": {
+                "fromRound": 0,
+                "matchId": 6
+              },
+              "away": {
+                "fromRound": 0,
+                "matchId": 7
+              }
             }
           ],
           [
@@ -6166,10 +6202,33 @@
                 "fromRound": 1,
                 "matchId": 1
               }
+            },
+            {
+              "home": {
+                "fromRound": 1,
+                "matchId": 2
+              },
+              "away": {
+                "fromRound": 1,
+                "matchId": 3
+              }
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 2,
+                "matchId": 0
+              },
+              "away": {
+                "fromRound": 2,
+                "matchId": 1
+              }
             }
           ]
         ],
         "stageNames": [
+          "Vòng 1/8",
           "Tứ kết",
           "Bán kết",
           "Chung kết"
@@ -6184,12 +6243,28 @@
             "gf": 7
           },
           {
+            "teamIdx": 0,
+            "groupName": "C",
+            "position": 2,
+            "points": 4,
+            "gd": -1,
+            "gf": 5
+          },
+          {
             "teamIdx": 4,
             "groupName": "H",
             "position": 1,
             "points": 6,
             "gd": 1,
             "gf": 5
+          },
+          {
+            "teamIdx": 8,
+            "groupName": "E",
+            "position": 2,
+            "points": 7,
+            "gd": 1,
+            "gf": 7
           },
           {
             "teamIdx": 16,
@@ -6200,6 +6275,14 @@
             "gf": 9
           },
           {
+            "teamIdx": 22,
+            "groupName": "H",
+            "position": 2,
+            "points": 5,
+            "gd": 1,
+            "gf": 6
+          },
+          {
             "teamIdx": 18,
             "groupName": "F",
             "position": 1,
@@ -6208,11 +6291,27 @@
             "gf": 10
           },
           {
+            "teamIdx": 1,
+            "groupName": "B",
+            "position": 2,
+            "points": 6,
+            "gd": 1,
+            "gf": 8
+          },
+          {
             "teamIdx": 12,
             "groupName": "E",
             "position": 1,
             "points": 9,
             "gd": 5,
+            "gf": 8
+          },
+          {
+            "teamIdx": 7,
+            "groupName": "G",
+            "position": 2,
+            "points": 5,
+            "gd": 0,
             "gf": 8
           },
           {
@@ -6224,6 +6323,14 @@
             "gf": 7
           },
           {
+            "teamIdx": 6,
+            "groupName": "F",
+            "position": 2,
+            "points": 7,
+            "gd": 1,
+            "gf": 7
+          },
+          {
             "teamIdx": 20,
             "groupName": "A",
             "position": 1,
@@ -6232,23 +6339,47 @@
             "gf": 10
           },
           {
+            "teamIdx": 21,
+            "groupName": "D",
+            "position": 2,
+            "points": 5,
+            "gd": 0,
+            "gf": 8
+          },
+          {
             "teamIdx": 3,
             "groupName": "G",
             "position": 1,
             "points": 6,
             "gd": 2,
             "gf": 9
+          },
+          {
+            "teamIdx": 13,
+            "groupName": "A",
+            "position": 2,
+            "points": 6,
+            "gd": 1,
+            "gf": 9
           }
         ],
         "teamIndices": [
           11,
+          0,
           4,
+          8,
           16,
+          22,
           18,
+          1,
           12,
+          7,
           17,
+          6,
           20,
-          3
+          21,
+          3,
+          13
         ],
         "seedVersion": 3
       },

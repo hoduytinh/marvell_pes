@@ -18293,6 +18293,26 @@
         "2-2": {
           "hg": 1,
           "ag": 1
+        },
+        "0-3": {
+          "hg": 1,
+          "ag": 0
+        },
+        "1-5": {
+          "hg": 3,
+          "ag": 2
+        },
+        "2-5": {
+          "hg": 2,
+          "ag": 2
+        },
+        "2-1": {
+          "hg": 2,
+          "ag": 4
+        },
+        "3-1": {
+          "hg": 2,
+          "ag": 4
         }
       },
       "rounds": [
@@ -19018,6 +19038,14 @@
         },
         "3-4": {
           "hg": 2,
+          "ag": 2
+        },
+        "2-4": {
+          "hg": 1,
+          "ag": 5
+        },
+        "3-5": {
+          "hg": 0,
           "ag": 2
         }
       },
@@ -20332,7 +20360,7 @@
         "Tú",
         "Linh",
         "Truông",
-        "Huy2026/Tiến Anh",
+        "Huy2026",
         "Em Kiên",
         "Hưng",
         "HPM",
@@ -20384,7 +20412,7 @@
         "logos/Ba_lan.jpg",
         "logos/Croatia.jpg",
         "logos/Flamengo.jpg",
-        "logos/Default.jpg",
+        "logos/Arsenal.jpg",
         "logos/Tottenham_Hotspur.jpg",
         "logos/Atletico_Madrid.jpg",
         "logos/Brazil.jpg",
@@ -22713,7 +22741,7 @@
       "mode": "tournament",
       "has3rdPlace": true,
       "numGroups": 8,
-      "numKnockoutTeams": 8,
+      "numKnockoutTeams": 16,
       "groupRoundRobin": "double",
       "groups": {
         "A": {
@@ -23130,7 +23158,7 @@
       "tournamentPhase": "group"
     }
   },
-  "current": "s87qc63r",
+  "current": "s4fvc53z",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
