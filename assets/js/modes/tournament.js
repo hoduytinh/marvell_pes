@@ -542,6 +542,7 @@
                       '<td' + stageColor + '>' + row.GD + '</td>' +
                       '<td' + stageColor + '>' + row.Pts + '</td>' +
                       '<td' + stageColor + ' style="text-align: center;">' + row.stage + '</td>';
+        tr.addEventListener('click', function(){ openTeamDialog(row.idx); });
         tbody.appendChild(tr);
       });
       
@@ -630,6 +631,8 @@
                         '<td' + qualifier + ' style="width: 30px; text-align: center; padding: 6px 4px;">' + row.GA + '</td>' +
                         '<td' + qualifier + ' style="width: 30px; text-align: center; padding: 6px 4px;">' + row.GD + '</td>' +
                         '<td' + qualifier + ' style="width: 32px; text-align: center; padding: 6px 4px; font-weight: bold;">' + row.Pts + '</td>';
+          tr.style.cursor = 'pointer';
+          tr.addEventListener('click', function(){ openTeamDialog(row.idx); });
           groupTbody.appendChild(tr);
         });
         groupTable.appendChild(groupTbody);

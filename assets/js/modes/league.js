@@ -575,28 +575,30 @@ var rows=computeStandingsFor(s,'overall'); var ul=$('insights'); ul.innerHTML=''
     function makeMiniRow(){return {team:'',P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,Pts:0}}
     function renderMiniRow(r){ return '<tr><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr>'+
       '<tr><td>'+r.P+'</td><td>'+r.W+'</td><td>'+r.D+'</td><td>'+r.L+'</td><td>'+r.GF+'</td><td>'+r.GA+'</td><td>'+(r.GD>=0?'+':'')+r.GD+'</td><td>'+r.Pts+'</td></tr>' }
-    function splitHomeAwayStats(s,teamIdx){ var home=makeMiniRow(),away=makeMiniRow(); for(var r=0;r<s.rounds.length;r++){ var ms=s.rounds[r]; for(var m=0;m<ms.length;m++){ var key=r+'-'+m,res=s.results[key]; if(!res) continue; var hi=ms[m].home,ai=ms[m].away; var hg=+res.hg,ag=+res.ag; if(hi===teamIdx){ home.P++;home.GF+=hg;home.GA+=ag; if(hg>ag){home.W++;home.Pts+=3}else if(hg<ag){home.L++}else{home.D++;home.Pts++} } else if(ai===teamIdx){ away.P++;away.GF+=ag;away.GA+=hg; if(ag>hg){away.W++;away.Pts+=3}else if(ag<hg){away.L++}else{away.D++;away.Pts++} } } } home.GD=home.GF-home.GA; away.GD=away.GF-away.GA; return {home:home,away:away} }
+    function splitHomeAwayStats(played){ var home=makeMiniRow(),away=makeMiniRow(); played.forEach(function(m){ var t=m.isHome?home:away; t.P++; t.GF+=m.gf; t.GA+=m.ga; if(m.r==='W'){t.W++;t.Pts+=3} else if(m.r==='L'){t.L++} else {t.D++;t.Pts++} }); home.GD=home.GF-home.GA; away.GD=away.GF-away.GA; return {home:home,away:away} }
+    // Works for every mode: matches come from collectSeasonMatches (features/team-matches.js).
     function openTeamDialog(teamIdx){
-      var s=activeSeason(); var name=s.teams[teamIdx]; $('teamDialogTitle').textContent=name;
-      var seq=fullFormSeq(s,teamIdx); $('teamFormSeq').innerHTML=renderFormCells(seq); $('fullForm').innerHTML=renderFormCells(seq);
-      var last10=seq.slice(-10); $('teamLast10').innerHTML=last10.length?renderFormCells(last10):'<span class="muted">—</span>';
-      var oppSel=$('h2hOpponent'); oppSel.innerHTML=''; var oppList = s.teams.map(function(n,i){ return {name: n, idx: i}; }).filter(function(t){ return t.idx !== teamIdx; }); oppList.sort(function(a, b) { return a.name.localeCompare(b.name); }); oppList.forEach(function(opp){ var o=document.createElement('option'); o.value=String(opp.idx); o.textContent=opp.name; oppSel.appendChild(o) });
-      oppSel.onchange=function(){ renderH2H(teamIdx,Number(oppSel.value)) };
-      if(oppSel.options.length>0){ oppSel.value=oppSel.options[0].value; renderH2H(teamIdx,Number(oppSel.value)) }
-      var sp=splitHomeAwayStats(s,teamIdx); $('homeStats').innerHTML=renderMiniRow(sp.home); $('awayStats').innerHTML=renderMiniRow(sp.away);
-      var dlg=$('teamDialog'); if(dlg && typeof dlg.showModal==='function'){ dlg.showModal() } else { dlg.setAttribute('open','open') }
+      var s=activeSeason(); if(!s || s.teams[teamIdx]==null) return; $('teamDialogTitle').textContent=s.teams[teamIdx];
+      var all=collectSeasonMatches(s); var played=teamPlayedMatches(s,teamIdx,all);
+      var seq=played.map(function(m){ return m.r }); $('teamFormSeq').innerHTML=renderFormCells(seq); $('fullForm').innerHTML=renderFormCells(seq);
+      var last10=played.slice(-10).reverse();
+      $('teamLast10').innerHTML=last10.length?('<div style="margin:6px 0">'+renderFormCells(seq.slice(-10))+'</div>'+renderTeamMatchList(s,last10)):'<span class="muted">—</span>';
+      var byeIdx=s.chessSwiss?s.chessSwiss.byeIndex:null;
+      var oppSel=$('h2hOpponent'); oppSel.innerHTML=''; var oppList = s.teams.map(function(n,i){ return {name: n, idx: i}; }).filter(function(t){ return t.idx !== teamIdx && t.idx !== byeIdx; }); oppList.sort(function(a, b) { return String(a.name).localeCompare(String(b.name)); }); oppList.forEach(function(opp){ var o=document.createElement('option'); o.value=String(opp.idx); o.textContent=opp.name; oppSel.appendChild(o) });
+      oppSel.onchange=function(){ renderH2H(teamIdx,Number(oppSel.value),all) };
+      if(oppSel.options.length>0){ var lastOpp=played.length?played[played.length-1].opp:Number(oppSel.options[0].value); oppSel.value=String(lastOpp); if(oppSel.selectedIndex<0) oppSel.selectedIndex=0; renderH2H(teamIdx,Number(oppSel.value),all) }
+      else { $('h2hSummary').innerHTML=''; $('h2hList').innerHTML=''; }
+      var sp=splitHomeAwayStats(played); $('homeStats').innerHTML=renderMiniRow(sp.home); $('awayStats').innerHTML=renderMiniRow(sp.away);
+      var dlg=$('teamDialog'); if(dlg.open) return; if(typeof dlg.showModal==='function'){ dlg.showModal() } else { dlg.setAttribute('open','open') }
     }
-    function renderH2H(aIdx,bIdx){
+    function renderH2H(aIdx,bIdx,all){
       var s=activeSeason(); var list=[]; var W=0,D=0,L=0,GF=0,GA=0;
-      for(var r=0;r<s.rounds.length;r++){
-        var ms=s.rounds[r];
-        for(var m=0;m<ms.length;m++){
-          var home=ms[m].home,away=ms[m].away; if(!((home===aIdx&&away===bIdx)||(home===bIdx&&away===aIdx))) continue;
-          var key=r+'-'+m,res=s.results[key];
-          if(res){ var hg=+res.hg,ag=+res.ag; var aHome=(home===aIdx); var gfor=aHome?hg:ag,gag=aHome?ag:hg; GF+=gfor; GA+=gag; if(gfor>gag) W++; else if(gfor<gag) L++; else D++; list.push('<div class="chip small">V'+(r+1)+': '+s.teams[home]+' '+hg+'–'+ag+' '+s.teams[away]+'</div>') }
-          else { list.push('<div class="chip small muted">V'+(r+1)+': '+s.teams[home]+' – '+s.teams[away]+' (chưa đá)</div>') }
-        }
-      }
+      (all||collectSeasonMatches(s)).forEach(function(x){
+        var home=x.home,away=x.away; if(!((home===aIdx&&away===bIdx)||(home===bIdx&&away===aIdx))) return;
+        var label=escapeHtml(x.stage)+': '+escapeHtml(s.teams[home]);
+        if(x.res){ var hg=x.res.hg,ag=x.res.ag; var aHome=(home===aIdx); var gfor=aHome?hg:ag,gag=aHome?ag:hg; GF+=gfor; GA+=gag; if(gfor>gag) W++; else if(gfor<gag) L++; else D++; list.push('<div class="chip small">'+label+' '+hg+'–'+ag+' '+escapeHtml(s.teams[away])+'</div>') }
+        else { list.push('<div class="chip small muted">'+label+' – '+escapeHtml(s.teams[away])+' (chưa đá)</div>') }
+      });
       $('h2hSummary').innerHTML='Tổng: <strong>'+W+'–'+D+'–'+L+'</strong> • GF/GA: <strong>'+GF+'/'+GA+'</strong>';
-      $('h2hList').innerHTML=list.join('')
+      $('h2hList').innerHTML=list.length?list.join(''):'<div class="muted small">Chưa gặp nhau</div>'
     }

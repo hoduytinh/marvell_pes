@@ -1155,6 +1155,7 @@ function renderCupStandings(s){
         '<td>'+r.GF+'</td><td>'+r.GA+'</td><td>'+(r.GF-r.GA>=0?'+':'')+(r.GF-r.GA)+'</td>'+
         '<td><strong>'+r.Pts+'</strong></td>'+
         '<td style="color:'+statusColor+';text-align:left;padding-left:8px;font-weight:'+(r.status === 'Vô địch' || r.status === 'Á quân' || r.status === 'Hạng 3' ? 'bold' : 'normal')+'">'+statusDisplay+'</td>';
+    tr.addEventListener('click', function(){ openTeamDialog(r.idx); });
     tbody.appendChild(tr);
   });
 }

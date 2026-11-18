@@ -1815,6 +1815,7 @@ function renderSwissStandings(s) {
                   '<td' + rowStyle + '>' + row.GA + '</td>' +
                   '<td' + rowStyle + '>' + row.GD + '</td>' +
                   '<td' + rowStyle + ' style="text-align: center;">' + stageBadge + '</td>';
+    tr.addEventListener('click', function(){ openTeamDialog(row.idx); });
     tbody.appendChild(tr);
   });
 }
