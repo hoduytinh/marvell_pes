@@ -413,6 +413,24 @@
       <label style="grid-column: span 2;">Ưu tiên H2H: <input id="cfgH2H" type="checkbox"/></label>
       <label id="cfgEnableRegenWrap" style="grid-column: span 2;">Enable Re-gen: <input id="cfgEnableRegen" type="checkbox"/></label>
     </div>
+    <div id="cfgModeSection" style="margin-top:12px;display:none">
+      <h4 id="cfgModeTitle" style="margin:0 0 8px">Cài đặt thể thức</h4>
+      <div id="cfgTournamentWrap" style="display:none">
+        <label style="display:flex;align-items:center;gap:8px">Số bảng: <input id="cfgNumGroups" type="number" min="2" max="8" style="width:80px"/></label>
+        <div style="margin-top:8px">Lượt đấu vòng bảng:
+          <label style="margin-left:8px"><input type="radio" name="cfgGroupRR" value="single"/> Đấu 1 lượt</label>
+          <label style="margin-left:8px"><input type="radio" name="cfgGroupRR" value="double"/> Đấu 2 lượt</label>
+        </div>
+        <label id="cfgNumKnockoutRow" style="display:flex;align-items:center;gap:8px;margin-top:8px">Số đội vào vòng loại trực tiếp: <input id="cfgNumKnockout" type="number" min="2" max="32" style="width:80px"/></label>
+        <label style="display:flex;align-items:center;gap:8px;margin-top:8px"><input id="cfgSerieAB" type="checkbox"/> Knock-out kiểu Serie A/B</label>
+        <label id="cfgNumSerieARow" style="display:flex;align-items:center;gap:8px;margin-top:6px;padding-left:24px">Số đội vào Serie A:
+          <select id="cfgNumSerieA" style="width:80px"><option value="2">2</option><option value="4">4</option><option value="8">8</option><option value="16">16</option></select>
+        </label>
+      </div>
+      <label id="cfgChessRoundsWrap" style="display:none;align-items:center;gap:8px">Số vòng đấu: <input id="cfgChessRounds" type="number" min="1" max="20" style="width:80px"/></label>
+      <label id="cfg3rdWrap" style="display:none;align-items:center;gap:8px;margin-top:8px"><input id="cfg3rdPlace" type="checkbox"/> Thêm trận tranh hạng 3</label>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px">Thay đổi cấu trúc sẽ hỏi xác nhận nếu cần xóa kết quả liên quan, và tự động sao lưu mùa trước khi đổi.</div>
+    </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
       <button value="cancel">Đóng</button>
       <button id="btnApplySettings" class="primary" value="confirm">Lưu</button>
@@ -487,6 +505,7 @@
       load('assets/js/features/overview.js');
       load('assets/js/features/round-export.js');
       load('assets/js/features/season-backup.js');
+      load('assets/js/features/mode-settings.js');
       load('assets/js/modes/cup.js');
       load('assets/js/modes/double-elim.js');
       load('assets/js/modes/swiss.js');

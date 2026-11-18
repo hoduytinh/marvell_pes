@@ -217,6 +217,8 @@
     '📤 Export vòng đấu': '📤 Export round',
     // Season backup/restore
     '🗂️ Backup/Restore mùa giải': '🗂️ Season Backup/Restore',
+    'Cài đặt thể thức': 'Format settings',
+    'Thay đổi cấu trúc sẽ hỏi xác nhận nếu cần xóa kết quả liên quan, và tự động sao lưu mùa trước khi đổi.': 'Structural changes ask for confirmation if related results must be cleared, and the season is auto-backed up first.',
     'Sao lưu / khôi phục tỉ số của mùa đang chọn': 'Back up / restore the scores of the current season',
     'Chưa có trận nào để export': 'No matches to export',
     'Đang tạo ảnh...': 'Creating image...',
