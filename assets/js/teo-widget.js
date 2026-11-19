@@ -668,6 +668,10 @@
     };
   }
 
+  // Strings added with the career features pick their language directly (the page reloads on switch).
+  var TEO_EN = (function() { try { return localStorage.getItem('pesLang') !== 'vi'; } catch(_) { return true; } })();
+  function L(vi, en) { return TEO_EN ? en : vi; }
+
   function createEl(tag, className, html) {
     var el = document.createElement(tag);
     if(className) el.className = className;
@@ -680,11 +684,11 @@
     var style = document.createElement('style');
     style.id = 'teo-widget-style';
     style.textContent = [
-      '#teoFab,#teoPanel{--teo-bg1:#f7fbff;--teo-bg2:#eef6ff;--teo-bg3:#e8f3ff;--teo-text:#0f172a;--teo-border:rgba(14,116,144,.22);--teo-head1:rgba(186,230,253,.8);--teo-head2:rgba(187,247,208,.75);--teo-head-text:#0b3a66;--teo-desc-bg:rgba(186,230,253,.65);--teo-desc-border:rgba(56,189,248,.45);--teo-desc-text:#164e63;--teo-label:#0c4a6e;--teo-control-bg:#ffffff;--teo-control-border:#93c5fd;--teo-control-text:#0f172a;--teo-result-bg1:#ffffff;--teo-result-bg2:#f4f9ff;--teo-result-border:rgba(125,211,252,.55);--teo-muted:#475569;--teo-pill1:rgba(74,222,128,.2);--teo-pill2:rgba(56,189,248,.22);--teo-pill-border:rgba(56,189,248,.4);--teo-section:#0369a1;--teo-section-border:rgba(100,116,139,.4);--teo-summary-border:rgba(125,211,252,.55);--teo-summary-alt:rgba(186,230,253,.25);--teo-summary-head:rgba(125,211,252,.45);--teo-fab1:#14b8a6;--teo-fab2:#38bdf8;--teo-fab-shadow:rgba(56,189,248,.35);--teo-run1:#22c55e;--teo-run2:#06b6d4;--teo-run-shadow:rgba(34,197,94,.24);--teo-capture1:#f59e0b;--teo-capture2:#f97316}',
+      '#teoFab,#teoPanel,#teoBubble{--teo-bg1:#f7fbff;--teo-bg2:#eef6ff;--teo-bg3:#e8f3ff;--teo-text:#0f172a;--teo-border:rgba(14,116,144,.22);--teo-head1:rgba(186,230,253,.8);--teo-head2:rgba(187,247,208,.75);--teo-head-text:#0b3a66;--teo-desc-bg:rgba(186,230,253,.65);--teo-desc-border:rgba(56,189,248,.45);--teo-desc-text:#164e63;--teo-label:#0c4a6e;--teo-control-bg:#ffffff;--teo-control-border:#93c5fd;--teo-control-text:#0f172a;--teo-result-bg1:#ffffff;--teo-result-bg2:#f4f9ff;--teo-result-border:rgba(125,211,252,.55);--teo-muted:#475569;--teo-pill1:rgba(74,222,128,.2);--teo-pill2:rgba(56,189,248,.22);--teo-pill-border:rgba(56,189,248,.4);--teo-section:#0369a1;--teo-section-border:rgba(100,116,139,.4);--teo-summary-border:rgba(125,211,252,.55);--teo-summary-alt:rgba(186,230,253,.25);--teo-summary-head:rgba(125,211,252,.45);--teo-fab1:#14b8a6;--teo-fab2:#38bdf8;--teo-fab-shadow:rgba(56,189,248,.35);--teo-run1:#22c55e;--teo-run2:#06b6d4;--teo-run-shadow:rgba(34,197,94,.24);--teo-capture1:#f59e0b;--teo-capture2:#f97316}',
       '#teoPanel[data-theme="dark"],#teoFab[data-theme="dark"]{--teo-bg1:#081120;--teo-bg2:#0d1730;--teo-bg3:#132142;--teo-text:#e7eeff;--teo-border:rgba(59,130,246,.22);--teo-head1:rgba(30,64,175,.42);--teo-head2:rgba(8,145,178,.34);--teo-head-text:#f8fbff;--teo-desc-bg:rgba(29,78,216,.18);--teo-desc-border:rgba(96,165,250,.28);--teo-desc-text:#c7d5f5;--teo-label:#9fd2ff;--teo-control-bg:#0b1530;--teo-control-border:#2a466d;--teo-control-text:#eaf1ff;--teo-result-bg1:#0b1327;--teo-result-bg2:#101a31;--teo-result-border:rgba(71,85,105,.6);--teo-muted:#9fb2d6;--teo-pill1:rgba(34,197,94,.14);--teo-pill2:rgba(14,165,233,.14);--teo-pill-border:rgba(125,211,252,.35);--teo-section:#7dd3fc;--teo-section-border:rgba(148,163,184,.35);--teo-summary-border:rgba(148,163,184,.28);--teo-summary-alt:rgba(148,163,184,.08);--teo-summary-head:rgba(14,165,233,.22);--teo-fab1:#0f766e;--teo-fab2:#0ea5e9;--teo-fab-shadow:rgba(0,0,0,.35);--teo-run1:#16a34a;--teo-run2:#06b6d4;--teo-run-shadow:rgba(6,182,212,.24);--teo-capture1:#f59e0b;--teo-capture2:#ea580c}',
       '#teoPanel[data-theme="blue"],#teoFab[data-theme="blue"]{--teo-bg1:#eaf4ff;--teo-bg2:#dbeafe;--teo-bg3:#d7ebff;--teo-text:#102544;--teo-border:rgba(30,58,95,.22);--teo-head1:rgba(125,211,252,.72);--teo-head2:rgba(96,165,250,.42);--teo-head-text:#10386b;--teo-desc-bg:rgba(186,230,253,.72);--teo-desc-border:rgba(56,189,248,.45);--teo-desc-text:#164e63;--teo-label:#0c4a6e;--teo-control-bg:#ffffff;--teo-control-border:#93c5fd;--teo-control-text:#102544;--teo-result-bg1:#ffffff;--teo-result-bg2:#eff6ff;--teo-result-border:rgba(96,165,250,.45);--teo-muted:#47627f;--teo-pill1:rgba(59,130,246,.16);--teo-pill2:rgba(56,189,248,.2);--teo-pill-border:rgba(56,189,248,.35);--teo-section:#0369a1;--teo-section-border:rgba(59,130,246,.26);--teo-summary-border:rgba(96,165,250,.4);--teo-summary-alt:rgba(191,219,254,.35);--teo-summary-head:rgba(147,197,253,.45);--teo-fab1:#0ea5e9;--teo-fab2:#2563eb;--teo-fab-shadow:rgba(37,99,235,.28);--teo-run1:#0284c7;--teo-run2:#22c55e;--teo-run-shadow:rgba(14,165,233,.22);--teo-capture1:#f59e0b;--teo-capture2:#fb7185}',
       '#teoFab{position:fixed;right:18px;bottom:18px;z-index:9999;border:none;background:linear-gradient(135deg,var(--teo-fab1),var(--teo-fab2));color:#fff;padding:12px 18px;border-radius:999px;font-weight:800;font-size:14px;letter-spacing:.2px;cursor:pointer;box-shadow:0 10px 24px var(--teo-fab-shadow)}',
-      '#teoPanel{position:fixed;right:18px;bottom:76px;z-index:9999;width:520px;max-width:calc(100vw - 24px);max-height:78vh;overflow:hidden;background:linear-gradient(160deg,var(--teo-bg1) 0%,var(--teo-bg2) 45%,var(--teo-bg3) 100%);color:var(--teo-text);border:1px solid var(--teo-border);border-radius:16px;box-shadow:0 24px 50px rgba(2,132,199,.22);display:none}',
+      '#teoPanel{position:fixed;right:18px;bottom:76px;z-index:9999;width:560px;max-width:calc(100vw - 24px);max-height:78vh;overflow:hidden;background:linear-gradient(160deg,var(--teo-bg1) 0%,var(--teo-bg2) 45%,var(--teo-bg3) 100%);color:var(--teo-text);border:1px solid var(--teo-border);border-radius:16px;box-shadow:0 24px 50px rgba(2,132,199,.22);display:none}',
       '#teoPanel.open{display:block;animation:teoPop .16s ease-out}',
       '@keyframes teoPop{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}',
       '#teoHead{display:flex;justify-content:center;align-items:center;padding:14px 16px;border-bottom:1px solid var(--teo-border);background:linear-gradient(90deg,var(--teo-head1),var(--teo-head2))}',
@@ -706,6 +710,10 @@
 
       '#teoResult{margin-top:14px;padding:12px;background:linear-gradient(180deg,var(--teo-result-bg1),var(--teo-result-bg2));border:1px solid var(--teo-result-border);border-radius:12px;max-height:46vh;overflow:auto;font-size:13px;line-height:1.5}',
       '#teoResult .muted{color:var(--teo-muted)}',
+      // Career / head-to-head HTML (features/career.js) uses the app theme vars: map them to Teo colors.
+      '#teoResult{--card:var(--teo-result-bg1);--panel:var(--teo-result-bg1);--surface-2:var(--teo-summary-alt);--hover:var(--teo-summary-alt);--border:var(--teo-summary-border);--text:var(--teo-text);--text-2:var(--teo-muted);--muted:var(--teo-muted);--accent:var(--teo-section)}',
+      '#teoResult .cr-metrics{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}',
+      '#teoResult .cr-sec>summary{color:var(--teo-section)}',
       '#teoResult ul{padding-left:18px;margin:8px 0 0}',
       '#teoResult .teo-title{font-size:14px;font-weight:800;color:var(--teo-text);margin-bottom:8px}',
       '#teoResult .teo-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0 10px}',
@@ -742,6 +750,17 @@
       '#teoTeamChecklist label.teo-filtered{display:none}',
       '#teoTeamSearch{width:100%;box-sizing:border-box;padding:8px 10px;margin-bottom:8px;border-radius:8px;border:1px solid var(--teo-control-border);background:var(--teo-control-bg);color:var(--teo-control-text)}',
       '#teoTeamManager .status{font-size:12px;color:var(--teo-label);margin-top:6px}',
+      '#teoCommentRow{margin-top:10px;padding:8px 10px;border:1px dashed var(--teo-section-border);border-radius:10px}',
+      '#teoPanel label#teoCommentLabel{display:flex;align-items:center;gap:8px;margin:0;font-size:12.5px;font-weight:600;text-transform:none;letter-spacing:0;color:var(--teo-text);cursor:pointer}',
+      '#teoCommentLabel small{display:block;font-weight:400;color:var(--teo-muted)}',
+      '#teoResult .teo-taunts{list-style:none;padding:0;margin:6px 0 0}',
+      '#teoResult .teo-taunts li{padding:7px 10px;margin-bottom:6px;border-radius:10px;background:var(--teo-summary-alt);border:1px solid var(--teo-summary-border)}',
+      '#teoResult .teo-card-legend{font-size:11.5px;margin-top:8px;text-align:center}',
+      '#teoBubble{position:fixed;right:150px;bottom:16px;z-index:9999;max-width:min(380px,calc(100vw - 170px));background:linear-gradient(160deg,var(--teo-bg1),var(--teo-bg3));color:var(--teo-text);border:1px solid var(--teo-border);border-radius:14px 14px 4px 14px;padding:10px 28px 10px 12px;box-shadow:0 12px 28px rgba(2,132,199,.25);font-size:13px;line-height:1.45;display:none;cursor:pointer}',
+      '#teoBubble.show{display:block;animation:teoPop .16s ease-out}',
+      '#teoBubble .tb-head{font-weight:800;margin-bottom:3px}',
+      '#teoBubble .tb-close{position:absolute;top:4px;right:9px;font-size:14px;opacity:.55}',
+      '@media (max-width: 700px){#teoBubble{right:12px;bottom:130px;max-width:calc(100vw - 24px)}}',
       '@media (max-width: 700px){#teoFab{right:12px;bottom:12px}#teoPanel{right:12px;bottom:62px;width:calc(100vw - 16px);max-height:82vh}#teoBody{max-height:calc(82vh - 62px)}#teoResult{max-height:44vh}#teoResult .teo-metrics{grid-template-columns:1fr}#teoResult .teo-summary li{grid-template-columns:1.2fr .5fr .85fr .85fr .65fr .65fr;padding:7px 8px;gap:6px;font-size:12px}}',
       '@media (max-width: 480px){#teoTopRow{grid-template-columns:1fr}#teoTeamsRow{grid-template-columns:1fr}}'
     ].join('');
@@ -772,6 +791,8 @@
           '<select id="teoFunction">' +
             '<option value="profile">Hồ sơ cá nhân</option>' +
             '<option value="h2h">Lịch sử đối đầu</option>' +
+            '<option value="card">' + L('Thẻ cầu thủ FIFA', 'FIFA player card') + '</option>' +
+            '<option value="taunt">' + L('Khiêu khích', 'Taunt') + '</option>' +
           '</select>' +
         '</div>' +
       '</div>',
@@ -807,7 +828,9 @@
           '<div id="teoTeamManagerStatus" class="status"></div>' +
         '</div>' +
       '</div>',
-      '<div id="teoResult"><span class="muted">Chọn 2 team và bấm Kiểm tra đối đầu.</span></div>'
+      '<div id="teoResult"><span class="muted">Chọn 2 team và bấm Kiểm tra đối đầu.</span></div>',
+      '<div id="teoCommentRow"><label id="teoCommentLabel"><input type="checkbox" id="teoCommentToggle"/>' +
+        '<span>🎙️ ' + L('Bình luận viên tự động', 'Auto commentator') + '<small>' + L('Tèo bình luận khi có kết quả mới và thỉnh thoảng khiêu khích một đội ngẫu nhiên.', 'Teo comments on new results and now and then teases a random team.') + '</small></span></label></div>'
     ].join('');
 
     panel.appendChild(head);
@@ -1120,19 +1143,91 @@
       setCaptureEnabled(true);
     }
 
+    function careerReady() {
+      return typeof window.careerData === 'function' && typeof window.renderH2HHtml === 'function' && window.state && window.state.seasons;
+    }
+
+    function renderCareerProfile(team) {
+      var cd = window.careerData(window.state), name = window.careerResolveName(cd, team);
+      resultEl.innerHTML = '<div class="teo-title">📊 ' + L('Toàn sự nghiệp', 'Career') + ': <span class="no-i18n">' + escapeText(name) + '</span></div>' +
+        window.renderCareerHtml(cd, name);
+      setCaptureEnabled(!!cd.elo[name]);
+    }
+
+    function renderCareerH2H(a, b) {
+      resultEl.innerHTML = '<div class="teo-title">⚔️ ' + L('Đối đầu', 'Head-to-head') + ': <span class="no-i18n">' + escapeText(a) + '</span> vs <span class="no-i18n">' + escapeText(b) + '</span></div>' +
+        window.renderH2HHtml(window.careerData(window.state), a, b);
+      setCaptureEnabled(true);
+    }
+
+    function escapeText(v) {
+      return String(v == null ? '' : v).replace(/[&<>"']/g, function(ch) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+      });
+    }
+
+    function renderCardResult(team) {
+      var card = window.careerFifaCard(window.careerData(window.state), team);
+      resultEl.innerHTML = '<div class="teo-title">' + L('Thẻ cầu thủ', 'Player card') + ': <span class="no-i18n">' + escapeText(team) + '</span></div>' +
+        window.renderFifaCardHtml(card) +
+        (card ? '<div class="muted teo-card-legend">' + L(
+          'Chỉ số 45–99 theo thứ hạng so với các đội khác: Tấn công = bàn thắng/trận, Phòng ngự = bàn thua/trận, Phong độ = 10 trận gần nhất, Bản lĩnh = các loạt đấu loại trực tiếp, Kinh nghiệm = số trận, Danh hiệu = huy chương. Chỉ số tổng kết hợp thêm Elo.',
+          'Ratings 45–99 by rank against the other teams: Attack = goals/match, Defence = conceded/match, Form = last 10 matches, Clutch = knock-out ties, Experience = matches played, Trophies = medals. OVR also factors in Elo.') + '</div>' : '');
+      setCaptureEnabled(!!card);
+    }
+
+    function renderTauntResult(team, opp) {
+      var lines = window.careerTaunts(window.careerData(window.state), team, opp || null);
+      resultEl.innerHTML = '<div class="teo-title">😈 ' + L('Tèo khiêu khích', 'Teo teases') + ' <span class="no-i18n">' + escapeText(team) + (opp ? ' (vs ' + escapeText(opp) + ')' : '') + '</span></div>' +
+        '<ul class="teo-taunts no-i18n">' + lines.map(function(l) { return '<li>' + escapeText(l) + '</li>'; }).join('') + '</ul>';
+      setCaptureEnabled(true);
+    }
+
+    function setAnyOpponentOption(on) {
+      var any = teamBEl.querySelector('option[data-any]');
+      if(on && !any) {
+        any = document.createElement('option');
+        any.value = '';
+        any.setAttribute('data-any', '1');
+        any.textContent = L('— Không chọn —', '— None —');
+        teamBEl.insertBefore(any, teamBEl.firstChild);
+        teamBEl.value = '';
+      } else if(!on && any) {
+        any.remove();
+        if(teamBEl.options.length > 1 && teamBEl.selectedIndex <= 0) teamBEl.selectedIndex = 1;
+      }
+    }
+
     function applyFunctionUI() {
       var fn = fnEl.value;
+      setAnyOpponentOption(fn === 'taunt');
+      if(fn === 'card' || fn === 'taunt') {
+        var isCard = fn === 'card';
+        fnDescEl.textContent = isCard
+          ? L('Tạo thẻ cầu thủ kiểu FIFA từ thống kê toàn sự nghiệp (Elo, tấn công, phòng ngự, phong độ, danh hiệu).', 'Build a FIFA-style player card from career stats (Elo, attack, defence, form, trophies).')
+          : L('Tèo soi dữ liệu và "cà khịa" một đội: chuỗi thua, khắc tinh, trận thua đậm nhất... Chọn thêm đối thủ để chọc theo đối đầu.', 'Teo digs through the data and teases a team: losing streaks, nemesis, heaviest defeat... Pick an opponent to tease about the head-to-head.');
+        teamALabelEl.textContent = L('Đội', 'Team');
+        teamBLabelEl.textContent = L('Đối thủ (tuỳ chọn)', 'Opponent (optional)');
+        teamAFieldEl.classList.remove('teo-hidden');
+        teamBFieldEl.classList.toggle('teo-hidden', isCard);
+        var runLabel = isCard ? L('Tạo thẻ', 'Create card') : L('Khiêu khích!', 'Tease!');
+        runBtn.textContent = runLabel;
+        resultEl.innerHTML = '<span class="muted">' + L('Chọn đội và bấm ', 'Select a team and click ') + runLabel + '</span>';
+        setCaptureEnabled(false);
+        return;
+      }
+      teamBLabelEl.textContent = L('Đội B', 'Team B');
       if(fn === 'profile') {
-        fnDescEl.textContent = 'Tổng hợp toàn bộ thành tích, thống kê theo mùa và chế độ thi đấu.';
-        teamALabelEl.textContent = 'Team';
+        fnDescEl.textContent = L('Toàn bộ sự nghiệp của đội: thẻ cầu thủ, Elo, danh hiệu, thống kê theo mùa, theo thể thức và đối thủ.', 'The full career of a team: player card, Elo, trophies, stats by season, by format and by opponent.');
+        teamALabelEl.textContent = L('Đội', 'Team');
         teamAFieldEl.classList.remove('teo-hidden');
         teamBFieldEl.classList.add('teo-hidden');
         runBtn.textContent = 'Xem thông tin team';
         resultEl.innerHTML = '<span class="muted">Chọn 1 team và bấm Xem thông tin team.</span>';
         setCaptureEnabled(false);
       } else {
-        fnDescEl.textContent = 'So sánh kết quả tất cả các trận giữa 2 team trong toàn bộ dữ liệu.';
-        teamALabelEl.textContent = 'Team A';
+        fnDescEl.textContent = L('So sánh đối đầu chuyên sâu: thành tích, so sánh chỉ số, dự đoán theo Elo và toàn bộ các trận giữa 2 đội.', 'In-depth head-to-head: record, stat comparison, Elo forecast and every meeting between the 2 teams.');
+        teamALabelEl.textContent = L('Đội A', 'Team A');
         teamAFieldEl.classList.remove('teo-hidden');
         teamBFieldEl.classList.remove('teo-hidden');
         runBtn.textContent = 'Kiểm tra đối đầu';
@@ -1144,6 +1239,7 @@
     fab.addEventListener('click', function() {
       panel.classList.toggle('open');
       if(panel.classList.contains('open')) {
+        hideBubble();
         renderAdminState();
         renderTeamOptions();
         applyFunctionUI();
@@ -1210,13 +1306,30 @@
       var a = teamAEl.value;
       var b = teamBEl.value;
 
+      if(fn === 'card' || fn === 'taunt') {
+        if(!a) {
+          resultEl.innerHTML = '<span class="muted">Vui lòng chọn team.</span>';
+          setCaptureEnabled(false);
+          return;
+        }
+        if(!careerReady()) {
+          resultEl.innerHTML = '<span class="muted">' + L('Dữ liệu chưa sẵn sàng, thử lại sau giây lát.', 'Data is not ready yet, try again in a moment.') + '</span>';
+          setCaptureEnabled(false);
+          return;
+        }
+        if(fn === 'card') renderCardResult(a);
+        else renderTauntResult(a, b && b !== a ? b : null);
+        return;
+      }
+
       if(fn === 'profile') {
         if(!a) {
           resultEl.innerHTML = '<span class="muted">Vui lòng chọn team.</span>';
           setCaptureEnabled(false);
           return;
         }
-        renderProfileResult(analyzeTeamProfile(state, a));
+        if(careerReady()) renderCareerProfile(a);
+        else renderProfileResult(analyzeTeamProfile(state, a));
         return;
       }
 
@@ -1231,8 +1344,94 @@
         return;
       }
 
-      renderH2HResult(analyzeHeadToHead(state, a, b));
+      if(careerReady()) renderCareerH2H(a, b);
+      else renderH2HResult(analyzeHeadToHead(state, a, b));
     });
+
+    // ---------- Auto commentator (speech bubble next to the Teo button) ----------
+    var COMMENT_KEY = 'teoCommentator';
+    var SEEN_KEY = 'teoSeenResults';
+    var commentToggleEl = document.getElementById('teoCommentToggle');
+    var bubble = createEl('div');
+    bubble.id = 'teoBubble';
+    document.body.appendChild(bubble);
+    var bubbleQueue = [], bubbleTimer = null, lastResultsSig = null;
+
+    function commentatorOn() {
+      try { return localStorage.getItem(COMMENT_KEY) !== 'off'; } catch(_) { return true; }
+    }
+    commentToggleEl.checked = commentatorOn();
+    commentToggleEl.addEventListener('change', function() {
+      try { localStorage.setItem(COMMENT_KEY, commentToggleEl.checked ? 'on' : 'off'); } catch(_) {}
+      if(!commentToggleEl.checked) { bubbleQueue = []; hideBubble(); }
+    });
+
+    function hideBubble() {
+      bubble.classList.remove('show');
+      if(bubbleTimer) { clearTimeout(bubbleTimer); bubbleTimer = null; }
+    }
+
+    function showNextBubble() {
+      if(bubble.classList.contains('show') || !bubbleQueue.length) return;
+      if(panel.classList.contains('open')) return;
+      var msg = bubbleQueue.shift();
+      bubble.innerHTML = '<span class="tb-close">✕</span>' +
+        (msg.head ? '<div class="tb-head">🎙️ ' + escapeText(msg.head) + '</div>' : '') +
+        '<div>' + (msg.lines || []).map(escapeText).join('<br>') + '</div>';
+      bubble.classList.add('show');
+      bubbleTimer = setTimeout(function() { hideBubble(); setTimeout(showNextBubble, 600); }, 11000);
+    }
+
+    function queueBubble(msg) {
+      if(!msg || !commentatorOn()) return;
+      bubbleQueue.push(msg);
+      if(bubbleQueue.length > 5) bubbleQueue.shift();
+      showNextBubble();
+    }
+
+    bubble.addEventListener('click', function() {
+      hideBubble();
+      setTimeout(showNextBubble, 400);
+    });
+
+    function loadSeen() {
+      try { var v = JSON.parse(localStorage.getItem(SEEN_KEY) || 'null'); return v && typeof v === 'object' ? v : null; } catch(_) { return null; }
+    }
+
+    function commentTick() {
+      if(!careerReady()) return;
+      var cd = window.careerData(window.state);
+      if(!cd.hist.length) return;
+      var keys = {};
+      cd.hist.forEach(function(m, i) { keys[m.sid + '|' + m.key + '|' + m.hg + '-' + m.ag] = i; });
+      var sig = Object.keys(keys).join(',');
+      if(sig === lastResultsSig) return;
+      lastResultsSig = sig;
+      var seen = loadSeen();
+      try { localStorage.setItem(SEEN_KEY, JSON.stringify(keys)); } catch(_) {}
+      if(!seen || !commentatorOn()) return;
+      var fresh = Object.keys(keys).filter(function(k) { return !(k in seen); }).map(function(k) { return keys[k]; }).sort(function(a, b) { return a - b; });
+      if(!fresh.length) return;
+      if(fresh.length > 12) {
+        queueBubble({ head: L('Tin nóng', 'Breaking news'), lines: [L('📰 Có ' + fresh.length + ' kết quả mới kể từ lần cuối bạn ghé thăm!', '📰 ' + fresh.length + ' new results since your last visit!')] });
+        fresh = fresh.slice(-2);
+      }
+      fresh.slice(-3).forEach(function(i) { queueBubble(window.careerCommentary(cd, i)); });
+    }
+
+    function randomTaunt() {
+      if(!careerReady() || !commentatorOn() || document.hidden || panel.classList.contains('open')) return;
+      if(bubble.classList.contains('show') || bubbleQueue.length) return;
+      var cd = window.careerData(window.state);
+      var teams = getVisibleTeamNames(loadState()).filter(function(t) { return cd.elo[t] && cd.elo[t].P >= 5; });
+      if(!teams.length) return;
+      var team = teams[Math.floor(Math.random() * teams.length)];
+      var lines = window.careerTaunts(cd, team, null);
+      queueBubble({ head: L('Tèo khiêu khích', 'Teo teases'), lines: [lines[Math.floor(Math.random() * lines.length)]] });
+    }
+
+    setInterval(commentTick, 6000);
+    setTimeout(function() { randomTaunt(); setInterval(randomTaunt, 6 * 60 * 1000); }, 90 * 1000);
 
     renderAdminState();
     applyFunctionUI();

@@ -540,7 +540,7 @@ function renderChessSwissStandings(s){
     return a.team.localeCompare(b.team);
   });
 
-  var finished = cs.rounds.length >= cs.numRounds && chessSwissRoundComplete(s, cs.numRounds - 1);
+  var finished = (cs.rounds.length >= cs.numRounds && chessSwissRoundComplete(s, cs.numRounds - 1)) || !!s.forceEnded;
 
   // Band settings (same as League): top / euro / playoff / relegation
   var topBand = s.settings.top || 0,

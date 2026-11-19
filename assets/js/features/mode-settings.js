@@ -57,6 +57,7 @@ function fillModeSettings(s){
   var m = s.mode;
   var tour = m === 'tournament', chess = m === 'chess-swiss';
   var third = m === 'tournament' || m === 'cup' || m === 'swiss';
+  $('cfgForceEnd').checked = !!s.forceEnded;
   msShow('cfgModeSection', tour || chess || third);
   msShow('cfgTournamentWrap', tour);
   msShow('cfgChessRoundsWrap', chess, 'flex');
@@ -162,6 +163,7 @@ function applyModeSettings(s){
       if(typeof checkAndGenerateNextChessSwiss === 'function') checkAndGenerateNextChessSwiss(s);
     }
   }
+  if($('cfgForceEnd').checked) s.forceEnded = true; else delete s.forceEnded;
   return true;
 }
 

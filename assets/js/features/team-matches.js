@@ -21,12 +21,14 @@ function tmResolveSlot(rounds, keyFor, results, slot, mapIdx, ext, depth){
 // Only matches whose two teams are known are included.
 function collectSeasonMatches(s){
   var out = [], results = s.results || {};
-  function push(stage, h, a, key){
+  // extra: { round: label shared by matches played together (e.g. all groups' L1), ko: knockout match }
+  function push(stage, h, a, key, extra){
     if(typeof h !== 'number' || typeof a !== 'number' || h === a) return;
     var r = results[key];
     if(r && (r.bye || r.hg == null || r.ag == null || r.hg === '' || r.ag === '')) r = r.bye ? 'bye' : null;
     if(r === 'bye') return;
-    out.push({ stage: stage, home: h, away: a, key: key, res: r ? { hg: +r.hg, ag: +r.ag } : null });
+    out.push({ stage: stage, round: (extra && extra.round) || stage, ko: !!(extra && extra.ko),
+      home: h, away: a, key: key, res: r ? { hg: +r.hg, ag: +r.ag } : null });
   }
   function knockout(br, prefix, label, mapIdx, ext){
     if(!br || !br.rounds) return;
@@ -35,7 +37,7 @@ function collectSeasonMatches(s){
       (round || []).forEach(function(m, mi){
         if(!m) return;
         push(label(r), tmResolveSlot(br.rounds, keyFor, results, m.home, mapIdx, ext, 0),
-          tmResolveSlot(br.rounds, keyFor, results, m.away, mapIdx, ext, 0), keyFor(r, mi));
+          tmResolveSlot(br.rounds, keyFor, results, m.away, mapIdx, ext, 0), keyFor(r, mi), { ko: true });
       });
     });
   }
@@ -63,7 +65,7 @@ function collectSeasonMatches(s){
         var grp = groups[g], rd = (grp.fixtures || [])[r], ti = grp.teamIndices || [];
         if(!rd) return;
         rd.forEach(function(m, mi){
-          push('Bảng ' + g + ' · L' + (r + 1), ti[m.home], ti[m.away], 'group-' + g + '-' + r + '-' + mi);
+          push('Bảng ' + g + ' · L' + (r + 1), ti[m.home], ti[m.away], 'group-' + g + '-' + r + '-' + mi, { round: 'Vòng bảng · L' + (r + 1) });
         });
         rests('Bảng ' + g + ' · L' + (r + 1), ti, rd, function(i){ return ti[i]; });
       });
@@ -103,13 +105,14 @@ function collectSeasonMatches(s){
   } else if(mode === 'double-elimination' && s.doubleElimination){
     var de = s.doubleElimination;
     var res = function(slot){ try { return resolveDoubleEliminationTeam(s, slot); } catch(e){ return null; } };
-    (de.playoffRound || []).forEach(function(m, mi){ push('Play-in', res(m.home), res(m.away), 'de-playoff-0-' + mi); });
+    var KO = { ko: true };
+    (de.playoffRound || []).forEach(function(m, mi){ push('Play-in', res(m.home), res(m.away), 'de-playoff-0-' + mi, KO); });
     var wb = de.winnersRounds || [], lb = de.losersRounds || [];
     for(var i = 0; i < Math.max(wb.length, lb.length); i++){
-      (wb[i] || []).forEach(function(m, mi){ push('WB V' + (i + 1), res(m.home), res(m.away), 'de-winners-' + i + '-' + mi); });
-      (lb[i] || []).forEach(function(m, mi){ push('LB V' + (i + 1), res(m.home), res(m.away), 'de-losers-' + i + '-' + mi); });
+      (wb[i] || []).forEach(function(m, mi){ push('WB V' + (i + 1), res(m.home), res(m.away), 'de-winners-' + i + '-' + mi, KO); });
+      (lb[i] || []).forEach(function(m, mi){ push('LB V' + (i + 1), res(m.home), res(m.away), 'de-losers-' + i + '-' + mi, KO); });
     }
-    (de.grandFinals || []).forEach(function(m, mi){ push('Chung kết tổng', res(m.home), res(m.away), 'de-grand-final-' + mi); });
+    (de.grandFinals || []).forEach(function(m, mi){ push('Chung kết tổng', res(m.home), res(m.away), 'de-grand-final-' + mi, KO); });
   } else if(mode === 'chess-swiss' && s.chessSwiss){
     var cs = s.chessSwiss;
     (cs.rounds || []).forEach(function(round, r){

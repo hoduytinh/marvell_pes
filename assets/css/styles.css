@@ -229,7 +229,7 @@ dialog::backdrop{background:rgba(2,6,23,.55);backdrop-filter:blur(3px);-webkit-b
 .formBox.L{background:var(--loss)}
 
 /* Team dialog: last matches list */
-#teamDialog{width:min(560px,94vw)}
+#teamDialog{width:min(620px,94vw)}
 .team-match-list{display:flex;flex-direction:column;gap:3px;margin-top:4px}
 .team-match-row{display:grid;grid-template-columns:22px minmax(70px,auto) 1fr 52px 1fr;align-items:center;gap:6px;font-size:12.5px;padding:3px 6px;border:1px solid var(--border);border-radius:6px;background:var(--card)}
 .team-match-row .tm-stage{color:var(--muted);font-size:11px;white-space:nowrap}
@@ -242,6 +242,142 @@ dialog::backdrop{background:rgba(2,6,23,.55);backdrop-filter:blur(3px);-webkit-b
 .team-match-row.tm-rest{opacity:.7;border-style:dashed}
 .team-match-row .tm-rest-note{grid-column:3 / 6;text-align:center;color:var(--muted);font-style:italic}
 .formBox.N{background:#64748b}
+
+/* Career / Elo & records dialogs (features/career.js) */
+.cr-dialog{width:min(860px,94vw)}
+.cr-dialog h3{margin-top:0}
+.cr-team{color:inherit;text-decoration:none;border-bottom:1px dotted var(--muted)}
+.cr-team:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.cr-metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:10px}
+.cr-pill{border:1px solid var(--border);border-radius:10px;background:var(--card);padding:8px 10px}
+.cr-pill-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.cr-pill-value{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:2px}
+.cr-pill-sub{font-size:11.5px;color:var(--text-2);margin-top:2px}
+.cr-spark{width:100%;height:80px;display:block;border:1px solid var(--border);border-radius:10px;background:var(--card)}
+.cr-spark-line{fill:none;stroke:var(--accent);stroke-width:2;vector-effect:non-scaling-stroke}
+.cr-spark-base{stroke:var(--muted);stroke-dasharray:4 4;stroke-width:1;vector-effect:non-scaling-stroke}
+.cr-spark-legend{display:flex;justify-content:space-between;font-size:11px;margin:2px 2px 8px}
+.cr-sec{margin-top:10px;border-top:1px solid var(--border);padding-top:8px}
+.cr-sec>summary{cursor:pointer;margin-bottom:6px}
+.cr-table-wrap{overflow-x:auto}
+.cr-table{width:100%;border-collapse:collapse;font-size:13px}
+.cr-table th,.cr-table td{padding:5px 8px;border-bottom:1px solid var(--border);text-align:center;white-space:nowrap}
+.cr-table th{color:var(--muted);font-weight:600;font-size:12px}
+.cr-table td:nth-child(2),.cr-table th:nth-child(2){text-align:left}
+.cr-table:not(.cr-elo) td:first-child,.cr-table:not(.cr-elo) th:first-child{text-align:left}
+.cr-table tbody tr:hover{background:var(--hover)}
+.cr-elo tr.cr-prov{opacity:.55}
+.cr-up{color:var(--win);font-weight:700}
+.cr-down{color:var(--loss);font-weight:700}
+.cr-note{font-size:11.5px;margin-top:8px}
+.cr-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.cr-tag{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--border);border-radius:999px;padding:3px 10px;font-size:12.5px;background:var(--card)}
+.cr-tag.bad{border-color:var(--loss)}
+.cr-tag.good{border-color:var(--win)}
+.cr-tag button{padding:0 6px;min-height:0;font-size:12px}
+.cr-trophies{display:flex;flex-wrap:wrap;gap:6px}
+.cr-trophy{border:1px solid var(--border);border-radius:8px;padding:3px 8px;font-size:12.5px;background:var(--card)}
+.cr-trophy.medal-gold{border-color:#eab308}
+.cr-trophy.medal-silver{border-color:#94a3b8}
+.cr-trophy.medal-bronze{border-color:#b45309}
+.cr-list{margin:0;padding-left:18px;font-size:13px;line-height:1.7}
+.cr-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.cr-tabs{display:flex;gap:6px}
+.cr-tabs button.active{border-color:var(--accent);color:var(--accent);font-weight:700}
+.cr-filter{font-size:12.5px;display:flex;align-items:center;gap:6px}
+.rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.rec-card{border:1px solid var(--border);border-radius:12px;background:var(--card);padding:10px 12px}
+.rec-title{font-weight:700;font-size:13px;margin-bottom:6px}
+.rec-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
+.rec-list li{display:flex;align-items:center;gap:8px;font-size:13px}
+.rec-rank{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;background:var(--surface-2);flex:none}
+.rec-list li:first-child .rec-rank{background:#eab308;color:#1f1300}
+.rec-who{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.rec-sub{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec-val{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cr-dialog.cr-wide{width:min(1200px,96vw)}
+.cr-search{min-width:180px}
+.fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;padding:4px}
+.fc-pick{position:relative;cursor:pointer;border-radius:18px 18px 40px 40px;outline:none;transition:transform .15s}
+.fc-pick:hover,.fc-pick:focus-visible{transform:translateY(-4px) scale(1.02)}
+.fc-pick:focus-visible .fifa-card{box-shadow:0 0 0 3px var(--accent),0 8px 24px rgba(0,0,0,.35)}
+.fc-grid .fifa-card{width:auto;margin:0}
+.fc-rank{position:absolute;top:-6px;left:-6px;z-index:1;min-width:26px;height:26px;padding:0 6px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;background:var(--card);color:var(--text);border:1px solid var(--border)}
+.cr-hero{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:14px;margin-bottom:4px}
+.cr-hero>.fifa-card{flex:none;margin:0}
+.cr-hero-main{flex:1 1 300px;min-width:0}
+
+/* Sticky dialog header with an X close button */
+.dlg-head{position:sticky;top:-20px;z-index:5;display:flex;align-items:center;gap:8px;margin:-20px -20px 12px;padding:12px 14px 12px 20px;background:var(--panel);border-bottom:1px solid var(--border)}
+.dlg-head h3{margin:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dlg-x{flex:none;width:34px;height:34px;min-height:0;padding:0;border-radius:50%;font-size:15px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.dlg-x:hover:not(:disabled){background:var(--danger-bg);border-color:var(--danger);color:var(--danger-text)}
+.td-hero{display:flex;flex-wrap:wrap;align-items:flex-start;gap:12px}
+.td-hero #teamFifaCard .fifa-card{margin:0}
+.td-hero .td-form{flex:1 1 240px;min-width:0}
+
+/* Head-to-head (renderH2HHtml) */
+.h2h-hero{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding:12px;border:1px solid var(--border);border-radius:14px;background:var(--card)}
+.h2h-side{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;min-width:0}
+.h2h-logo{width:56px;height:56px;border-radius:50%;object-fit:cover;border:3px solid var(--border)}
+.h2h-side.a .h2h-logo{border-color:var(--accent)}
+.h2h-side.b .h2h-logo{border-color:#f97316}
+.h2h-name{font-weight:800;font-size:15px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.h2h-meta{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.h2h-ovr{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:20px;padding:0 5px;border-radius:6px;font-weight:900;font-size:12px;color:#1f1300;background:#d4a017}
+.h2h-ovr.tier-silver{background:#a8b3c2;color:#0f172a}
+.h2h-ovr.tier-bronze{background:#c2773a;color:#2a1205}
+.h2h-ovr.tier-icon{background:#6d28d9;color:#fff7d6}
+.h2h-score{text-align:center}
+.h2h-big{display:flex;gap:6px;justify-content:center;font-size:30px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.1}
+.h2h-big span{min-width:40px}
+.h2h-big .a,.h2h-v.a.best,.h2h-fc b.a{color:var(--accent)}
+.h2h-big .d{color:var(--muted)}
+.h2h-big .b,.h2h-v.b.best,.h2h-fc b.b{color:#f97316}
+.h2h-cap{display:flex;gap:6px;justify-content:center;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.h2h-cap span{min-width:40px}
+.h2h-sub{font-size:12px;color:var(--text-2);margin-top:4px}
+.h2h-bar{display:flex;height:20px;margin:8px 0 2px;border-radius:999px;overflow:hidden;background:var(--surface-2);font-size:11px;font-weight:700;color:#fff}
+.h2h-bar span{display:flex;align-items:center;justify-content:center;min-width:0;overflow:hidden}
+.h2h-bar .a{background:var(--accent)}
+.h2h-bar .d{background:var(--draw,#64748b)}
+.h2h-bar .b{background:#f97316}
+.h2h-empty{text-align:center;margin:8px 0}
+.h2h-forecast{margin-top:10px;padding:8px 12px;border:1px solid var(--border);border-radius:12px;background:var(--card)}
+.h2h-fc-title{font-size:12px;color:var(--muted);margin-bottom:4px}
+.h2h-fc{display:flex;align-items:center;gap:10px;font-variant-numeric:tabular-nums}
+.h2h-fc b{min-width:40px;text-align:center;font-size:15px}
+.h2h-fc .h2h-split{flex:1;height:10px}
+.h2h-split{display:flex;height:6px;border-radius:999px;overflow:hidden;background:var(--surface-2);gap:2px}
+.h2h-split i{display:block;height:100%}
+.h2h-split i.a{background:var(--accent)}
+.h2h-split i.b{background:#f97316}
+.h2h-legend{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px}
+.h2h-legend .a{color:var(--accent)}
+.h2h-legend .b{color:#f97316}
+.h2h-rows{display:flex;flex-direction:column;gap:6px}
+.h2h-row{display:grid;grid-template-columns:56px 1fr 56px;align-items:center;gap:10px}
+.h2h-v{font-weight:800;font-variant-numeric:tabular-nums;font-size:14px;color:var(--text-2)}
+.h2h-v.a{text-align:left}
+.h2h-v.b{text-align:right}
+.h2h-l{text-align:center;font-size:11.5px;color:var(--muted);margin-bottom:3px}
+.fc-stat span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* FIFA-style team card */
+.fifa-card{position:relative;width:230px;margin:6px auto;padding:16px 16px 12px;border-radius:18px 18px 40px 40px;color:#1f1300;
+  background:linear-gradient(160deg,#fde68a,#d4a017 55%,#a16207);box-shadow:0 8px 24px rgba(0,0,0,.35);font-family:inherit}
+.fifa-card.tier-silver{background:linear-gradient(160deg,#f1f5f9,#a8b3c2 55%,#64748b);color:#0f172a}
+.fifa-card.tier-bronze{background:linear-gradient(160deg,#fcd9b6,#c2773a 55%,#7c3f12);color:#2a1205}
+.fifa-card.tier-icon{background:linear-gradient(160deg,#1e1b4b,#6d28d9 50%,#eab308);color:#fff7d6}
+.fc-top{display:flex;align-items:flex-start;gap:8px}
+.fc-ovr{font-size:40px;font-weight:900;line-height:1}
+.fc-pos{font-size:15px;font-weight:800;margin-top:6px}
+.fc-logo{margin-left:auto;width:72px;height:72px;object-fit:cover;border-radius:50%;border:3px solid rgba(255,255,255,.6)}
+.fc-name{text-align:center;font-size:19px;font-weight:900;text-transform:uppercase;margin:10px 0 6px;border-bottom:1px solid currentColor;padding-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fc-stats{display:grid;grid-template-columns:1fr 1fr;gap:3px 12px}
+.fc-stat{display:flex;align-items:baseline;gap:6px;font-size:11px;font-weight:700}
+.fc-stat b{font-size:17px;font-weight:900;min-width:24px}
+.fc-foot{text-align:center;font-size:11px;font-weight:700;margin-top:8px;opacity:.85}
 
 /* Rank delta (Δ) — colored arrows, no pill background */
 td.delta{padding:0 2px;text-align:center}

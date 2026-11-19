@@ -140,7 +140,7 @@ function renderSeasonOverview(s){
   host.hidden = false;
 
   var status, statusClass;
-  if(d.champion || (d.total && d.played >= d.total)){ status = 'Đã kết thúc'; statusClass = 'done'; }
+  if(s.forceEnded || d.champion || (d.total && d.played >= d.total)){ status = 'Đã kết thúc'; statusClass = 'done'; }
   else if(d.played > 0){ status = 'Đang diễn ra'; statusClass = 'live'; }
   else { status = 'Chưa bắt đầu'; statusClass = 'idle'; }
 
@@ -169,7 +169,7 @@ function renderSeasonOverview(s){
   if(d.champion) grid.appendChild(ovStat('Vô địch', ovTeam('🏆 ' + d.champion), 'ov-champ'));
   else if(d.leader) grid.appendChild(ovStat('Dẫn đầu', ovTeam(d.leader)));
 
-  if(d.next && !d.champion){
+  if(d.next && !d.champion && !s.forceEnded){
     var nx = document.createElement('div'); nx.className = 'ov-next';
     var rd = document.createElement('span'); rd.className = 'ov-round'; rd.textContent = 'Vòng ' + d.next.round;
     var vs = document.createElement('span'); vs.className = 'ov-vs'; vs.textContent = 'vs';
