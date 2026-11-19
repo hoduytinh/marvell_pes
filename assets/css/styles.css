@@ -235,8 +235,13 @@ dialog::backdrop{background:rgba(2,6,23,.55);backdrop-filter:blur(3px);-webkit-b
 .team-match-row .tm-stage{color:var(--muted);font-size:11px;white-space:nowrap}
 .team-match-row .tm-team{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .team-match-row .tm-home{text-align:right}
-.team-match-row .tm-self{font-weight:700}
+.team-match-row .tm-self{font-weight:700;color:var(--accent)}
 .team-match-row .tm-score{text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+.team-match-row.tm-pending{opacity:.75;border-style:dashed}
+.team-match-row.tm-pending .tm-score{color:var(--muted);font-weight:500}
+.team-match-row.tm-rest{opacity:.7;border-style:dashed}
+.team-match-row .tm-rest-note{grid-column:3 / 6;text-align:center;color:var(--muted);font-style:italic}
+.formBox.N{background:#64748b}
 
 /* Rank delta (Δ) — colored arrows, no pill background */
 td.delta{padding:0 2px;text-align:center}

@@ -39,12 +39,20 @@ function collectSeasonMatches(s){
       });
     });
   }
+  // Teams of `teams` without a match in `ms` rest that round (odd team count).
+  function rests(stage, teams, ms, mapIdx){
+    var busy = {};
+    (ms || []).forEach(function(m){ busy[mapIdx ? mapIdx(m.home) : m.home] = 1; busy[mapIdx ? mapIdx(m.away) : m.away] = 1; });
+    teams.forEach(function(t){ if(!busy[t]) out.push({ stage: stage, rest: t }); });
+  }
   function stageName(br, r, pre){ return (pre || '') + ((br.stageNames && br.stageNames[r]) || ('Vòng ' + (r + 1))); }
   var mode = s.mode || 'league';
 
   if(mode === 'league'){
+    var allTeams = (s.teams || []).map(function(_, i){ return i; });
     (s.rounds || []).forEach(function(ms, r){
       ms.forEach(function(m, mi){ push('V' + (r + 1), m.home, m.away, r + '-' + mi); });
+      rests('V' + (r + 1), allTeams, ms);
     });
   } else if(mode === 'tournament'){
     var groups = s.groups || {}, gNames = Object.keys(groups).sort();
@@ -52,10 +60,12 @@ function collectSeasonMatches(s){
     gNames.forEach(function(g){ maxR = Math.max(maxR, (groups[g].fixtures || []).length); });
     for(var r = 0; r < maxR; r++){
       gNames.forEach(function(g){
-        var grp = groups[g], rd = (grp.fixtures || [])[r];
-        (rd || []).forEach(function(m, mi){
-          push('Bảng ' + g + ' · L' + (r + 1), grp.teamIndices[m.home], grp.teamIndices[m.away], 'group-' + g + '-' + r + '-' + mi);
+        var grp = groups[g], rd = (grp.fixtures || [])[r], ti = grp.teamIndices || [];
+        if(!rd) return;
+        rd.forEach(function(m, mi){
+          push('Bảng ' + g + ' · L' + (r + 1), ti[m.home], ti[m.away], 'group-' + g + '-' + r + '-' + mi);
         });
+        rests('Bảng ' + g + ' · L' + (r + 1), ti, rd, function(i){ return ti[i]; });
       });
     }
     var kb = s.knockoutBracket;
@@ -104,7 +114,10 @@ function collectSeasonMatches(s){
     var cs = s.chessSwiss;
     (cs.rounds || []).forEach(function(round, r){
       (round.matches || []).forEach(function(m, mi){
-        if(m.home === cs.byeIndex || m.away === cs.byeIndex) return;
+        if(m.home === cs.byeIndex || m.away === cs.byeIndex){
+          out.push({ stage: 'V' + (r + 1), rest: m.home === cs.byeIndex ? m.away : m.home, bye: true });
+          return;
+        }
         push('V' + (r + 1), m.home, m.away, 'cswiss-' + r + '-' + mi);
       });
     });
@@ -112,27 +125,38 @@ function collectSeasonMatches(s){
   return out;
 }
 
-// Played matches of one team, oldest first, from the team's perspective.
-function teamPlayedMatches(s, teamIdx, all){
+// All matches of one team (played, unplayed and rest rounds), in play order, from
+// the team's perspective. Unplayed matches have r = null; rest rounds have rest = true.
+function teamMatches(s, teamIdx, all){
   return (all || collectSeasonMatches(s)).filter(function(x){
-    return x.res && (x.home === teamIdx || x.away === teamIdx);
+    return x.rest === teamIdx || x.home === teamIdx || x.away === teamIdx;
   }).map(function(x){
-    var isHome = x.home === teamIdx;
-    var gf = isHome ? x.res.hg : x.res.ag, ga = isHome ? x.res.ag : x.res.hg;
-    return { stage: x.stage, home: x.home, away: x.away, hg: x.res.hg, ag: x.res.ag,
-      isHome: isHome, opp: isHome ? x.away : x.home, gf: gf, ga: ga,
-      r: gf > ga ? 'W' : (gf < ga ? 'L' : 'D') };
+    if(x.rest != null) return { stage: x.stage, rest: true, bye: !!x.bye, r: null };
+    var isHome = x.home === teamIdx, m = { stage: x.stage, home: x.home, away: x.away, isHome: isHome,
+      opp: isHome ? x.away : x.home, r: null };
+    if(x.res){
+      m.hg = x.res.hg; m.ag = x.res.ag;
+      m.gf = isHome ? m.hg : m.ag; m.ga = isHome ? m.ag : m.hg;
+      m.r = m.gf > m.ga ? 'W' : (m.gf < m.ga ? 'L' : 'D');
+    }
+    return m;
   });
 }
 
 function renderTeamMatchList(s, list){
   if(!list.length) return '<div class="muted">—</div>';
   return '<div class="team-match-list">' + list.map(function(m){
-    return '<div class="team-match-row">' +
-      '<span class="formBox ' + m.r + '">' + m.r + '</span>' +
+    if(m.rest) return '<div class="team-match-row tm-rest">' +
+      '<span class="formBox N">–</span>' +
+      '<span class="tm-stage">' + escapeHtml(m.stage) + '</span>' +
+      '<span class="tm-rest-note">' + escapeHtml(m.bye ? 'Nghỉ (BYE +2đ)' : 'Nghỉ – không có lịch thi đấu') + '</span>' +
+      '</div>';
+    var played = !!m.r;
+    return '<div class="team-match-row' + (played ? '' : ' tm-pending') + '">' +
+      '<span class="formBox ' + (played ? m.r : 'N') + '">' + (played ? m.r : '–') + '</span>' +
       '<span class="tm-stage">' + escapeHtml(m.stage) + '</span>' +
       '<span class="tm-team tm-home' + (m.isHome ? ' tm-self' : '') + '">' + escapeHtml(s.teams[m.home] || '') + '</span>' +
-      '<span class="tm-score">' + m.hg + ' – ' + m.ag + '</span>' +
+      '<span class="tm-score">' + (played ? m.hg + ' – ' + m.ag : '') + '</span>' +
       '<span class="tm-team tm-away' + (m.isHome ? '' : ' tm-self') + '">' + escapeHtml(s.teams[m.away] || '') + '</span>' +
       '</div>';
   }).join('') + '</div>';

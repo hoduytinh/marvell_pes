@@ -283,35 +283,17 @@
   <dialog id="teamDialog">
     <form method="dialog">
       <h3 id="teamDialogTitle">Đội</h3>
-      <div class="small muted">Live form</div>
-      <div id="teamFormSeq" class="chip" style="flex-wrap:wrap"></div>
+      <details open>
+        <summary><strong>Chuỗi form đầy đủ</strong></summary>
+        <div id="fullForm" class="chip" style="flex-wrap:wrap;margin-top:6px"></div>
+      </details>
       <details open style="margin-top:8px">
         <summary><strong>10 trận gần nhất</strong></summary>
         <div id="teamLast10"></div>
       </details>
-      <details style="margin-top:8px">
-        <summary><strong>Đối đầu</strong></summary>
-        <div style="display:flex;gap:8px;align-items:center;margin:8px 0">
-          <label class="muted">Chọn đối thủ:</label>
-          <select id="h2hOpponent"></select>
-        </div>
-        <div id="h2hSummary" class="chip small" style="margin-bottom:8px"></div>
-        <div id="h2hList"></div>
-      </details>
-      <details style="margin-top:8px">
-        <summary><strong>Thống kê nâng cao</strong></summary>
-        <div class="two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <div>
-            <div class="small muted">Sân nhà</div>
-            <table class="table-mini" id="homeStats"></table>
-          </div>
-          <div>
-            <div class="small muted">Sân khách</div>
-            <table class="table-mini" id="awayStats"></table>
-          </div>
-        </div>
-        <div class="small muted" style="margin-top:6px">Chuỗi form đầy đủ:</div>
-        <div id="fullForm" class="chip" style="flex-wrap:wrap"></div>
+      <details open style="margin-top:8px">
+        <summary><strong>3 trận sắp tới</strong></summary>
+        <div id="teamNext3"></div>
       </details>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
         <button value="cancel">Đóng</button>

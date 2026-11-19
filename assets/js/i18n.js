@@ -112,6 +112,10 @@
     // Team dialog
     'Live form': 'Live form',
     '10 trận gần nhất': 'Last 10 matches',
+    '3 trận sắp tới': 'Next 3 matches',
+    'Nghỉ – không có lịch thi đấu': 'Rest – no fixture',
+    'Nghỉ (BYE +2đ)': 'Rest (BYE +2 pts)',
+    'Chuỗi form đầy đủ': 'Full form sequence',
     'Đối đầu': 'Head-to-head',
     'Chọn đối thủ:': 'Select opponent:',
     'Thống kê nâng cao': 'Advanced stats',
