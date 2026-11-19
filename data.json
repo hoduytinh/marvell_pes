@@ -20044,6 +20044,10 @@
         "cup-0-0": {
           "hg": 0,
           "ag": 2
+        },
+        "cup-0-2": {
+          "hg": 2,
+          "ag": 0
         }
       },
       "rounds": [
@@ -20350,10 +20354,7 @@
               "away": 2
             },
             {
-              "home": {
-                "fromRound": 0,
-                "matchId": 2
-              },
+              "home": 4,
               "away": {
                 "fromRound": 0,
                 "matchId": 3
