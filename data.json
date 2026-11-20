@@ -2259,7 +2259,8 @@
         "playoff": 0
       },
       "createdAt": 1761151953453,
-      "mode": "league"
+      "mode": "league",
+      "locked": true
     },
     "sbesi4l4": {
       "name": "2025 S - PlayOff",
@@ -23315,7 +23316,7 @@
       "tournamentPhase": "group"
     }
   },
-  "current": "sbesi4l4",
+  "current": "spnjv01o",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
