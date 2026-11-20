@@ -1099,7 +1099,8 @@
         "playoff": 3
       },
       "createdAt": 1761151990086,
-      "mode": "league"
+      "mode": "league",
+      "locked": true
     },
     "sp5ol4p5": {
       "name": "2025 - Seri B",
@@ -23316,7 +23317,7 @@
       "tournamentPhase": "group"
     }
   },
-  "current": "spnjv01o",
+  "current": "s4i610j8",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
