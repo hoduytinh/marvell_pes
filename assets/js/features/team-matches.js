@@ -28,7 +28,7 @@ function collectSeasonMatches(s){
     if(r && (r.bye || r.hg == null || r.ag == null || r.hg === '' || r.ag === '')) r = r.bye ? 'bye' : null;
     if(r === 'bye') return;
     out.push({ stage: stage, round: (extra && extra.round) || stage, ko: !!(extra && extra.ko),
-      home: h, away: a, key: key, res: r ? { hg: +r.hg, ag: +r.ag } : null });
+      home: h, away: a, key: key, res: r ? { hg: +r.hg, ag: +r.ag, games: Array.isArray(r.games) ? r.games : null } : null });
   }
   function knockout(br, prefix, label, mapIdx, ext){
     if(!br || !br.rounds) return;
@@ -135,7 +135,7 @@ function teamMatches(s, teamIdx, all){
     return x.rest === teamIdx || x.home === teamIdx || x.away === teamIdx;
   }).map(function(x){
     if(x.rest != null) return { stage: x.stage, rest: true, bye: !!x.bye, r: null };
-    var isHome = x.home === teamIdx, m = { stage: x.stage, home: x.home, away: x.away, isHome: isHome,
+    var isHome = x.home === teamIdx, m = { stage: x.stage, key: x.key, home: x.home, away: x.away, isHome: isHome,
       opp: isHome ? x.away : x.home, r: null };
     if(x.res){
       m.hg = x.res.hg; m.ag = x.res.ag;
@@ -154,13 +154,14 @@ function renderTeamMatchList(s, list){
       '<span class="tm-stage">' + escapeHtml(m.stage) + '</span>' +
       '<span class="tm-rest-note">' + escapeHtml(m.bye ? 'Nghỉ (BYE +2đ)' : 'Nghỉ – không có lịch thi đấu') + '</span>' +
       '</div>';
-    var played = !!m.r;
+    var played = !!m.r, d = played && typeof careerEloDeltaOf === 'function' ? careerEloDeltaOf(s, m.key) : null;
     return '<div class="team-match-row' + (played ? '' : ' tm-pending') + '">' +
       '<span class="formBox ' + (played ? m.r : 'N') + '">' + (played ? m.r : '–') + '</span>' +
       '<span class="tm-stage">' + escapeHtml(m.stage) + '</span>' +
       '<span class="tm-team tm-home' + (m.isHome ? ' tm-self' : '') + '">' + escapeHtml(s.teams[m.home] || '') + '</span>' +
       '<span class="tm-score">' + (played ? m.hg + ' – ' + m.ag : '') + '</span>' +
       '<span class="tm-team tm-away' + (m.isHome ? '' : ' tm-self') + '">' + escapeHtml(s.teams[m.away] || '') + '</span>' +
+      '<span class="tm-elo">' + (d ? crEloBadge(m.isHome ? d.h : d.a) : '') + '</span>' +
       '</div>';
   }).join('') + '</div>';
 }

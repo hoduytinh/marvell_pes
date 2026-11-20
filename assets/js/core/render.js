@@ -138,7 +138,7 @@ $('seasonTitle').textContent='— '+s.name+' (LEAGUE)';
       var search=(($('searchTeam').value)||'').toLowerCase();
       var tbody=$('standings'); tbody.innerHTML='';
       var topBand=s.settings.top||4,euroBand=s.settings.euro||6,playoffBand=s.settings.playoff||0,rel=s.settings.rel||3;
-      var leagueFinished = (s.rounds && s.rounds.length>0 && s.rounds.every(function(rd, ri){ return rd.every(function(m, mi){ return s.results[ri+'-'+mi]; }); })) || !!s.forceEnded;
+      var leagueFinished = (s.rounds && s.rounds.length>0 && s.rounds.every(function(rd, ri){ return rd.every(function(m, mi){ return s.results[ri+'-'+mi]; }); })) || !!s.forceEnded || !!s.locked;
       rows.forEach(function(r,idx){
         if(search && r.team.toLowerCase().indexOf(search)===-1) return;
         var isTop=idx<topBand,isEuro=idx>=topBand&&idx<euroBand,isPlayoff=playoffBand>0&&idx>=rows.length-rel-playoffBand&&idx<rows.length-rel,isRel=idx>=rows.length-rel;
@@ -352,6 +352,7 @@ var sel=$('seasonSel'); sel.innerHTML='';
       }
       renderViewTabs(s);
       renderSeasonOverview(s);
-      showAdmin(isAdmin());
+      showAdmin(isAdminUser());
+      if(typeof seasonMetaUI === 'function') seasonMetaUI(s);
       applyTheme();
     }

@@ -39,6 +39,7 @@ function renderViewTabs(s){
   var current = getSavedView();
   if(!views.some(function(v){ return v.id === current; })) current = 'all';
   main.setAttribute('data-view', current);
+  main.removeAttribute('data-stats-tab');
 
   // A single tab is pointless (Legend / Ranking) — hide the bar
   if(views.length <= 2){
@@ -46,6 +47,7 @@ function renderViewTabs(s){
     main.setAttribute('data-view', 'all');
     return;
   }
+  if(views.some(function(v){ return v.id === 'stats'; })) main.setAttribute('data-stats-tab', '1');
   nav.hidden = false;
   nav.innerHTML = '';
   views.forEach(function(v){
@@ -60,6 +62,7 @@ function renderViewTabs(s){
     b.addEventListener('click', function(){ if(v.id !== getSavedView()) setView(v.id); });
     nav.appendChild(b);
   });
+  if(typeof crEloToggleBtn === 'function') nav.insertAdjacentHTML('beforeend', crEloToggleBtn('view-tab elo-toggle'));
 }
 
 // ---- Overview data ----
@@ -134,13 +137,23 @@ function renderSeasonOverview(s){
   var host = $('seasonOverview');
   if(!host) return;
   if(!s || s.mode === 'legend' || s.mode === 'ranking'){ host.hidden = true; host.innerHTML = ''; return; }
+  // Full season info + newspaper corner (features/season-news.js); the code below is the fallback.
+  if(typeof snRenderOverview === 'function'){
+    try {
+      host.innerHTML = snRenderOverview(s);
+      host.hidden = false;
+      var nav = $('viewTabs'), head = host.querySelector('.ov-head');
+      if(head && (!nav || nav.hidden) && typeof crEloToggleBtn === 'function') head.insertAdjacentHTML('beforeend', crEloToggleBtn('ghost elo-toggle'));
+      return;
+    } catch(e){ console.warn('Season news failed:', e); }
+  }
   var d = seasonOverviewData(s);
   var def = getModeDef(s);
   host.innerHTML = '';
   host.hidden = false;
 
   var status, statusClass;
-  if(s.forceEnded || d.champion || (d.total && d.played >= d.total)){ status = 'Đã kết thúc'; statusClass = 'done'; }
+  if(s.forceEnded || s.locked || d.champion || (d.total && d.played >= d.total)){ status = 'Đã kết thúc'; statusClass = 'done'; }
   else if(d.played > 0){ status = 'Đang diễn ra'; statusClass = 'live'; }
   else { status = 'Chưa bắt đầu'; statusClass = 'idle'; }
 
@@ -169,7 +182,7 @@ function renderSeasonOverview(s){
   if(d.champion) grid.appendChild(ovStat('Vô địch', ovTeam('🏆 ' + d.champion), 'ov-champ'));
   else if(d.leader) grid.appendChild(ovStat('Dẫn đầu', ovTeam(d.leader)));
 
-  if(d.next && !d.champion && !s.forceEnded){
+  if(d.next && !d.champion && !s.forceEnded && !s.locked){
     var nx = document.createElement('div'); nx.className = 'ov-next';
     var rd = document.createElement('span'); rd.className = 'ov-round'; rd.textContent = 'Vòng ' + d.next.round;
     var vs = document.createElement('span'); vs.className = 'ov-vs'; vs.textContent = 'vs';

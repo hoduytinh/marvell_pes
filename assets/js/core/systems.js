@@ -205,7 +205,7 @@ function initSystems(){
     renderSystemSwitcher();
     applySystemBranding();
     updateAuthButton();
-    if(changed){ showAdmin(isAdmin()); updateCustomLinks(); refreshSeasonUI(); }
+    if(changed){ showAdmin(isAdminUser()); updateCustomLinks(); refreshSeasonUI(); }
   });
 }
 
@@ -445,7 +445,7 @@ function buildSystemsDialog(draft){
       var changed = refreshAuthFromRegistry();
       renderSystemSwitcher();
       applySystemBranding();
-      if(changed){ showAdmin(isAdmin()); updateCustomLinks(); refreshSeasonUI(); }
+      if(changed){ showAdmin(isAdminUser()); updateCustomLinks(); refreshSeasonUI(); }
       render();
       setStatus('✅ Đã lưu');
     }).catch(function(e){

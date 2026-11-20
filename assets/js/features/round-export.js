@@ -151,11 +151,52 @@ function stripSnapshotImages(node){
   });
 }
 
-function renderSnapshotBlob(html2canvas, title, bg, withImages){
-  var node = buildRoundSnapshotNode(title, bg);
+// html2canvas 1.x cannot parse modern color functions (color-mix() computes to
+// "color(srgb ...)"). Resolve them to rgba() through a 1px canvas and inline them.
+var snapColorCtx = null;
+function snapshotRgba(c){
+  if(!snapColorCtx){
+    var cv = document.createElement('canvas');
+    cv.width = cv.height = 1;
+    snapColorCtx = cv.getContext('2d', { willReadFrequently: true });
+  }
+  var x = snapColorCtx;
+  x.clearRect(0, 0, 1, 1);
+  x.fillStyle = 'rgba(0,0,0,0)';
+  x.fillStyle = c;
+  x.fillRect(0, 0, 1, 1);
+  var d = x.getImageData(0, 0, 1, 1).data;
+  return 'rgba(' + d[0] + ',' + d[1] + ',' + d[2] + ',' + (d[3] / 255).toFixed(3) + ')';
+}
+
+var SNAP_COLOR_PROPS = ['color', 'background-color', 'background-image', 'border-top-color', 'border-right-color',
+  'border-bottom-color', 'border-left-color', 'outline-color', 'text-decoration-color', 'box-shadow', 'text-shadow',
+  'column-rule-color', 'caret-color', 'fill', 'stroke'];
+var SNAP_MODERN_COLOR = /\b(?:color|color-mix|oklch|oklab|lab|lch|hwb)\((?:[^()]|\([^()]*\))*\)/g;
+
+function flattenSnapshotColors(node){
+  [node].concat([].slice.call(node.querySelectorAll('*'))).forEach(function(el){
+    var cs = getComputedStyle(el);
+    SNAP_COLOR_PROPS.forEach(function(p){
+      var v = cs.getPropertyValue(p);
+      if(!v || v.indexOf('(') < 0) return;
+      SNAP_MODERN_COLOR.lastIndex = 0;
+      if(!SNAP_MODERN_COLOR.test(v)) return;
+      el.style.setProperty(p, v.replace(SNAP_MODERN_COLOR, snapshotRgba), 'important');
+    });
+  });
+}
+
+// build(bg) -> off-screen node appended to <body>; removed after rendering.
+function renderSnapshotBlob(html2canvas, build, bg, withImages){
+  var node = build(bg);
   var prep = withImages ? inlineSnapshotImages(node) : Promise.resolve(stripSnapshotImages(node));
   return prep.then(function(){
-    return html2canvas(node, { backgroundColor: bg, scale: 2, useCORS: true, allowTaint: false, logging: false, windowWidth: 1280 });
+    flattenSnapshotColors(node);
+    // Skip images outside the snapshot (e.g. lazy chat emoji GIFs): html2canvas waits for every image
+    // in its cloned document, and lazy/offline ones never settle -> capture hangs forever.
+    return html2canvas(node, { backgroundColor: bg, scale: 2, useCORS: true, allowTaint: false, logging: false, windowWidth: 1280,
+      ignoreElements: function(el){ return el.tagName === 'IMG' && !node.contains(el); } });
   }).then(function(canvas){
     return new Promise(function(resolve, reject){
       canvas.toBlob(function(blob){
@@ -165,16 +206,20 @@ function renderSnapshotBlob(html2canvas, title, bg, withImages){
   }).then(function(blob){ node.remove(); return blob; }, function(err){ node.remove(); throw err; });
 }
 
-function captureRoundSnapshot(title){
+function captureNodeSnapshot(build){
   var bg = getComputedStyle(document.documentElement).getPropertyValue('--panel').trim() || '#0e1b44';
   return loadHtml2Canvas().then(function(html2canvas){
-    return renderSnapshotBlob(html2canvas, title, bg, true).catch(function(err){
+    return renderSnapshotBlob(html2canvas, build, bg, true).catch(function(err){
       // Last resort: a canvas still got tainted -> export without logos.
       if(!err || err.name !== 'SecurityError') throw err;
-      console.warn('Round export: retrying without images', err);
-      return renderSnapshotBlob(html2canvas, title, bg, false);
+      console.warn('Export: retrying without images', err);
+      return renderSnapshotBlob(html2canvas, build, bg, false);
     });
   });
+}
+
+function captureRoundSnapshot(title){
+  return captureNodeSnapshot(function(bg){ return buildRoundSnapshotNode(title, bg); });
 }
 
 function roundExportFileName(title){
@@ -215,7 +260,9 @@ function exportThemeCss(){
 }
 
 // Builds the export UI inside `doc` (the export window, or a <dialog> fallback).
-function buildExportPanel(doc, title, blob, dataUrl, onClose){
+// opts: { heading, text } override the panel heading and the default message text.
+function buildExportPanel(doc, title, blob, dataUrl, onClose, opts){
+  opts = opts || {};
   var win = doc.defaultView;
   function el(tag, props, kids){
     var e = doc.createElement(tag);
@@ -228,7 +275,7 @@ function buildExportPanel(doc, title, blob, dataUrl, onClose){
     (kids || []).forEach(function(c){ e.appendChild(c); });
     return e;
   }
-  var textIn = el('textarea', { class: 'no-i18n', rows: 2, value: title + '\n@channel', spellcheck: false });
+  var textIn = el('textarea', { class: 'no-i18n', rows: 2, value: opts.text != null ? opts.text : title + '\n@channel', spellcheck: false });
   var status = el('div', { class: 'status' });
   function flash(msg){ status.textContent = msg; }
   function clip(){ return win.navigator.clipboard; }
@@ -319,7 +366,7 @@ function buildExportPanel(doc, title, blob, dataUrl, onClose){
   ];
 
   var root = el('div', {}, [
-    el('h3', { text: exportL('📤 Export vòng đấu', '📤 Export round') }),
+    el('h3', { text: opts.heading || exportL('📤 Export vòng đấu', '📤 Export round') }),
     textIn,
     el('div', { class: 'actions' }, buttons),
     status,
@@ -343,18 +390,18 @@ function openExportWindow(){
   return w;
 }
 
-function fillExportWindow(w, title, blob, dataUrl){
+function fillExportWindow(w, title, blob, dataUrl, opts){
   if(!w || w.closed) return false;
   var doc = w.document;
   doc.title = title;
   doc.body.innerHTML = '';
-  doc.body.appendChild(buildExportPanel(doc, title, blob, dataUrl, function(){ w.close(); }));
+  doc.body.appendChild(buildExportPanel(doc, title, blob, dataUrl, function(){ w.close(); }, opts));
   w.focus();
   return true;
 }
 
 // Fallback when the popup is blocked: same panel inside a <dialog>.
-function showRoundExportDialog(title, blob, dataUrl){
+function showRoundExportDialog(title, blob, dataUrl, opts){
   var dlg = $('roundExportDialog');
   if(!dlg){
     dlg = document.createElement('dialog');
@@ -363,7 +410,7 @@ function showRoundExportDialog(title, blob, dataUrl){
     document.body.appendChild(dlg);
   }
   dlg.innerHTML = '';
-  dlg.appendChild(buildExportPanel(document, title, blob, dataUrl, function(){ dlg.close(); }));
+  dlg.appendChild(buildExportPanel(document, title, blob, dataUrl, function(){ dlg.close(); }, opts));
   if(typeof dlg.showModal === 'function'){ if(!dlg.open) dlg.showModal(); }
   else dlg.setAttribute('open', '');
 }

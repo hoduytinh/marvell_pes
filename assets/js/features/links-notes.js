@@ -51,7 +51,7 @@
         var closeBtn = dlg.querySelector('#closeNoteBtn');
         labelInput.value = note.label;
         contentInput.value = note.content;
-        var admin = isAdmin();
+        var admin = isAdminUser();
         labelInput.disabled = !admin;
         contentInput.disabled = !admin ? true : false;
         saveBtn.style.display = admin ? '' : 'none';
@@ -60,7 +60,7 @@
         dlg.querySelector('#noteForm').onsubmit = null;
         dlg.querySelector('#noteForm').onsubmit = function(e) {
           e.preventDefault();
-          if (!isAdmin()) return;
+          if (!isAdminUser()) return;
           note.label = labelInput.value;
           note.content = contentInput.value;
           notes[idx] = note;
@@ -97,7 +97,7 @@
           }
         };
         btnWrap.appendChild(btn);
-        if (isAdmin()) {
+        if (isAdminUser()) {
           var delBtn = document.createElement('button');
           delBtn.textContent = '×';
           delBtn.title = 'Xoá ghi chú';
@@ -131,7 +131,7 @@
         btnHome.title = homeLink;
         btnHome.style.marginRight = '2px';
         btnHome.onclick = function(e) {
-          if (isAdmin()) {
+          if (isAdminUser()) {
             var dlg = $('homeLinkDialog');
             $('homeLinkInput').value = homeLink;
             $('homeLabelInput').value = homeLabel;
@@ -143,7 +143,7 @@
           }
         };
         btnHomeWrap.appendChild(btnHome);
-        if (isAdmin()) {
+        if (isAdminUser()) {
           var delBtn = document.createElement('button');
           delBtn.textContent = '×';
           delBtn.title = 'Xoá nút Home';
@@ -178,7 +178,7 @@
         btn.title = link.url;
         btn.style.marginRight = '2px';
         btn.onclick = function(e) {
-          if (isAdmin()) {
+          if (isAdminUser()) {
             var dlg = $('homeLinkDialog');
             $('homeLinkInput').value = link.url;
             $('homeLabelInput').value = link.label;
@@ -191,7 +191,7 @@
           }
         };
         btnWrap.appendChild(btn);
-        if (isAdmin()) {
+        if (isAdminUser()) {
           var delBtn = document.createElement('button');
           delBtn.textContent = '×';
           delBtn.title = 'Xoá liên kết';

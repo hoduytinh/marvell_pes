@@ -25,6 +25,16 @@
   var EXACT = {
     // Header menus
     '🏆 Mùa giải': '🏆 Seasons',
+    // Season meta (kind / format / lock)
+    '🔒 Khóa mùa': '🔒 Lock season',
+    'Khóa mùa': 'Lock season',
+    'Loại giải:': 'Season type:',
+    'Chính thức': 'Official',
+    'Playoff (không tính điểm danh hiệu)': 'Playoff (no trophy points)',
+    'Thể thức:': 'Format:',
+    'Đơn (1 vs 1)': 'Singles (1 vs 1)',
+    'Đôi (2 vs 2)': 'Doubles (2 vs 2)',
+    '🔒 Khóa mùa giải (đã kết thúc, không thể chỉnh sửa)': '🔒 Lock season (finished, no further edits)',
     // Double-elimination tree view
     '🌳 Sơ đồ nhánh': '🌳 Bracket tree',
     '📋 Danh sách trận': '📋 Match list',

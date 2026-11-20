@@ -582,7 +582,7 @@ var rows=computeStandingsFor(s,'overall'); var ul=$('insights'); ul.innerHTML=''
       var last10=list.slice(Math.max(0,lastIdx-9),lastIdx+1).reverse();
       $('teamLast10').innerHTML=renderTeamMatchList(s,last10);
       // Next 3 real matches after it (rest rounds in between are shown too).
-      var next=[], n=0; if(!s.forceEnded) for(var i=lastIdx+1;i<list.length&&n<3;i++){ next.push(list[i]); if(!list[i].rest) n++ }
+      var next=[], n=0; if(!s.forceEnded && !s.locked) for(var i=lastIdx+1;i<list.length&&n<3;i++){ next.push(list[i]); if(!list[i].rest) n++ }
       $('teamNext3').innerHTML=renderTeamMatchList(s,next);
       $('teamDialog').setAttribute('data-team-name', s.teams[teamIdx]);
       if(typeof renderTeamDialogCard==='function') renderTeamDialogCard(s.teams[teamIdx]);

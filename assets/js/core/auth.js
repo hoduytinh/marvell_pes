@@ -28,20 +28,39 @@ function canEditSystem(id){
   return a.role === 'mod' && Array.isArray(a.systems) && a.systems.indexOf(id) !== -1;
 }
 // "Admin mode" for the current system (used everywhere in the app to gate editing UI).
-function isAdmin(){ return canEditSystem(PES_SYSTEM_ID); }
+// isAdminUser(): real edit permission. isAdmin(): permission AND the active season is not locked
+// (a locked season is finished and read-only until it is unlocked in Settings).
+function isAdminUser(){ return canEditSystem(PES_SYSTEM_ID); }
+function seasonLocked(s){
+  if(s === undefined){ try { s = (typeof state !== 'undefined' && state && state.seasons) ? state.seasons[state.current] : null; } catch(_) { s = null; } }
+  return !!(s && s.locked);
+}
+function isAdmin(){ return isAdminUser() && !seasonLocked(); }
 
 // Legacy flag still read by teo-widget.js.
 function syncLegacyAdminFlag(){
   try {
-    if(isAdmin()) sessionStorage.setItem('pesAdmin', '1');
+    if(isAdminUser()) sessionStorage.setItem('pesAdmin', '1');
     else sessionStorage.removeItem('pesAdmin');
   } catch(_) {}
 }
 
 function ensureAdmin(){
-  if(isAdmin()) return true;
+  if(isAdminUser()) return true;
   openAdminLogin();
   return false;
+}
+
+// For actions that modify the active season's structure or results.
+function ensureSeasonEditable(){
+  if(!ensureAdmin()) return false;
+  if(seasonLocked()){
+    alert((localStorage.getItem('pesLang') === 'vi')
+      ? '🔒 Mùa giải này đã bị khóa (đã kết thúc). Mở khóa trong menu Mùa giải trước khi chỉnh sửa.'
+      : '🔒 This season is locked (finished). Unlock it from the Seasons menu before editing.');
+    return false;
+  }
+  return true;
 }
 
 function openAdminLogin(){

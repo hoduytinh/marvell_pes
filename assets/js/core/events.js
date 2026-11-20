@@ -41,7 +41,7 @@
     function initEvents(){
       // Add Note button event
       $('btnAddNote').addEventListener('click', function() {
-        if (!isAdmin()) return;
+        if (!isAdminUser()) return;
         var notes = JSON.parse(localStorage.getItem('pesNotes') || '[]');
         var label = prompt('Tên ghi chú:', 'Note ' + (notes.length + 1));
         if (!label) return;
@@ -103,11 +103,11 @@
               if(input) input.value='';
               if(err) err.style.display='none';
               if(typeof dlg.close==='function'){ dlg.close(); } else { dlg.removeAttribute('open'); }
-              showAdmin(isAdmin());
+              showAdmin(isAdminUser());
               updateCustomLinks();
               refreshSeasonUI();
               renderSystemSwitcher();
-              if(!isAdmin()) toast('Tài khoản không có quyền chỉnh sửa hệ thống này');
+              if(!isAdminUser()) toast('Tài khoản không có quyền chỉnh sửa hệ thống này');
               else if(!CloudSync.hasPAT()) alert('Thiết bị này chưa có quyền ghi cloud: tỉ số nhập ở đây chỉ lưu trên máy, KHÔNG đồng bộ lên server.\n\nCách bật: trên máy tính đã có PAT, mở Hệ thống → tài khoản này → tick "Ghi cloud", nhập mật khẩu → Lưu. Sau đó đăng nhập lại trên thiết bị này.');
             }else{
               if(err){ err.textContent=res.error || 'Sai tên đăng nhập hoặc mật khẩu'; err.style.display='block'; }
@@ -123,7 +123,7 @@
         if(userInput) userInput.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); if(input) input.focus(); } });
       })();
       $('btnCloudSyncToggle').addEventListener('click', function() {
-        if(!isAdmin()) { toast('Chỉ admin được phép đổi trạng thái sync'); return; }
+        if(!isAdminUser()) { toast('Chỉ admin được phép đổi trạng thái sync'); return; }
         var nextState = !CloudSync.isEnabled();
         CloudSync.setEnabled(nextState);
         if(nextState) {
@@ -137,6 +137,8 @@
         if(!ensureAdmin()) return; 
         $('newSeasonName').value=''; 
         $('newSeasonTeams').value=20;
+        $('newSeasonKind').value='official';
+        $('newSeasonFormat').value='single';
         $('numTournamentGroups').value=4;
         // Initialize option visibility
         var type = $('newSeasonType').value;
@@ -273,6 +275,10 @@
         
         season.mode = type;
         season.has3rdPlace = has3rdPlace;
+        if(type !== 'legend' && type !== 'ranking') {
+          season.kind = $('newSeasonKind').value === 'playoff' ? 'playoff' : 'official';
+          season.format = $('newSeasonFormat').value === 'double' ? 'double' : 'single';
+        }
         if(type === 'tournament') {
           season.numGroups = numGroups;
           season.numKnockoutTeams = numKnockoutTeams;
@@ -332,7 +338,7 @@
         else dlg.removeAttribute('open');
       });
       $('btnRenameSeason').addEventListener('click',function(){ if(!ensureAdmin()) return; var s=activeSeason(); var name=prompt('Tên mùa:',s.name); if(name){s.name=name.trim(); saveAll(); refreshSeasonUI()} });
-      $('btnDeleteSeason').addEventListener('click',function(){ if(!ensureAdmin()) return; if(Object.keys(state.seasons).length<=1){alert('Phải còn ít nhất 1 mùa.'); return} var s=activeSeason(); if(!confirm("Xoá mùa '"+s.name+"'?")) return; delete state.seasons[state.current]; var seasonKeys=Object.keys(state.seasons); state.current=seasonKeys[seasonKeys.length-1]; saveAll(); refreshSeasonUI() });
+      $('btnDeleteSeason').addEventListener('click',function(){ if(!ensureSeasonEditable()) return; if(Object.keys(state.seasons).length<=1){alert('Phải còn ít nhất 1 mùa.'); return} var s=activeSeason(); if(!confirm("Xoá mùa '"+s.name+"'?")) return; delete state.seasons[state.current]; var seasonKeys=Object.keys(state.seasons); state.current=seasonKeys[seasonKeys.length-1]; saveAll(); refreshSeasonUI() });
       
       $('btnReorderSeasons').addEventListener('click',function(){ 
         if(!ensureAdmin()) return; 
@@ -477,10 +483,10 @@
       });
       
       $('seasonSel').addEventListener('change',function(){ state.current=this.value; saveAll(); refreshAll() });
-      $('btnTeamCount').addEventListener('click',function(){ if(!ensureAdmin()) return; var s=activeSeason(); $('editTeamCount').value=s.teamCount; var dlg=$('teamCountDialog'); if(dlg && typeof dlg.showModal==='function'){dlg.showModal()} else {dlg.setAttribute('open','open')} });
-      $('applyTeamCount').addEventListener('click',function(){ if(!ensureAdmin()) return; var s=activeSeason(); var n=clamp(parseInt($('editTeamCount').value,10)||s.teamCount,3,30); if(!confirm('Đổi số đội sẽ xoá mọi kết quả. Tiếp tục?')) return; s.teamCount=n; if(s.teams.length<n){ var add=Array.from({length:n-s.teams.length},function(_,i){return 'Team '+(s.teams.length+i+1)}); s.teams=s.teams.concat(add); s.teamColors=s.teamColors.concat(Array(n-s.teamColors.length).fill('#1b2550')); s.teamLogos=s.teamLogos.concat(Array(n-s.teamLogos.length).fill(DEFAULT_TEAM_LOGO)) } else if(s.teams.length>n){ s.teams=s.teams.slice(0,n); s.teamColors=s.teamColors.slice(0,n); s.teamLogos=s.teamLogos.slice(0,n) } s.rounds=generateFixtures(n); s.results={}; saveAll(); refreshSeasonUI() });
+      $('btnTeamCount').addEventListener('click',function(){ if(!ensureSeasonEditable()) return; var s=activeSeason(); $('editTeamCount').value=s.teamCount; var dlg=$('teamCountDialog'); if(dlg && typeof dlg.showModal==='function'){dlg.showModal()} else {dlg.setAttribute('open','open')} });
+      $('applyTeamCount').addEventListener('click',function(){ if(!ensureSeasonEditable()) return; var s=activeSeason(); var n=clamp(parseInt($('editTeamCount').value,10)||s.teamCount,3,30); if(!confirm('Đổi số đội sẽ xoá mọi kết quả. Tiếp tục?')) return; s.teamCount=n; if(s.teams.length<n){ var add=Array.from({length:n-s.teams.length},function(_,i){return 'Team '+(s.teams.length+i+1)}); s.teams=s.teams.concat(add); s.teamColors=s.teamColors.concat(Array(n-s.teamColors.length).fill('#1b2550')); s.teamLogos=s.teamLogos.concat(Array(n-s.teamLogos.length).fill(DEFAULT_TEAM_LOGO)) } else if(s.teams.length>n){ s.teams=s.teams.slice(0,n); s.teamColors=s.teamColors.slice(0,n); s.teamLogos=s.teamLogos.slice(0,n) } s.rounds=generateFixtures(n); s.results={}; saveAll(); refreshSeasonUI() });
       $('btnEditNames').addEventListener('click',function(){ 
-        if(!ensureAdmin()) return; 
+        if(!ensureSeasonEditable()) return; 
         var s=activeSeason(); 
         var nameDialog=$('nameDialog'); 
         nameDialog.innerHTML='<form method="dialog"><h3>Team setup (<span id="nameCount"></span>)</h3><div class="grid-names" id="nameGrid"></div><div style="display:flex;justify-content:space-between;margin-top:12px"><div class="muted small">Đặt tên, màu, logo (PNG/JPG 1:1). Bấm [↓] để chọn từ danh sách đội.</div><div style="display:flex;gap:8px"><button value="cancel">Hủy</button><button id="saveNames" class="primary" value="confirm">Lưu</button></div></div></form>'; 
@@ -508,7 +514,7 @@
           teamListBtn.className = 'ghost small';
           teamListBtn.style.cssText = 'padding: 2px 6px; min-width: 24px;';
           teamListBtn.title = 'Select from Team List';
-          teamListBtn.addEventListener('click', function() {
+          function openPicker(target) {
             if(!state.teamMasterList || state.teamMasterList.length === 0) {
               toast('Team List is empty. Add teams to Team List first.');
               return;
@@ -538,7 +544,8 @@
             teamOptions.forEach(function(option) {
               option.addEventListener('click', function() {
                 var selectedTeam = this.getAttribute('data-team');
-                input.value = selectedTeam;
+                target.value = selectedTeam;
+                target.dispatchEvent(new Event('input', { bubbles: true }));
                 selectDialog.close();
                 document.body.removeChild(selectDialog);
               });
@@ -580,10 +587,53 @@
                 document.body.removeChild(selectDialog);
               }
             });
-          });
+          }
+          teamListBtn.addEventListener('click', function() { openPicker(input); });
           
-          teamNameContainer.appendChild(input);
-          teamNameContainer.appendChild(teamListBtn);
+          if(typeof seasonIsDoubles === 'function' && seasonIsDoubles(s)) {
+            // Doubles: the team is a pair of players; its name is built as "P1 & P2".
+            var pair = seasonPair(s, i) || ['', ''];
+            teamNameContainer.style.cssText = 'display: flex; flex-direction: column; gap: 4px; align-items: stretch;';
+            var pairInputs = [0, 1].map(function(slot) {
+              var row = document.createElement('div');
+              row.style.cssText = 'display: flex; gap: 4px; align-items: center;';
+              var p = document.createElement('input');
+              p.type = 'text';
+              p.value = pair[slot] || '';
+              p.placeholder = (slot ? 'Tuyển thủ 2' : 'Tuyển thủ 1');
+              p.setAttribute('data-pair-idx', i);
+              p.setAttribute('data-slot', slot);
+              p.style.cssText = 'flex: 1;';
+              var pb = document.createElement('button');
+              pb.type = 'button';
+              pb.textContent = '↓';
+              pb.className = 'ghost small';
+              pb.style.cssText = 'padding: 2px 6px; min-width: 24px;';
+              pb.title = 'Select from Team List';
+              pb.addEventListener('click', function() { openPicker(p); });
+              row.appendChild(p);
+              row.appendChild(pb);
+              teamNameContainer.appendChild(row);
+              return p;
+            });
+            // Empty display name -> "P1 & P2" (shown as placeholder, applied on save).
+            var pairDefaultName = function() {
+              var a = pairInputs[0].value.trim(), b = pairInputs[1].value.trim();
+              return (a && b) ? a + ' & ' + b : '';
+            };
+            var setPairPlaceholder = function() {
+              input.placeholder = pairDefaultName() || 'Tên hiển thị (trống = ghép tên 2 tuyển thủ)';
+            };
+            if(input.value.trim() === pairDefaultName()) input.value = '';
+            setPairPlaceholder();
+            pairInputs.forEach(function(p) { p.addEventListener('input', setPairPlaceholder); });
+            input.title = 'Tên hiển thị (để trống = tự ghép tên 2 tuyển thủ)';
+            input.style.cssText = 'flex: 1; font-size: 12px; opacity: .8;';
+            teamNameContainer.appendChild(input);
+          } else {
+            teamNameContainer.appendChild(input);
+            teamNameContainer.appendChild(teamListBtn);
+          }
           
           var color=document.createElement('input'); 
           color.type='color'; 
@@ -745,11 +795,26 @@
         if(typeof nameDialog.showModal==='function'){nameDialog.showModal()} else {nameDialog.setAttribute('open','open')} 
         nameDialog.querySelector('#saveNames').addEventListener('click',function(){ 
           var s=activeSeason(); 
-          var inputs=nameDialog.querySelectorAll('input[type="text"]'); 
+          var inputs=nameDialog.querySelectorAll('input[type="text"][data-idx]'); 
           inputs.forEach(function(inp){
             var i=Number(inp.getAttribute('data-idx')); 
-            s.teams[i]=(inp.value||'').trim()||('Team '+(i+1))
+            var name=(inp.value||'').trim();
+            if(!name){
+              // Doubles: no display name -> join the two players.
+              var a=nameDialog.querySelector('input[data-pair-idx="'+i+'"][data-slot="0"]'), b=nameDialog.querySelector('input[data-pair-idx="'+i+'"][data-slot="1"]');
+              var pa=a?a.value.trim():'', pb=b?b.value.trim():'';
+              if(pa&&pb) name=pa+' & '+pb;
+            }
+            s.teams[i]=name||('Team '+(i+1))
           }); 
+          if(typeof seasonIsDoubles === 'function' && seasonIsDoubles(s)){
+            if(!Array.isArray(s.pairs)) s.pairs=[];
+            s.teams.forEach(function(_,i){
+              var a=nameDialog.querySelector('input[data-pair-idx="'+i+'"][data-slot="0"]'), b=nameDialog.querySelector('input[data-pair-idx="'+i+'"][data-slot="1"]');
+              var pa=a?a.value.trim():'', pb=b?b.value.trim():'';
+              s.pairs[i]=(pa&&pb)?[pa,pb]:null;
+            });
+          }
           var colors=nameDialog.querySelectorAll('input[type="color"]'); 
           colors.forEach(function(inp){
             var i=Number(inp.getAttribute('data-idx')); 
@@ -782,7 +847,7 @@
           .then(function() { $('logoFile').value = ''; });
       });
       $('btnLogo').addEventListener('click',function(){
-        if(!ensureAdmin()) return;
+        if(!ensureSeasonEditable()) return;
         var s = activeSeason();
         var seasonLogoOptions = getSeasonLogoOptions();
 
@@ -2359,5 +2424,5 @@
         };
       }
       
-      $('btnResetSeason').addEventListener('click',function(){ if(!ensureAdmin()) return; if(!confirm('Xoá toàn bộ kết quả của mùa hiện tại?')) return; var s=activeSeason(); s.results={}; saveAll(); refreshSeasonUI() });
+      $('btnResetSeason').addEventListener('click',function(){ if(!ensureSeasonEditable()) return; if(!confirm('Xoá toàn bộ kết quả của mùa hiện tại?')) return; var s=activeSeason(); s.results={}; saveAll(); refreshSeasonUI() });
     }

@@ -934,49 +934,35 @@
       return out;
     }
 
-    function loadHtml2CanvasLib() {
-      if(window.html2canvas) return Promise.resolve(window.html2canvas);
-      return new Promise(function(resolve, reject) {
-        var existing = document.getElementById('teo-html2canvas-lib');
-        if(existing) {
-          existing.addEventListener('load', function() { resolve(window.html2canvas); }, { once: true });
-          existing.addEventListener('error', reject, { once: true });
-          return;
-        }
-        var script = document.createElement('script');
-        script.id = 'teo-html2canvas-lib';
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-        script.async = true;
-        script.onload = function() { resolve(window.html2canvas); };
-        script.onerror = reject;
-        document.head.appendChild(script);
-      });
+    function captureTitle() {
+      var fn = fnEl.value;
+      var opt = fnEl.options[fnEl.selectedIndex];
+      var names = [teamAEl.value];
+      if(fn === 'h2h' || (fn === 'taunt' && teamBEl.value)) names.push(teamBEl.value);
+      return (opt ? opt.textContent + ': ' : '') + names.filter(Boolean).join(' vs ');
     }
 
-    function copyCanvasToClipboard(canvas) {
-      return new Promise(function(resolve, reject) {
-        if(!canvas || !canvas.toBlob) { reject(new Error('Canvas không hợp lệ')); return; }
-        canvas.toBlob(function(blob) {
-          if(!blob) { reject(new Error('Không tạo được ảnh')); return; }
-
-          if(navigator.clipboard && window.ClipboardItem) {
-            navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
-              .then(resolve)
-              .catch(reject);
-            return;
-          }
-
-          var url = URL.createObjectURL(blob);
-          var a = document.createElement('a');
-          a.href = url;
-          a.download = 'teo-summary.png';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          reject(new Error('Trình duyệt không hỗ trợ copy ảnh trực tiếp. Đã tải file PNG xuống máy.'));
-        }, 'image/png');
-      });
+    // Off-screen copy of #teoResult for captureNodeSnapshot (round-export.js). The copy
+    // keeps the id so the #teoResult rules apply; the --teo-* theme vars live on
+    // #teoPanel, so they are copied onto the wrapper.
+    function buildCaptureNode(bg) {
+      var wrap = document.createElement('div');
+      wrap.style.cssText = 'position:fixed;left:0;top:0;z-index:-1;pointer-events:none;width:600px;padding:12px;' +
+        'box-sizing:border-box;background:var(--teo-bg2);color:var(--teo-text);font-family:inherit;';
+      var panelCs = getComputedStyle(panel);
+      var styleEl = document.getElementById('teo-widget-style');
+      var vars = {};
+      ((styleEl && styleEl.textContent.match(/--teo-[\w-]+/g)) || []).forEach(function(v) { vars[v] = 1; });
+      Object.keys(vars).forEach(function(v) { wrap.style.setProperty(v, panelCs.getPropertyValue(v)); });
+      var clone = resultEl.cloneNode(true);
+      clone.style.maxHeight = 'none';
+      clone.style.overflow = 'visible';
+      clone.style.marginTop = '0';
+      [].forEach.call(clone.querySelectorAll('details'), function(d) { d.open = true; });
+      [].forEach.call(clone.querySelectorAll('summary'), function(sm) { sm.style.listStyle = 'none'; sm.style.display = 'block'; });
+      wrap.appendChild(clone);
+      document.body.appendChild(wrap);
+      return wrap;
     }
 
     function captureSummaryToClipboard() {
@@ -984,32 +970,25 @@
         resultEl.innerHTML = '<span class="muted">Chưa có summary để chụp.</span>';
         return;
       }
+      if(typeof captureNodeSnapshot !== 'function') return;
 
+      var title = captureTitle();
       captureBtn.disabled = true;
-      var oldText = captureBtn.textContent;
-      captureBtn.textContent = 'Đang chụp...';
+      var w = openExportWindow(); // synchronous inside the click so popup blockers allow it
 
-      var oldMaxHeight = resultEl.style.maxHeight;
-      var oldOverflow = resultEl.style.overflow;
-      resultEl.style.maxHeight = 'none';
-      resultEl.style.overflow = 'visible';
-
-      loadHtml2CanvasLib()
-        .then(function(html2canvas) {
-          return html2canvas(resultEl, { backgroundColor: '#ffffff', scale: 2, useCORS: true });
-        })
-        .then(copyCanvasToClipboard)
-        .then(function() {
-          captureBtn.textContent = '✅ Đã copy vào clipboard';
-          setTimeout(function() { captureBtn.textContent = oldText; }, 1300);
+      captureNodeSnapshot(buildCaptureNode)
+        .then(function(blob) {
+          return blobToDataUrl(blob).then(function(url) {
+            var opts = { heading: L('📤 Export Tèo Robot', '📤 Export Teo Robot'), text: title };
+            if(!fillExportWindow(w, title, blob, url, opts)) showRoundExportDialog(title, blob, url, opts);
+          });
         })
         .catch(function(err) {
-          captureBtn.textContent = oldText;
-          alert(err && err.message ? err.message : 'Chụp summary thất bại.');
+          console.error('Teo capture failed:', err);
+          if(w && !w.closed) w.close();
+          alert(L('Không tạo được ảnh: ', 'Could not create the image: ') + (err && err.message ? err.message : err));
         })
-        .finally(function() {
-          resultEl.style.maxHeight = oldMaxHeight;
-          resultEl.style.overflow = oldOverflow;
+        .then(function() {
           captureBtn.disabled = false;
         });
     }
@@ -1171,8 +1150,8 @@
       resultEl.innerHTML = '<div class="teo-title">' + L('Thẻ cầu thủ', 'Player card') + ': <span class="no-i18n">' + escapeText(team) + '</span></div>' +
         window.renderFifaCardHtml(card) +
         (card ? '<div class="muted teo-card-legend">' + L(
-          'Chỉ số 45–99 theo thứ hạng so với các đội khác: Tấn công = bàn thắng/trận, Phòng ngự = bàn thua/trận, Phong độ = 10 trận gần nhất, Bản lĩnh = các loạt đấu loại trực tiếp, Kinh nghiệm = số trận, Danh hiệu = huy chương. Chỉ số tổng kết hợp thêm Elo.',
-          'Ratings 45–99 by rank against the other teams: Attack = goals/match, Defence = conceded/match, Form = last 10 matches, Clutch = knock-out ties, Experience = matches played, Trophies = medals. OVR also factors in Elo.') + '</div>' : '');
+          'Chỉ số 45–99 theo thứ hạng so với các đội khác: Tấn công / Phòng ngự = bàn thắng / bàn thua so với mức thường gặp của từng đối thủ (ít trận thì bị kéo về mức trung bình), Phong độ = 10 trận gần nhất, Bản lĩnh = các loạt đấu loại trực tiếp, Kinh nghiệm = số trận, Danh hiệu = điểm thành tích. Chỉ số tổng kết hợp thêm Elo.',
+          'Ratings 45–99 by rank against the other teams: Attack / Defence = goals scored / conceded compared with what each opponent usually allows / scores (few matches are pulled towards the average), Form = last 10 matches, Clutch = knock-out ties, Experience = matches played, Trophies = finish points. OVR also factors in Elo.') + '</div>' : '');
       setCaptureEnabled(!!card);
     }
 

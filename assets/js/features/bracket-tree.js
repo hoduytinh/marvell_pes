@@ -251,6 +251,7 @@ function renderKnockoutTree(host, s, cfg) {
     var variant = n.third ? 'third' : (n === finalNode ? 'grand-final' : (/playoff/i.test(names[n.r] || '') ? 'playoff' : 'winners'));
     var box = document.createElement('div');
     box.className = 'de-tree-match ' + variant + (played ? ' played' : '');
+    box.setAttribute('data-tree-key', n.key);
     box.style.left = x + 'px';
     box.style.top = (n.y - BOX_H / 2) + 'px';
     box.style.width = BOX_W + 'px';
@@ -499,6 +500,7 @@ function renderDoubleEliminationTree(s, host) {
     if(code) addAbs('de-tree-code', code, n.x + 2, n.y - BOX_H / 2 - LABEL_H, BOX_W);
     var box = document.createElement('div');
     box.className = 'de-tree-match ' + n.bracket + (played ? ' played' : '');
+    box.setAttribute('data-tree-key', n.key);
     box.style.left = n.x + 'px';
     box.style.top = (n.y - BOX_H / 2) + 'px';
     box.style.width = BOX_W + 'px';

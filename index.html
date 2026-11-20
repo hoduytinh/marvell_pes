@@ -72,6 +72,7 @@
         <button id="btnRenameSeason" class="ghost">Đổi tên</button>
         <button id="btnDeleteSeason" class="danger">Xoá mùa</button>
         <button id="btnResetSeason" class="danger" title="Xoá kết quả mùa hiện tại">Reset mùa</button>
+        <button id="btnLockSeason" class="ghost">🔒 Khóa mùa</button>
         <button id="btnSettings" class="ghost">Cài đặt</button>
     </div>
   </details>
@@ -111,15 +112,8 @@
     </div>
   </details>
 
-  <!-- Nhóm: Thống kê (mọi người) -->
-  <details class="hmenu">
-    <summary class="ghost">📊 Thống kê</summary>
-    <div class="hmenu-panel">
-        <button id="btnCareerList" class="ghost">🃏 Sự nghiệp</button>
-        <button id="btnElo" class="ghost">📈 Bảng xếp hạng Elo</button>
-        <button id="btnRecords" class="ghost">🏅 Kỷ lục toàn hệ thống</button>
-    </div>
-  </details>
+  <!-- Thống kê (mọi người): mở trang thống kê toàn hệ thống -->
+  <button id="btnStatsPage" class="ghost">📊 Dashboard</button>
 
   <span id="cloudSyncStatus" title="Trạng thái đồng bộ" style="font-size:12px;padding:4px 8px;border-radius:4px;background:var(--card);border:1px solid var(--border);color:var(--muted);white-space:nowrap;">☁️ —</span>
   <button id="btnAdmin" class="ghost">Admin</button>
@@ -290,6 +284,9 @@
     </div>
   </main>
 
+  <!-- Stats page (features/career.js): replaces the season view while open -->
+  <main id="statsPage" class="container stats-page" hidden></main>
+
   <dialog id="teamDialog">
     <form method="dialog">
       <div class="dlg-head">
@@ -315,35 +312,6 @@
     </form>
   </dialog>
 
-  <dialog id="careerDialog" class="cr-dialog">
-    <form method="dialog">
-      <div class="dlg-head">
-        <h3><span>📊 Toàn sự nghiệp</span> · <span id="careerTitle" class="no-i18n"></span></h3>
-        <button type="button" class="dlg-x" title="Đóng" aria-label="Đóng">✕</button>
-      </div>
-      <div id="careerBody"></div>
-    </form>
-  </dialog>
-
-  <dialog id="hallDialog" class="cr-dialog">
-    <form method="dialog">
-      <div class="dlg-head">
-        <h3 id="hallTitle">📈 Bảng xếp hạng Elo</h3>
-        <button type="button" class="dlg-x" title="Đóng" aria-label="Đóng">✕</button>
-      </div>
-      <div class="cr-toolbar">
-        <div class="cr-tabs">
-          <button type="button" data-hall-tab="career">🃏 Sự nghiệp</button>
-          <button type="button" data-hall-tab="elo">📈 Elo</button>
-          <button type="button" data-hall-tab="records">🏅 Kỷ lục</button>
-        </div>
-        <input id="hallSearch" type="search" class="cr-search" placeholder="Tìm đội..." autocomplete="off"/>
-        <label class="cr-filter"><input type="checkbox" id="hallMasterOnly" checked/> Chỉ đội trong Team List</label>
-      </div>
-      <div id="hallBody"></div>
-    </form>
-  </dialog>
-
   <dialog id="seasonDialog"><form method="dialog">
     <h3>Tạo mùa mới</h3>
     <div style="display:flex;gap:10px;margin-bottom:10px">
@@ -361,6 +329,20 @@
         <option value="legend">Legend</option>
         <option value="ranking">Ranking</option>
       </select>
+    </div>
+    <div id="seasonKindRow" style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px">
+      <label style="display:flex;align-items:center;gap:8px"><span>Loại giải:</span>
+        <select id="newSeasonKind" data-no-search>
+          <option value="official">Chính thức</option>
+          <option value="playoff">Playoff (không tính điểm danh hiệu)</option>
+        </select>
+      </label>
+      <label style="display:flex;align-items:center;gap:8px"><span>Thể thức:</span>
+        <select id="newSeasonFormat" data-no-search>
+          <option value="single">Đơn (1 vs 1)</option>
+          <option value="double">Đôi (2 vs 2)</option>
+        </select>
+      </label>
     </div>
     <div id="tournamentGroupOption" style="margin-bottom:10px;display:none">
       <label style="display:flex;align-items:center;gap:8px">
@@ -438,6 +420,9 @@
       <label style="grid-column: span 2;">Ưu tiên H2H: <input id="cfgH2H" type="checkbox"/></label>
       <label id="cfgEnableRegenWrap" style="grid-column: span 2;">Enable Re-gen: <input id="cfgEnableRegen" type="checkbox"/></label>
       <label style="grid-column: span 2;" title="Dùng cho giải chỉ đá vài trận (VD: playoff): coi như đã kết thúc, chốt thứ hạng hiện tại"><input id="cfgForceEnd" type="checkbox"/> 🏁 Kết thúc giải (không cần đá hết các trận còn lại)</label>
+      <label>Loại giải: <select id="cfgKind" data-no-search><option value="official">Chính thức</option><option value="playoff">Playoff (không tính điểm danh hiệu)</option></select></label>
+      <label>Thể thức: <select id="cfgFormat" data-no-search><option value="single">Đơn (1 vs 1)</option><option value="double">Đôi (2 vs 2)</option></select></label>
+      <label style="grid-column: span 2;" title="Mùa giải đã kết thúc: không thể sửa tỉ số hay cấu trúc cho tới khi mở khóa"><input id="cfgLock" type="checkbox"/> 🔒 Khóa mùa giải (đã kết thúc, không thể chỉnh sửa)</label>
     </div>
     <div id="cfgModeSection" style="margin-top:12px;display:none">
       <h4 id="cfgModeTitle" style="margin:0 0 8px">Cài đặt thể thức</h4>
@@ -534,6 +519,10 @@
       load('assets/js/features/mode-settings.js');
       load('assets/js/features/team-matches.js');
       load('assets/js/features/career.js');
+      load('assets/js/features/season-meta.js');
+      load('assets/js/features/ko-games.js');
+      load('assets/js/features/player-links.js');
+      load('assets/js/features/season-news.js');
       load('assets/js/modes/cup.js');
       load('assets/js/modes/double-elim.js');
       load('assets/js/modes/swiss.js');

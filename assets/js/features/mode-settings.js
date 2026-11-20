@@ -58,6 +58,9 @@ function fillModeSettings(s){
   var tour = m === 'tournament', chess = m === 'chess-swiss';
   var third = m === 'tournament' || m === 'cup' || m === 'swiss';
   $('cfgForceEnd').checked = !!s.forceEnded;
+  if($('cfgLock')) $('cfgLock').checked = !!s.locked;
+  if($('cfgKind')) $('cfgKind').value = (typeof seasonKind === 'function') ? seasonKind(s) : (s.kind || 'official');
+  if($('cfgFormat')) $('cfgFormat').value = (typeof seasonIsDoubles === 'function' && seasonIsDoubles(s)) ? 'double' : 'single';
   msShow('cfgModeSection', tour || chess || third);
   msShow('cfgTournamentWrap', tour);
   msShow('cfgChessRoundsWrap', chess, 'flex');
@@ -82,6 +85,8 @@ function fillModeSettings(s){
 
 // Returns false when the user cancels / validation fails (nothing is changed).
 function applyModeSettings(s){
+  // Locked season staying locked: only metadata can change, never the structure.
+  if(s.locked && $('cfgLock') && $('cfgLock').checked){ msApplyMeta(s); return true; }
   var m = s.mode, results = s.results || (s.results = {});
   var want3rd = $('cfg3rdPlace').checked;
   var backedUp = false;
@@ -163,8 +168,15 @@ function applyModeSettings(s){
       if(typeof checkAndGenerateNextChessSwiss === 'function') checkAndGenerateNextChessSwiss(s);
     }
   }
-  if($('cfgForceEnd').checked) s.forceEnded = true; else delete s.forceEnded;
+  msApplyMeta(s);
   return true;
+}
+
+function msApplyMeta(s){
+  if($('cfgForceEnd').checked) s.forceEnded = true; else delete s.forceEnded;
+  if($('cfgKind')) s.kind = $('cfgKind').value === 'playoff' ? 'playoff' : 'official';
+  if($('cfgFormat')) s.format = $('cfgFormat').value === 'double' ? 'double' : 'single';
+  if($('cfgLock')){ if($('cfgLock').checked) s.locked = true; else delete s.locked; }
 }
 
 document.addEventListener('change', function(e){
