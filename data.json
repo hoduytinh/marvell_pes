@@ -7422,7 +7422,8 @@
             },
             "bracket": "grand-final"
           }
-        ]
+        ],
+        "bracketVersion": 2
       }
     },
     "sm11z5b1": {
@@ -23253,7 +23254,7 @@
       "tournamentPhase": "group"
     }
   },
-  "current": "snox8vos",
+  "current": "sw572sy9",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
