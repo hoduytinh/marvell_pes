@@ -7206,7 +7206,8 @@
         ]
       },
       "tournamentPhase": "knockout",
-      "has3rdPlace": true
+      "has3rdPlace": true,
+      "locked": true
     },
     "sw572sy9": {
       "name": "2023 - Dual",
