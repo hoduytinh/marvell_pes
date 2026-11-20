@@ -23660,6 +23660,11 @@
       "source": "scan"
     },
     {
+      "name": "season_Champions_League",
+      "data": "logos/season_Champions_League.jpg",
+      "source": "scan"
+    },
+    {
       "name": "season_Hall_of_Champions",
       "data": "logos/season_Hall_of_Champions.jpg",
       "source": "scan"
