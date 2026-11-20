@@ -3650,7 +3650,8 @@
           "Bán kết",
           "Chung kết"
         ]
-      }
+      },
+      "locked": true
     },
     "spzpcuzo": {
       "name": "2024 - Single",
@@ -23313,7 +23314,7 @@
       "tournamentPhase": "group"
     }
   },
-  "current": "spzpcuzo",
+  "current": "svaqi6fr",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
