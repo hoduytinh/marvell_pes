@@ -2402,7 +2402,8 @@
         "h2h": false
       },
       "createdAt": 1760991057635,
-      "mode": "league"
+      "mode": "league",
+      "locked": true
     },
     "svaqi6fr": {
       "name": "2024 - Euro",
