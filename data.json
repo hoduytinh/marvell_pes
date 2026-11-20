@@ -12727,7 +12727,8 @@
           "Bán kết",
           "Chung kết"
         ]
-      }
+      },
+      "locked": true
     },
     "s61o8upo": {
       "name": "2026 - Single",
