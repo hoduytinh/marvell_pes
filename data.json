@@ -5102,7 +5102,8 @@
           0,
           11
         ]
-      }
+      },
+      "locked": true
     },
     "spjtuhsi": {
       "name": "2023 - Single",
@@ -23312,7 +23313,7 @@
       "tournamentPhase": "group"
     }
   },
-  "current": "spjtuhsi",
+  "current": "spzpcuzo",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
