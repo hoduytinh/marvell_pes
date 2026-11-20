@@ -902,6 +902,8 @@ main[data-view]:not([data-view="all"]) #statsRow,
 main[data-view]:not([data-view="all"]) #tournamentGroups{margin-top:0 !important}
 
 .view-tabs{display:flex;gap:4px;margin:0 0 14px;padding:4px;overflow-x:auto;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-1);scrollbar-width:none}
+/* Season / dashboard tab bar stays pinned under the sticky header (--header-h set in core/main.js) */
+.view-tabs{position:sticky;top:var(--header-h, 0px);z-index:9}
 .view-tabs::-webkit-scrollbar{display:none}
 .view-tabs[hidden]{display:none}
 .view-tab{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:transparent;border:1px solid transparent;border-radius:var(--radius);color:var(--text-2);font-weight:600;white-space:nowrap}

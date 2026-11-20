@@ -1,6 +1,15 @@
 // Marvell PES Club - core/main.js (split from app.js; shared global scope, load order set in index.html)
     function ensureInitial(){ if(!state.current){ state.current=Object.keys(state.seasons)[0] } var s=activeSeason(); if(s && (!s.rounds||!s.rounds.length) && s.mode!=='cup' && s.mode!=='chess-swiss' && s.mode!=='swiss' && s.mode!=='double-elimination' && s.mode!=='tournament' && s.mode!=='legend' && s.mode!=='ranking'){ s.rounds=generateFixtures(s.teamCount) } saveAll() }
 
+    // Header height -> --header-h so the sticky tab bars sit right under the (sticky, wrapping) header.
+    (function trackHeaderHeight(){
+      var h = document.querySelector('header');
+      if(!h) return;
+      var set = function(){ document.documentElement.style.setProperty('--header-h', h.offsetHeight + 'px'); };
+      set();
+      if(window.ResizeObserver) new ResizeObserver(set).observe(h); else window.addEventListener('resize', set);
+    })();
+
     function init(){ 
       loadAll().then(function() {
         ensureInitial(); 
