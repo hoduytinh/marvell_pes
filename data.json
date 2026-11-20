@@ -11009,7 +11009,8 @@
       },
       "createdAt": 1764299243230,
       "mode": "league",
-      "has3rdPlace": false
+      "has3rdPlace": false,
+      "locked": true
     },
     "snox8vos": {
       "name": "2022 - Dual",
