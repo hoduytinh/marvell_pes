@@ -8690,7 +8690,8 @@
           "Bán kết",
           "Chung kết"
         ]
-      }
+      },
+      "locked": true
     },
     "strxh7hr": {
       "name": "2023 - League",
@@ -23309,7 +23310,7 @@
       "tournamentPhase": "group"
     }
   },
-  "current": "sm11z5b1",
+  "current": "sw572sy9",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
