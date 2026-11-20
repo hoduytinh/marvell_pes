@@ -14251,7 +14251,8 @@
           1,
           10
         ]
-      }
+      },
+      "locked": true
     },
     "s5fhf2z5": {
       "name": "2026 - World Cup",
@@ -17702,7 +17703,8 @@
         ],
         "seedVersion": 3
       },
-      "tournamentPhase": "knockout"
+      "tournamentPhase": "knockout",
+      "locked": true
     },
     "su8gwuph": {
       "name": "2026 - Dual",
@@ -23318,7 +23320,7 @@
       "tournamentPhase": "group"
     }
   },
-  "current": "s61o8upo",
+  "current": "su8gwuph",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
