@@ -17697,14 +17697,14 @@
       "logo": "logos/season_2023_-_Dual.jpg",
       "teamCount": 8,
       "teams": [
-        "Tĩnh - Linh",
-        "Phát - Hưng",
-        "Thiện - Toàn",
-        "Ánh - Hoàng",
-        "Đức - Kiên",
-        "Tùng - Tú",
-        "Phong - Vỹ",
-        "Thái - Tâm"
+        "Tĩnh Tèo & Linh",
+        "Phát Cool & Hưng",
+        "Thiện & Toàn T10",
+        "Ánh VIP & Hoàng",
+        "Đức & Em Kiên",
+        "Tùng Mai & Tú",
+        "Phong & Vyyy",
+        "Thái & Tâm"
       ],
       "teamColors": [
         "#1b2550",
@@ -18256,7 +18256,41 @@
         "bracketVersion": 2
       },
       "kind": "official",
-      "format": "double"
+      "format": "double",
+      "pairs": [
+        [
+          "Tĩnh Tèo",
+          "Linh"
+        ],
+        [
+          "Phát Cool",
+          "Hưng"
+        ],
+        [
+          "Thiện",
+          "Toàn T10"
+        ],
+        [
+          "Ánh VIP",
+          "Hoàng"
+        ],
+        [
+          "Đức",
+          "Em Kiên"
+        ],
+        [
+          "Tùng Mai",
+          "Tú"
+        ],
+        [
+          "Phong",
+          "Vyyy"
+        ],
+        [
+          "Thái",
+          "Tâm"
+        ]
+      ]
     },
     "s4fvc53z": {
       "name": "2026 - Seri A",
