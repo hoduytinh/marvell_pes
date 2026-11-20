@@ -534,7 +534,7 @@ el.innerHTML = `
     }
 
     function renderInsights(){
-      var s=activeSeason(); if(!s) return; 
+      var s=activeSeason(); if(!s || !$('insights')) return; 
   var curR = lastRoundWithAnyResult(s);
   var prevR = curR - 1;
 

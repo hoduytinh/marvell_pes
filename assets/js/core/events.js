@@ -1383,7 +1383,7 @@
         renderSeasonStats(); 
         drawRankChart();
       });
-      $('btnSimulate').addEventListener('click',function(){
+      if($('btnSimulate')) $('btnSimulate').addEventListener('click',function(){
         var s = activeSeason();
         if(s && s.mode === 'chess-swiss'){ runChessSwissSimulation(s, 300); return; }
         runSimulation(200);

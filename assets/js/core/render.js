@@ -352,6 +352,7 @@ var sel=$('seasonSel'); sel.innerHTML='';
       }
       renderViewTabs(s);
       renderSeasonOverview(s);
+      if(typeof ssRenderBoard === 'function') ssRenderBoard(s);
       showAdmin(isAdminUser());
       if(typeof seasonMetaUI === 'function') seasonMetaUI(s);
       applyTheme();

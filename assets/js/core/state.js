@@ -50,10 +50,42 @@
       if(!se.settings || typeof se.settings !== 'object') se.settings = {top:4,euro:6,playoff:0,rel:3,h2h:false,enableRegen:false};
       if(!Array.isArray(se.teams)) se.teams = [];
       if(!Array.isArray(se.teamColors)) se.teamColors = [];
+      fillKnockoutGames(se);
     });
     normalizeTeamLogos(st);
     st.schemaVersion = SCHEMA_VERSION;
     return st;
+  }
+
+  // Knock-out series are Bo3/Bo5: a series result without per-game scores gets one 1-0 game per
+  // game won (winner's and loser's games alternate, winner first, so the winner takes the last game).
+  // Only fills when games are missing or don't add up to the series (see careerGamesOf).
+  var KO_RESULT_PREFIXES = ['cup-', 'knockout-', 'knockoutB-', 'swiss-playoff-', 'de-'];
+  var koGamesFilled = 0;
+  function fillKnockoutGames(se){
+    Object.keys(se.results).forEach(function(key){
+      if(!KO_RESULT_PREFIXES.some(function(p){ return key.indexOf(p) === 0; })) return;
+      var r = se.results[key];
+      if(!r || typeof r !== 'object' || r.hg === '' || r.ag === '' || r.hg == null || r.ag == null) return;
+      var h = +r.hg, a = +r.ag;
+      if(!isFinite(h) || !isFinite(a) || h < 0 || a < 0 || h % 1 || a % 1 || h + a === 0 || h + a > 5 || h > 3 || a > 3) return;
+      if(Array.isArray(r.games) && r.games.length){
+        var sh = 0, sa = 0;
+        r.games.forEach(function(g){
+          if(!g) return;
+          var gh = +g.h, ga = +g.a;
+          if(gh > ga || (gh === ga && g.p === 'h')) sh++; else if(ga > gh || (gh === ga && g.p === 'a')) sa++;
+        });
+        if(sh === h && sa === a) return;
+      }
+      var homeWins = h >= a, w = homeWins ? h : a, l = homeWins ? a : h, games = [];
+      for(var i = 0; i < w; i++){
+        games.push(homeWins ? {h:1, a:0} : {h:0, a:1});
+        if(i < l) games.push(homeWins ? {h:0, a:1} : {h:1, a:0});
+      }
+      r.games = games;
+      koGamesFilled++;
+    });
   }
     var standingsMode='overall';
 

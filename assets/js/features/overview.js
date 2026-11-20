@@ -15,7 +15,9 @@ var PES_VIEWS = [
 
 function availableViews(s){
   var def = getModeDef(s);
-  var has = { all: true, standings: def.standings, fixtures: def.fixtures, bracket: def.bracket, stats: def.extras };
+  // Stats tab (features/season-stats.js) exists for every format except Legend / Ranking
+  var stats = !!s && s.mode !== 'legend' && s.mode !== 'ranking';
+  var has = { all: true, standings: def.standings, fixtures: def.fixtures, bracket: def.bracket, stats: stats };
   return PES_VIEWS.filter(function(v){ return has[v.id]; });
 }
 
@@ -198,5 +200,6 @@ function scheduleOverviewRefresh(){
   clearTimeout(_overviewTimer);
   _overviewTimer = setTimeout(function(){
     try { renderSeasonOverview(activeSeason()); } catch(e) { console.warn('Overview refresh failed:', e); }
+    try { if(typeof ssRenderBoard === 'function') ssRenderBoard(activeSeason()); } catch(e) { console.warn('Stats refresh failed:', e); }
   }, 50);
 }

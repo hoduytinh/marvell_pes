@@ -273,6 +273,6 @@ var win=Array(s.teamCount).fill(0), top4=Array(s.teamCount).fill(0), rel=Array(s
         var rows=computeStandingsFor(tmp,'overall');
         rows.forEach(function(rr,idx){ if(idx===0) win[rr.idx]++; if(idx<4) top4[rr.idx]++; if(idx>=rows.length-(s.settings.rel||3)) rel[rr.idx]++ })
       }
-      var table=$('simTable'); table.innerHTML=''; var head=document.createElement('tr'); head.innerHTML='<th align="left">Đội</th><th>Vô địch</th><th>Top4</th><th>Rớt hạng</th>'; table.appendChild(head);
+      var table=$('simTable'); if(!table) return; table.innerHTML=''; var head=document.createElement('tr'); head.innerHTML='<th align="left">Đội</th><th>Vô địch</th><th>Top4</th><th>Rớt hạng</th>'; table.appendChild(head);
       s.teams.forEach(function(name,i){ var tr=document.createElement('tr'); tr.innerHTML='<td>'+escapeHtml(name)+'</td><td>'+pct(win[i])+'</td><td>'+pct(top4[i])+'</td><td>'+pct(rel[i])+'</td>'; table.appendChild(tr) })
     }

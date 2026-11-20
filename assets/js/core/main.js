@@ -19,6 +19,9 @@
         wireCloudConfigDialog();
         initSystems();
 
+        // Knock-out series filled with 1-0 games by migrateState → save once so the cloud keeps them
+        if(koGamesFilled > 0 && typeof CloudSync !== 'undefined' && CloudSync.canPush()) { koGamesFilled = 0; saveAll(); }
+
         // Auto-scan logos/ folder and merge into Logo Master List.
         // Use cached result first for instant UI, then refresh in background.
         try {

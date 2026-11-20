@@ -913,7 +913,82 @@ main[data-view]:not([data-view="all"]) #tournamentGroups{margin-top:0 !important
 
 /* Charts / statistics live in their own tab only (not on the overview page) */
 main[data-view="all"][data-stats-tab] #chartsRow,
-main[data-view="all"][data-stats-tab] #statsRow{display:none !important}
+main[data-view="all"][data-stats-tab] #statsRow,
+main[data-view="all"] #seasonStatsBoard{display:none !important}
+
+/* Season stats tab (features/season-stats.js). Keep html2canvas-safe: no color-mix/filter/clip-path. */
+.ss-board{display:flex;flex-direction:column;gap:14px}
+.ss-board[hidden]{display:none}
+.ss-board + #chartsRow{margin-top:14px !important}
+.ss-sec{min-width:0;padding:14px 16px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-1)}
+.ss-sec h3{display:flex;align-items:baseline;flex-wrap:wrap;gap:8px;margin:0 0 12px;font-size:15px}
+.ss-sec h3 small{font-size:12px;font-weight:500;color:var(--muted)}
+.ss-empty{padding:24px;text-align:center;color:var(--muted)}
+.ss-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px}
+.ss-note{margin-top:8px;font-size:11.5px;line-height:1.6;color:var(--muted)}
+.ss-mini{display:block;margin-top:3px;font-size:11.5px;color:var(--muted)}
+.ss-split{display:flex;height:8px;margin-top:6px;border-radius:999px;overflow:hidden;background:var(--surface-2)}
+.ss-split i{display:block;height:100%}
+.ss-split i.h{background:var(--win)}
+.ss-split i.d{background:var(--muted)}
+.ss-split i.a{background:var(--loss)}
+.ss-leaders{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.ss-lead{min-width:0;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--card)}
+.ss-lead-l{font-size:11px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ss-lead-v{display:flex;align-items:baseline;gap:8px;margin-top:4px;min-width:0}
+.ss-lead-v > b{flex:0 0 auto;font-size:18px;font-variant-numeric:tabular-nums}
+.ss-lead-n{min-width:0;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ss-table-wrap{overflow-x:auto}
+.ss-table{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.ss-table th,.ss-table td{padding:5px 7px;border-bottom:1px solid var(--border);text-align:center;white-space:nowrap}
+.ss-table th{font-size:11.5px;font-weight:700;color:var(--muted);background:var(--th-bg, transparent)}
+.ss-table th[data-ss-sort]{cursor:pointer;user-select:none}
+.ss-table th[data-ss-sort]:hover,.ss-table th.sorted{color:var(--accent)}
+.ss-table .ss-name{text-align:left}
+.ss-table .ss-grp{border-left:2px solid var(--border)}
+.ss-table tbody tr:hover{background:var(--hover)}
+.ss-teams td:nth-child(10){font-weight:800}
+.ss-formcell{white-space:normal !important;text-align:left !important}
+.ss-formcell .sn-form{flex-wrap:wrap}
+.ss-cur{display:inline-block;min-width:30px;padding:1px 6px;border-radius:6px;font-weight:800;color:#fff;background:var(--muted)}
+.ss-cur.W{background:var(--win)}
+.ss-cur.L{background:var(--loss)}
+.ss-bar-row{display:grid;grid-template-columns:44px minmax(0,1fr) 78px;gap:8px;align-items:center;padding:3px 0;font-size:12.5px}
+.ss-bar-row span{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.ss-bar{height:8px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.ss-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),var(--ok))}
+.ss-avg{display:grid;grid-template-columns:36px 90px;gap:6px;align-items:center;justify-content:center}
+.ss-hist{display:flex;align-items:flex-end;gap:6px;height:140px;padding-top:6px}
+.ss-hist .ss-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;height:100%;font-size:11px}
+.ss-hist .ss-col i{display:block;width:100%;max-width:40px;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--accent),var(--accent-2))}
+.ss-hist .ss-col span{color:var(--muted);font-weight:700}
+.ss-match{display:grid;grid-template-columns:auto minmax(0,1fr) auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:5px 0;border-bottom:1px dashed var(--border);font-size:13px}
+.ss-match:last-child{border-bottom:0}
+.ss-st{max-width:120px;padding:1px 6px;border:1px solid var(--border);border-radius:6px;font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ss-h{text-align:right}
+.ss-h,.ss-a{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ss-match .win{font-weight:800}
+.ss-sc{padding:1px 8px;border-radius:6px;background:var(--surface-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ss-sc small{font-weight:600;color:var(--muted)}
+.ss-x{font-size:11px;color:var(--muted);white-space:nowrap}
+.ss-elo-row{display:grid;grid-template-columns:minmax(0,220px) 110px minmax(120px,1fr) 56px;gap:10px;align-items:center;padding:3px 0;font-size:13px}
+.ss-elo-n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ss-elo-v{font-size:12px;text-align:right;font-variant-numeric:tabular-nums}
+.ss-elo-row > b{text-align:right;font-variant-numeric:tabular-nums}
+.ss-elo-bar{position:relative;height:8px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.ss-elo-bar i{position:absolute;top:0;bottom:0}
+.ss-elo-bar i.up{left:50%;background:var(--win)}
+.ss-elo-bar i.down{right:50%;background:var(--loss)}
+.ss-x-table,.ss-x td{font-size:11.5px;line-height:1.3}
+.ss-x td{min-width:40px}
+.ss-x td.w{background:rgba(34,197,94,.18)}
+.ss-x td.d{background:rgba(148,163,184,.16)}
+.ss-x td.l{background:rgba(239,68,68,.16)}
+.ss-x td.me{background:var(--surface-2);color:var(--muted)}
+@media (max-width:600px){
+  .ss-cols{grid-template-columns:1fr}
+  .ss-elo-row{grid-template-columns:minmax(0,1fr) 90px 70px 44px;gap:6px}
+}
 
 /* Per-match Elo ± badges on/off (features/career.js crSetEloShown) */
 body.hide-elo .elo-dl,

@@ -115,7 +115,7 @@
   <!-- Thống kê (mọi người): mở trang thống kê toàn hệ thống -->
   <button id="btnStatsPage" class="ghost">📊 Dashboard</button>
 
-  <span id="cloudSyncStatus" title="Trạng thái đồng bộ" style="font-size:12px;padding:4px 8px;border-radius:4px;background:var(--card);border:1px solid var(--border);color:var(--muted);white-space:nowrap;">☁️ —</span>
+  <span id="cloudSyncStatus" class="adminOnly hidden" title="Trạng thái đồng bộ" style="font-size:12px;padding:4px 8px;border-radius:4px;background:var(--card);border:1px solid var(--border);color:var(--muted);white-space:nowrap;">☁️ —</span>
   <button id="btnAdmin" class="ghost">Admin</button>
   <button id="btnLang" class="ghost no-i18n" title="Language / Ngôn ngữ">🌐 EN</button>
   <select id="themeSel" title="Theme">
@@ -229,6 +229,8 @@
       </section>
     </div>
 
+    <div id="seasonStatsBoard" class="ss-board" data-sec="stats" hidden></div>
+
     <div class="row" id="chartsRow" data-sec="stats" style="margin-top:16px">
       <section class="card grow">
         <div style="display:flex;align-items:center;justify-content:space-between">
@@ -247,29 +249,6 @@
       <!-- merged into the next section below -->
     </div>
 
-    <div class="row" id="statsRow" data-sec="stats" style="margin-top:16px">
-      <section class="card grow">
-        <div class="two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:0">
-          <div>
-            <div class="small muted" id="simProbLabel">Xác suất (Vô địch / Top4 / Rớt hạng)</div>
-            <button id="btnSimulate" class="primary" style="margin-bottom:8px">Dự đoán đội vô địch</button>
-            <table class="table-mini" id="simTable"></table>
-          </div>
-        </div>
-      </section>
-      <section class="card sm">
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          <div>
-            <h3 id="seasonStatsTitle" style="margin:0 0 8px 0">Thống kê mùa</h3>
-            <ul id="seasonStats" class="small" style="margin:0;padding-left:18px"></ul>
-          </div>
-          <div>
-            <h3 id="insightsTitle" style="margin:0 0 8px 0">Chỉ số tổng hợp</h3>
-            <ul id="insights" class="small"></ul>
-          </div>
-        </div>
-      </section>
-    </div>
     <div id="cupBracketWrap" class="hidden" data-sec="bracket" style="margin-top:16px">
       <div class="card">
         <h3 style="margin:8px 0">Knock-out Stage</h3>
@@ -523,6 +502,7 @@
       load('assets/js/features/ko-games.js');
       load('assets/js/features/player-links.js');
       load('assets/js/features/season-news.js');
+      load('assets/js/features/season-stats.js');
       load('assets/js/modes/cup.js');
       load('assets/js/modes/double-elim.js');
       load('assets/js/modes/swiss.js');
