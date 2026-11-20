@@ -65,9 +65,9 @@ function snData(s){
     [[h, m.hg, m.ag], [a, m.ag, m.hg]].forEach(function(x){
       var t = x[0], r = careerResult(x[1], x[2]);
       t.P++; t[r]++; t.form.push(r);
-      if(!m.ko){ t.gP++; t.GF += x[1]; t.GA += x[2]; if(!x[2]) t.cs++; if(!x[1]) t.blank++; }
+      if(!m.ko && !m.est){ t.gP++; t.GF += x[1]; t.GA += x[2]; if(!x[2]) t.cs++; if(!x[1]) t.blank++; }
     });
-    if(!m.ko) games.push(m);
+    if(!m.ko && !m.est) games.push(m);
   });
 
   var list = collectSeasonMatches(s).filter(function(m){ return m.rest == null && T[m.home] && T[m.away]; });

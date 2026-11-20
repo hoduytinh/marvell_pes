@@ -17,7 +17,7 @@ function ssCompute(s){
   var D = snData(s), W3 = D.W3, byName = {}, roundOf = {};
   D.list.forEach(function(m){ roundOf[m.key] = m.round || m.stage; });
   var S = D.teams.map(function(t){
-    var r = { t: t, idx: t.idx, name: t.name, P: 0, W: 0, D: 0, L: 0, GF: 0, GA: 0, CS: 0, FTS: 0, BTTS: 0,
+    var r = { t: t, idx: t.idx, name: t.name, P: 0, Pg: 0, GFg: 0, GAg: 0, W: 0, D: 0, L: 0, GF: 0, GA: 0, CS: 0, FTS: 0, BTTS: 0,
       H: { P: 0, W: 0, D: 0, L: 0, GF: 0, GA: 0 }, A: { P: 0, W: 0, D: 0, L: 0, GF: 0, GA: 0 },
       seq: [], gf: [], ga: [], elo0: null, eloD: 0, maxGF: 0 };
     byName[t.name] = r;
@@ -31,16 +31,21 @@ function ssCompute(s){
     if(!h || !a || !isFinite(m.hg) || !isFinite(m.ag)) return;
     var key = String(m.key || '').replace(/#\d+$/, '');
     var x = { h: h, a: a, hg: +m.hg, ag: +m.ag, stage: m.stage || '', round: roundOf[key] || m.stage || '',
-      ko: !!(m.ko || m.koGame), pen: m.pen || null, eloH: m.eloH, eloA: m.eloA, eloD: isFinite(m.eloD) ? m.eloD : 0 };
+      ko: !!(m.ko || m.koGame), est: !!m.est, pen: m.pen || null, eloH: m.eloH, eloA: m.eloA, eloD: isFinite(m.eloD) ? m.eloD : 0 };
     M.push(x);
     [[h, x.hg, x.ag, 'H', x.eloH, x.eloD], [a, x.ag, x.hg, 'A', x.eloA, -x.eloD]].forEach(function(y){
       var r = y[0], gf = y[1], ga = y[2], res = careerResult(gf, ga), side = r[y[3]];
       r.P++; r[res]++; r.GF += gf; r.GA += ga;
-      if(!ga) r.CS++;
-      if(!gf) r.FTS++;
-      if(gf && ga) r.BTTS++;
+      // auto-filled 1-0 knock-out games: real result, unknown scoreline
+      if(!x.est){
+        r.Pg++; r.GFg += gf; r.GAg += ga;
+        if(!ga) r.CS++;
+        if(!gf) r.FTS++;
+        if(gf && ga) r.BTTS++;
+        r.gf.push(gf); r.ga.push(ga);
+      }
       side.P++; side[res]++; side.GF += gf; side.GA += ga;
-      r.seq.push(res); r.gf.push(gf); r.ga.push(ga);
+      r.seq.push(res);
       if(gf > r.maxGF) r.maxGF = gf;
       if(r.elo0 == null && isFinite(y[4])) r.elo0 = y[4];
       r.eloD += y[5];
@@ -53,9 +58,9 @@ function ssCompute(s){
     r.H.Pts = r.H.W * W3 + r.H.D; r.A.Pts = r.A.W * W3 + r.A.D;
     r.wp = r.P ? r.W / r.P : null;
     r.ppg = r.P ? r.Pts / r.P : null;
-    r.gfpg = r.P ? r.GF / r.P : null;
-    r.gapg = r.P ? r.GA / r.P : null;
-    r.bttsP = r.P ? r.BTTS / r.P : null;
+    r.gfpg = r.Pg ? r.GFg / r.Pg : null;
+    r.gapg = r.Pg ? r.GAg / r.Pg : null;
+    r.bttsP = r.Pg ? r.BTTS / r.Pg : null;
     if(r.elo0 == null) r.elo0 = r.t.elo;
     r.elo1 = r.elo0 + r.eloD;
     r.runW = ssRunMax(r.seq, function(x){ return x === 'W'; });
@@ -86,21 +91,23 @@ function ssCompute(s){
   if(fin) S.forEach(function(r){ r.fin = fin[r.idx] || null; });
 
   // Totals
-  var T = { n: M.length, G: 0, hG: 0, aG: 0, hW: 0, dr: 0, aW: 0, btts: 0, o25: 0, nil: 0, cs: 0, five: 0, pen: 0, koN: 0, koG: 0, eloX: 0,
+  var T = { n: M.length, ng: 0, G: 0, hG: 0, aG: 0, hW: 0, dr: 0, aW: 0, btts: 0, o25: 0, nil: 0, cs: 0, five: 0, pen: 0, koN: 0, koG: 0, eloX: 0,
     scores: {}, hist: [0, 0, 0, 0, 0, 0, 0, 0] };
   M.forEach(function(x){
     var g = x.hg + x.ag;
     T.G += g; T.hG += x.hg; T.aG += x.ag;
     if(x.hg > x.ag) T.hW++; else if(x.hg < x.ag) T.aW++; else T.dr++;
+    if(x.pen) T.pen++;
+    if(x.ko){ T.koN++; T.koG += g; }
+    T.eloX += Math.abs(x.eloD);
+    if(x.est) return;
+    T.ng++;
     if(x.hg && x.ag) T.btts++;
     if(g > 2) T.o25++;
     if(!g) T.nil++;
     if(!x.hg) T.cs++;
     if(!x.ag) T.cs++;
     if(g >= 5) T.five++;
-    if(x.pen) T.pen++;
-    if(x.ko){ T.koN++; T.koG += g; }
-    T.eloX += Math.abs(x.eloD);
     var sc = Math.max(x.hg, x.ag) + '-' + Math.min(x.hg, x.ag);
     T.scores[sc] = (T.scores[sc] || 0) + 1;
     T.hist[Math.min(7, g)]++;
@@ -156,7 +163,7 @@ function ssMatchList(R, list, extraFn){
 }
 
 function ssKpis(R){
-  var T = R.T, D = R.D, n = T.n, h = '';
+  var T = R.T, D = R.D, n = T.n, ng = T.ng, h = '';
   var tot = D.total || D.played.length, pct = tot ? Math.round(D.played.length * 100 / tot) : 0;
   h += ssKpi(crL('Tiến độ', 'Progress'), D.played.length + ' / ' + tot + ' <small class="muted">(' + pct + '%)</small>',
     '<div class="ov-bar"><i style="width:' + pct + '%"></i></div>');
@@ -166,13 +173,16 @@ function ssKpis(R){
   h += ssKpi(crL('Nhà thắng · Hòa · Khách thắng', 'Home W · Draw · Away W'), T.hW + ' · ' + T.dr + ' · ' + T.aW,
     ssSplit(T.hW, T.dr, T.aW) + '<span class="ss-mini">' + ssPct(T.hW, n) + ' · ' + ssPct(T.dr, n) + ' · ' + ssPct(T.aW, n) + '</span>', 'ov-wide');
   h += ssKpi(crL('Bàn sân nhà · sân khách', 'Home · away goals'), T.hG + ' · ' + T.aG, n ? ssNum(T.hG / n) + ' · ' + ssNum(T.aG / n) + crL(' /trận', ' per match') : '');
-  h += ssKpi(crL('Cả hai đội ghi bàn', 'Both teams scored'), T.btts, ssPct(T.btts, n) + crL(' số trận', ' of matches'));
-  h += ssKpi(crL('Trên 2.5 bàn', 'Over 2.5 goals'), T.o25, ssPct(T.o25, n) + crL(' số trận', ' of matches'));
-  h += ssKpi(crL('Trận ≥ 5 bàn', 'Matches with 5+ goals'), T.five, ssPct(T.five, n));
-  h += ssKpi(crL('Giữ sạch lưới', 'Clean sheets'), T.cs, n ? ssPct(T.cs, n * 2) + crL(' lượt đội', ' of team-matches') : '');
-  h += ssKpi(crL('Hòa 0-0', 'Goalless draws'), T.nil, ssPct(T.nil, n));
+  if(ng){
+    var of = ng < n ? crL(' / ' + ng + ' trận có tỉ số', ' of ' + ng + ' scored games') : crL(' số trận', ' of matches');
+    h += ssKpi(crL('Cả hai đội ghi bàn', 'Both teams scored'), T.btts, ssPct(T.btts, ng) + of);
+    h += ssKpi(crL('Trên 2.5 bàn', 'Over 2.5 goals'), T.o25, ssPct(T.o25, ng) + of);
+    h += ssKpi(crL('Trận ≥ 5 bàn', 'Matches with 5+ goals'), T.five, ssPct(T.five, ng));
+    h += ssKpi(crL('Giữ sạch lưới', 'Clean sheets'), T.cs, ssPct(T.cs, ng * 2) + crL(' lượt đội', ' of team-matches'));
+    h += ssKpi(crL('Hòa 0-0', 'Goalless draws'), T.nil, ssPct(T.nil, ng));
+  }
   var top = Object.keys(T.scores).sort(function(a, b){ return T.scores[b] - T.scores[a]; })[0];
-  if(top) h += ssKpi(crL('Tỉ số phổ biến nhất', 'Most common score'), top, T.scores[top] + crL(' lần', ' times') + ' · ' + ssPct(T.scores[top], n));
+  if(top) h += ssKpi(crL('Tỉ số phổ biến nhất', 'Most common score'), top, T.scores[top] + crL(' lần', ' times') + ' · ' + ssPct(T.scores[top], ng));
   if(T.ties) h += ssKpi(crL('Cặp knock-out', 'Knock-out ties'), T.ties, T.koN ? crL('TB ', 'Avg ') + ssNum(T.koG / T.koN) + crL(' bàn/ván', ' goals per game') : '');
   if(T.pen) h += ssKpi(crL('Phân định luân lưu', 'Decided on penalties'), T.pen);
   var eloAvg = D.teams.length ? D.teams.reduce(function(a, t){ return a + t.elo; }, 0) / D.teams.length : null;
@@ -314,7 +324,7 @@ function ssHomeAway(R){
 }
 
 function ssScores(R){
-  var T = R.T, n = T.n;
+  var T = R.T, n = T.ng;
   if(!n) return '';
   var keys = Object.keys(T.scores).sort(function(a, b){ return T.scores[b] - T.scores[a] || a.localeCompare(b); }).slice(0, 10);
   var mx = T.scores[keys[0]] || 1;

@@ -60,10 +60,11 @@ function kgDecorate(){
       line.className = 'ko-games-line';
       el.appendChild(line);
     }
-    var names = games ? kgTeams(s, key) : null;
-    line.innerHTML = (games ? '<span class="kg-list">' + kgGamesText(games, names) + '</span>' : '') +
+    var names = games ? kgTeams(s, key) : null, auto = !!games && games.some(function(g){ return g.auto; });
+    line.innerHTML = (games ? '<span class="kg-list' + (auto ? ' kg-auto' : '') + '">' + kgGamesText(games, names) +
+        (auto ? ' <small class="muted" title="' + escapeHtml(kgL('Chưa có tỉ số từng trận: mỗi trận thắng tính 1-0, không tính vào tỉ lệ ghi bàn / sạch lưới', 'No per-game scores: each game won counts as 1-0, excluded from scoring / clean-sheet rates')) + '">(' + kgL('tự điền', 'auto') + ')</small>' : '') + '</span>' : '') +
       (canEdit ? '<button type="button" class="ghost small kg-edit" data-kg-key="' + escapeHtml(key) + '" title="' + escapeHtml(kgL('Nhập tỉ số từng trận (tối đa 5)', 'Enter per-game scores (max 5)')) + '">🎮 ' +
-        (games ? kgL('Sửa tỉ số từng trận', 'Edit game scores') : kgL('Tỉ số từng trận', 'Game scores')) + '</button>' : '');
+        (games && !auto ? kgL('Sửa tỉ số từng trận', 'Edit game scores') : kgL('Tỉ số từng trận', 'Game scores')) + '</button>' : '');
   });
 }
 
@@ -141,6 +142,9 @@ function kgOpen(key){
   if(!names) return;
   kgCur = { key: key, names: names };
   var games = kgValidGames(s.results[key]) || [], dlg = kgDialog(), e = escapeHtml;
+  // Auto-filled 1-0 games are placeholders: start from empty rows so that saving never turns them into "real" scores.
+  var auto = games.some(function(g){ return g.auto; });
+  if(auto) games = [];
   var rows = '';
   for(var i = 0; i < KG_MAX; i++){
     var g = games[i] || {};
@@ -154,7 +158,8 @@ function kgOpen(key){
   dlg.innerHTML = '<div class="kg-wrap"><div class="kg-head"><strong>🎮 ' + kgL('Tỉ số từng trận', 'Per-game scores') + '</strong>' +
     '<div class="kg-teams no-i18n">' + e(names[0]) + ' <span class="muted">vs</span> ' + e(names[1]) + '</div></div>' +
     '<div class="muted kg-help">' + kgL('Tối đa 5 trận. Tỉ số loạt (số trận thắng) sẽ được cập nhật tự động. Mỗi trận được tính riêng vào Elo / đối đầu / sự nghiệp.',
-      'Up to 5 games. The series score (games won) is updated automatically. Each game counts separately for Elo / head-to-head / career.') + '</div>' +
+      'Up to 5 games. The series score (games won) is updated automatically. Each game counts separately for Elo / head-to-head / career.') +
+    (auto ? '<br>' + kgL('Loạt này đang dùng tỉ số 1-0 tự điền (không tính vào tỉ lệ ghi bàn). Nhập tỉ số thật để thay thế.', 'This series uses auto-filled 1-0 games (excluded from scoring rates). Enter the real scores to replace them.') : '') + '</div>' +
     '<div class="kg-rows">' + rows + '</div><div class="kg-series"></div>' +
     '<div class="kg-actions"><button type="button" class="ghost" data-kg-act="cancel">' + kgL('Hủy', 'Cancel') + '</button>' +
     (games.length ? '<button type="button" class="danger" data-kg-act="clear">' + kgL('Xóa tỉ số từng trận', 'Clear game scores') + '</button>' : '') +
