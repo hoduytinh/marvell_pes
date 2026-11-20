@@ -18209,7 +18209,9 @@
           }
         ],
         "bracketVersion": 2
-      }
+      },
+      "kind": "official",
+      "format": "double"
     },
     "s4fvc53z": {
       "name": "2026 - Seri A",
