@@ -11793,7 +11793,8 @@
           "Tranh hạng 3",
           "Chung kết"
         ]
-      }
+      },
+      "locked": true
     },
     "sn3pex2x": {
       "name": "PES RANKING",
