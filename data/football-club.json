@@ -6780,6 +6780,11 @@
       "source": "scan"
     },
     {
+      "name": "season_Champions_League",
+      "data": "logos/season_Champions_League.jpg",
+      "source": "scan"
+    },
+    {
       "name": "season_Hall_of_Champions",
       "data": "logos/season_Hall_of_Champions.jpg",
       "source": "scan"
@@ -6866,5 +6871,6 @@
     }
   ],
   "systemId": "football-club",
-  "schemaVersion": 1
+  "schemaVersion": 1,
+  "koAutoTagged": 1
 }
