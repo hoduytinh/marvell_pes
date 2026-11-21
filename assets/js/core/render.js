@@ -160,6 +160,14 @@ $('seasonTitle').textContent='— '+s.name+' (LEAGUE)';
       drawRankSparks(rows.map(function(x){return x.idx}))
     }
 
+    // Hall of Legend / PES Ranking live in Dashboard tabs, not in the season list
+    function pesIsSpecialSeason(s){ return !!s && (s.mode === 'legend' || s.mode === 'ranking'); }
+    function pesSpecialSeasonId(mode){
+      var ids = (state.seasonOrder && state.seasonOrder.length ? state.seasonOrder : []).concat(Object.keys(state.seasons));
+      for(var i = 0; i < ids.length; i++){ var x = state.seasons[ids[i]]; if(x && x.mode === mode) return ids[i]; }
+      return null;
+    }
+
     function refreshSeasonUI(){
       var s=activeSeason(); if(!s) return;
       
@@ -170,12 +178,11 @@ var sel=$('seasonSel'); sel.innerHTML='';
         // Use custom order
         seasonIds = state.seasonOrder.slice(); // Clone array
         
-        // Add any new seasons not in the order (append at end)
-        Object.keys(state.seasons).forEach(function(id) {
-          if (seasonIds.indexOf(id) === -1 && id.indexOf('separator-') !== 0) {
-            seasonIds.push(id);
-          }
-        });
+        // Seasons not in the order yet are new -> put them at the top
+        var newIds = Object.keys(state.seasons).filter(function(id) {
+          return seasonIds.indexOf(id) === -1 && id.indexOf('separator-') !== 0;
+        }).sort(function(a, b) { return (state.seasons[b].createdAt || 0) - (state.seasons[a].createdAt || 0); });
+        seasonIds = newIds.concat(seasonIds);
         
         // Remove deleted seasons from order (keep separators)
         seasonIds = seasonIds.filter(function(id) {
@@ -195,6 +202,21 @@ var sel=$('seasonSel'); sel.innerHTML='';
           return timeB - timeA; // Newest first (descending order)
         });
       }
+
+      // Legend/Ranking are Dashboard tabs: drop them (and leading/double/trailing separators) from the list
+      var listIds = [];
+      seasonIds.forEach(function(id){
+        var isSep = id.indexOf('separator-') === 0;
+        if(!isSep && pesIsSpecialSeason(state.seasons[id])) return;
+        if(isSep && (!listIds.length || listIds[listIds.length - 1].indexOf('separator-') === 0)) return;
+        listIds.push(id);
+      });
+      while(listIds.length && listIds[listIds.length - 1].indexOf('separator-') === 0) listIds.pop();
+      if(pesIsSpecialSeason(s) && listIds.length){
+        state.current = listIds[0];
+        s = activeSeason();
+      }
+      seasonIds = listIds;
       
       seasonIds.forEach(function(id){ 
         // Check if this is a separator
@@ -253,13 +275,14 @@ var sel=$('seasonSel'); sel.innerHTML='';
       
       // Containers owned by one mode are removed when another season is shown
       // (renderTournamentGroups() re-creates #tournamentGroups for tournament seasons)
+      // (the Dashboard tabs host their own copy inside #statsPage - leave that one alone)
       if(s.mode !== 'legend') {
         var legendContainer = document.getElementById('legendContainer');
-        if(legendContainer) legendContainer.remove();
+        if(legendContainer && !legendContainer.closest('#statsPage')) legendContainer.remove();
       }
       if(s.mode !== 'ranking') {
         var rankingModeContainer = document.getElementById('rankingModeContainer');
-        if(rankingModeContainer) rankingModeContainer.remove();
+        if(rankingModeContainer && !rankingModeContainer.closest('#statsPage')) rankingModeContainer.remove();
       }
       var tournamentGroups = document.getElementById('tournamentGroups');
       if(tournamentGroups) tournamentGroups.remove();

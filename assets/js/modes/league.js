@@ -449,7 +449,9 @@ function renderFixtures(roundIdx){
         if(showOnlyPending && (res.hg!=null&&res.ag!=null)) return;
         var el=document.createElement('div'); el.className='fixture'; el.setAttribute('data-key',key);
         var vhg=(res.hg==null?'':res.hg), vag=(res.ag==null?'':res.ag);
-        var probs=matchProbs(s,m.home,m.away); var pct=function(x){return Math.round(x*100)};
+        var pred=(typeof pesMatchPrediction==='function')?pesMatchPrediction(s,m.home,m.away):null;
+        var probs=pred?{home:pred.p.h,draw:pred.p.d,away:pred.p.a}:matchProbs(s,m.home,m.away); var pct=function(x){return Math.round(x*100)};
+        var predScoreStr=pred?(pred.x+'-'+pred.y):estimatePredScore(s, m);
         
         // Determine winner/loser classes
         var homeClass = '';
@@ -484,7 +486,7 @@ el.innerHTML = `
       : '<span class="fixture-logo" style="background:'+(s.teamColors[m.away]||'#1b2550')+'; width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--border); display: inline-block;"></span>'}
   </div>
   <div class="prob">${pct(probs.home)}%-${pct(probs.draw)}%-${pct(probs.away)}%</div>
-  <div class="predScore">${estimatePredScore(s, m)}</div>
+  <div class="predScore">${predScoreStr}</div>
 `;
 
         var h=el.querySelector('.scoreH'); var a=el.querySelector('.scoreA');

@@ -329,8 +329,11 @@
         if(ok){
           state.seasons[id]=season;
           state.current=id;
+          // Newest season goes to the top of the list
+          if(Array.isArray(state.seasonOrder) && state.seasonOrder.length && state.seasonOrder.indexOf(id) === -1) state.seasonOrder.unshift(id);
           saveAll();
           refreshAll();
+          if((type === 'legend' || type === 'ranking') && typeof openStatsPage === 'function') openStatsPage(type);
         }
         // Always close dialog after attempt
         var dlg = document.getElementById('seasonDialog');
@@ -338,7 +341,7 @@
         else dlg.removeAttribute('open');
       });
       $('btnRenameSeason').addEventListener('click',function(){ if(!ensureAdmin()) return; var s=activeSeason(); var name=prompt('Tên mùa:',s.name); if(name){s.name=name.trim(); saveAll(); refreshSeasonUI()} });
-      $('btnDeleteSeason').addEventListener('click',function(){ if(!ensureSeasonEditable()) return; if(Object.keys(state.seasons).length<=1){alert('Phải còn ít nhất 1 mùa.'); return} var s=activeSeason(); if(!confirm("Xoá mùa '"+s.name+"'?")) return; delete state.seasons[state.current]; var seasonKeys=Object.keys(state.seasons); state.current=seasonKeys[seasonKeys.length-1]; saveAll(); refreshSeasonUI() });
+      $('btnDeleteSeason').addEventListener('click',function(){ if(!ensureSeasonEditable()) return; if(Object.keys(state.seasons).length<=1){alert('Phải còn ít nhất 1 mùa.'); return} var s=activeSeason(); if(!confirm("Xoá mùa '"+s.name+"'?")) return; delete state.seasons[state.current]; var seasonKeys=Object.keys(state.seasons); var firstListed=(state.seasonOrder||[]).filter(function(id){ return state.seasons[id] && !pesIsSpecialSeason(state.seasons[id]); })[0]; state.current=firstListed||seasonKeys[seasonKeys.length-1]; saveAll(); refreshAll() });
       
       $('btnReorderSeasons').addEventListener('click',function(){ 
         if(!ensureAdmin()) return; 
@@ -347,11 +350,9 @@
         var seasonOrder = state.seasonOrder || [];
         var seasonIds = Object.keys(state.seasons);
         
-        // Add any seasons not in the order array (new seasons)
-        seasonIds.forEach(function(id) {
-          if (seasonOrder.indexOf(id) === -1) {
-            seasonOrder.push(id);
-          }
+        // Add any seasons not in the order array (new seasons) at the top
+        seasonIds.filter(function(id) { return seasonOrder.indexOf(id) === -1; }).reverse().forEach(function(id) {
+          seasonOrder.unshift(id);
         });
         
         // Remove deleted seasons from order (keep separators which start with 'separator-')

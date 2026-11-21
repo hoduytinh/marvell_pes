@@ -471,22 +471,22 @@ function careerRecords(cd, onlyMaster){
     .map(function(p){ return { pair: [p.a, p.b], value: p.P + M, sub: p.W + ' – ' + p.D + ' – ' + p.L }; });
 
   return [
-    { icon: '🏆', title: crL('Nhiều danh hiệu nhất', 'Most trophies'), items: tro },
-    { icon: '📈', title: crL('Elo cao nhất mọi thời đại', 'Highest Elo of all time'), items: topTeams(function(t){ return Math.round(t.peak); }) },
-    { icon: '🔥', title: crL('Chuỗi thắng dài nhất', 'Longest winning streak'), items: streakTop('win') },
-    { icon: '🛡️', title: crL('Chuỗi bất bại dài nhất', 'Longest unbeaten run'), items: streakTop('unbeaten') },
-    { icon: '💥', title: crL('Trận thắng đậm nhất', 'Biggest wins'), items: topMatches(function(m){ return Math.abs(m.hg - m.ag); }) },
-    { icon: '🎆', title: crL('Trận nhiều bàn nhất', 'Highest-scoring matches'), items: topMatches(function(m){ return m.hg + m.ag; }) },
-    { icon: '🎯', title: crL('Tỉ lệ thắng cao nhất (≥ ', 'Best win rate (≥ ') + minP + M + ')', items: topTeams(function(t){ return t.W / t.P; }, function(t){ return t.P >= minP; }, function(v){ return Math.round(v * 100) + '%'; }) },
-    { icon: '⚽', title: crL('Nhiều bàn thắng nhất (tổng)', 'Most goals scored (total)'), items: topTeams(function(t){ return t.GF; }, null, function(v, t){ return v + (t.Pg ? ' (' + (t.GFg / t.Pg).toFixed(2) + crL('/trận', '/match') + ')' : ''); }) },
-    { icon: '🗡️', title: crL('Hàng công tốt nhất (≥ ', 'Best attack (≥ ') + minP + M + ')', items: topTeams(function(t){ return ad[t.name] ? 10 + ad[t.name].att : 0; }, function(t){ return t.Pg >= minP; }, function(v, t){ return (t.GFg / t.Pg).toFixed(2) + crL(' bàn/trận', ' goals/match'); })
+    { grp: 'top', icon: '🏆', title: crL('Nhiều danh hiệu nhất', 'Most trophies'), items: tro },
+    { grp: 'top', icon: '📈', title: crL('Elo cao nhất mọi thời đại', 'Highest Elo of all time'), items: topTeams(function(t){ return Math.round(t.peak); }) },
+    { grp: 'streak', icon: '🔥', title: crL('Chuỗi thắng dài nhất', 'Longest winning streak'), items: streakTop('win') },
+    { grp: 'streak', icon: '🛡️', title: crL('Chuỗi bất bại dài nhất', 'Longest unbeaten run'), items: streakTop('unbeaten') },
+    { grp: 'match', icon: '💥', title: crL('Trận thắng đậm nhất', 'Biggest wins'), items: topMatches(function(m){ return Math.abs(m.hg - m.ag); }) },
+    { grp: 'match', icon: '🎆', title: crL('Trận nhiều bàn nhất', 'Highest-scoring matches'), items: topMatches(function(m){ return m.hg + m.ag; }) },
+    { grp: 'top', icon: '🎯', title: crL('Tỉ lệ thắng cao nhất (≥ ', 'Best win rate (≥ ') + minP + M + ')', items: topTeams(function(t){ return t.W / t.P; }, function(t){ return t.P >= minP; }, function(v){ return Math.round(v * 100) + '%'; }) },
+    { grp: 'goal', icon: '⚽', title: crL('Nhiều bàn thắng nhất (tổng)', 'Most goals scored (total)'), items: topTeams(function(t){ return t.GF; }, null, function(v, t){ return v + (t.Pg ? ' (' + (t.GFg / t.Pg).toFixed(2) + crL('/trận', '/match') + ')' : ''); }) },
+    { grp: 'goal', icon: '🗡️', title: crL('Hàng công tốt nhất (≥ ', 'Best attack (≥ ') + minP + M + ')', items: topTeams(function(t){ return ad[t.name] ? 10 + ad[t.name].att : 0; }, function(t){ return t.Pg >= minP; }, function(v, t){ return (t.GFg / t.Pg).toFixed(2) + crL(' bàn/trận', ' goals/match'); })
       .map(function(it){ var x = ad[it.team]; it.sub = crL('Đã tính độ mạnh đối thủ: ', 'Opponent-adjusted: ') + (x.att >= 0 ? '+' : '') + x.att.toFixed(2); return it; }) },
-    { icon: '🧱', title: crL('Hàng thủ tốt nhất (≥ ', 'Best defence (≥ ') + minP + M + ')', items: topTeams(function(t){ return ad[t.name] ? 10 + ad[t.name].def : 0; }, function(t){ return t.Pg >= minP; }, function(v, t){ return (t.GAg / t.Pg).toFixed(2) + crL(' bàn thua/trận', ' conceded/match'); })
+    { grp: 'goal', icon: '🧱', title: crL('Hàng thủ tốt nhất (≥ ', 'Best defence (≥ ') + minP + M + ')', items: topTeams(function(t){ return ad[t.name] ? 10 + ad[t.name].def : 0; }, function(t){ return t.Pg >= minP; }, function(v, t){ return (t.GAg / t.Pg).toFixed(2) + crL(' bàn thua/trận', ' conceded/match'); })
       .map(function(it){ var x = ad[it.team]; it.sub = crL('Đã tính độ mạnh đối thủ: ', 'Opponent-adjusted: ') + (x.def >= 0 ? '+' : '') + x.def.toFixed(2); return it; }) },
-    { icon: '🎮', title: crL('Nhiều trận nhất', 'Most matches played'), items: topTeams(function(t){ return t.P; }, null, function(v){ return v + M; })
+    { grp: 'top', icon: '🎮', title: crL('Nhiều trận nhất', 'Most matches played'), items: topTeams(function(t){ return t.P; }, null, function(v){ return v + M; })
       .map(function(it){ var t = cd.elo[it.team]; if(t && t.DP) it.sub = crL('+ ', '+ ') + t.DP + crL(' trận đôi', ' doubles'); return it; }) },
-    { icon: '⚔️', title: crL('Cặp đấu kinh điển', 'Classic rivalries'), items: rivalry },
-    { icon: '😬', title: crL('Chuỗi thua dài nhất', 'Longest losing streak'), items: streakTop('lose') }
+    { grp: 'match', icon: '⚔️', title: crL('Cặp đấu kinh điển', 'Classic rivalries'), items: rivalry },
+    { grp: 'streak', icon: '😬', title: crL('Chuỗi thua dài nhất', 'Longest losing streak'), items: streakTop('lose') }
   ].concat(careerFunRecords(cd, teams, pairs, matches, ok, topTeams, minP, M));
 }
 
@@ -759,6 +759,7 @@ function crGotoSeason(sid){
   [].forEach.call(document.querySelectorAll('dialog[open]'), function(d){ d.close(); });
   var teo = document.getElementById('teoPanel');
   if(teo) teo.classList.remove('open');
+  if(pesIsSpecialSeason(state.seasons[sid])){ openStatsPage(state.seasons[sid].mode); return; }
   closeStatsPage();
   var sel = $('seasonSel');
   if(sel) sel.value = sid;
@@ -1043,64 +1044,138 @@ function statsApplySearch(){
   });
 }
 
+// Elo tab: every column sortable (click a header; again = reverse). '#' keeps the Elo rank.
+var crEloSort = { k: 'elo', dir: -1 };
+var CR_ELO_ASC = { rank: 1, name: 1, L: 1, GA: 1, gam: 1 };
+function crEloCols(anyD){
+  var gTip = crL('Chỉ tính trận có tỉ số thật (không tính ván KO tự điền 1-0)', 'Real-score matches only (auto-filled 1-0 KO games excluded)');
+  return [
+    { k: 'rank', l: '#' },
+    { k: 'name', l: crL('Đội', 'Team') },
+    { k: 'elo', l: 'Elo' },
+    { k: 'd10', l: crL('10 trận', 'Last 10'), t: crL('Thay đổi sau 10 trận gần nhất', 'Change over the last 10 matches') },
+    { k: 'peak', l: crL('Đỉnh cao', 'Peak') },
+    { k: 'P', l: CR_COL.P, t: crL('Số trận', 'Matches played'), grp: 1 },
+    { k: 'W', l: crL('T', 'W'), t: crL('Thắng', 'Won') },
+    { k: 'D', l: crL('H', 'D'), t: crL('Hòa', 'Drawn') },
+    { k: 'L', l: crL('B', 'L'), t: crL('Thua', 'Lost') },
+    { k: 'wr', l: CR_COL.win, t: crL('Tỉ lệ thắng', 'Win rate') },
+    { k: 'GF', l: crL('BT', 'GF'), t: crL('Tổng bàn thắng', 'Goals scored (total)'), grp: 1 },
+    { k: 'GA', l: crL('BB', 'GA'), t: crL('Tổng bàn thua', 'Goals conceded (total)') },
+    { k: 'GD', l: crL('HS', 'GD'), t: crL('Hiệu số bàn thắng', 'Goal difference') },
+    { k: 'gfm', l: crL('BT/trận', 'GF/match'), t: crL('Bàn thắng trung bình mỗi trận. ', 'Goals scored per match. ') + gTip, grp: 1 },
+    { k: 'gam', l: crL('BB/trận', 'GA/match'), t: crL('Bàn thua trung bình mỗi trận. ', 'Goals conceded per match. ') + gTip }
+  ].concat(anyD ? [{ k: 'DP', l: crL('Đôi (T-H-B)', 'Doubles (W-D-L)'), t: crL('Số trận đá đôi', 'Doubles matches played'), grp: 1 }] : []);
+}
 function crEloHtml(cd, only){
   var html, rows = careerEloTable(cd, only), anyD = rows.some(function(t){ return t.DP; });
-    html = '<div class="cr-table-wrap"><table class="cr-table cr-elo"><thead><tr><th>#</th><th>' + crL('Đội', 'Team') + '</th><th>Elo</th><th title="' + crL('Thay đổi sau 10 trận gần nhất', 'Change over the last 10 matches') + '">' + crL('10 trận', 'Last 10') + '</th><th>' + crL('Đỉnh cao', 'Peak') + '</th><th>' + CR_COL.P + '</th><th>' + CR_COL.WDL + '</th><th>' + CR_COL.win + '</th>' + (anyD ? '<th>' + crL('Đôi (T-H-B)', 'Doubles (W-D-L)') + '</th>' : '') + '</tr></thead><tbody>' +
-      rows.map(function(t, i){
-        var tl = t.timeline, back = tl.length > 10 ? tl[tl.length - 11] : ELO_BASE, d = t.elo - back;
-        return '<tr' + (t.P + t.DP < ELO_PROVISIONAL ? ' class="cr-prov" title="' + crL('Dưới ' + ELO_PROVISIONAL + ' trận: Elo tạm tính', 'Under ' + ELO_PROVISIONAL + ' matches: provisional Elo') + '"' : '') + '><td>' + (i + 1) + '</td><td>' + crTeam(t.name) + '</td>' +
-          '<td><b>' + Math.round(t.elo) + '</b></td><td class="' + (d >= 0 ? 'cr-up' : 'cr-down') + '">' + crSigned(d) + '</td><td>' + Math.round(t.peak) + '</td>' +
-          '<td>' + t.P + '</td><td>' + t.W + '-' + t.D + '-' + t.L + '</td><td>' + crPct(t.W, t.P) + '</td>' + (anyD ? '<td>' + (t.DP ? t.DW + '-' + t.DD + '-' + t.DL : '—') + '</td>' : '') + '</tr>';
+  var cols = crEloCols(anyD), col = cols.filter(function(c){ return c.k === crEloSort.k; })[0] || cols[2], dir = crEloSort.dir;
+  rows = rows.map(function(t, i){
+    var tl = t.timeline, back = tl.length > 10 ? tl[tl.length - 11] : ELO_BASE;
+    return { t: t, rank: i + 1, name: t.name, elo: t.elo, d10: t.elo - back, peak: t.peak, P: t.P, W: t.W, D: t.D, L: t.L,
+      wr: t.P ? t.W / t.P : null, GF: t.GF, GA: t.GA, GD: t.GF - t.GA,
+      gfm: t.Pg ? t.GFg / t.Pg : null, gam: t.Pg ? t.GAg / t.Pg : null, DP: t.DP };
+  });
+  rows.sort(function(a, b){
+    if(col.k === 'name') return dir * a.name.localeCompare(b.name);
+    var x = a[col.k], y = b[col.k];
+    if(x == null || y == null) return (x == null) - (y == null) || a.rank - b.rank; // empty values always last
+    return dir * (x - y) || a.rank - b.rank;
+  });
+  var head = cols.map(function(c){
+    var on = c.k === col.k, cls = (on ? 'sorted' : '') + (c.grp ? ' cr-grp' : '');
+    return '<th data-cr-sort="' + c.k + '"' + (cls.trim() ? ' class="' + cls.trim() + '"' : '') + (c.t ? ' title="' + escapeHtml(c.t) + '"' : '') + '>' +
+      escapeHtml(c.l) + '<span class="cr-arrow">' + (on ? (dir > 0 ? '▲' : '▼') : '') + '</span></th>';
+  }).join('');
+  var dec = function(v){ return v == null ? '<span class="muted">—</span>' : v.toFixed(2); };
+  var sc = function(k, inner, extra){ var cls = (k === col.k ? 'sorted' : '') + (extra ? ' ' + extra : ''); return '<td' + (cls.trim() ? ' class="' + cls.trim() + '"' : '') + '>' + inner + '</td>'; };
+    html = '<div class="cr-table-wrap"><table class="cr-table cr-elo"><thead><tr>' + head + '</tr></thead><tbody>' +
+      rows.map(function(r){
+        var t = r.t, d = r.d10;
+        return '<tr' + (t.P + t.DP < ELO_PROVISIONAL ? ' class="cr-prov" title="' + crL('Dưới ' + ELO_PROVISIONAL + ' trận: Elo tạm tính', 'Under ' + ELO_PROVISIONAL + ' matches: provisional Elo') + '"' : '') + '>' +
+          sc('rank', '<span class="cr-rk' + (r.rank <= 3 ? ' r' + r.rank : '') + '">' + r.rank + '</span>') + sc('name', crTeam(t.name)) +
+          sc('elo', '<b>' + Math.round(t.elo) + '</b>') + sc('d10', crSigned(d), Math.round(d) > 0 ? 'cr-up' : Math.round(d) < 0 ? 'cr-down' : 'muted') + sc('peak', Math.round(t.peak)) +
+          sc('P', t.P, 'cr-grp') + sc('W', t.W) + sc('D', t.D) + sc('L', t.L) + sc('wr', crPct(t.W, t.P)) +
+          sc('GF', t.GF, 'cr-grp') + sc('GA', t.GA) + sc('GD', crSigned(r.GD), r.GD > 0 ? 'cr-up' : r.GD < 0 ? 'cr-down' : 'muted') +
+          sc('gfm', dec(r.gfm), 'cr-grp') + sc('gam', dec(r.gam)) +
+          (anyD ? sc('DP', t.DP ? t.DW + '-' + t.DD + '-' + t.DL : '<span class="muted">—</span>', 'cr-grp') : '') + '</tr>';
       }).join('') + '</tbody></table></div>' +
       '<div class="muted cr-note">' + crL(
-        'Elo khởi điểm ' + ELO_BASE + ', K=' + ELO_K + '. Trận thường: nhân thêm theo cách biệt bàn thắng. Loại trực tiếp: nếu có tỉ số từng trận thì mỗi trận được tính riêng (×' + ELO_KO_FACTOR + '); nếu chỉ có tỉ số loạt (Bo3/Bo5) thì tính 1 trận thắng/thua, ×' + ELO_KO_FACTOR + ', thắng trắng thêm ×' + ELO_SWEEP_FACTOR + '. Đá đôi: Elo mỗi bên = trung bình 2 tuyển thủ, cả 2 cùng được cộng/trừ. Thứ tự theo thanh chọn mùa (cũ → mới). Hàng mờ: dưới ' + ELO_PROVISIONAL + ' trận.',
-        'Elo starts at ' + ELO_BASE + ', K=' + ELO_K + '. Regular matches are scaled by the goal margin. Knock-out: when per-game scores are entered each game is rated on its own (×' + ELO_KO_FACTOR + '); otherwise the series (Bo3/Bo5) counts as one win/loss, ×' + ELO_KO_FACTOR + ', a clean sweep adds ×' + ELO_SWEEP_FACTOR + '. Doubles: each side is rated as the average of its two players, both gain/lose the same. Order follows the season bar (old → new). Faded rows: under ' + ELO_PROVISIONAL + ' matches.') + '</div>';
+        'Bấm tiêu đề cột để sắp xếp. BT/BB: tổng bàn thắng/thua; BT/trận, BB/trận chỉ tính trận có tỉ số thật. Elo khởi điểm ' + ELO_BASE + ', K=' + ELO_K + '. Trận thường: nhân thêm theo cách biệt bàn thắng. Loại trực tiếp: nếu có tỉ số từng trận thì mỗi trận được tính riêng (×' + ELO_KO_FACTOR + '); nếu chỉ có tỉ số loạt (Bo3/Bo5) thì tính 1 trận thắng/thua, ×' + ELO_KO_FACTOR + ', thắng trắng thêm ×' + ELO_SWEEP_FACTOR + '. Đá đôi: Elo mỗi bên = trung bình 2 tuyển thủ, cả 2 cùng được cộng/trừ. Thứ tự theo thanh chọn mùa (cũ → mới). Hàng mờ: dưới ' + ELO_PROVISIONAL + ' trận.',
+        'Click a column header to sort. GF/GA: total goals; GF/match and GA/match count real-score matches only. Elo starts at ' + ELO_BASE + ', K=' + ELO_K + '. Regular matches are scaled by the goal margin. Knock-out: when per-game scores are entered each game is rated on its own (×' + ELO_KO_FACTOR + '); otherwise the series (Bo3/Bo5) counts as one win/loss, ×' + ELO_KO_FACTOR + ', a clean sweep adds ×' + ELO_SWEEP_FACTOR + '. Doubles: each side is rated as the average of its two players, both gain/lose the same. Order follows the season bar (old → new). Faded rows: under ' + ELO_PROVISIONAL + ' matches.') + '</div>';
   if(!rows.length) html = '<div class="muted">' + crL('Chưa có dữ liệu.', 'No data yet.') + '</div>';
   return html;
 }
 
+// Records tab: grouped sections; each card = leader block (#1) + compact #2/#3 rows.
+function crRecVal(v){
+  v = String(v == null ? '' : v);
+  var m = /^([−+±-]?\d[\d.,]*%?(?: – \d+)?)\s*(.*)$/.exec(v);
+  return m ? '<b>' + escapeHtml(m[1]) + '</b>' + (m[2] ? '<small>' + escapeHtml(m[2]) + '</small>' : '') : '<b>' + escapeHtml(v) + '</b>';
+}
 function crRecordsHtml(cd, only){
   var all = careerRecords(cd, only);
-  function grid(list){
-    return '<div class="rec-grid">' + list.map(function(r){
-      var items = r.items.length ? r.items.map(function(it, i){
-        var who = it.team ? crTeam(it.team)
-          : it.pair ? crTeam(it.pair[0]) + ' <span class="muted">vs</span> ' + crTeam(it.pair[1])
-          : '<span class="no-i18n">' + escapeHtml(it.match.home) + ' – ' + escapeHtml(it.match.away) + '</span>';
-        var sub = it.match ? '<div class="rec-sub no-i18n">' + crSeasonLink(it.match.sid, it.match.season) + ' · ' + escapeHtml(it.match.stage) + (it.note ? '<br>' + escapeHtml(it.note) : '') + '</div>'
-          : it.sub ? '<div class="rec-sub">' + escapeHtml(it.sub) + '</div>' : '';
-        return '<li><span class="rec-rank">' + (i + 1) + '</span><div class="rec-who">' + who + sub + '</div><span class="rec-val">' + escapeHtml(it.value) + '</span></li>';
-      }).join('') : '<li class="muted">—</li>';
-      return '<div class="rec-card' + (r.fun ? ' rec-fun' : '') + '"><div class="rec-title">' + r.icon + ' ' + r.title + '</div><ol class="rec-list">' + items + '</ol></div>';
-    }).join('') + '</div>';
+  var groups = [
+    { k: 'top', icon: '👑', l: crL('Danh hiệu & đẳng cấp', 'Trophies & class') },
+    { k: 'streak', icon: '🔥', l: crL('Chuỗi trận', 'Streaks') },
+    { k: 'goal', icon: '⚽', l: crL('Tấn công & phòng ngự', 'Attack & defence') },
+    { k: 'match', icon: '🏟️', l: crL('Trận đấu & đối đầu', 'Matches & rivalries') },
+    { k: 'fun', icon: '🎉', l: crL('Kỷ lục vui', 'Fun records') }
+  ];
+  function who(it){
+    return it.team ? crTeam(it.team)
+      : it.pair ? crTeam(it.pair[0]) + ' <span class="rec-vs">vs</span> ' + crTeam(it.pair[1])
+      : crTeam(it.match.home) + ' <span class="rec-vs">–</span> ' + crTeam(it.match.away);
   }
-  var fun = all.filter(function(r){ return r.fun; });
-  return grid(all.filter(function(r){ return !r.fun; })) +
-    (fun.length ? '<h3 class="rec-group">🎉 ' + crL('Kỷ lục vui', 'Fun records') + '</h3>' + grid(fun) : '');
+  function sub(it){
+    return it.match ? '<div class="rec-sub no-i18n">' + crSeasonLink(it.match.sid, it.match.season) + ' · ' + escapeHtml(it.match.stage) + (it.note ? '<br>' + escapeHtml(it.note) : '') + '</div>'
+      : it.sub ? '<div class="rec-sub">' + escapeHtml(it.sub) + '</div>' : '';
+  }
+  function card(r){
+    var it = r.items, top = it[0];
+    var title = String(r.title).replace(/\s*\((≥[^)]*)\)\s*$/, '<small>$1</small>');
+    var body = top ? '<div class="rec-top"><span class="rec-rank r1">1</span><div class="rec-who">' + who(top) + sub(top) + '</div><div class="rec-val">' + crRecVal(top.value) + '</div></div>' +
+      (it.length > 1 ? '<ol class="rec-list">' + it.slice(1).map(function(x, i){
+        return '<li><span class="rec-rank r' + (i + 2) + '">' + (i + 2) + '</span><div class="rec-who">' + who(x) + sub(x) + '</div><span class="rec-val">' + crRecVal(x.value) + '</span></li>';
+      }).join('') + '</ol>' : '')
+      : '<div class="rec-none">' + crL('Chưa có dữ liệu', 'No data yet') + '</div>';
+    return '<div class="rec-card' + (r.fun ? ' rec-fun' : '') + '"><div class="rec-head"><span class="rec-ico">' + r.icon + '</span><span class="rec-title">' + title + '</span></div>' + body + '</div>';
+  }
+  return groups.map(function(g){
+    var list = all.filter(function(r){ return (r.fun ? 'fun' : r.grp || 'top') === g.k; });
+    if(!list.length) return '';
+    return '<section class="rec-sec"><h3 class="rec-group"><span>' + g.icon + '</span> ' + g.l + ' <small>' + list.length + '</small></h3><div class="rec-grid">' + list.map(card).join('') + '</div></section>';
+  }).join('');
 }
 
 var STATS_TABS = [
   { k: 'career', icon: '🃏', label: crL('Sự nghiệp', 'Career') },
   { k: 'h2h', icon: '⚔️', label: crL('Đối đầu', 'Head-to-head') },
   { k: 'elo', icon: '📈', label: 'Elo' },
-  { k: 'records', icon: '🏅', label: crL('Kỷ lục', 'Records') }
+  { k: 'records', icon: '🏅', label: crL('Kỷ lục', 'Records') },
+  { k: 'legend', icon: '🏛️', label: 'Hall of Legend', special: true },
+  { k: 'ranking', icon: '🏆', label: 'PES Ranking', special: true }
 ];
 
 function renderStatsPage(){
   var host = $('statsPage');
   if(!host) return;
+  var tabs = STATS_TABS.filter(function(t){ return !t.special || pesSpecialSeasonId(t.k); });
+  if(!tabs.some(function(t){ return t.k === statsTab; })) statsTab = 'career';
   var cd = careerData(state), hasMaster = !!(state.teamMasterList || []).length, only = hasMaster && statsMasterOnly;
+  var special = statsTab === 'legend' || statsTab === 'ranking';
   var html = '<div class="sp-head"><h2>📊 Dashboard</h2>' + crEloToggleBtn('ghost elo-toggle') +
     '<button type="button" class="ghost" id="spBack">← ' + crL('Về mùa giải', 'Back to season') + '</button></div>' +
-    '<div class="view-tabs sp-tabs">' + STATS_TABS.map(function(t){
+    '<div class="view-tabs sp-tabs">' + tabs.map(function(t){
       return '<button type="button" class="view-tab' + (t.k === statsTab ? ' active' : '') + '" data-sp-tab="' + t.k + '">' + t.icon + ' ' + t.label + '</button>';
     }).join('') + '</div>';
   var tools = '';
   if(statsTab === 'career' && !statsCareer) tools += '<input type="search" id="spSearch" class="sp-search" placeholder="' + escapeHtml(crL('Tìm tuyển thủ…', 'Search player…')) + '" value="' + escapeHtml(statsQuery) + '">';
-  if(hasMaster && !(statsTab === 'career' && statsCareer)) tools += '<label class="sp-check"><input type="checkbox" id="spMasterOnly"' + (only ? ' checked' : '') + '> ' + crL('Chỉ tuyển thủ trong danh sách', 'Master-list players only') + '</label>';
+  if(hasMaster && !special && !(statsTab === 'career' && statsCareer)) tools += '<label class="sp-check"><input type="checkbox" id="spMasterOnly"' + (only ? ' checked' : '') + '> ' + crL('Chỉ tuyển thủ trong danh sách', 'Master-list players only') + '</label>';
   if(tools) html += '<div class="sp-tools">' + tools + '</div>';
   var body = '';
-  if(statsTab === 'career'){
+  if(special) body = '<div id="spModeHost" data-mode="' + statsTab + '"></div>';
+  else if(statsTab === 'career'){
     if(statsCareer){
       body = '<div class="sp-career-head"><button type="button" class="ghost" id="spCareerBack">← ' + crL('Tất cả thẻ', 'All cards') + '</button>' +
         '<h3 class="no-i18n">' + escapeHtml(statsCareer) + '</h3></div>' + renderCareerHtml(cd, statsCareer);
@@ -1119,6 +1194,12 @@ function renderStatsPage(){
   else body = crRecordsHtml(cd, only);
   host.innerHTML = html + '<div class="sp-body">' + body + '</div>';
   if(statsTab === 'career' && !statsCareer) statsApplySearch();
+  if(special){
+    var ms = state.seasons[pesSpecialSeasonId(statsTab)];
+    PES_MODE_HOST = $('spModeHost');
+    try { if(statsTab === 'legend') renderLegendMode(ms); else renderRankingMode(ms); }
+    catch(e){ console.error('Dashboard ' + statsTab + ' render failed:', e); }
+  }
 }
 
 function openStatsPage(tab, name){
@@ -1235,6 +1316,14 @@ document.addEventListener('click', function(e){
   if(t.closest('#spH2HSwap')){ statsH2H = [statsH2H[1], statsH2H[0]]; renderStatsPage(); return; }
   if(t.closest('#spH2HExport')){ exportH2HImage(); return; }
   if(t.closest('[data-elo-toggle]')){ crSetEloShown(!crEloShown()); return; }
+  var srt = t.closest('#statsPage [data-cr-sort]');
+  if(srt){
+    var sk = srt.getAttribute('data-cr-sort');
+    if(crEloSort.k === sk) crEloSort.dir = -crEloSort.dir;
+    else { crEloSort.k = sk; crEloSort.dir = CR_ELO_ASC[sk] ? 1 : -1; }
+    renderStatsPage();
+    return;
+  }
   var tab = t.closest('[data-sp-tab]');
   if(tab){ statsTab = tab.getAttribute('data-sp-tab'); statsCareer = null; renderStatsPage(); }
 });

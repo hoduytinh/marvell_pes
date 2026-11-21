@@ -344,10 +344,14 @@ function buildChessSwissRoundDiv(s, roundIdx, filters){
         '<div style="text-align:center">–</div>' +
         '<input class="scoreA" type="number" min="0" value="' + vag + '"/>';
       var probStr = '', predStr = '';
-      if(predShim && typeof matchProbs === 'function'){
+      var pct = function(x){ return Math.round(x * 100); };
+      var sp = (typeof pesMatchPrediction === 'function') ? pesMatchPrediction(s, homeIdx, awayIdx) : null;
+      if(sp){
+        probStr = pct(sp.p.h) + '%-' + pct(sp.p.d) + '%-' + pct(sp.p.a) + '%';
+        predStr = sp.x + '-' + sp.y;
+      } else if(predShim && typeof matchProbs === 'function'){
         try {
           var pr = matchProbs(predShim, homeIdx, awayIdx);
-          var pct = function(x){ return Math.round(x * 100); };
           probStr = pct(pr.home) + '%-' + pct(pr.draw) + '%-' + pct(pr.away) + '%';
           predStr = (typeof estimatePredScore === 'function') ? estimatePredScore(predShim, { home: homeIdx, away: awayIdx }) : '';
         } catch(e) {}

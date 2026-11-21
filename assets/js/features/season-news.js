@@ -41,6 +41,13 @@ function snB(t){ return '<b class="no-i18n">' + snE(t && t.name != null ? t.name
 function snSigned(v){ v = Math.round(v); return (v > 0 ? '+' : v < 0 ? '−' : '±') + Math.abs(v); }
 
 // ---------------- Season data ----------------
+// Momentum on top of the career Elo: last 5 results of this season (needs 3+), at most ±35.
+function snFormBonus(form){
+  var f = form.slice(-5);
+  if(f.length < 3) return 0;
+  var ppg = f.reduce(function(a, r){ return a + (r === 'W' ? 3 : r === 'D' ? 1 : 0); }, 0) / f.length;
+  return Math.max(-35, Math.min(35, (ppg - 1.5) * 25));
+}
 function snData(s){
   var cd = careerData(state), sid = careerSeasonIdOf(s), mode = s.mode || 'league';
   var names = (s.teams || []).map(careerName), dbl = crIsDoubles(s);
@@ -69,6 +76,7 @@ function snData(s){
     });
     if(!m.ko && !m.est) games.push(m);
   });
+  teams.forEach(function(t){ t.rt = t.elo + snFormBonus(t.form); });
 
   var list = collectSeasonMatches(s).filter(function(m){ return m.rest == null && T[m.home] && T[m.away]; });
   var played = list.filter(function(m){ return m.res; }), pending = list.filter(function(m){ return !m.res; });
@@ -138,7 +146,7 @@ function snOdds(D, rng){
   if(D.kind === 'table' && D.table.length){
     var st = D.s.settings || {}, rel = D.mode === 'league' ? Math.max(0, +st.rel || 0) : 0;
     var topN = D.mode === 'league' ? Math.max(0, +st.top || 0) : 0;
-    var fx = D.pending.map(function(m){ return { h: m.home, a: m.away, p: snProbs(T[m.home].elo, T[m.away].elo, false) }; });
+    var fx = D.pending.map(function(m){ return { h: m.home, a: m.away, p: snProbs(T[m.home].rt, T[m.away].rt, false) }; });
     var N = (!fx.length && !D.extraRounds) ? 1 : SN_SIMS, W3 = D.W3, cnt = {};
     D.table.forEach(function(b){ cnt[b.t.idx] = { c: 0, top: 0, rel: 0 }; });
     var play = function(H, A, p){
@@ -148,7 +156,7 @@ function snOdds(D, rng){
       else { A.Pts += W3; A.GD += g; H.GD -= g; A.GF += g; }
     };
     for(var k = 0; k < N; k++){
-      var cur = {}, arr = D.table.map(function(b){ return (cur[b.t.idx] = { i: b.t.idx, elo: b.t.elo, Pts: b.Pts, GD: b.GD, GF: b.GF, r: rng() }); });
+      var cur = {}, arr = D.table.map(function(b){ return (cur[b.t.idx] = { i: b.t.idx, elo: b.t.rt, Pts: b.Pts, GD: b.GD, GF: b.GF, r: rng() }); });
       fx.forEach(function(f){ play(cur[f.h], cur[f.a], f.p); });
       for(var x = 0; x < D.extraRounds; x++){
         arr.sort(function(a, b){ return b.Pts - a.Pts || a.r - b.r; });
@@ -167,7 +175,7 @@ function snOdds(D, rng){
   } else {
     var pool = D.alive && D.alive.length ? D.alive : D.teams, sum = 0;
     var w = pool.map(function(t){
-      var v = Math.pow(10, t.elo / 400) * (D.mode === 'double-elimination' && t.koL ? 0.55 : 1);
+      var v = Math.pow(10, t.rt / 400) * (D.mode === 'double-elimination' && t.koL ? 0.55 : 1);
       sum += v;
       return { t: t, v: v };
     });
@@ -176,16 +184,45 @@ function snOdds(D, rng){
   return out;
 }
 
-// Predicted result of an unplayed match.
+// Predicted result of an unplayed match: chances from Elo + form, score = most likely
+// Poisson scoreline (goal rates from the Elo gap and the season attack/defence) that
+// agrees with the favourite (draw when the chances are within 12%).
 function snPredict(D, m){
-  var h = D.T[m.home], a = D.T[m.away], p = snProbs(h.elo, a.elo, m.ko);
-  if(m.ko) return { p: p, sc: null, h: h, a: a, fav: p.h >= p.a ? h : a, dog: p.h >= p.a ? a : h, pf: Math.max(p.h, p.a) };
+  var h = D.T[m.home], a = D.T[m.away], p = snProbs(h.rt, a.rt, m.ko);
+  var r = { p: p, sc: null, h: h, a: a, fav: p.h >= p.a ? h : a, dog: p.h >= p.a ? a : h, pf: Math.max(p.h, p.a) };
+  if(m.ko) return r;
   var base = D.avgGoals != null && D.games.length >= 3 ? D.avgGoals / 2 : 1.4;
-  var gh = Math.round(base * Math.pow(10, (h.elo - a.elo) / 800)), ga = Math.round(base * Math.pow(10, (a.elo - h.elo) / 800));
-  if(p.h - p.a > 0.12 && gh <= ga) gh = ga + 1;
-  else if(p.a - p.h > 0.12 && ga <= gh) ga = gh + 1;
-  else if(Math.abs(p.h - p.a) <= 0.12) gh = ga = Math.min(gh, ga);
-  return { p: p, sc: gh + ' – ' + ga, h: h, a: a, fav: p.h >= p.a ? h : a, dog: p.h >= p.a ? a : h, pf: Math.max(p.h, p.a) };
+  var att = function(t){ return (t.GF + 3 * base) / (t.gP + 3) / base; };
+  var def = function(t){ return (t.GA + 3 * base) / (t.gP + 3) / base; };
+  var lh = base * Math.pow(10, (h.rt - a.rt) / 800) * Math.sqrt(att(h) * def(a));
+  var la = base * Math.pow(10, (a.rt - h.rt) / 800) * Math.sqrt(att(a) * def(h));
+  var cat = p.h - p.a > 0.12 ? 'h' : (p.a - p.h > 0.12 ? 'a' : 'd');
+  var pmf = function(l){ var out = [Math.exp(-l)]; for(var k = 1; k <= 8; k++) out.push(out[k - 1] * l / k); return out; };
+  var ph = pmf(lh), pa = pmf(la), best = { x: 1, y: 1, q: -1 };
+  for(var x = 0; x <= 8; x++) for(var y = 0; y <= 8; y++){
+    if((cat === 'h' && x <= y) || (cat === 'a' && x >= y) || (cat === 'd' && x !== y)) continue;
+    var q = ph[x] * pa[y];
+    if(q > best.q + 1e-12 || (Math.abs(q - best.q) <= 1e-12 && x + y < best.x + best.y)) best = { x: x, y: y, q: q };
+  }
+  r.x = best.x; r.y = best.y; r.sc = best.x + ' – ' + best.y;
+  return r;
+}
+
+// Shared per-match prediction for the fixture lists (same model as the season news).
+// Returns { p:{h,d,a}, x, y } or null when the season/teams are not rated.
+var snPredMemo = { cd: null, list: [] };
+function pesMatchPrediction(s, hi, ai){
+  if(typeof careerData !== 'function' || !s) return null;
+  var cd = careerData(state);
+  if(snPredMemo.cd !== cd) snPredMemo = { cd: cd, list: [] };
+  var hit = snPredMemo.list.filter(function(e){ return e.s === s; })[0];
+  if(!hit){
+    hit = { s: s, D: null };
+    try { if(careerSeasonIdOf(s)) hit.D = snData(s); } catch(e){ console.warn('Prediction data failed:', e); }
+    snPredMemo.list.push(hit);
+  }
+  if(!hit.D || !hit.D.T[hi] || !hit.D.T[ai]) return null;
+  return snPredict(hit.D, { home: hi, away: ai, ko: false });
 }
 
 function snH2H(cd, a, b){
