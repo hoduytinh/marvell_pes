@@ -1,11 +1,13 @@
 // Marvell PES Club - features/visitors.js
 // Header pill "👁 N đang xem · M lượt truy cập" backed by the chat's Firebase Realtime DB (REST):
-//   stats/<system>/visits        total visits (+1 once per browser session, server-side increment)
+//   stats/<system>/visits        total visits (server-side increment). A visit = the page is viewed on a
+//                                new day or after IDLE of no viewing (shared by all tabs of the browser),
+//                                so a tab left open for days still counts once per day it is looked at.
 //   stats/<system>/online/<id>   server timestamp of each open tab, refreshed every 30s
 // Needs the "stats" rules in the Firebase console; without them the pill simply stays hidden.
 (function(){
   var FB = 'https://pes-chat-box-default-rtdb.asia-southeast1.firebasedatabase.app';
-  var BEAT = 30000, ALIVE = 90000, STALE = 10 * 60000;
+  var BEAT = 30000, ALIVE = 90000, STALE = 10 * 60000, IDLE = 30 * 60000;
   var sys = String((typeof PES_SYSTEM_ID !== 'undefined' && PES_SYSTEM_ID) || 'default').replace(/[.#$\[\]\/]/g, '_');
   var base = FB + '/stats/' + encodeURIComponent(sys);
   var id, visits = null, online = null, offset = 0, dead = false;
@@ -60,8 +62,25 @@
       online = n;
     });
   }
+  // Returns true when this view starts a new visit; records the activity either way.
+  function newVisit(){
+    if(document.hidden) return false;
+    var key = 'pesVisitLast@' + sys, now = Date.now(), d = new Date(now);
+    var day = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(), last = null;
+    try { last = JSON.parse(localStorage.getItem(key) || 'null'); } catch(e){}
+    var isNew = !last || last.d !== day || !(now - last.t < IDLE);
+    try { localStorage.setItem(key, JSON.stringify({ t: now, d: day })); } catch(e){ isNew = false; }
+    return isNew;
+  }
+  function syncVisits(){
+    if(dead) return;
+    var p = newVisit() ? req('/visits', 'PUT', { '.sv': { 'increment': 1 } }) : req('/visits', 'GET');
+    p.then(function(v){ visits = +v || 0; render(); }).catch(function(){ render(); });
+  }
+
   function beat(){
     if(dead) return;
+    syncVisits();
     req('/online/' + id, 'PUT', { '.sv': 'timestamp' })
       .then(function(ts){ if(isFinite(ts)) offset = ts - Date.now(); return countOnline(); })
       .then(render)
@@ -69,14 +88,6 @@
   }
 
   function start(){
-    var first = false;
-    try { first = !sessionStorage.getItem('pesVisited'); } catch(e){}
-    var p = first ? req('/visits', 'PUT', { '.sv': { 'increment': 1 } }) : req('/visits', 'GET');
-    p.then(function(v){
-      visits = +v || 0;
-      if(first){ try { sessionStorage.setItem('pesVisited', '1'); } catch(e){} }
-      render();
-    }).catch(function(){ render(); });
     beat();
     setInterval(beat, BEAT);
     document.addEventListener('visibilitychange', function(){ if(!document.hidden) beat(); });
