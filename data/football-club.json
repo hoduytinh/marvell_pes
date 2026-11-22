@@ -6384,9 +6384,315 @@
         "seedVersion": 3
       },
       "tournamentPhase": "knockout"
+    },
+    "syw91f8n": {
+      "name": "Knock",
+      "logo": null,
+      "teamCount": 24,
+      "teams": [
+        "Team 1",
+        "Team 2",
+        "Team 3",
+        "Team 4",
+        "Team 5",
+        "Team 6",
+        "Team 7",
+        "Team 8",
+        "Team 9",
+        "Team 10",
+        "Team 11",
+        "Team 12",
+        "Team 13",
+        "Team 14",
+        "Team 15",
+        "Team 16",
+        "Team 17",
+        "Team 18",
+        "Team 19",
+        "Team 20",
+        "Team 21",
+        "Team 22",
+        "Team 23",
+        "Team 24"
+      ],
+      "teamColors": [
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550",
+        "#1b2550"
+      ],
+      "teamLogos": [
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg",
+        "logos/Default.jpg"
+      ],
+      "results": {},
+      "rounds": [],
+      "settings": {
+        "top": 4,
+        "euro": 6,
+        "playoff": 0,
+        "rel": 3,
+        "h2h": false,
+        "enableRegen": false
+      },
+      "createdAt": 1795241285129,
+      "mode": "cup",
+      "has3rdPlace": false,
+      "numGroups": 4,
+      "numKnockoutTeams": 8,
+      "groupRoundRobin": "double",
+      "kind": "official",
+      "format": "single",
+      "cup": {
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ],
+        "rounds": [
+          [
+            {
+              "home": 0,
+              "away": 1
+            },
+            {
+              "home": 2,
+              "away": 3
+            },
+            {
+              "home": 4,
+              "away": 5
+            },
+            {
+              "home": 6,
+              "away": 7
+            },
+            {
+              "home": 8,
+              "away": 9
+            },
+            {
+              "home": 10,
+              "away": 11
+            },
+            {
+              "home": 12,
+              "away": 13
+            },
+            {
+              "home": 14,
+              "away": 15
+            }
+          ],
+          [
+            {
+              "home": 16,
+              "away": {
+                "fromRound": 0,
+                "matchId": 0
+              }
+            },
+            {
+              "home": 17,
+              "away": {
+                "fromRound": 0,
+                "matchId": 1
+              }
+            },
+            {
+              "home": 18,
+              "away": {
+                "fromRound": 0,
+                "matchId": 2
+              }
+            },
+            {
+              "home": 19,
+              "away": {
+                "fromRound": 0,
+                "matchId": 3
+              }
+            },
+            {
+              "home": 20,
+              "away": {
+                "fromRound": 0,
+                "matchId": 4
+              }
+            },
+            {
+              "home": 21,
+              "away": {
+                "fromRound": 0,
+                "matchId": 5
+              }
+            },
+            {
+              "home": 22,
+              "away": {
+                "fromRound": 0,
+                "matchId": 6
+              }
+            },
+            {
+              "home": 23,
+              "away": {
+                "fromRound": 0,
+                "matchId": 7
+              }
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 1,
+                "matchId": 0
+              },
+              "away": {
+                "fromRound": 1,
+                "matchId": 1
+              }
+            },
+            {
+              "home": {
+                "fromRound": 1,
+                "matchId": 2
+              },
+              "away": {
+                "fromRound": 1,
+                "matchId": 3
+              }
+            },
+            {
+              "home": {
+                "fromRound": 1,
+                "matchId": 4
+              },
+              "away": {
+                "fromRound": 1,
+                "matchId": 5
+              }
+            },
+            {
+              "home": {
+                "fromRound": 1,
+                "matchId": 6
+              },
+              "away": {
+                "fromRound": 1,
+                "matchId": 7
+              }
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 2,
+                "matchId": 0
+              },
+              "away": {
+                "fromRound": 2,
+                "matchId": 1
+              }
+            },
+            {
+              "home": {
+                "fromRound": 2,
+                "matchId": 2
+              },
+              "away": {
+                "fromRound": 2,
+                "matchId": 3
+              }
+            }
+          ],
+          [
+            {
+              "home": {
+                "fromRound": 3,
+                "matchId": 0
+              },
+              "away": {
+                "fromRound": 3,
+                "matchId": 1
+              }
+            }
+          ]
+        ],
+        "stageNames": [
+          "Playoff",
+          "Vòng 1/8",
+          "Tứ kết",
+          "Bán kết",
+          "Chung kết"
+        ]
+      }
     }
   },
-  "current": "s54ug7hu",
+  "current": "syw91f8n",
   "teamMasterList": [],
   "logoMasterList": [
     {
@@ -6780,6 +7086,11 @@
       "source": "scan"
     },
     {
+      "name": "season_Champions_League",
+      "data": "logos/season_Champions_League.jpg",
+      "source": "scan"
+    },
+    {
       "name": "season_Hall_of_Champions",
       "data": "logos/season_Hall_of_Champions.jpg",
       "source": "scan"
@@ -6866,5 +7177,6 @@
     }
   ],
   "systemId": "football-club",
-  "schemaVersion": 1
+  "schemaVersion": 1,
+  "koAutoTagged": 1
 }
