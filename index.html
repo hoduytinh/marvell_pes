@@ -114,6 +114,7 @@
 
   <!-- Thống kê (mọi người): mở trang thống kê toàn hệ thống -->
   <button id="btnStatsPage" class="ghost">📊 Dashboard</button>
+  <button id="btnAdminFixtures" class="ghost adminOnly hidden" title="Tất cả trận chờ nhập kết quả của các giải chưa khóa">📝 Nhập kết quả</button>
 
   <span id="cloudSyncStatus" class="adminOnly hidden" title="Trạng thái đồng bộ" style="font-size:12px;padding:4px 8px;border-radius:4px;background:var(--card);border:1px solid var(--border);color:var(--muted);white-space:nowrap;">☁️ —</span>
   <button id="btnAdmin" class="ghost">Admin</button>
@@ -498,6 +499,7 @@
       load('assets/js/features/mode-settings.js');
       load('assets/js/features/team-matches.js');
       load('assets/js/features/career.js');
+      load('assets/js/features/admin-fixtures.js');
       load('assets/js/features/season-meta.js');
       load('assets/js/features/ko-games.js');
       load('assets/js/features/player-links.js');

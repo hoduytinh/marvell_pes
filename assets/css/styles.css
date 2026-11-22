@@ -463,6 +463,41 @@ body.page-stats main.container:not(.stats-page){display:none!important}
 .sp-h2h-pick select{min-width:180px}
 .sp-body .cr-sec:first-child{margin-top:0;border-top:none}
 
+/* Admin "Enter results" tab (features/admin-fixtures.js) */
+.am-sum{font-size:12.5px;margin-left:auto}
+.sp-tools select.am-status{padding:6px 8px;font-size:13px}
+.am-empty{padding:24px;text-align:center;border:1px dashed var(--border);border-radius:10px}
+.am-list{display:flex;flex-direction:column;gap:12px}
+.am-season{border:1px solid var(--border);border-radius:10px;background:var(--card);overflow:hidden}
+.am-season>summary{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;background:var(--surface-2);font-weight:700}
+.am-logo{width:26px;height:26px;object-fit:contain;border-radius:4px}
+.am-name{font-size:15px}
+.am-prog{flex:1 1 80px;max-width:180px;height:6px;border-radius:999px;background:var(--border);overflow:hidden;margin-left:auto}
+.am-prog i{display:block;height:100%;background:var(--accent)}
+.am-count{font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap}
+.am-count b{color:var(--text)}
+.am-round{padding:6px 12px 10px}
+.am-round-h{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin:4px 0 6px}
+.am-round-h small{font-weight:700;margin-left:4px}
+.am-rbar{display:flex;align-items:center;gap:8px;margin:2px 0 8px;font-size:13px;color:var(--muted)}
+.am-rbar select.am-rsel{margin-left:6px;max-width:100%;padding:4px 8px;font-size:13px}
+.am-row{display:grid;grid-template-columns:minmax(0,80px) minmax(0,1fr) 46px 10px 46px minmax(0,1fr) 30px;align-items:center;gap:8px;margin:0 0 4px;padding:5px 8px;border:1px solid var(--border);border-radius:8px}
+.am-row:hover,.am-row:focus-within{border-color:var(--accent)}
+.am-row.done{background:var(--surface-2)}
+.am-row.done input.am-in{color:var(--muted)}
+.am-row.am-saved{animation:deFlash 1.2s ease}
+.am-stage{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.am-team{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.am-h{text-align:right}
+.am-row input.am-in{width:46px;height:30px;padding:0;text-align:center;font-weight:800;font-size:14px;box-sizing:border-box}
+.am-dash{text-align:center;color:var(--muted)}
+.am-open{width:30px;height:28px;padding:0;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--accent);cursor:pointer;font-weight:800}
+.am-open:hover{border-color:var(--accent)}
+@media (max-width:600px){.am-row{grid-template-columns:minmax(0,1fr) 40px 8px 40px minmax(0,1fr) 28px;gap:5px}.am-stage{display:none}.am-row input.am-in{width:40px}}
+.am-season[hidden],.am-round[hidden],.am-row[hidden]{display:none}
+.am-back{position:fixed;left:14px;bottom:14px;z-index:900;padding:9px 14px;border-radius:999px;border:1px solid var(--accent);background:var(--card);color:var(--text);font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer}
+body.page-stats .am-back{display:none}
+
 /* Season badges / lock (features/season-meta.js) */
 .season-badges{display:inline-flex;gap:4px;margin-left:8px;vertical-align:middle}
 .season-badges:empty{display:none}

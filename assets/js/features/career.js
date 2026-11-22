@@ -1105,26 +1105,31 @@ var STATS_TABS = [
   { k: 'elo', icon: '📈', label: 'Elo' },
   { k: 'records', icon: '🏅', label: crL('Kỷ lục', 'Records') },
   { k: 'legend', icon: '🏛️', label: 'Hall of Legend', special: true },
-  { k: 'ranking', icon: '🏆', label: 'PES Ranking', special: true }
+  { k: 'ranking', icon: '🏆', label: 'PES Ranking', special: true },
+  { k: 'admin', icon: '📝', label: crL('Nhập kết quả', 'Enter results'), admin: true } // features/admin-fixtures.js
 ];
 
 function renderStatsPage(){
   var host = $('statsPage');
   if(!host) return;
-  var tabs = STATS_TABS.filter(function(t){ return !t.special || pesSpecialSeasonId(t.k); });
+  var tabs = STATS_TABS.filter(function(t){
+    if(t.admin) return isAdminUser() && typeof amRenderHtml === 'function';
+    return !t.special || pesSpecialSeasonId(t.k);
+  });
   if(!tabs.some(function(t){ return t.k === statsTab; })) statsTab = 'career';
   var cd = careerData(state), hasMaster = !!(state.teamMasterList || []).length, only = hasMaster && statsMasterOnly;
-  var special = statsTab === 'legend' || statsTab === 'ranking';
+  var special = statsTab === 'legend' || statsTab === 'ranking', adminTab = statsTab === 'admin';
   var html = '<div class="view-tabs sp-tabs">' + tabs.map(function(t){
       return '<button type="button" class="view-tab' + (t.k === statsTab ? ' active' : '') + '" data-sp-tab="' + t.k + '">' + t.icon + ' ' + t.label + '</button>';
     }).join('') + crEloToggleBtn('view-tab elo-toggle') +
     '<button type="button" class="view-tab sp-back" id="spBack">← ' + crL('Về mùa giải', 'Back to season') + '</button></div>';
   var tools = '';
   if(statsTab === 'career' && !statsCareer) tools += '<input type="search" id="spSearch" class="sp-search" placeholder="' + escapeHtml(crL('Tìm tuyển thủ…', 'Search player…')) + '" value="' + escapeHtml(statsQuery) + '">';
-  if(hasMaster && !special && !(statsTab === 'career' && statsCareer)) tools += '<label class="sp-check"><input type="checkbox" id="spMasterOnly"' + (only ? ' checked' : '') + '> ' + crL('Chỉ tuyển thủ trong danh sách', 'Master-list players only') + '</label>';
+  if(hasMaster && !special && !adminTab && !(statsTab === 'career' && statsCareer)) tools += '<label class="sp-check"><input type="checkbox" id="spMasterOnly"' + (only ? ' checked' : '') + '> ' + crL('Chỉ tuyển thủ trong danh sách', 'Master-list players only') + '</label>';
   if(tools) html += '<div class="sp-tools">' + tools + '</div>';
   var body = '';
   if(special) body = '<div id="spModeHost" data-mode="' + statsTab + '"></div>';
+  else if(adminTab) body = amRenderHtml();
   else if(statsTab === 'career'){
     if(statsCareer){
       body = '<div class="sp-career-head"><button type="button" class="ghost" id="spCareerBack">← ' + crL('Tất cả thẻ', 'All cards') + '</button>' +
@@ -1144,6 +1149,7 @@ function renderStatsPage(){
   else body = crRecordsHtml(cd, only);
   host.innerHTML = html + '<div class="sp-body">' + body + '</div>';
   if(statsTab === 'career' && !statsCareer) statsApplySearch();
+  if(adminTab) amApplySearch();
   if(special){
     var ms = state.seasons[pesSpecialSeasonId(statsTab)];
     PES_MODE_HOST = $('spModeHost');
