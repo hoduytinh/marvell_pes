@@ -1,7 +1,7 @@
 // Marvell PES Club - features/career.js
 // Cross-season data built on collectSeasonMatches (features/team-matches.js):
 // chronological match history, Elo ratings, all-time records, team career,
-// FIFA-style card, Teo commentary/taunt texts, head-to-head view and the Career / Elo / records dialogs.
+// FIFA-style card, match commentary (sentences from news-bank.js), head-to-head view and the Career / Elo / records dialogs.
 // Teams are identified by their (trimmed) name across seasons.
 // UI strings are bilingual via crL(vi, en); switching language reloads the page.
 
@@ -637,7 +637,6 @@ function renderFifaCardHtml(card){
 }
 
 // ---------------- Teo texts ----------------
-function careerPick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
 function careerFill(tpl, v){ return tpl.replace(/\{(\w+)\}/g, function(_, k){ return v[k] != null ? v[k] : ''; }); }
 
 // Streak state of `name` just before and just after history index i.
@@ -661,88 +660,40 @@ function careerCommentary(cd, i){
   var v = { H: m.home, A: m.away, W: W, L: L, gd: Math.abs(m.hg - m.ag), tot: m.hg + m.ag,
     eW: Math.round(homeWin ? m.eloH : m.eloA), eL: Math.round(homeWin ? m.eloA : m.eloH) };
   v.d = v.eL - v.eW;
+  v.s = Math.max(m.hg, m.ag) + '-' + Math.min(m.hg, m.ag); v.st = m.stage;
   var sW = careerStreakAt(cd, W, i), sL = careerStreakAt(cd, L, i), lines = [];
-  function add(arr, extra){ if(extra) Object.keys(extra).forEach(function(k){ v[k] = extra[k]; }); lines.push(careerFill(careerPick(arr), v)); }
-  if(!draw && v.d >= 100) add(crL(['😱 ĐỊA CHẤN! {W} (Elo {eW}) quật ngã {L} (Elo {eL})!', '🤯 Không ai tin nổi: {W} hạ {L} dù kém tới {d} điểm Elo!'],
-    ['😱 SHOCKER! {W} (Elo {eW}) topple {L} (Elo {eL})!', '🤯 Unbelievable: {W} beat {L} despite being {d} Elo points behind!']));
-  if(m.ko && !draw){
-    if(Math.min(m.hg, m.ag) === 0) add(crL(['🧹 {W} thắng trắng {L} {s} ở {st}, không cho đối thủ một ván nào!', '💪 {W} đá bại {L} {s} gọn gàng ở {st}.'],
-      ['🧹 {W} sweep {L} {s} in {st} without dropping a single game!', '💪 {W} dispatch {L} {s} cleanly in {st}.']), { s: Math.max(m.hg, m.ag) + '-0', st: m.stage });
-    else add(crL(['😮‍💨 {W} vượt qua {L} {s} ở {st} sau ván quyết định!', '⚔️ Kéo tới ván cuối, {W} mới hạ được {L} {s} ở {st}.'],
-      ['😮‍💨 {W} edge past {L} {s} in {st} after a decider!', '⚔️ It went the distance before {W} beat {L} {s} in {st}.']), { s: Math.max(m.hg, m.ag) + '-' + Math.min(m.hg, m.ag), st: m.stage });
-  }
-  if(!m.ko && !draw && v.gd >= 4) add(crL(['💥 Hủy diệt! {W} vùi dập {L} cách biệt {gd} bàn.', '🧹 {W} quét sạch {L} như dọn nhà ngày Tết.'],
-    ['💥 Demolition! {W} crush {L} by {gd} goals.', '🧹 {W} wipe the floor with {L}.']));
-  if(!m.ko && v.tot >= 7) add(crL(['🎆 Mưa bàn thắng: {tot} bàn trong một trận!', '🍿 {tot} bàn thắng — khán giả được bữa no nê!'],
-    ['🎆 Goal fest: {tot} goals in one match!', '🍿 {tot} goals — the crowd got their money\'s worth!']));
-  if(!draw && sW.after.win >= 3) add(crL(['🔥 {W} đã thắng {n} trận liên tiếp — ai cản nổi?', '🚀 {n} trận thắng liền mạch cho {W}!'],
-    ['🔥 {W} have won {n} in a row — who can stop them?', '🚀 {n} straight wins for {W}!']), { n: sW.after.win });
-  if(!draw && sW.before.winless >= 5) add(crL(['🌅 {W} cuối cùng cũng biết thắng sau {n} trận!'], ['🌅 {W} finally win again after {n} matches!']), { n: sW.before.winless });
-  if(!draw && sL.before.unbeaten >= 5) add(crL(['🛑 {L} chấm dứt chuỗi {n} trận bất bại.'], ['🛑 {L} see their {n}-match unbeaten run come to an end.']), { n: sL.before.unbeaten });
-  if(!draw && sL.after.lose >= 3) add(crL(['😬 {L} đã thua {n} trận liên tiếp. Tèo đề nghị nghỉ ngơi!', '🚑 {L} thua {n} trận liền, gọi xe cấp cứu chưa?'],
-    ['😬 {L} have lost {n} in a row. Teo suggests a break!', '🚑 {n} straight defeats for {L} — call an ambulance?']), { n: sL.after.lose });
-  if(!lines.length){
-    if(draw) add(crL(['🤝 {H} và {A} bất phân thắng bại.', '😐 Hòa! Chia điểm đều nhau, không ai vui hẳn.'],
-      ['🤝 {H} and {A} cannot be separated.', '😐 A draw! Points shared, nobody is really happy.']));
-    else if(v.gd >= 2) add(crL(['👏 {W} thắng thuyết phục trước {L}.', '💪 {W} chơi áp đảo, {L} không có cửa.'],
-      ['👏 A convincing win for {W} over {L}.', '💪 {W} dominate, {L} had no answer.']));
-    else add(crL(['✅ {W} giành chiến thắng sát nút trước {L}.', '😅 {W} thắng nghẹt thở, {L} tiếc nuối.'],
-      ['✅ {W} edge {L} in a tight one.', '😅 {W} win a nail-biter, {L} left ruing their chances.']));
-  }
-  return { head: '[' + m.season + ' · ' + m.stage + '] ' + m.home + ' ' + m.hg + ' – ' + m.ag + ' ' + m.away, lines: lines.slice(0, 2) };
-}
-
-function careerTaunts(cd, name, oppName){
-  var tc = teamCareer(cd, name), out = [];
-  var v = { n: name, o: oppName || '' };
-  function say(vi, en, extra){
-    if(extra) Object.keys(extra).forEach(function(k){ v[k] = extra[k]; });
-    out.push(careerFill(crL(vi, en), v));
-  }
-  if(!tc.list.length){
-    say('{n} còn chưa đá trận nào — ra sân đi rồi Tèo mới có cái để chọc! 😏', '{n} have not played a single match yet — get on the pitch and Teo will find something to tease! 😏');
-    return out;
-  }
-  var P = tc.list.length, W = tc.list.filter(function(x){ return x.r === 'W'; }).length;
-  var real = tc.list.filter(function(x){ return !x.m.est; }), Pg = real.length;
-  var GA = real.reduce(function(a, x){ return a + x.ga; }, 0);
-  var c = medalCount(tc.trophies), cur = tc.streaks.cur;
-  if(oppName){
-    var o = tc.opponents.filter(function(x){ return x.name === oppName; })[0];
-    if(!o) say('{n} và {o} chưa từng gặp nhau. Né nhau à? 🐔', '{n} and {o} have never met. Avoiding each other? 🐔');
-    else {
-      v.w = o.W; v.d = o.D; v.l = o.L; v.gf = o.GF; v.ga = o.GA;
-      say('Đối đầu {n} vs {o}: {w} thắng – {d} hòa – {l} thua, bàn thắng {gf}–{ga}.', 'Head-to-head {n} vs {o}: {w} wins – {d} draws – {l} losses, goals {gf}–{ga}.');
-      if(o.L > o.W) say('{o} đang "bắt nạt" {n} trong đối đầu ({w}–{l}). Phục thù đi chứ! 😤', '{o} are bullying {n} head-to-head ({w}–{l}). Time for revenge! 😤');
-      else if(o.W > o.L) say('{n} đang làm "bố" {o} trong đối đầu ({w}–{l}). 😎', '{n} own {o} head-to-head ({w}–{l}). 😎');
-      else say('{n} và {o} cân tài cân sức — trận tới sẽ phân định ai là trùm! ⚔️', '{n} and {o} are dead even — the next match decides who is boss! ⚔️');
-      if(o.lastWin) say('Lần cuối {n} thắng {o}: {s} ({st}), {sc}. 🕰️', 'Last time {n} beat {o}: {s} ({st}), {sc}. 🕰️',
-        { s: o.lastWin.m.season, st: o.lastWin.m.stage, sc: o.lastWin.gf + '–' + o.lastWin.ga });
-      else say('{n} chưa từng thắng nổi {o}! 🙈', '{n} have never managed to beat {o}! 🙈');
+  function add(id, extra){ if(extra) Object.keys(extra).forEach(function(k){ v[k] = extra[k]; }); var t = snLine(id, v); if(t) lines.push(t); }
+  // Earlier meetings of the two teams and W's best Elo before this match.
+  var met = 0, wBeat = 0, last = null, peak = ELO_BASE, wP = 0;
+  for(var j = 0; j < i; j++){
+    var h = cd.hist[j];
+    if(h.dbl) continue;
+    var wh = h.home === W, wa = h.away === W;
+    if(wh || wa){
+      wP++;
+      var post = (wh ? h.eloH : h.eloA) + (wh ? h.eloD : -h.eloD);
+      if(post > peak) peak = post;
+      if(h.home === L || h.away === L){ met++; last = careerResult(wh ? h.hg : h.ag, wh ? h.ag : h.hg); if(last === 'W') wBeat++; }
     }
   }
-  if(cur.lose >= 2) say('{n} đang thua {k} trận liên tiếp — có cần Tèo gọi xe cứu thương không? 🚑', '{n} have lost {k} in a row — should Teo call an ambulance? 🚑', { k: cur.lose });
-  else if(cur.winless >= 4) say('{n} đã {k} trận chưa biết mùi chiến thắng. 🍋', '{n} have gone {k} matches without tasting victory. 🍋', { k: cur.winless });
-  if(cur.win >= 3) say('{n} đang thắng {k} trận liền. Bay cao quá coi chừng té đau! 🪂', '{n} have won {k} straight. The higher you fly, the harder you fall! 🪂', { k: cur.win });
-  var nem = tc.opponents.filter(function(x){ return x.L >= 3 && x.L > x.W && x.name !== oppName; }).sort(function(a, b){ return b.L - a.L; })[0];
-  if(nem) say('{x} chính là "khắc tinh" của {n}: thua {xl} trận, chỉ thắng {xw}. 😈', '{x} are the nemesis of {n}: {xl} losses, only {xw} wins. 😈', { x: nem.name, xl: nem.L, xw: nem.W });
-  tc.opponents.filter(function(x){ return x.P >= 3 && x.W === 0 && x.name !== oppName; }).slice(0, 2).forEach(function(x){
-    say('{n} chưa từng thắng {x} sau {xp} lần gặp nhau. 🙈', '{n} have never beaten {x} in {xp} meetings. 🙈', { x: x.name, xp: x.P });
-  });
-  if(tc.worstLoss){
-    var wl = tc.worstLoss;
-    say('Ký ức kinh hoàng: {n} thua {x} {sc} ở {s} ({st}). 💀', 'Nightmare memory: {n} lost {sc} to {x} in {s} ({st}). 💀',
-      { x: wl.opp, sc: wl.gf + '–' + wl.ga, s: wl.m.season, st: wl.m.stage });
+  var swing = Math.abs(m.eloD || 0), postW = (homeWin ? m.eloH : m.eloA) + swing;
+  if(!draw && v.d >= 100) add('r_shock');
+  if(m.ko && !draw) add(Math.min(m.hg, m.ag) === 0 ? 'r_sweep' : 'r_decider');
+  if(!m.ko && !draw && v.gd >= 4) add('r_demol');
+  if(!m.ko && v.tot >= 7) add('r_fest');
+  if(!m.ko && v.tot === 0) add('r_nil');
+  if(!draw && !m.dbl){
+    if(met >= 2 && !wBeat) add('r_firstWin', { n: met });
+    else if(last === 'L') add('r_revenge');
   }
-  if(tc.elo && tc.elo.peak - tc.elo.elo >= 60) say('{n} đã tụt {k} điểm Elo so với đỉnh cao {pk}. 📉', '{n} have dropped {k} Elo points from their peak of {pk}. 📉',
-    { k: Math.round(tc.elo.peak - tc.elo.elo), pk: Math.round(tc.elo.peak) });
-  if(P >= 15 && W / P < 0.35) say('Tỉ lệ thắng của {n} chỉ {k}% — tung đồng xu còn tốt hơn. 🪙', '{n} win only {k}% of their matches — a coin toss would do better. 🪙', { k: Math.round(W * 100 / P) });
-  if(Pg >= 20 && GA / Pg >= 2.5) say('Hàng thủ {n} thủng trung bình {k} bàn/trận — lưới hay là lưới đánh cá? 🥅', 'The {n} defence leaks {k} goals per match — is that a goal net or a fishing net? 🥅', { k: (GA / Pg).toFixed(1) });
-  if(tc.ko.P >= 4 && tc.ko.W / tc.ko.P < 0.4) say('{n} chỉ thắng {k} loạt đấu loại trực tiếp. Cứ trận quyết định là run tay? 🫣', '{n} have won only {k} knock-out ties. Shaky hands when it matters? 🫣', { k: tc.ko.W + '/' + tc.ko.P });
-  if(P >= 20 && !c.gold) say('{k} trận mà chưa có nổi một chiếc cúp vàng. Tủ kính vẫn đang chờ, {n} ơi! 🏆❌', '{k} matches and still no gold trophy. The cabinet is still waiting, {n}! 🏆❌', { k: P });
-  if(tc.rank === 1) say('{n} đang số 1 Elo. Ngai vàng nào cũng lung lay, cẩn thận nhé! 👑', '{n} are Elo number 1. Every throne wobbles — careful! 👑');
-  if(!out.length) say('{n} khá ổn định... Tèo chưa tìm được gì để chọc. Lần sau nhé! 😇', '{n} look pretty solid... Teo found nothing to tease this time. 😇');
-  return out;
+  if(!draw && sW.after.win >= 3) add('r_wstreak', { n: sW.after.win });
+  if(!draw && sW.before.winless >= 5) add('r_winlessEnd', { n: sW.before.winless });
+  if(!draw && sL.before.unbeaten >= 5) add('r_unbeatenEnd', { n: sL.before.unbeaten });
+  if(!draw && sL.after.lose >= 3) add('r_lstreak', { n: sL.after.lose });
+  if(!draw && !m.dbl && wP >= 10 && postW > peak) add('r_peak', { e: Math.round(postW) });
+  if(!draw && swing >= 25) add('r_swing', { x: Math.round(swing) });
+  if(!lines.length) add(draw ? 'r_draw' : v.gd >= 2 ? 'r_convincing' : 'r_narrow');
+  return { head: '[' + m.season + ' · ' + m.stage + '] ' + m.home + ' ' + m.hg + ' – ' + m.ag + ' ' + m.away, lines: lines.slice(0, 2) };
 }
 
 // ---------------- Dialog rendering ----------------
@@ -1164,11 +1115,10 @@ function renderStatsPage(){
   if(!tabs.some(function(t){ return t.k === statsTab; })) statsTab = 'career';
   var cd = careerData(state), hasMaster = !!(state.teamMasterList || []).length, only = hasMaster && statsMasterOnly;
   var special = statsTab === 'legend' || statsTab === 'ranking';
-  var html = '<div class="sp-head"><h2>📊 Dashboard</h2>' + crEloToggleBtn('ghost elo-toggle') +
-    '<button type="button" class="ghost" id="spBack">← ' + crL('Về mùa giải', 'Back to season') + '</button></div>' +
-    '<div class="view-tabs sp-tabs">' + tabs.map(function(t){
+  var html = '<div class="view-tabs sp-tabs">' + tabs.map(function(t){
       return '<button type="button" class="view-tab' + (t.k === statsTab ? ' active' : '') + '" data-sp-tab="' + t.k + '">' + t.icon + ' ' + t.label + '</button>';
-    }).join('') + '</div>';
+    }).join('') + crEloToggleBtn('view-tab elo-toggle') +
+    '<button type="button" class="view-tab sp-back" id="spBack">← ' + crL('Về mùa giải', 'Back to season') + '</button></div>';
   var tools = '';
   if(statsTab === 'career' && !statsCareer) tools += '<input type="search" id="spSearch" class="sp-search" placeholder="' + escapeHtml(crL('Tìm tuyển thủ…', 'Search player…')) + '" value="' + escapeHtml(statsQuery) + '">';
   if(hasMaster && !special && !(statsTab === 'career' && statsCareer)) tools += '<label class="sp-check"><input type="checkbox" id="spMasterOnly"' + (only ? ' checked' : '') + '> ' + crL('Chỉ tuyển thủ trong danh sách', 'Master-list players only') + '</label>';

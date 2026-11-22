@@ -1020,6 +1020,8 @@ main[data-view="all"] #seasonStatsBoard{display:none !important}
 body.hide-elo .elo-dl,
 body.hide-elo .elo-dl-line{display:none !important}
 .view-tabs .elo-toggle{margin-left:auto}
+.view-tabs .sp-back{border:1px solid #ca8a04;color:#1f2937;background:linear-gradient(180deg,#fde047,#eab308);font-weight:800;box-shadow:0 2px 8px rgba(234,179,8,.35)}
+.view-tabs .sp-back:hover:not(:disabled){background:linear-gradient(180deg,#fef08a,#facc15);color:#111827;border-color:#ca8a04}
 .elo-toggle{font-size:12px;font-weight:700}
 .elo-toggle:not(.on){opacity:.55;text-decoration:line-through}
 .elo-toggle.on{border-color:var(--accent) !important;color:var(--accent)}
@@ -1087,6 +1089,14 @@ body.hide-elo .elo-dl-line{display:none !important}
 .sn-tag.t-mile{background:#ca8a04}
 .sn-tag.t-form{background:#059669}
 .sn-tag.t-rel{background:#991b1b}
+.sn-tag.t-profile{background:#0f766e}
+.sn-tag.t-h2h{background:#be123c}
+.sn-tag.t-hist{background:#92400e}
+.sn-tag.t-ko{background:#1d4ed8}
+.sn-tag.t-elo{background:#4f46e5}
+.sn-tag.t-future{background:#0e7490}
+.sn-tag.t-quote{background:#65a30d}
+.sn-tag.t-fun{background:#64748b}
 .sn-side{display:flex;flex-direction:column;gap:10px}
 .sn-box{padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--card)}
 .sn-box-title{margin-bottom:8px;font-size:13px;font-weight:800}

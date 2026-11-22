@@ -1,8 +1,9 @@
 // Marvell PES Club - features/season-news.js
 // Season info card (#seasonOverview) for every format: key numbers, upcoming matches with Elo
-// predictions, title / relegation odds and the "PES newspaper" corner — generated headlines
+// predictions, title / relegation odds and the PesNews newspaper corner — generated headlines
 // (analysis, predictions, banter) that change with new results, page reloads or the 🔄 button.
-// Rendered by renderSeasonOverview() (overview.js). Uses career.js data (Elo, history, commentary).
+// Rendered by renderSeasonOverview() (overview.js). Uses career.js data (Elo, history) and the
+// sentence bank in news-bank.js (snLine). snHeadlines() feeds the same headlines to Teo Robot.
 
 var SN_NONCE = Math.floor(Math.random() * 1e9), snShuffle = 0, snMemo = { key: null, html: '' };
 var SN_SIMS = 600;
@@ -238,7 +239,7 @@ function snStreak(t, kind){
   var k = 0;
   for(var i = t.form.length - 1; i >= 0; i--){
     var r = t.form[i];
-    if(kind === 'W' ? r === 'W' : kind === 'L' ? r === 'L' : kind === 'U' ? r !== 'L' : r !== 'W') k++; else break;
+    if(kind === 'W' ? r === 'W' : kind === 'L' ? r === 'L' : kind === 'U' ? r !== 'L' : kind === 'D' ? r === 'D' : r !== 'W') k++; else break;
   }
   return k;
 }
@@ -250,79 +251,161 @@ function snMax(arr, fn){
 }
 
 // ---------------- Newspaper ----------------
+// Every sentence comes from SN_BANK (features/news-bank.js), shared with the match commentary and
+// Teo Robot. snNews only decides which situations apply to the season and fills in the facts.
 var SN_TAGS = {
   hot: crL('Tiêu điểm', 'Headline'), race: crL('Cuộc đua', 'Title race'), pred: crL('Dự đoán', 'Prediction'),
   preview: crL('Soi kèo', 'Preview'), result: crL('Kết quả', 'Result'), shock: crL('Sốc', 'Shock'),
   troll: crL('Cà khịa', 'Banter'), stats: crL('Thống kê', 'Stats'), rumor: crL('Tin đồn', 'Rumour'),
-  mile: crL('Cột mốc', 'Milestone'), form: crL('Phong độ', 'Form'), rel: crL('Rớt hạng', 'Relegation')
+  mile: crL('Cột mốc', 'Milestone'), form: crL('Phong độ', 'Form'), rel: crL('Rớt hạng', 'Relegation'),
+  profile: crL('Hồ sơ', 'Profile'), h2h: crL('Đối đầu', 'Rivalry'), hist: crL('Lịch sử', 'History'),
+  ko: crL('Loại trực tiếp', 'Knock-out'), elo: 'Elo', future: crL('Tương lai', 'Outlook'),
+  quote: crL('Phát ngôn', 'Quote'), fun: crL('Bên lề', 'Sidelines')
 };
+var SN_MAX_ITEMS = 12, SN_TAG_LIMIT = { rumor: 1, quote: 1, fun: 1, result: 2, troll: 3, profile: 3 };
 
-function snNews(D, odds, rng){
-  var cd = D.cd, items = [], teams = D.teams, nPlayed = D.played.length;
-  function say(pri, tag, vi, en, v){
-    var arr = CR_EN ? en : vi;
-    items.push({ pri: pri + rng() * 14, tag: tag, html: careerFill(arr[Math.floor(rng() * arr.length)], v || {}) });
+// Same competition in other years: the name without digits / punctuation ("2026 - Seri A" -> "seri a").
+function snSeriesKey(name){
+  return String(name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd')
+    .replace(/\d+/g, ' ').replace(/[^a-z]+/g, ' ').trim();
+}
+function snYearOf(name){ var m = /(19|20)\d{2}/.exec(String(name || '')); return m ? m[0] : null; }
+function snLc(n){ return careerName(n).toLowerCase(); }
+// Earlier editions of D's competition (oldest first) with their champions and title counts.
+function snSeries(D){
+  var key = snSeriesKey(D.s.name), ids = careerSeasonIds(state), prev = [], titles = {};
+  if(!key || !D.sid) return null;
+  for(var i = 0; i < ids.length && ids[i] !== D.sid; i++){
+    var s = state.seasons[ids[i]], champ = null, fin = null;
+    if(!s || snSeriesKey(s.name) !== key) continue;
+    try { fin = careerSeasonFinishes(s); } catch(e){ fin = null; }
+    if(fin) Object.keys(fin).forEach(function(k){ if(fin[k].medal === 'gold' && !champ) champ = careerName((s.teams || [])[k]); });
+    if(champ) titles[snLc(champ)] = (titles[snLc(champ)] || 0) + 1;
+    prev.push({ sid: ids[i], champ: champ });
   }
+  return { editions: prev.length + 1, prev: prev, titles: titles, last: prev.length ? prev[prev.length - 1].champ : null };
+}
+function snGolds(cd, name){
+  var t = cd.trophies[snLc(name)];
+  return t ? t.list.filter(function(x){ return x.medal === 'gold'; }) : [];
+}
+function snShuffled(arr, rng){
+  var a = arr.slice();
+  for(var i = a.length - 1; i > 0; i--){ var j = Math.floor(rng() * (i + 1)), x = a[i]; a[i] = a[j]; a[j] = x; }
+  return a;
+}
+
+// all = true: every applicable headline (Teo Robot); otherwise a varied front page.
+function snNews(D, odds, rng, all){
+  var cd = D.cd, items = [], teams = D.teams, nPlayed = D.played.length, W3 = D.W3;
+  function say(pri, id, v, tag){
+    if(!SN_BANK[id]) return;
+    items.push({ pri: pri + rng() * 14, tag: tag || SN_BANK[id].tag, html: snLine(id, v, rng) });
+  }
+  function pickR(arr){ return arr[Math.floor(rng() * arr.length)]; }
   var byElo = teams.slice().sort(function(a, b){ return b.elo - a.elo; });
-  var eloRank = {};
+  var eloRank = {}, byName = {};
   byElo.forEach(function(t, i){ eloRank[t.idx] = i + 1; });
+  teams.forEach(function(t){ byName[snLc(t.name)] = t; });
   var season = '<span class="no-i18n">' + snE(D.s.name || '') + '</span>';
+  var stTxt = function(x){ return '<span class="no-i18n">' + snE(x) + '</span>'; };
+  var series = snSeries(D), year = snYearOf(D.s.name), clinched = false;
+  var defending = series && series.last ? byName[snLc(series.last)] || null : null;
+  var defOut = !!(defending && D.kind === 'ko' && D.alive && nPlayed && !D.done && D.alive.indexOf(defending) === -1);
+  var yearGolds = function(t){
+    return D.dbl || !year ? 0 : snGolds(cd, t.ck).filter(function(g){ return g.sid !== D.sid && snYearOf(g.season) === year; }).length;
+  };
 
   // --- Finished season ---
   if(D.done && D.podium.gold){
-    var c = D.podium.gold, r2 = D.podium.silver;
-    say(100, 'hot', ['🏆 {c} chính thức lên ngôi vô địch {s}! Tèo xin cúi đầu bái phục.', '👑 Ngai vàng {s} đã có chủ: {c}. Các đội còn lại hẹn mùa sau nhé!',
-      '🏆 {c} vô địch {s}! Champagne đâu, mở ra cho Tèo một chai.'],
-      ['🏆 {c} are officially the {s} champions! Teo takes a bow.', '👑 The {s} throne has an owner: {c}. Everyone else, see you next season!',
-      '🏆 {c} win {s}! Pop the champagne — and save a glass for Teo.'], { c: snB(c), s: season });
-    if(r2) say(70, 'troll', ['🥈 {r} về nhì. Huy chương bạc cũng đẹp mà... đúng không? 🥲', '🥈 {r} á quân — gần lắm rồi mà vẫn xa. Tèo hiểu cảm giác đó.',
-      '🥈 {r} dừng bước ở vị trí thứ 2. Lịch sử thường chỉ nhớ người thắng, nhưng Tèo vẫn nhớ {r}.'],
-      ['🥈 {r} finish second. Silver is pretty too... right? 🥲', '🥈 Runners-up {r} — so close, yet so far. Teo knows the feeling.',
-      '🥈 {r} stop at number 2. History remembers winners, but Teo remembers {r}.'], { r: snB(r2) });
-    say(58, 'stats', ['📋 Thành tích của nhà vô địch {c}: {w} thắng – {d} hòa – {l} thua, Elo {e} sau mùa giải.'],
-      ['📋 Champions {c} record: {w} wins – {d} draws – {l} losses, {e} Elo over the season.'],
-      { c: snB(c), w: c.W, d: c.D, l: c.L, e: snSigned(c.eloD) });
+    var c = D.podium.gold, r2 = D.podium.silver, b3 = D.podium.bronze;
+    say(100, 'champ', { c: snB(c), s: season });
+    if(r2) say(70, 'runnerUp', { r: snB(r2) });
+    if(b3) say(50, 'bronze', { b: snB(b3) });
+    say(58, 'champRecord', { c: snB(c), w: c.W, d: c.D, l: c.L, e: snSigned(c.eloD) });
+    if(c.P >= 3 && !c.L) say(80, 'champUnbeaten', { c: snB(c) });
+    if(!D.dbl){
+      var golds = snGolds(cd, c.ck), mine = golds.some(function(g){ return g.sid === D.sid; });
+      if(mine && golds.length === 1) say(78, 'champFirst', { c: snB(c) });
+      else if(mine && golds.length >= 3) say(74, 'champDynasty', { c: snB(c), k: golds.length });
+      var yg = yearGolds(c);
+      if(yg) say(66, 'champYearDouble', { c: snB(c), k: yg + 1 });
+      var rt = r2 ? cd.trophies[snLc(r2.ck)] : null, rc = rt ? medalCount(rt.list) : null;
+      if(rc && rc.silver >= 2 && !rc.gold) say(60, 'silverCurse', { r: snB(r2), k: rc.silver });
+    }
+    if(series && series.last && snLc(series.last) === snLc(c.name)) say(82, 'champDefend', { c: snB(c), s: season });
+    else if(series && series.titles[snLc(c.name)]) say(64, 'champSeriesKing', { c: snB(c), k: series.titles[snLc(c.name)] + 1 });
     if(D.mode === 'league' && D.table.length){
       var relN = Math.max(0, +((D.s.settings || {}).rel) || 0);
-      D.table.slice(D.table.length - relN).forEach(function(x){
-        say(62, 'rel', ['⬇️ {t} chính thức xuống hạng. Hẹn gặp lại... hoặc không.', '⬇️ {t} rớt hạng. Mùa sau nhớ mang theo bản đồ đường về.'],
-          ['⬇️ {t} are relegated. See you again... maybe.', '⬇️ {t} go down. Remember the way back next season.'], { t: snB(x.t) });
-      });
+      D.table.slice(D.table.length - relN).forEach(function(x){ say(62, 'relegated', { t: snB(x.t) }); });
+    }
+    if(D.kind === 'table' && D.table.length >= 4){
+      var spoon = D.table[D.table.length - 1];
+      say(46, 'woodenSpoon', { t: snB(spoon.t), p: spoon.Pts });
     }
     var fav = byElo[0];
-    if(fav && fav !== c) say(52, 'troll', ['🎭 {f} có Elo cao nhất giải nhưng chiếc cúp lại về tay {c}. Elo chỉ là con số!'],
-      ['🎭 {f} had the highest Elo in the field, but the trophy went to {c}. Elo is just a number!'], { f: snB(fav), c: snB(c) });
+    if(fav && fav !== c) say(52, 'eloFlop', { f: snB(fav), c: snB(c) });
   }
 
   // --- Not started ---
   if(D.status === 'idle' && byElo.length){
     var f0 = byElo[0], lo = byElo[byElo.length - 1];
-    say(95, 'hot', ['📣 {s} sắp khởi tranh với {n} đội. Ứng viên số 1 trên giấy tờ: {f} (Elo {e}).', '📣 Tiếng còi khai cuộc {s} sắp vang lên! {n} đội, 1 chiếc cúp, và {f} là cái tên được đánh giá cao nhất.'],
-      ['📣 {s} is about to kick off with {n} teams. Favourite on paper: {f} (Elo {e}).', '📣 {s} is about to start! {n} teams, 1 trophy, and {f} are the name to beat.'],
-      { s: season, n: teams.length, f: snB(f0), e: Math.round(f0.elo) });
-    if(lo && lo !== f0) say(50, 'troll', ['🐣 {t} vào giải với Elo thấp nhất ({e}). Mục tiêu: không thua quá đậm?', '🐣 {t} là "tân binh" yếu nhất trên giấy tờ. Nhưng giấy thì... dễ rách lắm.'],
-      ['🐣 {t} enter with the lowest Elo ({e}). Target: avoid a thrashing?', '🐣 {t} are the weakest on paper. But paper tears easily.'], { t: snB(lo), e: Math.round(lo.elo) });
+    say(95, 'kickoff', { s: season, n: teams.length, f: snB(f0), e: Math.round(f0.elo) });
+    if(lo && lo !== f0) say(50, 'weakest', { t: snB(lo), e: Math.round(lo.elo) });
+    if(byElo[1] && f0.elo - byElo[1].elo < 25) say(58, 'preGap', { f: snB(f0), t2: snB(byElo[1]), g: Math.round(f0.elo - byElo[1].elo) });
+    if(!D.dbl){
+      var rookies = teams.filter(function(t){ return !cd.elo[t.ck]; });
+      if(rookies.length) say(46, 'debutant', { t: snB(pickR(rookies)) });
+      var vet = snMax(teams, function(t){ return cd.elo[t.ck] ? cd.elo[t.ck].P : 0; });
+      if(vet && cd.elo[vet.ck] && cd.elo[vet.ck].P >= 30) say(40, 'preVeteran', { t: snB(vet), k: cd.elo[vet.ck].P });
+    }
+  }
+  if(defending && !D.done && !defOut) say(D.status === 'idle' ? 72 : 38, 'defending', { t: snB(defending), s: season });
+
+  // --- History of this competition ---
+  if(series){
+    if(series.editions === 1){ if(!D.done) say(44, 'hsFirst', { s: season }); }
+    else {
+      say(28, 'hsEditions', { k: series.editions, s: season });
+      var kingK = 0, kingN = null;
+      Object.keys(series.titles).forEach(function(k){ if(series.titles[k] > kingK){ kingK = series.titles[k]; kingN = k; } });
+      if(kingN && kingK >= 2 && byName[kingN] && !D.done) say(50, 'hsKing', { t: snB(byName[kingN]), k: kingK });
+      if(series.last && !defending && !D.done) say(42, 'hsAbsent', { t: snB(series.last) });
+      if(series.prev.length >= 2 && kingK === 1 && series.prev.every(function(p){ return p.champ; })) say(34, 'hsNoRepeat', { k: series.prev.length });
+    }
   }
 
   // --- Title race (table formats) ---
   if(D.kind === 'table' && D.status === 'live' && D.table.length >= 2){
-    var L = D.table[0], S = D.table[1], gap = L.Pts - S.Pts;
-    if(gap >= 6) say(86, 'race', ['🚀 {l} bỏ xa {s2} tới {g} điểm. Cuộc đua vô địch sắp thành cuộc dạo chơi?', '🏃 {l} đang chạy một mình: hơn đội nhì {s2} {g} điểm. Ai đó gọi họ quay lại đi!'],
-      ['🚀 {l} are {g} points clear of {s2}. Is the title race turning into a stroll?', '🏃 {l} are running alone: {g} points ahead of {s2}. Someone call them back!'], { l: snB(L.t), s2: snB(S.t), g: gap });
-    else if(gap === 0) say(86, 'race', ['🔥 {l} và {s2} đang bằng điểm nhau ({p} điểm). Ngôi đầu chỉ còn tính bằng hiệu số!', '⚔️ Hai con hổ chung một núi: {l} và {s2} cùng có {p} điểm.'],
-      ['🔥 {l} and {s2} are level on {p} points. The top spot comes down to goal difference!', '⚔️ Two tigers, one mountain: {l} and {s2} both have {p} points.'], { l: snB(L.t), s2: snB(S.t), p: L.Pts });
-    else if(gap <= 1) say(86, 'race', ['🔥 Cuộc đua nghẹt thở: {l} và {s2} chỉ cách nhau {g} điểm!', '⚔️ Ngôi đầu đang bị đe dọa: {s2} bám sát {l} chỉ {g} điểm.'],
-      ['🔥 Breathless race: {l} and {s2} are separated by {g} point(s)!', '⚔️ The top spot is under threat: {s2} sit just {g} point(s) behind {l}.'], { l: snB(L.t), s2: snB(S.t), g: gap });
-    else say(80, 'race', ['📊 {l} tạm dẫn đầu với {p} điểm, hơn {s2} {g} điểm.', '📊 {l} đang ngồi trên đỉnh ({p} điểm). {s2} đứng thứ 2, kém {g} điểm.'],
-      ['📊 {l} lead with {p} points, {g} ahead of {s2}.', '📊 {l} sit on top ({p} pts). {s2} are second, {g} behind.'], { l: snB(L.t), s2: snB(S.t), g: gap, p: L.Pts });
+    var L = D.table[0], S = D.table[1], gap = L.Pts - S.Pts, rem = {};
+    D.table.forEach(function(b){ rem[b.t.idx] = D.extraRounds; });
+    D.pending.forEach(function(m){ if(rem[m.home] != null) rem[m.home]++; if(rem[m.away] != null) rem[m.away]++; });
+    var rivals = D.table.slice(1);
+    clinched = rivals.every(function(b){ return L.Pts - b.Pts > W3 * rem[b.t.idx]; });
+    if(clinched) say(97, 'clinch', { l: snB(L.t) });
+    else {
+      say(gap >= 6 || gap <= 1 ? 86 : 80, gap >= 6 ? 'runaway' : gap === 0 ? 'level' : gap <= 1 ? 'tight' : 'lead',
+        { l: snB(L.t), s2: snB(S.t), g: gap, p: L.Pts });
+      if(rem[L.t.idx] && rivals.every(function(b){ return L.Pts + W3 - b.Pts > W3 * rem[b.t.idx]; })) say(84, 'fClinchNext', { l: snB(L.t) });
+    }
+    var lastL = null;
+    D.ent.forEach(function(m){ if(!m.ko && (m._h === L.t || m._a === L.t)) lastL = m; });
+    if(lastL){
+      var lh = lastL._h === L.t, lgf = lh ? lastL.hg : lastL.ag, lga = lh ? lastL.ag : lastL.hg;
+      if(lgf < lga) say(74, 'leaderSlip', { l: snB(L.t), o: snB(lh ? lastL._a : lastL._h), sc: lgf + '–' + lga });
+    }
     // Table position vs Elo expectation
     if(nPlayed >= teams.length){
       var diffs = D.table.map(function(x, i){ return { t: x.t, pos: i + 1, er: eloRank[x.t.idx], d: (i + 1) - eloRank[x.t.idx] }; });
       var under = snMax(diffs, function(x){ return x.d; }), over = snMax(diffs, function(x){ return -x.d; });
-      if(under && under.d >= 3) say(60, 'troll', ['🎭 {t} có Elo cao thứ {e} giải nhưng đang đứng thứ {p}. Hữu danh vô thực?', '🫠 {t}: Elo xếp thứ {e}, bảng xếp hạng thứ {p}. Có ai thấy phong độ của {t} đâu không?'],
-        ['🎭 {t} have the #{e} Elo but sit #{p}. All name, no game?', '🫠 {t}: #{e} by Elo, #{p} in the table. Has anyone seen their form?'], { t: snB(under.t), e: under.er, p: under.pos });
-      if(over && over.d <= -3) say(52, 'form', ['🌟 {t} đứng thứ {p} dù Elo chỉ xếp thứ {e}. Vượt xa kỳ vọng!', '🌟 Hiện tượng của mùa: {t} (Elo thứ {e}) đang chễm chệ vị trí thứ {p}.'],
-        ['🌟 {t} are #{p} despite being #{e} by Elo. Way above expectations!', '🌟 Surprise package: {t} (#{e} by Elo) are sitting #{p}.'], { t: snB(over.t), e: over.er, p: over.pos });
+      if(under && under.d >= 3) say(60, 'under', { t: snB(under.t), e: under.er, p: under.pos });
+      if(over && over.d <= -3) say(52, 'over', { t: snB(over.t), e: over.er, p: over.pos });
+      if(D.table.length >= 4){ var B = D.table[D.table.length - 1]; say(44, 'bottom', { t: snB(B.t), p: B.Pts }); }
+    }
+    var topN = D.mode === 'league' ? Math.max(0, +((D.s.settings || {}).top) || 0) : 0;
+    if(topN >= 2 && D.table.length > topN + 1){
+      var cut = D.table[topN - 1].Pts, fight = D.table.filter(function(b){ return Math.abs(b.Pts - cut) <= 3; });
+      if(fight.length > topN) say(54, 'topSpots', { n: topN, list: fight.slice(0, 6).map(function(b){ return snB(b.t); }).join(', ') });
     }
   }
 
@@ -330,57 +413,66 @@ function snNews(D, odds, rng){
   if(odds && odds.title.length){
     var top = odds.title[0], sec = odds.title[1];
     var how = odds.method === 'sim' ? crL('sau ' + odds.sims + ' kịch bản mô phỏng', 'over ' + odds.sims + ' simulations') : crL('theo Elo', 'by Elo');
-    say(78, 'pred', ['🔮 Máy tính của Tèo ({h}): {t} vô địch với xác suất {p}.', '🔮 Tèo đặt cửa {t} lên ngôi ({p}, {h}). Ai không đồng ý thì ra sân chứng minh!',
-      '🔮 Nếu phải đặt cược, Tèo chọn {t}: {p} cơ hội vô địch ({h}).'],
-      ['🔮 Teo\'s computer ({h}): {t} win the title with {p} probability.', '🔮 Teo backs {t} to lift the trophy ({p}, {h}). Disagree? Prove it on the pitch!',
-      '🔮 If Teo had to bet, it would be on {t}: {p} title chance ({h}).'], { t: snB(top.t), p: snPct(top.p), h: how });
-    if(sec && top.p < 0.45) say(66, 'pred', ['🎲 Chưa ai chắc suất: {t} ({p}) và {t2} ({p2}) đang chia nhau cơ hội vô địch.'],
-      ['🎲 Nothing is settled: {t} ({p}) and {t2} ({p2}) share the title chances.'], { t: snB(top.t), p: snPct(top.p), t2: snB(sec.t), p2: snPct(sec.p) });
+    if(!clinched){
+      if(top.p >= 0.9 && D.status === 'live') say(80, 'nearlyDone', { t: snB(top.t), p: snPct(top.p) });
+      else say(78, 'titleOdds', { t: snB(top.t), p: snPct(top.p), h: how });
+    }
+    if(sec && top.p < 0.45) say(66, 'shared', { t: snB(top.t), p: snPct(top.p), t2: snB(sec.t), p2: snPct(sec.p) });
     var median = byElo[Math.floor(byElo.length / 2)];
     var horse = odds.title.slice(1, 6).filter(function(x){ return x.p >= 0.04 && x.p <= 0.35 && median && x.t.elo <= median.elo; })[0];
-    if(horse) say(56, 'pred', ['🐴 Ngựa ô: {t} có {p} cơ hội vô địch dù Elo chỉ {e}.', '🐴 Đừng ngạc nhiên nếu {t} gây sốc — Tèo cho họ {p} cơ hội.'],
-      ['🐴 Dark horse: {t} have a {p} title chance despite an Elo of just {e}.', '🐴 Don\'t be shocked if {t} cause an upset — Teo gives them {p}.'], { t: snB(horse.t), p: snPct(horse.p), e: Math.round(horse.t.elo) });
+    if(horse) say(56, 'darkHorse', { t: snB(horse.t), p: snPct(horse.p), e: Math.round(horse.t.elo) });
     if(D.kind === 'table' && D.table.length && D.table[0].t !== top.t && D.status === 'live')
-      say(64, 'pred', ['🤔 {l} đang đứng đầu nhưng Tèo vẫn tin {t} hơn ({p} vs {p2}). Lịch đấu còn dài!'],
-        ['🤔 {l} lead the table, but Teo still trusts {t} more ({p} vs {p2}). Plenty of games left!'],
-        { l: snB(D.table[0].t), t: snB(top.t), p: snPct(top.p), p2: snPct((odds.all || []).filter(function(x){ return x.t === D.table[0].t; }).map(function(x){ return x.p; })[0] || 0) });
+      say(64, 'trustOther', { l: snB(D.table[0].t), t: snB(top.t), p: snPct(top.p),
+        p2: snPct((odds.all || []).filter(function(x){ return x.t === D.table[0].t; }).map(function(x){ return x.p; })[0] || 0) });
+    if(odds.all && D.status === 'live'){
+      var gone = odds.all.filter(function(x){ return !x.p && eloRank[x.t.idx] <= 3; })[0];
+      if(gone) say(58, 'bigOut', { t: snB(gone.t), e: Math.round(gone.t.elo) });
+      var mid = odds.topN ? odds.all.filter(function(x){ return x.top >= 0.3 && x.top <= 0.7; }) : [];
+      if(mid.length){ var mx = pickR(mid); say(50, 'topN', { t: snB(mx.t), p: snPct(mx.top), n: odds.topN }); }
+    }
+    var yh = yearGolds(top.t);
+    if(yh) say(56, 'yearHunt', { t: snB(top.t), k: yh, p: snPct(top.p) });
     if(odds.rel && odds.rel.length && D.status === 'live'){
       var rr = odds.rel[0];
-      if(rr.rel >= 0.99) say(72, 'rel', ['⚰️ {t} gần như chắc chắn xuống hạng ({p}). Đặt vé tàu chưa?', '⚰️ Phép màu cũng khó cứu {t}: {p} khả năng rớt hạng.'],
-        ['⚰️ {t} are all but relegated ({p}). Train tickets booked yet?', '⚰️ Only a miracle saves {t}: {p} relegation chance.'], { t: snB(rr.t), p: snPct(rr.rel) });
-      else if(rr.rel >= 0.3) say(70, 'rel', ['⚠️ {t} đang đứng trước nguy cơ rớt hạng: {p}.', '🚨 Báo động đỏ cho {t}: {p} khả năng phải xuống chơi giải dưới.'],
-        ['⚠️ {t} are in relegation danger: {p}.', '🚨 Red alert for {t}: {p} chance of going down.'], { t: snB(rr.t), p: snPct(rr.rel) });
+      if(rr.rel >= 0.99) say(72, 'relSure', { t: snB(rr.t), p: snPct(rr.rel) });
+      else if(rr.rel >= 0.3) say(70, 'relDanger', { t: snB(rr.t), p: snPct(rr.rel) });
       var r2b = odds.rel.filter(function(x){ return x !== rr && x.rel >= 0.15 && x.rel <= 0.7; })[0];
-      if(r2b) say(46, 'rel', ['😰 {t} vẫn chưa an toàn ({p} nguy cơ rớt hạng). Đừng vội ăn mừng!'],
-        ['😰 {t} are not safe yet ({p} relegation risk). No celebrating yet!'], { t: snB(r2b.t), p: snPct(r2b.rel) });
+      if(r2b) say(46, 'relSecond', { t: snB(r2b.t), p: snPct(r2b.rel) });
     }
   }
 
   // --- Knock-out: who is still alive ---
   if(D.kind === 'ko' && D.alive && !D.done && nPlayed){
     var out = teams.filter(function(t){ return D.alive.indexOf(t) === -1; });
-    if(D.alive.length && D.alive.length <= 8 && out.length) say(76, 'race', ['🎯 Còn {n} đội trên đường đua: {list}.', '🎯 Cuộc chơi thu hẹp lại còn {n} đội: {list}. Ai sẽ là người cuối cùng?'],
-      ['🎯 {n} teams left standing: {list}.', '🎯 Down to {n}: {list}. Who will be the last one standing?'],
-      { n: D.alive.length, list: D.alive.map(snB).join(', ') });
-    var fallen = out.filter(function(t){ return eloRank[t.idx] <= 3; }).sort(function(a, b){ return eloRank[a.idx] - eloRank[b.idx]; })[0];
-    if(fallen) say(74, 'shock', ['💔 Cú sốc: {t} — Elo cao thứ {k} giải — đã bị loại{by}!', '😵 Ứng viên {t} (Elo thứ {k}) đã phải dừng bước{by}. Ai đoán được chứ?'],
-      ['💔 Shock: {t} — #{k} by Elo — are out{by}!', '😵 Contenders {t} (#{k} by Elo) have been knocked out{by}. Who saw that coming?'],
-      { t: snB(fallen), k: eloRank[fallen.idx], by: fallen.koBy ? crL(' dưới tay ', ' by ') + snB(fallen.koBy.t) : '' });
+    if(D.alive.length === 2) say(90, 'finalPair', { a: snB(D.alive[0]), b: snB(D.alive[1]) });
+    else if(D.alive.length && D.alive.length <= 8 && out.length) say(76, 'alive', { n: D.alive.length, list: D.alive.map(function(t){ return snB(t); }).join(', ') });
+    var fallen = out.filter(function(t){ return eloRank[t.idx] <= 3 && t !== defending; }).sort(function(a, b){ return eloRank[a.idx] - eloRank[b.idx]; })[0];
+    if(fallen) say(74, 'fallen', { t: snB(fallen), k: eloRank[fallen.idx], by: fallen.koBy ? crL(' dưới tay ', ' by ') + snB(fallen.koBy.t) : '' });
+    if(defOut) say(80, 'defendingOut', { t: snB(defending) });
+    if(D.alive.length >= 3){
+      var mouse = D.alive.slice().sort(function(a, b){ return a.elo - b.elo; })[0];
+      if(eloRank[mouse.idx] > teams.length / 2) say(62, 'underdogAlive', { t: snB(mouse), e: Math.round(mouse.elo) });
+    }
+    if(D.mode === 'double-elimination'){
+      var zs = D.alive.filter(function(t){ return t.koL === 1; });
+      if(zs.length) say(54, 'deSurvivor', { t: snB(pickR(zs)) });
+    }
     if(D.mode === 'swiss' && D.s.swiss && !(D.s.swiss.playoffQualifiers || []).length){
       var ql = (D.s.swiss.qualified || []).map(function(i){ return D.T[i]; }).filter(Boolean);
-      if(ql.length) say(58, 'race', ['🎟️ {n} đội đã có vé playoff: {list}.'], ['🎟️ {n} teams have booked a playoff ticket: {list}.'], { n: ql.length, list: ql.map(snB).join(', ') });
+      if(ql.length) say(58, 'swissTickets', { n: ql.length, list: ql.map(function(t){ return snB(t); }).join(', ') });
     }
+    if(odds && odds.title.length >= 2 && D.alive.length >= 4) say(52, 'fFinalGuess', { a: snB(odds.title[0].t), b: snB(odds.title[1].t) });
   }
 
-  // --- Latest results ---
+  // --- Latest results (same commentary as Teo Robot) ---
   if(!D.dbl){
     var idxs = [];
     cd.hist.forEach(function(m, i){ if(m.sid === D.sid) idxs.push(i); });
     idxs.slice(-2).reverse().forEach(function(i, k){
-      var c = careerCommentary(cd, i), m = cd.hist[i];
-      if(!c) return;
+      var cm = careerCommentary(cd, i), m = cd.hist[i];
+      if(!cm) return;
       items.push({ pri: (k ? 58 : 73) + rng() * 10, tag: 'result',
-        html: '<span class="sn-score no-i18n">' + snE(m.home + ' ' + m.hg + ' – ' + m.ag + ' ' + m.away) + '</span> <small class="muted no-i18n">' + snE(m.stage) + '</small><br>' + snE(c.lines.join(' ')) });
+        html: '<span class="sn-score no-i18n">' + snE(m.home + ' ' + m.hg + ' – ' + m.ag + ' ' + m.away) + '</span> <small class="muted no-i18n">' + snE(m.stage) + '</small><br>' + snE(cm.lines.join(' ')) });
     });
   }
 
@@ -388,140 +480,267 @@ function snNews(D, odds, rng){
   var ups = D.ent.filter(function(m){ return m.hg !== m.ag && isFinite(m.eloH) && isFinite(m.eloA); })
     .map(function(m){ var hw = m.hg > m.ag; return { m: m, d: hw ? m.eloA - m.eloH : m.eloH - m.eloA, w: hw ? m._h : m._a, l: hw ? m._a : m._h, ew: hw ? m.eloH : m.eloA, el: hw ? m.eloA : m.eloH }; });
   var up = snMax(ups, function(x){ return x.d; });
-  if(up && up.d >= 60) say(62, 'shock', ['😱 Địa chấn của mùa: {w} (Elo {ew}) hạ {l} (Elo {el}) {sc} ở {st}.', '🤯 Không ai tin nổi: {w} kém {d} Elo vẫn quật ngã {l} {sc} ({st}).'],
-    ['😱 Upset of the season: {w} (Elo {ew}) beat {l} (Elo {el}) {sc} in {st}.', '🤯 Nobody believed it: {w}, {d} Elo behind, toppled {l} {sc} ({st}).'],
-    { w: snB(up.w), l: snB(up.l), ew: Math.round(up.ew), el: Math.round(up.el), d: Math.round(up.d), sc: up.m.hg + '–' + up.m.ag, st: '<span class="no-i18n">' + snE(up.m.stage) + '</span>' });
+  if(up && up.d >= 60) say(62, 'upset', { w: snB(up.w), l: snB(up.l), ew: Math.round(up.ew), el: Math.round(up.el), d: Math.round(up.d),
+    sc: up.m.hg + '–' + up.m.ag, st: stTxt(up.m.stage) });
 
   // --- Form ---
   var active = teams.filter(function(t){ return t.P >= 3; });
   var hot = snMax(active, function(t){ return snStreak(t, 'W') * 10 + snFormPts(t, 5); });
-  if(hot && snStreak(hot, 'W') >= 3) say(66, 'form', ['🔥 {t} đã thắng {k} trận liên tiếp. Ai sẽ là người chặn đứng?', '🚀 {t} đang bay cao với {k} chiến thắng liền mạch.', '🔥 {k} trận thắng liền cho {t}. Nóng như chảo dầu!'],
-    ['🔥 {t} have won {k} in a row. Who will stop them?', '🚀 {t} are flying with {k} straight wins.', '🔥 {k} wins on the bounce for {t}. Red hot!'], { t: snB(hot), k: snStreak(hot, 'W') });
-  else if(hot && snFormPts(hot, 5) >= 10) say(50, 'form', ['📈 {t} có phong độ tốt nhất giải: {p}/15 điểm trong 5 trận gần nhất.'],
-    ['📈 {t} are in the best form: {p}/15 points from their last 5.'], { t: snB(hot), p: snFormPts(hot, 5) });
+  if(hot && snStreak(hot, 'W') >= 3) say(66, 'hot', { t: snB(hot), k: snStreak(hot, 'W') });
+  else if(hot && snFormPts(hot, 5) >= 10) say(50, 'bestForm', { t: snB(hot), p: snFormPts(hot, 5) });
   var cold = snMax(active, function(t){ return snStreak(t, 'L') * 10 + snStreak(t, 'N'); });
   if(cold && cold !== hot){
-    if(snStreak(cold, 'L') >= 3) say(64, 'troll', ['🚑 {t} thua {k} trận liền. Tèo đề nghị kiểm tra lại tay cầm.', '📉 {t} đã thua {k} trận liên tiếp. Có cần gọi bác sĩ tâm lý không?', '🧯 {t} thua {k} trận liền — cháy nhà rồi, ai dập lửa đây?'],
-      ['🚑 {t} have lost {k} in a row. Teo suggests checking the controller.', '📉 {k} straight defeats for {t}. Time to call a sports psychologist?', '🧯 {t} have lost {k} straight — the house is on fire!'], { t: snB(cold), k: snStreak(cold, 'L') });
-    else if(snStreak(cold, 'N') >= 4) say(58, 'troll', ['🥶 {t} đã {k} trận không biết thắng. Có ai mang bùa may mắn cho họ không?', '🍋 {k} trận chưa biết mùi chiến thắng — {t} chua như chanh.'],
-      ['🥶 {t} are {k} games without a win. Someone bring them a lucky charm?', '🍋 {k} games without a win — sour times for {t}.'], { t: snB(cold), k: snStreak(cold, 'N') });
+    if(snStreak(cold, 'L') >= 3) say(64, 'coldLose', { t: snB(cold), k: snStreak(cold, 'L') });
+    else if(snStreak(cold, 'N') >= 4) say(58, 'coldWinless', { t: snB(cold), k: snStreak(cold, 'N') });
   }
   var unb = snMax(active, function(t){ return snStreak(t, 'U'); });
-  if(unb && unb !== hot && snStreak(unb, 'U') >= 5) say(48, 'form', ['🛡️ {t} bất bại {k} trận liên tiếp. Muốn hạ họ phải có kế hoạch đặc biệt.'],
-    ['🛡️ {t} are unbeaten in {k}. Beating them takes a special plan.'], { t: snB(unb), k: snStreak(unb, 'U') });
+  if(unb && unb !== hot && snStreak(unb, 'U') >= 5) say(48, 'unbeaten', { t: snB(unb), k: snStreak(unb, 'U') });
+  var zig = active.filter(function(t){
+    var f = t.form.slice(-5);
+    return f.length === 5 && f.every(function(r, i){ return r !== 'D' && (!i || r !== f[i - 1]); });
+  });
+  if(zig.length){
+    var zt = pickR(zig);
+    say(40, 'zigzag', { t: snB(zt), f: zt.form.slice(-5).map(function(r){ return crL({ W: 'T', D: 'H', L: 'B' }[r], r); }).join('-') });
+  }
+  var drr = snMax(active, function(t){ return snStreak(t, 'D'); });
+  if(drr && snStreak(drr, 'D') >= 3) say(38, 'drawRun', { t: snB(drr), k: snStreak(drr, 'D') });
 
   // --- Attack / defence ---
   var g2 = teams.filter(function(t){ return t.gP >= 2; });
   var att = snMax(g2, function(t){ return t.GF / t.gP; });
-  if(att) say(46, 'stats', ['⚽ Hàng công {t} đã nổ {gf} bàn sau {p} trận ({a}/trận). Thủ môn các đội khác hãy cẩn thận!', '⚽ {t} là cỗ máy ghi bàn của mùa: {a} bàn mỗi trận.'],
-    ['⚽ {t} have scored {gf} in {p} games ({a}/match). Goalkeepers, beware!', '⚽ {t} are the goal machine of the season: {a} per match.'], { t: snB(att), gf: att.GF, p: att.gP, a: (att.GF / att.gP).toFixed(1) });
+  if(att) say(46, 'attack', { t: snB(att), gf: att.GF, p: att.gP, a: (att.GF / att.gP).toFixed(1) });
   var leak = snMax(g2, function(t){ return t.GA / t.gP; });
-  if(leak && leak.GA / leak.gP >= 2) say(54, 'troll', ['🥅 {t} thủng lưới {ga} bàn sau {p} trận. Lưới hay là lưới đánh cá?', '🧀 Hàng thủ {t} như miếng phô mai Thụy Sĩ: {a} bàn thua mỗi trận.', '🚪 Cửa nhà {t} mở toang: {a} bàn thua/trận. Ai đó lắp giùm cái khóa!'],
-    ['🥅 {t} have conceded {ga} in {p} games. Goal net or fishing net?', '🧀 The {t} defence is Swiss cheese: {a} conceded per match.', '🚪 The {t} door is wide open: {a} conceded per match. Someone fit a lock!'], { t: snB(leak), ga: leak.GA, p: leak.gP, a: (leak.GA / leak.gP).toFixed(1) });
+  if(leak && leak.GA / leak.gP >= 2) say(54, 'leak', { t: snB(leak), ga: leak.GA, p: leak.gP, a: (leak.GA / leak.gP).toFixed(1) });
   var g3 = teams.filter(function(t){ return t.gP >= 3; });
   var wall = snMax(g3, function(t){ return -t.GA / t.gP; });
-  if(wall && wall !== leak && wall.GA / wall.gP <= 1.2) say(44, 'stats', ['🧱 {t} mới để thủng lưới {ga} bàn sau {p} trận — bức tường thực sự.'],
-    ['🧱 {t} have let in only {ga} in {p} games — a real wall.'], { t: snB(wall), ga: wall.GA, p: wall.gP });
+  if(wall && wall !== leak && wall.GA / wall.gP <= 1.2) say(44, 'wall', { t: snB(wall), ga: wall.GA, p: wall.gP });
   var blank = snMax(teams, function(t){ return t.blank; });
-  if(blank && blank.blank >= 2) say(42, 'troll', ['🔇 {t} đã {k} trận tịt ngòi. Tiền đạo đi nghỉ mát rồi à?', '🔇 {k} trận không ghi nổi bàn nào — {t} cần gấp một tiền đạo.'],
-    ['🔇 {t} have drawn a blank {k} times. Are the strikers on holiday?', '🔇 {k} games without a goal — {t} urgently need a striker.'], { t: snB(blank), k: blank.blank });
+  if(blank && blank.blank >= 2) say(42, 'blank', { t: snB(blank), k: blank.blank });
   var cs = snMax(teams, function(t){ return t.cs; });
-  if(cs && cs.cs >= 2 && cs !== wall) say(34, 'stats', ['🧤 {t} giữ sạch lưới {k} trận — thủ môn xứng đáng được tăng lương.'],
-    ['🧤 {t} have kept {k} clean sheets — give the keeper a raise.'], { t: snB(cs), k: cs.cs });
+  if(cs && cs.cs >= 2 && cs !== wall) say(34, 'cleanSheets', { t: snB(cs), k: cs.cs });
   var dk = snMax(teams, function(t){ return t.D; });
-  if(dk && dk.D >= 3) say(36, 'troll', ['🤝 {t} là "vua hòa" với {k} trận hòa. Chia điểm là đam mê.', '🤝 {k} trận hòa — {t} đúng là sứ giả hòa bình của giải.'],
-    ['🤝 {t} are the draw kings with {k} draws. Sharing is caring.', '🤝 {k} draws — {t} are the league\'s peace ambassadors.'], { t: snB(dk), k: dk.D });
+  if(dk && dk.D >= 3) say(36, 'drawKing', { t: snB(dk), k: dk.D });
 
   // --- Matches of the season ---
   var big = snMax(D.games, function(m){ return Math.abs(m.hg - m.ag) * 10 + m.hg + m.ag; });
-  if(big && Math.abs(big.hg - big.ag) >= 3) say(40, 'stats', ['💥 Trận thắng đậm nhất mùa: {h} {sc} {a} ({st}).'],
-    ['💥 Biggest win of the season: {h} {sc} {a} ({st}).'], { h: snB(big._h), a: snB(big._a), sc: big.hg + '–' + big.ag, st: '<span class="no-i18n">' + snE(big.stage) + '</span>' });
+  if(big && Math.abs(big.hg - big.ag) >= 3) say(40, 'bigWin', { h: snB(big._h), a: snB(big._a), sc: big.hg + '–' + big.ag, st: stTxt(big.stage) });
   var fest = snMax(D.games, function(m){ return m.hg + m.ag; });
-  if(fest && fest !== big && fest.hg + fest.ag >= 6) say(38, 'stats', ['🎆 Mưa bàn thắng: {h} {sc} {a} là trận nhiều bàn nhất mùa.'],
-    ['🎆 Goal fest: {h} {sc} {a} is the highest-scoring match of the season.'], { h: snB(fest._h), a: snB(fest._a), sc: fest.hg + '–' + fest.ag });
+  if(fest && fest !== big && fest.hg + fest.ag >= 6) say(38, 'fest', { h: snB(fest._h), a: snB(fest._a), sc: fest.hg + '–' + fest.ag });
   if(D.games.length >= 6){
     var avg = D.avgGoals, draws = D.games.filter(function(m){ return m.hg === m.ag; }).length / D.games.length;
-    say(32, 'stats', ['📊 Mùa này: {g} bàn sau {m} trận, trung bình {a} bàn/trận. {c}'], ['📊 This season: {g} goals in {m} games, {a} per match. {c}'],
-      { g: D.G, m: D.games.length, a: avg.toFixed(2), c: avg >= 4 ? crL('Hàng thủ các đội đi đâu hết rồi?', 'Where did all the defenders go?') : avg <= 2.2 ? crL('Hơi buồn ngủ một chút...', 'A bit sleepy...') : crL('Vừa đủ để khán giả không ngủ gật.', 'Just enough to keep the crowd awake.') });
-    if(draws >= 0.35) say(30, 'troll', ['😴 {p} số trận kết thúc hòa — giải đấu của những người yêu hòa bình.'], ['😴 {p} of matches ended level — a tournament for peace lovers.'], { p: snPct(draws) });
+    say(32, 'avgGoals', { g: D.G, m: D.games.length, a: avg.toFixed(2), c: snLine(avg >= 4 ? 'avgHi' : avg <= 2.2 ? 'avgLo' : 'avgMid', {}, rng) });
+    if(draws >= 0.35) say(30, 'drawShare', { p: snPct(draws) });
+  }
+  if(D.games.length >= 8){
+    var scs = {};
+    D.games.forEach(function(m){ var k = Math.max(m.hg, m.ag) + '–' + Math.min(m.hg, m.ag); scs[k] = (scs[k] || 0) + 1; });
+    var topSc = snMax(Object.keys(scs), function(k){ return scs[k]; });
+    if(topSc && scs[topSc] >= 3) say(28, 'commonScore', { sc: topSc, k: scs[topSc] });
   }
 
-  // --- Elo winners / losers ---
+  // --- Elo ---
   var eg = snMax(teams, function(t){ return t.eloD; }), el = snMax(teams, function(t){ return -t.eloD; });
-  if(eg && eg.eloD >= 10) say(44, 'stats', ['📈 {t} là đội hưởng lợi nhiều nhất mùa này: {d} Elo.', '💰 Cổ phiếu {t} đang tăng trần: {d} Elo chỉ trong mùa này.'],
-    ['📈 {t} are the biggest winners this season: {d} Elo.', '💰 {t} stock is soaring: {d} Elo this season alone.'], { t: snB(eg), d: snSigned(eg.eloD) });
-  if(el && el.eloD <= -10) say(46, 'troll', ['📉 {t} đã rơi {d} Elo mùa này. Chứng khoán còn đỡ hơn.', '📉 {t} mất {d} Elo — Tèo đề nghị bán gấp trước khi quá muộn.'],
-    ['📉 {t} have shed {d} Elo this season. Even the stock market is kinder.', '📉 {t} are down {d} Elo — Teo says sell before it is too late.'], { t: snB(el), d: Math.round(-el.eloD) });
+  if(eg && eg.eloD >= 10) say(44, 'eloGain', { t: snB(eg), d: snSigned(eg.eloD) });
+  if(el && el.eloD <= -10) say(46, 'eloDrop', { t: snB(el), d: Math.round(-el.eloD) });
+  if(!D.dbl){
+    var et = careerEloTable(cd, false)[0], ek = et ? byName[snLc(et.name)] : null;
+    if(ek) say(46, 'eloKing', { t: snB(ek), e: Math.round(et.elo) });
+    var lowE = byElo[byElo.length - 1];
+    if(lowE && lowE.elo < ELO_BASE - 40 && cd.elo[lowE.ck] && cd.elo[lowE.ck].P >= 10) say(36, 'eloBelowBase', { t: snB(lowE), e: Math.round(lowE.elo) });
+  }
+  if(byElo.length >= 3 && byElo[0].elo - byElo[byElo.length - 1].elo >= 150)
+    say(30, 'eloGapField', { a: snB(byElo[0]), b: snB(byElo[byElo.length - 1]), g: Math.round(byElo[0].elo - byElo[byElo.length - 1].elo) });
 
   // --- Previews of the next matches ---
   if(D.pending.length && !D.done){
     var rnd = D.pending.slice(0, Math.max(4, Math.floor(teams.length / 2)));
-    var preds = rnd.map(function(m){ return { m: m, x: snPredict(D, m) }; });
+    var preds = rnd.map(function(m){ var x = snPredict(D, m); return { m: m, x: x, hh: D.dbl ? null : snH2H(cd, x.h.ck, x.a.ck) }; });
     var bigM = snMax(preds, function(p){ return p.x.h.elo + p.x.a.elo; });
     var oneSided = snMax(preds, function(p){ return p.x.pf; });
     var evenM = snMax(preds, function(p){ return -Math.abs(p.x.p.h - p.x.p.a); });
-    var stTxt = function(m){ return '<span class="no-i18n">' + snE(m.stage) + '</span>'; };
     var pick = function(p){ return p.m.ko ? crL(snB(p.x.fav) + ' đi tiếp (' + snPct(p.x.pf) + ')', snB(p.x.fav) + ' to go through (' + snPct(p.x.pf) + ')')
       : crL('dự đoán ' + p.x.sc, 'predicted ' + p.x.sc); };
     if(bigM){
-      var hh = D.dbl ? null : snH2H(cd, bigM.x.h.ck, bigM.x.a.ck);
-      say(74, 'preview', ['⚔️ Đại chiến {st}: {h} vs {a}. Tèo nghiêng về {f} ({p}), {pk}.{hh}', '🍿 Tâm điểm {st}: {h} đụng độ {a}. {f} được đánh giá cao hơn ({p}), {pk}.{hh}'],
-        ['⚔️ Big match, {st}: {h} vs {a}. Teo leans towards {f} ({p}), {pk}.{hh}', '🍿 Spotlight on {st}: {h} take on {a}. {f} are favourites ({p}), {pk}.{hh}'],
-        { st: stTxt(bigM.m), h: snB(bigM.x.h), a: snB(bigM.x.a), f: snB(bigM.x.fav), p: snPct(bigM.x.pf), pk: pick(bigM),
-          hh: hh && hh.P ? crL(' Lịch sử đối đầu: ', ' Head-to-head: ') + hh.W + '-' + hh.D + '-' + hh.L + '.' : '' });
+      var hh = bigM.hh;
+      say(74, 'bigMatch', { st: stTxt(bigM.m.stage), h: snB(bigM.x.h), a: snB(bigM.x.a), f: snB(bigM.x.fav), p: snPct(bigM.x.pf), pk: pick(bigM),
+        hh: hh && hh.P ? crL(' Lịch sử đối đầu: ', ' Head-to-head: ') + hh.W + '-' + hh.D + '-' + hh.L + '.' : '' });
       if(hh && hh.P >= 3){
-        var dog = bigM.x.dog, favT = bigM.x.fav, dogW = dog === bigM.x.h ? hh.W : hh.L, favW = dog === bigM.x.h ? hh.L : hh.W;
-        if(dogW > favW) say(60, 'preview', ['🧿 {d} kém Elo nhưng lại đang thắng {f} {w}-{l} trong đối đầu. Lời nguyền có tiếp diễn?'],
-          ['🧿 {d} trail on Elo but lead {f} {w}-{l} head-to-head. Will the curse continue?'], { d: snB(dog), f: snB(favT), w: dogW, l: favW });
+        var dog = bigM.x.dog, dogW = dog === bigM.x.h ? hh.W : hh.L, favW = dog === bigM.x.h ? hh.L : hh.W;
+        if(dogW > favW) say(60, 'curse', { d: snB(dog), f: snB(bigM.x.fav), w: dogW, l: favW });
       }
     }
-    if(oneSided && oneSided !== bigM && oneSided.x.pf >= 0.72) say(56, 'troll', ['🐟 {d} gặp {f}: Tèo cho {d} {p} cơ hội. Mang theo áo mưa nhé!', '🙏 {d} chạm trán {f}. Tèo chỉ biết chúc {d} may mắn ({p}).'],
-      ['🐟 {d} face {f}: Teo gives {d} a {p} chance. Bring a raincoat!', '🙏 {d} meet {f}. All Teo can say is good luck, {d} ({p}).'],
-      { d: snB(oneSided.x.dog), f: snB(oneSided.x.fav), p: snPct(1 - oneSided.x.pf - oneSided.x.p.d) });
-    if(evenM && evenM !== bigM && evenM !== oneSided && Math.abs(evenM.x.p.h - evenM.x.p.a) < 0.08) say(48, 'preview', ['🎲 {h} vs {a} là kèo 50-50 đúng nghĩa. Tèo... xin phép không đoán!', '⚖️ {h} – {a}: hai bên ngang tài ngang sức, {pk}.'],
-      ['🎲 {h} vs {a} is a true coin flip. Teo... would rather not guess!', '⚖️ {h} – {a}: evenly matched, {pk}.'], { h: snB(evenM.x.h), a: snB(evenM.x.a), pk: pick(evenM) });
+    if(oneSided && oneSided !== bigM && oneSided.x.pf >= 0.72)
+      say(56, 'oneSided', { d: snB(oneSided.x.dog), f: snB(oneSided.x.fav), p: snPct(1 - oneSided.x.pf - oneSided.x.p.d) });
+    if(evenM && evenM !== bigM && evenM !== oneSided && Math.abs(evenM.x.p.h - evenM.x.p.a) < 0.08)
+      say(48, 'coinFlip', { h: snB(evenM.x.h), a: snB(evenM.x.a), pk: pick(evenM) });
+    if(!D.dbl){
+      var fresh = preds.filter(function(p){ return !p.hh.P; })[0];
+      if(fresh) say(44, 'firstMeet', { h: snB(fresh.x.h), a: snB(fresh.x.a) });
+      var cls = snMax(preds.filter(function(p){ return p !== bigM && p.hh.P >= 6; }), function(p){ return p.hh.P; });
+      if(cls) say(52, 'classic', { h: snB(cls.x.h), a: snB(cls.x.a), n: cls.hh.P, w: cls.hh.W, d: cls.hh.D, l: cls.hh.L });
+      var sk = snMax(preds, function(p){ return Math.max(snStreak(p.x.h, 'W'), snStreak(p.x.a, 'W')); });
+      if(sk){
+        var skT = snStreak(sk.x.h, 'W') >= snStreak(sk.x.a, 'W') ? sk.x.h : sk.x.a, skK = snStreak(skT, 'W');
+        if(skK >= 3) say(54, 'streakLine', { t: snB(skT), k: skK, o: snB(skT === sk.x.h ? sk.x.a : sk.x.h) });
+      }
+      var rv = null;
+      preds.forEach(function(p){
+        if(rv) return;
+        var hc = p.x.h.ck, ac = p.x.a.ck, last = null;
+        cd.hist.forEach(function(m){ if(!m.ko && ((m.home === hc && m.away === ac) || (m.home === ac && m.away === hc))) last = m; });
+        if(last && Math.abs(last.hg - last.ag) >= 2){
+          var hLost = (last.home === hc) === (last.hg < last.ag);
+          rv = { t: hLost ? p.x.h : p.x.a, o: hLost ? p.x.a : p.x.h, sc: Math.min(last.hg, last.ag) + '–' + Math.max(last.hg, last.ag) };
+        }
+      });
+      if(rv) say(50, 'revengeChance', { t: snB(rv.t), o: snB(rv.o), sc: rv.sc });
+    }
+  }
+  if(D.status === 'live'){
+    var left = D.pending.length + D.extraRounds * Math.floor(teams.length / 2);
+    if(left >= 2 && left <= 12) say(34, 'fRemaining', { k: left });
   }
 
   // --- Milestones ---
-  if(!D.dbl) teams.forEach(function(t){
-    var e = cd.elo[t.ck];
-    if(!e) return;
-    var nextM = Math.ceil((e.P + 1) / 50) * 50, k = nextM - e.P;
-    if(k <= 2 && e.P >= 20) say(28, 'mile', ['🎖️ {t} chỉ còn {k} trận nữa là cán mốc {m} trận sự nghiệp.'], ['🎖️ {t} are {k} match(es) away from {m} career games.'], { t: snB(t), k: k, m: nextM });
-    if(t.P && Math.abs(e.elo - e.peak) < 0.5 && e.P >= 15) say(40, 'mile', ['🏔️ {t} đang ở đỉnh cao Elo sự nghiệp ({e}). Đừng nhìn xuống!'], ['🏔️ {t} are at their career-high Elo ({e}). Don\'t look down!'], { t: snB(t), e: Math.round(e.elo) });
-  });
-
-  // --- Rumours ---
-  if(teams.length){
-    var victims = teams.filter(function(t){ return t.L > t.W; });
-    var who = (victims.length ? victims : teams)[Math.floor(rng() * (victims.length || teams.length))];
-    say(18 + rng() * 30, 'rumor', [
-      '🕵️ Tin đồn: {t} đang bí mật luyện tập lúc 2h sáng để chuẩn bị cho trận tới.',
-      '📱 Nguồn tin thân cận: {t} đã đổi hình nền điện thoại thành bảng xếp hạng để tự tạo động lực.',
-      '🧂 Tin đồn chưa kiểm chứng: {t} đổ lỗi phong độ cho... tay cầm bị lag.',
-      '☕ Theo Tèo được biết, {t} uống 3 ly cà phê trước mỗi trận. Hiệu quả? Chưa rõ.',
-      '🎤 {t} tuyên bố: "Mùa này không vô địch thì mùa sau". Tèo đã ghi âm lại làm bằng chứng.',
-      '📺 Có người thấy {t} xem lại highlight trận thua tới 10 lần. Đau nhưng phải học.',
-      '🧘 {t} được cho là đang tập thiền để giữ bình tĩnh khi bị dẫn bàn.'],
-      ['🕵️ Rumour: {t} are secretly training at 2 a.m. for the next match.',
-      '📱 Sources close to {t} say the table is now their phone wallpaper — for motivation.',
-      '🧂 Unconfirmed: {t} blame their form on... a laggy controller.',
-      '☕ Teo hears {t} drink 3 coffees before every match. Effective? Unclear.',
-      '🎤 {t} declare: "If not this season, then next season". Teo has it on tape.',
-      '📺 {t} were spotted rewatching their last defeat 10 times. Painful but educational.',
-      '🧘 {t} are reportedly taking up meditation to stay calm when going behind.'], { t: snB(who) });
+  if(!D.dbl){
+    teams.forEach(function(t){
+      var e = cd.elo[t.ck];
+      if(!e) return;
+      var nextM = Math.ceil((e.P + 1) / 50) * 50;
+      if(nextM - e.P <= 2 && e.P >= 20) say(28, 'mileMatches', { t: snB(t), k: nextM - e.P, m: nextM });
+      var nw = Math.ceil((e.W + 1) / 25) * 25;
+      if(e.W >= 20 && nw - e.W <= 2) say(30, 'mileWins', { t: snB(t), k: nw - e.W, m: nw });
+      var ng = Math.ceil((e.GF + 1) / 100) * 100;
+      if(e.GF >= 50 && ng - e.GF <= 5) say(30, 'mileGoals', { t: snB(t), k: ng - e.GF, m: ng });
+      if(t.P && Math.abs(e.elo - e.peak) < 0.5 && e.P >= 15) say(40, 'milePeak', { t: snB(t), e: Math.round(e.elo) });
+    });
+    var seen = {};
+    cd.hist.forEach(function(m){
+      if(m.sid === D.sid) return;
+      [m.home, m.away].forEach(function(n){ (seen[n] || (seen[n] = {}))[m.sid] = 1; });
+    });
+    var nSeas = function(t){ return seen[t.ck] ? Object.keys(seen[t.ck]).length : 0; };
+    var vt = snMax(teams, nSeas);
+    if(vt && nSeas(vt) + 1 >= 6) say(30, 'mileSeasons', { t: snB(vt), k: nSeas(vt) + 1 });
   }
 
-  // Pick a varied front page.
+  // --- Career spotlight: a few random teams of the field, seen through their whole history ---
+  if(!D.dbl){
+    snShuffled(teams, rng).slice(0, 5).forEach(function(t){
+      if(!cd.elo[t.ck]) return;
+      var tc = teamCareer(cd, t.ck);
+      if(!tc.list.length) return;
+      var n = snB(t), P = tc.list.length, Wn = tc.list.filter(function(x){ return x.r === 'W'; }).length;
+      var real = tc.list.filter(function(x){ return !x.m.est && !x.m.ko; }), GA = real.reduce(function(a, x){ return a + x.ga; }, 0);
+      var mc = medalCount(tc.trophies), opts = [];
+      var o = function(pri, id, v){ v.n = n; opts.push([pri, id, v]); };
+      var nem = tc.opponents.filter(function(x){ return x.L >= 3 && x.L > x.W; }).sort(function(a, b){ return b.L - a.L; })[0];
+      if(nem) o(44, 'pNemesis', { x: snB(nem.name), xl: nem.L, xw: nem.W });
+      var nb = tc.opponents.filter(function(x){ return x.P >= 3 && !x.W; }).sort(function(a, b){ return b.P - a.P; })[0];
+      if(nb) o(42, 'pNeverBeat', { x: snB(nb.name), xp: nb.P });
+      var vic = tc.opponents.filter(function(x){ return x.W >= 4 && x.W >= 3 * x.L; }).sort(function(a, b){ return b.W - a.W; })[0];
+      if(vic) o(36, 'pVictim', { x: snB(vic.name), k: vic.W });
+      var wl = tc.worstLoss, bw = tc.biggestWin;
+      if(wl && wl.ga - wl.gf >= 3) o(36, 'pWorstLoss', { x: snB(wl.opp), sc: wl.gf + '–' + wl.ga, s: stTxt(wl.m.season), st: stTxt(wl.m.stage) });
+      if(bw && bw.gf - bw.ga >= 3) o(32, 'pBestWin', { x: snB(bw.opp), sc: bw.gf + '–' + bw.ga, s: stTxt(bw.m.season) });
+      if(tc.elo && tc.elo.peak - tc.elo.elo >= 60) o(40, 'pPeakDrop', { k: Math.round(tc.elo.peak - tc.elo.elo), pk: Math.round(tc.elo.peak) });
+      if(P >= 15 && Wn / P < 0.35) o(40, 'pLowWin', { k: Math.round(Wn * 100 / P) });
+      else if(P >= 15 && Wn / P >= 0.6) o(36, 'pWinRateHigh', { k: Math.round(Wn * 100 / P) });
+      if(real.length >= 20 && GA / real.length >= 2.5) o(38, 'pLeaky', { k: (GA / real.length).toFixed(1) });
+      if(tc.ko.P >= 4 && tc.ko.W / tc.ko.P < 0.4) o(40, 'pKoChoke', { k: tc.ko.W + '/' + tc.ko.P });
+      else if(tc.ko.P >= 4 && tc.ko.W / tc.ko.P >= 0.65) o(34, 'pKoKing', { k: tc.ko.W + '/' + tc.ko.P });
+      if(P >= 20 && !mc.gold) o(38, 'pNoGold', { k: P });
+      else if(mc.gold + mc.silver + mc.bronze >= 3) o(34, 'pCabinet', { g: mc.gold, s: mc.silver, b: mc.bronze });
+      if(tc.rank === 1) o(46, 'pThrone', {});
+      if(tc.streaks.best.win >= 6) o(28, 'pBestStreak', { k: tc.streaks.best.win });
+      if(P >= 150) o(26, 'pVeteran', { k: P });
+      else if(P < 12) o(26, 'pRookie', { k: P });
+      var prevT = tc.trophies.filter(function(x){ return x.sid !== D.sid; }), lastT = prevT[prevT.length - 1];
+      if(lastT) o(32, 'pLastSeason', { s: stTxt(lastT.season), pl: (lastT.medal ? CR_MEDAL_ICON[lastT.medal] + ' ' : '') + snE(lastT.place) });
+      snShuffled(opts, rng).slice(0, 2).forEach(function(x){ say(x[0], x[1], x[2]); });
+    });
+  }
+
+  // --- Rivalries inside the field ---
+  if(!D.dbl && teams.length >= 3){
+    var inF = {}, pairs = {};
+    teams.forEach(function(t){ inF[t.ck] = t; });
+    cd.hist.forEach(function(m){
+      var a = inF[m.home], b = inF[m.away];
+      if(!a || !b || a === b) return;
+      var x = a.ck < b.ck ? a : b, y = x === a ? b : a, k = x.ck + '\u0000' + y.ck;
+      var pr = pairs[k] || (pairs[k] = { a: x, b: y, P: 0, W: 0, D: 0, L: 0 });
+      pr.P++; pr[x === a ? careerResult(m.hg, m.ag) : careerResult(m.ag, m.hg)]++;
+    });
+    var pl = Object.keys(pairs).map(function(k){ return pairs[k]; });
+    var riv = snMax(pl.filter(function(p){ return p.P >= 6; }), function(p){ return p.P + rng() * 4; });
+    if(riv) say(40, 'hRivalry', { a: snB(riv.a), b: snB(riv.b), n: riv.P, w: riv.W, d: riv.D, l: riv.L });
+    var lop = snMax(pl.filter(function(p){ return p.P >= 4 && Math.abs(p.W - p.L) >= 4 && Math.min(p.W, p.L) * 3 <= Math.max(p.W, p.L); }),
+      function(p){ return Math.abs(p.W - p.L) + rng(); });
+    if(lop){
+      var aw = lop.W >= lop.L;
+      say(38, 'hLopsided', { a: snB(aw ? lop.a : lop.b), b: snB(aw ? lop.b : lop.a), w: Math.max(lop.W, lop.L), l: Math.min(lop.W, lop.L) });
+    }
+    var ev = snMax(pl.filter(function(p){ return p.P >= 6 && p.W === p.L && p !== riv; }), function(p){ return p.P; });
+    if(ev) say(34, 'hEven', { a: snB(ev.a), b: snB(ev.b), n: ev.P });
+  }
+
+  // --- Sidelines ---
+  if(rng() < 0.5) say(14, 'clubMatches', { k: cd.hist.length + (cd.dbl || []).length });
+  else {
+    var cg = 0;
+    cd.hist.concat(cd.dbl || []).forEach(function(m){ if(!m.est) cg += m.hg + m.ag; });
+    say(14, 'clubGoals', { k: cg });
+  }
+  if(!D.dbl && D.sid){
+    var avgs = careerSeasonIds(state).filter(function(id){ var s = state.seasons[id]; return s && !crIsDoubles(s) && (s.teams || []).length >= 3; })
+      .map(function(id){
+        var ns = state.seasons[id].teams.map(careerName).filter(function(x){ return x && !/^bye$/i.test(x); }), sum = 0;
+        ns.forEach(function(x){ var e = cd.elo[careerResolveName(cd, x)]; sum += e ? e.elo : ELO_BASE; });
+        return { id: id, v: ns.length ? sum / ns.length : 0 };
+      }).sort(function(a, b){ return b.v - a.v; });
+    var me = avgs.filter(function(x){ return x.id === D.sid; })[0], mr = avgs.indexOf(me) + 1;
+    if(me && avgs.length >= 3 && (mr <= 2 || mr === avgs.length)) say(26, 'fieldAvg', { e: Math.round(me.v), r: mr, n: avgs.length });
+  }
+
+  // --- Rumours & quotes ---
+  if(teams.length){
+    var victims = teams.filter(function(t){ return t.L > t.W; });
+    say(18 + rng() * 30, 'rumor', { t: snB(pickR(victims.length ? victims : teams)) });
+    if(D.status !== 'idle'){
+      var qL = D.podium.gold || (D.kind === 'table' && D.table.length ? D.table[0].t : odds && odds.title.length ? odds.title[0].t : byElo[0]);
+      say(20 + rng() * 26, 'qLeader', { t: snB(qL) });
+      var qs = snMax(victims, function(t){ return t.L - t.W; });
+      if(qs && qs !== qL) say(20 + rng() * 26, 'qStruggler', { t: snB(qs) });
+    }
+  }
+  say(10 + rng() * 20, 'qTeo', {});
+
   items.sort(function(a, b){ return b.pri - a.pri; });
-  var outList = [], per = {}, LIM = { rumor: 1, result: 2, troll: 3 };
+  items = items.filter(function(it){ return it.html; });
+  if(all) return items;
+  // Pick a varied front page.
+  var outList = [], per = {};
   items.forEach(function(it){
-    var lim = LIM[it.tag] || 2;
-    if(outList.length >= 9 || (per[it.tag] || 0) >= lim) return;
+    var lim = SN_TAG_LIMIT[it.tag] || 2;
+    if(outList.length >= SN_MAX_ITEMS || (per[it.tag] || 0) >= lim) return;
     per[it.tag] = (per[it.tag] || 0) + 1;
     outList.push(it);
   });
   return outList;
+}
+
+// Every headline of a season for Teo Robot (default: the newest rated season).
+function snHeadlines(s){
+  if(typeof careerData !== 'function' || !state || !state.seasons) return [];
+  if(!s || CAREER_SKIP_MODES[s.mode] || !careerSeasonIdOf(s)){
+    var ids = careerSeasonIds(state);
+    s = ids.length ? state.seasons[ids[ids.length - 1]] : null;
+  }
+  if(!s) return [];
+  var rng = snRng(Math.floor(Math.random() * 4294967296)), D = snData(s);
+  return snNews(D, snOdds(D, rng), rng, true).map(function(n){ return { tag: n.tag, label: SN_TAGS[n.tag] || '', html: n.html }; });
 }
 
 // ---------------- Rendering ----------------
@@ -617,7 +836,7 @@ function snBuildHtml(s, rng, key){
     '<span class="ov-status ' + D.status + '">' + st + '</span></div>';
   html += snStatsGrid(D);
   var ed = (snHash(key) % 900) + 100, date = new Date().toLocaleDateString(CR_EN ? 'en-GB' : 'vi-VN');
-  var paper = '<section class="sn-paper"><div class="sn-paper-head"><span class="sn-mast">📰 ' + crL('Góc báo PES', 'The PES Gazette') + '</span>' +
+  var paper = '<section class="sn-paper"><div class="sn-paper-head"><span class="sn-mast">📰 ' + 'PesNews' + '</span>' +
     '<span class="sn-ed muted">' + crL('Số ', 'No. ') + ed + ' · ' + date + '</span>' +
     '<button type="button" class="ghost sn-refresh" data-sn-refresh title="' + snE(crL('Tin khác', 'More news')) + '">🔄</button></div>';
   if(news.length){
@@ -626,8 +845,8 @@ function snBuildHtml(s, rng, key){
       '<div class="sn-list">' + news.slice(1).map(function(n){
         return '<article class="sn-item"><span class="sn-tag t-' + n.tag + '">' + SN_TAGS[n.tag] + '</span><div class="sn-text">' + n.html + '</div></article>';
       }).join('') + '</div>';
-  } else paper += '<div class="muted">' + crL('Chưa có tin gì để đưa. Đá vài trận đi rồi Tèo viết báo!', 'No news yet. Play a few matches and Teo will start writing!') + '</div>';
-  paper += '<div class="sn-foot muted">' + crL('Tèo Robot viết tự động từ kết quả và Elo — tin thay đổi khi có kết quả mới, khi tải lại trang hoặc bấm 🔄.', 'Written automatically by Teo Robot from results and Elo — changes with new results, page reloads or 🔄.') + '</div></section>';
+  } else paper += '<div class="muted">' + crL('Chưa có tin gì để đưa. Đá vài trận đi rồi PesNews viết báo!', 'No news yet. Play a few matches and PesNews will start writing!') + '</div>';
+  paper += '<div class="sn-foot muted">' + crL('PesNews được viết tự động từ kết quả và Elo — tin thay đổi khi có kết quả mới, khi tải lại trang hoặc bấm 🔄.', 'PesNews is written automatically from results and Elo — changes with new results, page reloads or 🔄.') + '</div></section>';
   var boxes = [snOddsBox(D, odds), snRelBox(odds), snFixturesBox(D), snEloBox(D)].filter(Boolean);
   // Many boxes (live leagues) make a tall side column next to a short paper -> lay them out in a row below.
   html += '<div class="sn-main no-i18n' + (boxes.length >= 3 ? ' wide' : '') + '">' + paper +

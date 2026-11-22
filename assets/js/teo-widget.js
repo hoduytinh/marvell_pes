@@ -753,9 +753,6 @@
       '#teoCommentRow{margin-top:10px;padding:8px 10px;border:1px dashed var(--teo-section-border);border-radius:10px}',
       '#teoPanel label#teoCommentLabel{display:flex;align-items:center;gap:8px;margin:0;font-size:12.5px;font-weight:600;text-transform:none;letter-spacing:0;color:var(--teo-text);cursor:pointer}',
       '#teoCommentLabel small{display:block;font-weight:400;color:var(--teo-muted)}',
-      '#teoResult .teo-taunts{list-style:none;padding:0;margin:6px 0 0}',
-      '#teoResult .teo-taunts li{padding:7px 10px;margin-bottom:6px;border-radius:10px;background:var(--teo-summary-alt);border:1px solid var(--teo-summary-border)}',
-      '#teoResult .teo-card-legend{font-size:11.5px;margin-top:8px;text-align:center}',
       '#teoBubble{position:fixed;right:150px;bottom:16px;z-index:9999;max-width:min(380px,calc(100vw - 170px));background:linear-gradient(160deg,var(--teo-bg1),var(--teo-bg3));color:var(--teo-text);border:1px solid var(--teo-border);border-radius:14px 14px 4px 14px;padding:10px 28px 10px 12px;box-shadow:0 12px 28px rgba(2,132,199,.25);font-size:13px;line-height:1.45;display:none;cursor:pointer}',
       '#teoBubble.show{display:block;animation:teoPop .16s ease-out}',
       '#teoBubble .tb-head{font-weight:800;margin-bottom:3px}',
@@ -791,8 +788,6 @@
           '<select id="teoFunction">' +
             '<option value="profile">Hồ sơ cá nhân</option>' +
             '<option value="h2h">Lịch sử đối đầu</option>' +
-            '<option value="card">' + L('Thẻ cầu thủ FIFA', 'FIFA player card') + '</option>' +
-            '<option value="taunt">' + L('Khiêu khích', 'Taunt') + '</option>' +
           '</select>' +
         '</div>' +
       '</div>',
@@ -830,7 +825,7 @@
       '</div>',
       '<div id="teoResult"><span class="muted">Chọn 2 team và bấm Kiểm tra đối đầu.</span></div>',
       '<div id="teoCommentRow"><label id="teoCommentLabel"><input type="checkbox" id="teoCommentToggle"/>' +
-        '<span>🎙️ ' + L('Bình luận viên tự động', 'Auto commentator') + '<small>' + L('Tèo bình luận khi có kết quả mới và thỉnh thoảng khiêu khích một đội ngẫu nhiên.', 'Teo comments on new results and now and then teases a random team.') + '</small></span></label></div>'
+        '<span>🎙️ ' + L('Bình luận viên tự động', 'Auto commentator') + '<small>' + L('Tèo bình luận khi có kết quả mới và thỉnh thoảng đọc tin nóng từ PesNews.', 'Teo comments on new results and now and then reads out a headline from PesNews.') + '</small></span></label></div>'
     ].join('');
 
     panel.appendChild(head);
@@ -938,7 +933,7 @@
       var fn = fnEl.value;
       var opt = fnEl.options[fnEl.selectedIndex];
       var names = [teamAEl.value];
-      if(fn === 'h2h' || (fn === 'taunt' && teamBEl.value)) names.push(teamBEl.value);
+      if(fn === 'h2h') names.push(teamBEl.value);
       return (opt ? opt.textContent + ': ' : '') + names.filter(Boolean).join(' vs ');
     }
 
@@ -1145,56 +1140,8 @@
       });
     }
 
-    function renderCardResult(team) {
-      var card = window.careerFifaCard(window.careerData(window.state), team);
-      resultEl.innerHTML = '<div class="teo-title">' + L('Thẻ cầu thủ', 'Player card') + ': <span class="no-i18n">' + escapeText(team) + '</span></div>' +
-        window.renderFifaCardHtml(card) +
-        (card ? '<div class="muted teo-card-legend">' + L(
-          'Chỉ số 45–99 theo thứ hạng so với các đội khác: Tấn công / Phòng ngự = bàn thắng / bàn thua so với mức thường gặp của từng đối thủ (ít trận thì bị kéo về mức trung bình), Phong độ = 10 trận gần nhất, Bản lĩnh = các loạt đấu loại trực tiếp, Kinh nghiệm = số trận, Danh hiệu = điểm thành tích. Chỉ số tổng kết hợp thêm Elo.',
-          'Ratings 45–99 by rank against the other teams: Attack / Defence = goals scored / conceded compared with what each opponent usually allows / scores (few matches are pulled towards the average), Form = last 10 matches, Clutch = knock-out ties, Experience = matches played, Trophies = finish points. OVR also factors in Elo.') + '</div>' : '');
-      setCaptureEnabled(!!card);
-    }
-
-    function renderTauntResult(team, opp) {
-      var lines = window.careerTaunts(window.careerData(window.state), team, opp || null);
-      resultEl.innerHTML = '<div class="teo-title">😈 ' + L('Tèo khiêu khích', 'Teo teases') + ' <span class="no-i18n">' + escapeText(team) + (opp ? ' (vs ' + escapeText(opp) + ')' : '') + '</span></div>' +
-        '<ul class="teo-taunts no-i18n">' + lines.map(function(l) { return '<li>' + escapeText(l) + '</li>'; }).join('') + '</ul>';
-      setCaptureEnabled(true);
-    }
-
-    function setAnyOpponentOption(on) {
-      var any = teamBEl.querySelector('option[data-any]');
-      if(on && !any) {
-        any = document.createElement('option');
-        any.value = '';
-        any.setAttribute('data-any', '1');
-        any.textContent = L('— Không chọn —', '— None —');
-        teamBEl.insertBefore(any, teamBEl.firstChild);
-        teamBEl.value = '';
-      } else if(!on && any) {
-        any.remove();
-        if(teamBEl.options.length > 1 && teamBEl.selectedIndex <= 0) teamBEl.selectedIndex = 1;
-      }
-    }
-
     function applyFunctionUI() {
       var fn = fnEl.value;
-      setAnyOpponentOption(fn === 'taunt');
-      if(fn === 'card' || fn === 'taunt') {
-        var isCard = fn === 'card';
-        fnDescEl.textContent = isCard
-          ? L('Tạo thẻ cầu thủ kiểu FIFA từ thống kê toàn sự nghiệp (Elo, tấn công, phòng ngự, phong độ, danh hiệu).', 'Build a FIFA-style player card from career stats (Elo, attack, defence, form, trophies).')
-          : L('Tèo soi dữ liệu và "cà khịa" một đội: chuỗi thua, khắc tinh, trận thua đậm nhất... Chọn thêm đối thủ để chọc theo đối đầu.', 'Teo digs through the data and teases a team: losing streaks, nemesis, heaviest defeat... Pick an opponent to tease about the head-to-head.');
-        teamALabelEl.textContent = L('Đội', 'Team');
-        teamBLabelEl.textContent = L('Đối thủ (tuỳ chọn)', 'Opponent (optional)');
-        teamAFieldEl.classList.remove('teo-hidden');
-        teamBFieldEl.classList.toggle('teo-hidden', isCard);
-        var runLabel = isCard ? L('Tạo thẻ', 'Create card') : L('Khiêu khích!', 'Tease!');
-        runBtn.textContent = runLabel;
-        resultEl.innerHTML = '<span class="muted">' + L('Chọn đội và bấm ', 'Select a team and click ') + runLabel + '</span>';
-        setCaptureEnabled(false);
-        return;
-      }
       teamBLabelEl.textContent = L('Đội B', 'Team B');
       if(fn === 'profile') {
         fnDescEl.textContent = L('Toàn bộ sự nghiệp của đội: thẻ cầu thủ, Elo, danh hiệu, thống kê theo mùa, theo thể thức và đối thủ.', 'The full career of a team: player card, Elo, trophies, stats by season, by format and by opponent.');
@@ -1285,22 +1232,6 @@
       var a = teamAEl.value;
       var b = teamBEl.value;
 
-      if(fn === 'card' || fn === 'taunt') {
-        if(!a) {
-          resultEl.innerHTML = '<span class="muted">Vui lòng chọn team.</span>';
-          setCaptureEnabled(false);
-          return;
-        }
-        if(!careerReady()) {
-          resultEl.innerHTML = '<span class="muted">' + L('Dữ liệu chưa sẵn sàng, thử lại sau giây lát.', 'Data is not ready yet, try again in a moment.') + '</span>';
-          setCaptureEnabled(false);
-          return;
-        }
-        if(fn === 'card') renderCardResult(a);
-        else renderTauntResult(a, b && b !== a ? b : null);
-        return;
-      }
-
       if(fn === 'profile') {
         if(!a) {
           resultEl.innerHTML = '<span class="muted">Vui lòng chọn team.</span>';
@@ -1356,7 +1287,7 @@
       var msg = bubbleQueue.shift();
       bubble.innerHTML = '<span class="tb-close">✕</span>' +
         (msg.head ? '<div class="tb-head">🎙️ ' + escapeText(msg.head) + '</div>' : '') +
-        '<div>' + (msg.lines || []).map(escapeText).join('<br>') + '</div>';
+        (msg.html ? '<div class="no-i18n">' + msg.html + '</div>' : '<div>' + (msg.lines || []).map(escapeText).join('<br>') + '</div>');
       bubble.classList.add('show');
       bubbleTimer = setTimeout(function() { hideBubble(); setTimeout(showNextBubble, 600); }, 11000);
     }
@@ -1398,19 +1329,19 @@
       fresh.slice(-3).forEach(function(i) { queueBubble(window.careerCommentary(cd, i)); });
     }
 
-    function randomTaunt() {
+    // A random PesNews headline (season-news.js) for the open season.
+    function randomNews() {
       if(!careerReady() || !commentatorOn() || document.hidden || panel.classList.contains('open')) return;
       if(bubble.classList.contains('show') || bubbleQueue.length) return;
-      var cd = window.careerData(window.state);
-      var teams = getVisibleTeamNames(loadState()).filter(function(t) { return cd.elo[t] && cd.elo[t].P >= 5; });
-      if(!teams.length) return;
-      var team = teams[Math.floor(Math.random() * teams.length)];
-      var lines = window.careerTaunts(cd, team, null);
-      queueBubble({ head: L('Tèo khiêu khích', 'Teo teases'), lines: [lines[Math.floor(Math.random() * lines.length)]] });
+      if(typeof window.snHeadlines !== 'function') return;
+      var st = window.state, list = window.snHeadlines(st && st.seasons ? st.seasons[st.current] : null);
+      if(!list.length) return;
+      var n = list[Math.floor(Math.random() * list.length)];
+      queueBubble({ head: 'PesNews' + (n.label ? ' · ' + n.label : ''), html: n.html });
     }
 
     setInterval(commentTick, 6000);
-    setTimeout(function() { randomTaunt(); setInterval(randomTaunt, 6 * 60 * 1000); }, 90 * 1000);
+    setTimeout(function() { randomNews(); setInterval(randomNews, 6 * 60 * 1000); }, 90 * 1000);
 
     renderAdminState();
     applyFunctionUI();
