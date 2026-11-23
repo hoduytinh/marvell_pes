@@ -25307,112 +25307,7 @@
         "logos/Default.jpg",
         "logos/Default.jpg"
       ],
-      "results": {
-        "group-D-0-0": {
-          "hg": 1,
-          "ag": 2
-        },
-        "group-B-2-1": {
-          "hg": 0,
-          "ag": 6
-        },
-        "group-B-1-0": {
-          "hg": 5,
-          "ag": 0
-        },
-        "group-B-3-0": {
-          "hg": 2,
-          "ag": 0
-        },
-        "group-B-0-1": {
-          "hg": 1,
-          "ag": 2
-        },
-        "group-C-1-1": {
-          "hg": 1,
-          "ag": 2
-        },
-        "group-D-1-0": {
-          "hg": 1,
-          "ag": 1
-        },
-        "group-B-3-1": {
-          "hg": 1,
-          "ag": 3
-        },
-        "group-D-0-1": {
-          "hg": 1,
-          "ag": 3
-        },
-        "group-D-2-0": {
-          "hg": 2,
-          "ag": 3
-        },
-        "group-A-1-1": {
-          "hg": 5,
-          "ag": 1
-        },
-        "group-C-0-0": {
-          "hg": 3,
-          "ag": 1
-        },
-        "group-A-3-1": {
-          "hg": 1,
-          "ag": 2
-        },
-        "group-C-2-0": {
-          "hg": 3,
-          "ag": 2
-        },
-        "group-A-2-1": {
-          "hg": 4,
-          "ag": 0
-        },
-        "group-B-0-0": {
-          "hg": 0,
-          "ag": 0
-        },
-        "group-B-4-0": {
-          "hg": 0,
-          "ag": 2
-        },
-        "group-D-2-1": {
-          "hg": 0,
-          "ag": 1
-        },
-        "group-A-4-0": {
-          "hg": 0,
-          "ag": 3
-        },
-        "group-C-1-0": {
-          "hg": 2,
-          "ag": 3
-        },
-        "group-A-0-0": {
-          "hg": 1,
-          "ag": 2
-        },
-        "group-D-1-1": {
-          "hg": 3,
-          "ag": 1
-        },
-        "group-A-0-1": {
-          "hg": 3,
-          "ag": 4
-        },
-        "group-A-3-0": {
-          "hg": 3,
-          "ag": 1
-        },
-        "group-C-0-1": {
-          "hg": 0,
-          "ag": 2
-        },
-        "group-C-2-1": {
-          "hg": 1,
-          "ag": 0
-        }
-      },
+      "results": {},
       "rounds": [
         [
           {
@@ -26720,23 +26615,23 @@
       "has3rdPlace": true,
       "numGroups": 4,
       "numKnockoutTeams": 8,
-      "groupRoundRobin": "single",
+      "groupRoundRobin": "double",
       "groups": {
         "A": {
           "name": "Group A",
           "teams": [
-            "Team 13",
-            "Team 9",
-            "Team 16",
-            "Team 4",
-            "Team 5"
+            "Truông",
+            "Linh",
+            "Dũng Prô",
+            "Đức Ngô",
+            "Ánh VIP"
           ],
           "teamIndices": [
-            12,
-            8,
-            15,
+            2,
             3,
-            4
+            7,
+            12,
+            1
           ],
           "fixtures": [
             [
@@ -26751,12 +26646,72 @@
             ],
             [
               {
+                "home": 1,
+                "away": 0
+              },
+              {
+                "home": 4,
+                "away": 3
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 2
+              },
+              {
+                "home": 3,
+                "away": 1
+              }
+            ],
+            [
+              {
+                "home": 3,
+                "away": 0
+              },
+              {
+                "home": 2,
+                "away": 4
+              }
+            ],
+            [
+              {
                 "home": 0,
                 "away": 4
               },
               {
                 "home": 1,
                 "away": 2
+              }
+            ],
+            [
+              {
+                "home": 4,
+                "away": 1
+              },
+              {
+                "home": 3,
+                "away": 2
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 1
+              },
+              {
+                "home": 3,
+                "away": 4
+              }
+            ],
+            [
+              {
+                "home": 2,
+                "away": 0
+              },
+              {
+                "home": 1,
+                "away": 3
               }
             ],
             [
@@ -26771,22 +26726,12 @@
             ],
             [
               {
-                "home": 0,
-                "away": 2
+                "home": 4,
+                "away": 0
               },
               {
-                "home": 3,
+                "home": 2,
                 "away": 1
-              }
-            ],
-            [
-              {
-                "home": 0,
-                "away": 1
-              },
-              {
-                "home": 3,
-                "away": 4
               }
             ]
           ]
@@ -26794,18 +26739,18 @@
         "B": {
           "name": "Group B",
           "teams": [
-            "Team 3",
-            "Team 2",
-            "Team 12",
-            "Team 11",
-            "Team 7"
+            "Lộc",
+            "Toàn T10",
+            "Đức Hà",
+            "Vi",
+            "Phong"
           ],
           "teamIndices": [
-            2,
-            1,
+            17,
+            15,
             11,
             10,
-            6
+            9
           ],
           "fixtures": [
             [
@@ -26820,12 +26765,72 @@
             ],
             [
               {
+                "home": 1,
+                "away": 0
+              },
+              {
+                "home": 4,
+                "away": 3
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 2
+              },
+              {
+                "home": 3,
+                "away": 1
+              }
+            ],
+            [
+              {
+                "home": 3,
+                "away": 0
+              },
+              {
+                "home": 2,
+                "away": 4
+              }
+            ],
+            [
+              {
                 "home": 0,
                 "away": 4
               },
               {
                 "home": 1,
                 "away": 2
+              }
+            ],
+            [
+              {
+                "home": 4,
+                "away": 1
+              },
+              {
+                "home": 3,
+                "away": 2
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 1
+              },
+              {
+                "home": 3,
+                "away": 4
+              }
+            ],
+            [
+              {
+                "home": 2,
+                "away": 0
+              },
+              {
+                "home": 1,
+                "away": 3
               }
             ],
             [
@@ -26840,22 +26845,12 @@
             ],
             [
               {
-                "home": 0,
-                "away": 2
+                "home": 4,
+                "away": 0
               },
               {
-                "home": 3,
+                "home": 2,
                 "away": 1
-              }
-            ],
-            [
-              {
-                "home": 0,
-                "away": 1
-              },
-              {
-                "home": 3,
-                "away": 4
               }
             ]
           ]
@@ -26863,16 +26858,16 @@
         "C": {
           "name": "Group C",
           "teams": [
-            "Team 10",
-            "Team 17",
-            "Team 6",
-            "Team 15"
+            "Phát Cool",
+            "Đức",
+            "VCD",
+            "Tĩnh Tèo"
           ],
           "teamIndices": [
-            9,
+            4,
             16,
-            5,
-            14
+            13,
+            0
           ],
           "fixtures": [
             [
@@ -26887,6 +26882,16 @@
             ],
             [
               {
+                "home": 1,
+                "away": 0
+              },
+              {
+                "home": 3,
+                "away": 2
+              }
+            ],
+            [
+              {
                 "home": 0,
                 "away": 2
               },
@@ -26897,11 +26902,31 @@
             ],
             [
               {
+                "home": 3,
+                "away": 0
+              },
+              {
+                "home": 2,
+                "away": 1
+              }
+            ],
+            [
+              {
                 "home": 0,
                 "away": 1
               },
               {
                 "home": 2,
+                "away": 3
+              }
+            ],
+            [
+              {
+                "home": 2,
+                "away": 0
+              },
+              {
+                "home": 1,
                 "away": 3
               }
             ]
@@ -26910,16 +26935,16 @@
         "D": {
           "name": "Group D",
           "teams": [
-            "Team 14",
-            "Team 18",
-            "Team 1",
-            "Team 8"
+            "Duy Jj",
+            "Phúc",
+            "Tùng Mai",
+            "Thiện"
           ],
           "teamIndices": [
-            13,
-            17,
-            0,
-            7
+            14,
+            6,
+            8,
+            5
           ],
           "fixtures": [
             [
@@ -26929,6 +26954,16 @@
               },
               {
                 "home": 1,
+                "away": 2
+              }
+            ],
+            [
+              {
+                "home": 1,
+                "away": 0
+              },
+              {
+                "home": 3,
                 "away": 2
               }
             ],
@@ -26944,11 +26979,31 @@
             ],
             [
               {
+                "home": 3,
+                "away": 0
+              },
+              {
+                "home": 2,
+                "away": 1
+              }
+            ],
+            [
+              {
                 "home": 0,
                 "away": 1
               },
               {
                 "home": 2,
+                "away": 3
+              }
+            ],
+            [
+              {
+                "home": 2,
+                "away": 0
+              },
+              {
+                "home": 1,
                 "away": 3
               }
             ]
@@ -27555,5 +27610,1713 @@
     "Vyyy"
   ],
   "schemaVersion": 1,
-  "koAutoTagged": 1
+  "koAutoTagged": 1,
+  "seasonBackups": {
+    "s83tbrz4": {
+      "sbmwt1xbzv523l": {
+        "id": "sbmwt1xbzv523l",
+        "createdAt": 1795425398779,
+        "by": "admin",
+        "note": "Tự động: trước khi đổi cài đặt",
+        "results": 26,
+        "data": {
+          "name": "2023 - Single F",
+          "teamCount": 18,
+          "teams": [
+            "Tĩnh Tèo",
+            "Ánh VIP",
+            "Truông",
+            "Linh",
+            "Phát Cool",
+            "Thiện",
+            "Phúc",
+            "Dũng Prô",
+            "Tùng Mai",
+            "Phong",
+            "Vi",
+            "Đức Hà",
+            "Đức Ngô",
+            "VCD",
+            "Duy Jj",
+            "Toàn T10",
+            "Đức",
+            "Lộc"
+          ],
+          "teamColors": [
+            "#1b2550",
+            "#1b2550",
+            "#1b2550",
+            "#1b2550",
+            "#1b2550",
+            "#1b2550",
+            "#1b2550",
+            "#1b2550",
+            "#1b2550",
+            "#1b2550",
+            "#1b2550",
+            "#1b2550",
+            "#1b2550",
+            "#1b2550",
+            "#1b2550",
+            "#1b2550",
+            "#1b2550",
+            "#1b2550"
+          ],
+          "results": {
+            "group-D-0-0": {
+              "hg": 1,
+              "ag": 2
+            },
+            "group-B-2-1": {
+              "hg": 0,
+              "ag": 6
+            },
+            "group-B-1-0": {
+              "hg": 5,
+              "ag": 0
+            },
+            "group-B-3-0": {
+              "hg": 2,
+              "ag": 0
+            },
+            "group-B-0-1": {
+              "hg": 1,
+              "ag": 2
+            },
+            "group-C-1-1": {
+              "hg": 1,
+              "ag": 2
+            },
+            "group-D-1-0": {
+              "hg": 1,
+              "ag": 1
+            },
+            "group-B-3-1": {
+              "hg": 1,
+              "ag": 3
+            },
+            "group-D-0-1": {
+              "hg": 1,
+              "ag": 3
+            },
+            "group-D-2-0": {
+              "hg": 2,
+              "ag": 3
+            },
+            "group-A-1-1": {
+              "hg": 5,
+              "ag": 1
+            },
+            "group-C-0-0": {
+              "hg": 3,
+              "ag": 1
+            },
+            "group-A-3-1": {
+              "hg": 1,
+              "ag": 2
+            },
+            "group-C-2-0": {
+              "hg": 3,
+              "ag": 2
+            },
+            "group-A-2-1": {
+              "hg": 4,
+              "ag": 0
+            },
+            "group-B-0-0": {
+              "hg": 0,
+              "ag": 0
+            },
+            "group-B-4-0": {
+              "hg": 0,
+              "ag": 2
+            },
+            "group-D-2-1": {
+              "hg": 0,
+              "ag": 1
+            },
+            "group-A-4-0": {
+              "hg": 0,
+              "ag": 3
+            },
+            "group-C-1-0": {
+              "hg": 2,
+              "ag": 3
+            },
+            "group-A-0-0": {
+              "hg": 1,
+              "ag": 2
+            },
+            "group-D-1-1": {
+              "hg": 3,
+              "ag": 1
+            },
+            "group-A-0-1": {
+              "hg": 3,
+              "ag": 4
+            },
+            "group-A-3-0": {
+              "hg": 3,
+              "ag": 1
+            },
+            "group-C-0-1": {
+              "hg": 0,
+              "ag": 2
+            },
+            "group-C-2-1": {
+              "hg": 1,
+              "ag": 0
+            }
+          },
+          "rounds": [
+            [
+              {
+                "home": 0,
+                "away": 17
+              },
+              {
+                "home": 1,
+                "away": 16
+              },
+              {
+                "home": 2,
+                "away": 15
+              },
+              {
+                "home": 3,
+                "away": 14
+              },
+              {
+                "home": 4,
+                "away": 13
+              },
+              {
+                "home": 5,
+                "away": 12
+              },
+              {
+                "home": 6,
+                "away": 11
+              },
+              {
+                "home": 7,
+                "away": 10
+              },
+              {
+                "home": 8,
+                "away": 9
+              }
+            ],
+            [
+              {
+                "home": 1,
+                "away": 0
+              },
+              {
+                "home": 17,
+                "away": 2
+              },
+              {
+                "home": 16,
+                "away": 3
+              },
+              {
+                "home": 15,
+                "away": 4
+              },
+              {
+                "home": 14,
+                "away": 5
+              },
+              {
+                "home": 13,
+                "away": 6
+              },
+              {
+                "home": 12,
+                "away": 7
+              },
+              {
+                "home": 11,
+                "away": 8
+              },
+              {
+                "home": 10,
+                "away": 9
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 2
+              },
+              {
+                "home": 3,
+                "away": 1
+              },
+              {
+                "home": 4,
+                "away": 17
+              },
+              {
+                "home": 5,
+                "away": 16
+              },
+              {
+                "home": 6,
+                "away": 15
+              },
+              {
+                "home": 7,
+                "away": 14
+              },
+              {
+                "home": 8,
+                "away": 13
+              },
+              {
+                "home": 9,
+                "away": 12
+              },
+              {
+                "home": 10,
+                "away": 11
+              }
+            ],
+            [
+              {
+                "home": 3,
+                "away": 0
+              },
+              {
+                "home": 2,
+                "away": 4
+              },
+              {
+                "home": 1,
+                "away": 5
+              },
+              {
+                "home": 17,
+                "away": 6
+              },
+              {
+                "home": 16,
+                "away": 7
+              },
+              {
+                "home": 15,
+                "away": 8
+              },
+              {
+                "home": 14,
+                "away": 9
+              },
+              {
+                "home": 13,
+                "away": 10
+              },
+              {
+                "home": 12,
+                "away": 11
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 4
+              },
+              {
+                "home": 5,
+                "away": 3
+              },
+              {
+                "home": 6,
+                "away": 2
+              },
+              {
+                "home": 7,
+                "away": 1
+              },
+              {
+                "home": 8,
+                "away": 17
+              },
+              {
+                "home": 9,
+                "away": 16
+              },
+              {
+                "home": 10,
+                "away": 15
+              },
+              {
+                "home": 11,
+                "away": 14
+              },
+              {
+                "home": 12,
+                "away": 13
+              }
+            ],
+            [
+              {
+                "home": 5,
+                "away": 0
+              },
+              {
+                "home": 4,
+                "away": 6
+              },
+              {
+                "home": 3,
+                "away": 7
+              },
+              {
+                "home": 2,
+                "away": 8
+              },
+              {
+                "home": 1,
+                "away": 9
+              },
+              {
+                "home": 17,
+                "away": 10
+              },
+              {
+                "home": 16,
+                "away": 11
+              },
+              {
+                "home": 15,
+                "away": 12
+              },
+              {
+                "home": 14,
+                "away": 13
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 6
+              },
+              {
+                "home": 7,
+                "away": 5
+              },
+              {
+                "home": 8,
+                "away": 4
+              },
+              {
+                "home": 9,
+                "away": 3
+              },
+              {
+                "home": 10,
+                "away": 2
+              },
+              {
+                "home": 11,
+                "away": 1
+              },
+              {
+                "home": 12,
+                "away": 17
+              },
+              {
+                "home": 13,
+                "away": 16
+              },
+              {
+                "home": 14,
+                "away": 15
+              }
+            ],
+            [
+              {
+                "home": 7,
+                "away": 0
+              },
+              {
+                "home": 6,
+                "away": 8
+              },
+              {
+                "home": 5,
+                "away": 9
+              },
+              {
+                "home": 4,
+                "away": 10
+              },
+              {
+                "home": 3,
+                "away": 11
+              },
+              {
+                "home": 2,
+                "away": 12
+              },
+              {
+                "home": 1,
+                "away": 13
+              },
+              {
+                "home": 17,
+                "away": 14
+              },
+              {
+                "home": 16,
+                "away": 15
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 8
+              },
+              {
+                "home": 9,
+                "away": 7
+              },
+              {
+                "home": 10,
+                "away": 6
+              },
+              {
+                "home": 11,
+                "away": 5
+              },
+              {
+                "home": 12,
+                "away": 4
+              },
+              {
+                "home": 13,
+                "away": 3
+              },
+              {
+                "home": 14,
+                "away": 2
+              },
+              {
+                "home": 15,
+                "away": 1
+              },
+              {
+                "home": 16,
+                "away": 17
+              }
+            ],
+            [
+              {
+                "home": 9,
+                "away": 0
+              },
+              {
+                "home": 8,
+                "away": 10
+              },
+              {
+                "home": 7,
+                "away": 11
+              },
+              {
+                "home": 6,
+                "away": 12
+              },
+              {
+                "home": 5,
+                "away": 13
+              },
+              {
+                "home": 4,
+                "away": 14
+              },
+              {
+                "home": 3,
+                "away": 15
+              },
+              {
+                "home": 2,
+                "away": 16
+              },
+              {
+                "home": 1,
+                "away": 17
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 10
+              },
+              {
+                "home": 11,
+                "away": 9
+              },
+              {
+                "home": 12,
+                "away": 8
+              },
+              {
+                "home": 13,
+                "away": 7
+              },
+              {
+                "home": 14,
+                "away": 6
+              },
+              {
+                "home": 15,
+                "away": 5
+              },
+              {
+                "home": 16,
+                "away": 4
+              },
+              {
+                "home": 17,
+                "away": 3
+              },
+              {
+                "home": 1,
+                "away": 2
+              }
+            ],
+            [
+              {
+                "home": 11,
+                "away": 0
+              },
+              {
+                "home": 10,
+                "away": 12
+              },
+              {
+                "home": 9,
+                "away": 13
+              },
+              {
+                "home": 8,
+                "away": 14
+              },
+              {
+                "home": 7,
+                "away": 15
+              },
+              {
+                "home": 6,
+                "away": 16
+              },
+              {
+                "home": 5,
+                "away": 17
+              },
+              {
+                "home": 4,
+                "away": 1
+              },
+              {
+                "home": 3,
+                "away": 2
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 12
+              },
+              {
+                "home": 13,
+                "away": 11
+              },
+              {
+                "home": 14,
+                "away": 10
+              },
+              {
+                "home": 15,
+                "away": 9
+              },
+              {
+                "home": 16,
+                "away": 8
+              },
+              {
+                "home": 17,
+                "away": 7
+              },
+              {
+                "home": 1,
+                "away": 6
+              },
+              {
+                "home": 2,
+                "away": 5
+              },
+              {
+                "home": 3,
+                "away": 4
+              }
+            ],
+            [
+              {
+                "home": 13,
+                "away": 0
+              },
+              {
+                "home": 12,
+                "away": 14
+              },
+              {
+                "home": 11,
+                "away": 15
+              },
+              {
+                "home": 10,
+                "away": 16
+              },
+              {
+                "home": 9,
+                "away": 17
+              },
+              {
+                "home": 8,
+                "away": 1
+              },
+              {
+                "home": 7,
+                "away": 2
+              },
+              {
+                "home": 6,
+                "away": 3
+              },
+              {
+                "home": 5,
+                "away": 4
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 14
+              },
+              {
+                "home": 15,
+                "away": 13
+              },
+              {
+                "home": 16,
+                "away": 12
+              },
+              {
+                "home": 17,
+                "away": 11
+              },
+              {
+                "home": 1,
+                "away": 10
+              },
+              {
+                "home": 2,
+                "away": 9
+              },
+              {
+                "home": 3,
+                "away": 8
+              },
+              {
+                "home": 4,
+                "away": 7
+              },
+              {
+                "home": 5,
+                "away": 6
+              }
+            ],
+            [
+              {
+                "home": 15,
+                "away": 0
+              },
+              {
+                "home": 14,
+                "away": 16
+              },
+              {
+                "home": 13,
+                "away": 17
+              },
+              {
+                "home": 12,
+                "away": 1
+              },
+              {
+                "home": 11,
+                "away": 2
+              },
+              {
+                "home": 10,
+                "away": 3
+              },
+              {
+                "home": 9,
+                "away": 4
+              },
+              {
+                "home": 8,
+                "away": 5
+              },
+              {
+                "home": 7,
+                "away": 6
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 16
+              },
+              {
+                "home": 17,
+                "away": 15
+              },
+              {
+                "home": 1,
+                "away": 14
+              },
+              {
+                "home": 2,
+                "away": 13
+              },
+              {
+                "home": 3,
+                "away": 12
+              },
+              {
+                "home": 4,
+                "away": 11
+              },
+              {
+                "home": 5,
+                "away": 10
+              },
+              {
+                "home": 6,
+                "away": 9
+              },
+              {
+                "home": 7,
+                "away": 8
+              }
+            ],
+            [
+              {
+                "home": 17,
+                "away": 0
+              },
+              {
+                "home": 16,
+                "away": 1
+              },
+              {
+                "home": 15,
+                "away": 2
+              },
+              {
+                "home": 14,
+                "away": 3
+              },
+              {
+                "home": 13,
+                "away": 4
+              },
+              {
+                "home": 12,
+                "away": 5
+              },
+              {
+                "home": 11,
+                "away": 6
+              },
+              {
+                "home": 10,
+                "away": 7
+              },
+              {
+                "home": 9,
+                "away": 8
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 1
+              },
+              {
+                "home": 2,
+                "away": 17
+              },
+              {
+                "home": 3,
+                "away": 16
+              },
+              {
+                "home": 4,
+                "away": 15
+              },
+              {
+                "home": 5,
+                "away": 14
+              },
+              {
+                "home": 6,
+                "away": 13
+              },
+              {
+                "home": 7,
+                "away": 12
+              },
+              {
+                "home": 8,
+                "away": 11
+              },
+              {
+                "home": 9,
+                "away": 10
+              }
+            ],
+            [
+              {
+                "home": 2,
+                "away": 0
+              },
+              {
+                "home": 1,
+                "away": 3
+              },
+              {
+                "home": 17,
+                "away": 4
+              },
+              {
+                "home": 16,
+                "away": 5
+              },
+              {
+                "home": 15,
+                "away": 6
+              },
+              {
+                "home": 14,
+                "away": 7
+              },
+              {
+                "home": 13,
+                "away": 8
+              },
+              {
+                "home": 12,
+                "away": 9
+              },
+              {
+                "home": 11,
+                "away": 10
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 3
+              },
+              {
+                "home": 4,
+                "away": 2
+              },
+              {
+                "home": 5,
+                "away": 1
+              },
+              {
+                "home": 6,
+                "away": 17
+              },
+              {
+                "home": 7,
+                "away": 16
+              },
+              {
+                "home": 8,
+                "away": 15
+              },
+              {
+                "home": 9,
+                "away": 14
+              },
+              {
+                "home": 10,
+                "away": 13
+              },
+              {
+                "home": 11,
+                "away": 12
+              }
+            ],
+            [
+              {
+                "home": 4,
+                "away": 0
+              },
+              {
+                "home": 3,
+                "away": 5
+              },
+              {
+                "home": 2,
+                "away": 6
+              },
+              {
+                "home": 1,
+                "away": 7
+              },
+              {
+                "home": 17,
+                "away": 8
+              },
+              {
+                "home": 16,
+                "away": 9
+              },
+              {
+                "home": 15,
+                "away": 10
+              },
+              {
+                "home": 14,
+                "away": 11
+              },
+              {
+                "home": 13,
+                "away": 12
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 5
+              },
+              {
+                "home": 6,
+                "away": 4
+              },
+              {
+                "home": 7,
+                "away": 3
+              },
+              {
+                "home": 8,
+                "away": 2
+              },
+              {
+                "home": 9,
+                "away": 1
+              },
+              {
+                "home": 10,
+                "away": 17
+              },
+              {
+                "home": 11,
+                "away": 16
+              },
+              {
+                "home": 12,
+                "away": 15
+              },
+              {
+                "home": 13,
+                "away": 14
+              }
+            ],
+            [
+              {
+                "home": 6,
+                "away": 0
+              },
+              {
+                "home": 5,
+                "away": 7
+              },
+              {
+                "home": 4,
+                "away": 8
+              },
+              {
+                "home": 3,
+                "away": 9
+              },
+              {
+                "home": 2,
+                "away": 10
+              },
+              {
+                "home": 1,
+                "away": 11
+              },
+              {
+                "home": 17,
+                "away": 12
+              },
+              {
+                "home": 16,
+                "away": 13
+              },
+              {
+                "home": 15,
+                "away": 14
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 7
+              },
+              {
+                "home": 8,
+                "away": 6
+              },
+              {
+                "home": 9,
+                "away": 5
+              },
+              {
+                "home": 10,
+                "away": 4
+              },
+              {
+                "home": 11,
+                "away": 3
+              },
+              {
+                "home": 12,
+                "away": 2
+              },
+              {
+                "home": 13,
+                "away": 1
+              },
+              {
+                "home": 14,
+                "away": 17
+              },
+              {
+                "home": 15,
+                "away": 16
+              }
+            ],
+            [
+              {
+                "home": 8,
+                "away": 0
+              },
+              {
+                "home": 7,
+                "away": 9
+              },
+              {
+                "home": 6,
+                "away": 10
+              },
+              {
+                "home": 5,
+                "away": 11
+              },
+              {
+                "home": 4,
+                "away": 12
+              },
+              {
+                "home": 3,
+                "away": 13
+              },
+              {
+                "home": 2,
+                "away": 14
+              },
+              {
+                "home": 1,
+                "away": 15
+              },
+              {
+                "home": 17,
+                "away": 16
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 9
+              },
+              {
+                "home": 10,
+                "away": 8
+              },
+              {
+                "home": 11,
+                "away": 7
+              },
+              {
+                "home": 12,
+                "away": 6
+              },
+              {
+                "home": 13,
+                "away": 5
+              },
+              {
+                "home": 14,
+                "away": 4
+              },
+              {
+                "home": 15,
+                "away": 3
+              },
+              {
+                "home": 16,
+                "away": 2
+              },
+              {
+                "home": 17,
+                "away": 1
+              }
+            ],
+            [
+              {
+                "home": 10,
+                "away": 0
+              },
+              {
+                "home": 9,
+                "away": 11
+              },
+              {
+                "home": 8,
+                "away": 12
+              },
+              {
+                "home": 7,
+                "away": 13
+              },
+              {
+                "home": 6,
+                "away": 14
+              },
+              {
+                "home": 5,
+                "away": 15
+              },
+              {
+                "home": 4,
+                "away": 16
+              },
+              {
+                "home": 3,
+                "away": 17
+              },
+              {
+                "home": 2,
+                "away": 1
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 11
+              },
+              {
+                "home": 12,
+                "away": 10
+              },
+              {
+                "home": 13,
+                "away": 9
+              },
+              {
+                "home": 14,
+                "away": 8
+              },
+              {
+                "home": 15,
+                "away": 7
+              },
+              {
+                "home": 16,
+                "away": 6
+              },
+              {
+                "home": 17,
+                "away": 5
+              },
+              {
+                "home": 1,
+                "away": 4
+              },
+              {
+                "home": 2,
+                "away": 3
+              }
+            ],
+            [
+              {
+                "home": 12,
+                "away": 0
+              },
+              {
+                "home": 11,
+                "away": 13
+              },
+              {
+                "home": 10,
+                "away": 14
+              },
+              {
+                "home": 9,
+                "away": 15
+              },
+              {
+                "home": 8,
+                "away": 16
+              },
+              {
+                "home": 7,
+                "away": 17
+              },
+              {
+                "home": 6,
+                "away": 1
+              },
+              {
+                "home": 5,
+                "away": 2
+              },
+              {
+                "home": 4,
+                "away": 3
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 13
+              },
+              {
+                "home": 14,
+                "away": 12
+              },
+              {
+                "home": 15,
+                "away": 11
+              },
+              {
+                "home": 16,
+                "away": 10
+              },
+              {
+                "home": 17,
+                "away": 9
+              },
+              {
+                "home": 1,
+                "away": 8
+              },
+              {
+                "home": 2,
+                "away": 7
+              },
+              {
+                "home": 3,
+                "away": 6
+              },
+              {
+                "home": 4,
+                "away": 5
+              }
+            ],
+            [
+              {
+                "home": 14,
+                "away": 0
+              },
+              {
+                "home": 13,
+                "away": 15
+              },
+              {
+                "home": 12,
+                "away": 16
+              },
+              {
+                "home": 11,
+                "away": 17
+              },
+              {
+                "home": 10,
+                "away": 1
+              },
+              {
+                "home": 9,
+                "away": 2
+              },
+              {
+                "home": 8,
+                "away": 3
+              },
+              {
+                "home": 7,
+                "away": 4
+              },
+              {
+                "home": 6,
+                "away": 5
+              }
+            ],
+            [
+              {
+                "home": 0,
+                "away": 15
+              },
+              {
+                "home": 16,
+                "away": 14
+              },
+              {
+                "home": 17,
+                "away": 13
+              },
+              {
+                "home": 1,
+                "away": 12
+              },
+              {
+                "home": 2,
+                "away": 11
+              },
+              {
+                "home": 3,
+                "away": 10
+              },
+              {
+                "home": 4,
+                "away": 9
+              },
+              {
+                "home": 5,
+                "away": 8
+              },
+              {
+                "home": 6,
+                "away": 7
+              }
+            ],
+            [
+              {
+                "home": 16,
+                "away": 0
+              },
+              {
+                "home": 15,
+                "away": 17
+              },
+              {
+                "home": 14,
+                "away": 1
+              },
+              {
+                "home": 13,
+                "away": 2
+              },
+              {
+                "home": 12,
+                "away": 3
+              },
+              {
+                "home": 11,
+                "away": 4
+              },
+              {
+                "home": 10,
+                "away": 5
+              },
+              {
+                "home": 9,
+                "away": 6
+              },
+              {
+                "home": 8,
+                "away": 7
+              }
+            ]
+          ],
+          "settings": {
+            "top": 4,
+            "euro": 6,
+            "playoff": 0,
+            "rel": 3,
+            "h2h": false,
+            "enableRegen": false
+          },
+          "createdAt": 1795424424938,
+          "mode": "tournament",
+          "has3rdPlace": true,
+          "numGroups": 4,
+          "numKnockoutTeams": 8,
+          "groupRoundRobin": "single",
+          "groups": {
+            "A": {
+              "name": "Group A",
+              "teams": [
+                "Team 13",
+                "Team 9",
+                "Team 16",
+                "Team 4",
+                "Team 5"
+              ],
+              "teamIndices": [
+                12,
+                8,
+                15,
+                3,
+                4
+              ],
+              "fixtures": [
+                [
+                  {
+                    "home": 1,
+                    "away": 4
+                  },
+                  {
+                    "home": 2,
+                    "away": 3
+                  }
+                ],
+                [
+                  {
+                    "home": 0,
+                    "away": 4
+                  },
+                  {
+                    "home": 1,
+                    "away": 2
+                  }
+                ],
+                [
+                  {
+                    "home": 0,
+                    "away": 3
+                  },
+                  {
+                    "home": 4,
+                    "away": 2
+                  }
+                ],
+                [
+                  {
+                    "home": 0,
+                    "away": 2
+                  },
+                  {
+                    "home": 3,
+                    "away": 1
+                  }
+                ],
+                [
+                  {
+                    "home": 0,
+                    "away": 1
+                  },
+                  {
+                    "home": 3,
+                    "away": 4
+                  }
+                ]
+              ]
+            },
+            "B": {
+              "name": "Group B",
+              "teams": [
+                "Team 3",
+                "Team 2",
+                "Team 12",
+                "Team 11",
+                "Team 7"
+              ],
+              "teamIndices": [
+                2,
+                1,
+                11,
+                10,
+                6
+              ],
+              "fixtures": [
+                [
+                  {
+                    "home": 1,
+                    "away": 4
+                  },
+                  {
+                    "home": 2,
+                    "away": 3
+                  }
+                ],
+                [
+                  {
+                    "home": 0,
+                    "away": 4
+                  },
+                  {
+                    "home": 1,
+                    "away": 2
+                  }
+                ],
+                [
+                  {
+                    "home": 0,
+                    "away": 3
+                  },
+                  {
+                    "home": 4,
+                    "away": 2
+                  }
+                ],
+                [
+                  {
+                    "home": 0,
+                    "away": 2
+                  },
+                  {
+                    "home": 3,
+                    "away": 1
+                  }
+                ],
+                [
+                  {
+                    "home": 0,
+                    "away": 1
+                  },
+                  {
+                    "home": 3,
+                    "away": 4
+                  }
+                ]
+              ]
+            },
+            "C": {
+              "name": "Group C",
+              "teams": [
+                "Team 10",
+                "Team 17",
+                "Team 6",
+                "Team 15"
+              ],
+              "teamIndices": [
+                9,
+                16,
+                5,
+                14
+              ],
+              "fixtures": [
+                [
+                  {
+                    "home": 0,
+                    "away": 3
+                  },
+                  {
+                    "home": 1,
+                    "away": 2
+                  }
+                ],
+                [
+                  {
+                    "home": 0,
+                    "away": 2
+                  },
+                  {
+                    "home": 3,
+                    "away": 1
+                  }
+                ],
+                [
+                  {
+                    "home": 0,
+                    "away": 1
+                  },
+                  {
+                    "home": 2,
+                    "away": 3
+                  }
+                ]
+              ]
+            },
+            "D": {
+              "name": "Group D",
+              "teams": [
+                "Team 14",
+                "Team 18",
+                "Team 1",
+                "Team 8"
+              ],
+              "teamIndices": [
+                13,
+                17,
+                0,
+                7
+              ],
+              "fixtures": [
+                [
+                  {
+                    "home": 0,
+                    "away": 3
+                  },
+                  {
+                    "home": 1,
+                    "away": 2
+                  }
+                ],
+                [
+                  {
+                    "home": 0,
+                    "away": 2
+                  },
+                  {
+                    "home": 3,
+                    "away": 1
+                  }
+                ],
+                [
+                  {
+                    "home": 0,
+                    "away": 1
+                  },
+                  {
+                    "home": 2,
+                    "away": 3
+                  }
+                ]
+              ]
+            }
+          },
+          "groupStandings": {},
+          "knockoutBracket": null,
+          "tournamentPhase": "group",
+          "kind": "official",
+          "format": "single"
+        }
+      }
+    }
+  }
 }
