@@ -25307,7 +25307,12 @@
         "logos/Default.jpg",
         "logos/Default.jpg"
       ],
-      "results": {},
+      "results": {
+        "group-A-0-0": {
+          "hg": 2,
+          "ag": 1
+        }
+      },
       "rounds": [
         [
           {
