@@ -7918,11 +7918,13 @@
         "top": 4,
         "euro": 6,
         "rel": 3,
-        "h2h": false
+        "h2h": false,
+        "playoff": 0,
+        "enableRegen": true
       },
       "createdAt": 1764300712276,
       "mode": "double-elimination",
-      "has3rdPlace": false,
+      "has3rdPlace": true,
       "doubleElimination": {
         "seeds": [
           0,
@@ -8039,7 +8041,9 @@
           "Tùng Mai"
         ]
       ],
-      "locked": true
+      "locked": true,
+      "kind": "official",
+      "format": "double"
     },
     "sm11z5b1": {
       "name": "2023 - Cup",
