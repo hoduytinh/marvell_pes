@@ -27544,5 +27544,16 @@
         }
       }
     }
+  },
+  "cardProfiles": {
+    "Tĩnh Tèo": {
+      "style": "toty",
+      "tier": "",
+      "zoom": 1,
+      "x": 5,
+      "y": 12,
+      "t": 1795519463197,
+      "img": "photos/cards/Tinh-Teo-mwulxgme.png"
+    }
   }
 }
