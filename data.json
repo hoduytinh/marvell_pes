@@ -5446,7 +5446,8 @@
         ]
       },
       "kind": "official",
-      "format": "single"
+      "format": "single",
+      "locked": true
     },
     "spjtuhsi": {
       "name": "2023 - Single",
