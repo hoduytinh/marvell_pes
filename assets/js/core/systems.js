@@ -97,8 +97,12 @@ function ghGetSha(path, pat){
 
 // Create or overwrite a repo file.
 function ghWriteText(path, text, message, pat){
+  return ghWriteBase64(path, btoa(unescape(encodeURIComponent(text))), message, pat);
+}
+// Same with base64 content (binary files such as images).
+function ghWriteBase64(path, b64, message, pat){
   return ghGetSha(path, pat).then(function(sha){
-    var body = { message: message, content: btoa(unescape(encodeURIComponent(text))), branch: CLOUD_CONFIG.branch };
+    var body = { message: message, content: b64, branch: CLOUD_CONFIG.branch };
     if(sha) body.sha = sha;
     return fetch(ghContentsUrl(path), {
       method: 'PUT',
@@ -108,6 +112,20 @@ function ghWriteText(path, text, message, pat){
   }).then(function(r){
     if(!r.ok) return r.text().then(function(t){ throw new Error('HTTP ' + r.status + ': ' + t.substring(0, 160)); });
     return true;
+  });
+}
+// Delete a repo file (no-op if it does not exist).
+function ghDeleteFile(path, message, pat){
+  return ghGetSha(path, pat).then(function(sha){
+    if(!sha) return false;
+    return fetch(ghContentsUrl(path), {
+      method: 'DELETE',
+      headers: { 'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' + pat, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: message, sha: sha, branch: CLOUD_CONFIG.branch })
+    }).then(function(r){
+      if(!r.ok) throw new Error('HTTP ' + r.status);
+      return true;
+    });
   });
 }
 

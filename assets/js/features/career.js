@@ -621,6 +621,7 @@ function careerTeamLogo(st, name){
 
 function renderFifaCardHtml(card){
   if(!card) return '<div class="muted">' + crL('Chưa có dữ liệu trận đấu.', 'No match data yet.') + '</div>';
+  if(!card.noLive && typeof ceLiveCardHtml === 'function'){ var live = ceLiveCardHtml(card); if(live) return live; } // admin-set design (card-profiles.js)
   var e = escapeHtml;
   return '<div class="fifa-card tier-' + card.tier + '">' +
     '<div class="fc-top"><div class="fc-id"><div class="fc-ovr">' + card.ovr + '</div><div class="fc-pos">' + card.pos + '</div>' +
@@ -1126,6 +1127,7 @@ function renderStatsPage(){
   var tools = '';
   if(statsTab === 'career' && !statsCareer) tools += '<input type="search" id="spSearch" class="sp-search" placeholder="' + escapeHtml(crL('Tìm tuyển thủ…', 'Search player…')) + '" value="' + escapeHtml(statsQuery) + '">';
   if(hasMaster && !special && !adminTab && !(statsTab === 'career' && statsCareer)) tools += '<label class="sp-check"><input type="checkbox" id="spMasterOnly"' + (only ? ' checked' : '') + '> ' + crL('Chỉ tuyển thủ trong danh sách', 'Master-list players only') + '</label>';
+  if(statsTab === 'career' && typeof openCardExport === 'function') tools += '<button type="button" class="ghost" id="spCardExport" title="' + escapeHtml(crL('Xuất thẻ 54 × 86 mm để in', 'Export a 54 × 86 mm card for printing')) + '">🖨️ ' + crL('In thẻ', 'Print card') + '</button>';
   if(tools) html += '<div class="sp-tools">' + tools + '</div>';
   var body = '';
   if(special) body = '<div id="spModeHost" data-mode="' + statsTab + '"></div>';
