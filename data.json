@@ -11833,12 +11833,16 @@
         "top": 4,
         "euro": 6,
         "rel": 3,
-        "h2h": false
+        "h2h": false,
+        "playoff": 0,
+        "enableRegen": true
       },
       "createdAt": 1764299243230,
       "mode": "league",
-      "has3rdPlace": false,
-      "locked": true
+      "has3rdPlace": true,
+      "locked": true,
+      "kind": "official",
+      "format": "single"
     },
     "snox8vos": {
       "name": "2022 - Dual",
