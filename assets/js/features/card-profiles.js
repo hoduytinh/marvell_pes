@@ -123,15 +123,21 @@ function ceUploadPhoto(name, src){
 }
 
 function ceCanWriteCloud(){ return typeof CloudSync !== 'undefined' && CloudSync.canPush() && !!CloudSync.pat; }
+// Promise<'ok'|'later'|'fail'|'local'>: result of the cloud sync.
 function ceSaveProfiles(){
   saveAll();
-  if(ceCanWriteCloud()) CloudSync.push(state);
+  if(!ceCanWriteCloud()) return Promise.resolve('local');
+  return CloudSync.push(state).then(function(ok){ return ok ? 'ok' : CloudSync.pushTimer || CloudSync.pushInProgress ? 'later' : 'fail'; }, function(){ return 'fail'; });
 }
+// Errors must be unmissable: a toast would sit behind the modal dialog.
+function ceAlert(msg){ ceStatus(msg); alert(msg); }
 
 function ceSetDefault(){
   var name = ce.name, av = ce.av || {};
-  if(!name || !ce.card || !isAdminUser()) return;
-  if(!ceCanWriteCloud()){ ceStatus('❌ ' + crL('Cần quyền ghi cloud (GitHub PAT) để lưu ảnh lên git.', 'Cloud write access (GitHub PAT) is needed to upload the photo.')); return; }
+  if(!name || !ce.card) return ceAlert('❌ ' + crL('Chưa chọn tuyển thủ có dữ liệu.', 'No player with data selected.'));
+  if(!isAdminUser()) return ceAlert('❌ ' + crL('Cần đăng nhập admin để đặt thẻ sự nghiệp.', 'Log in as admin to set the career card.'));
+  if(!ceCanWriteCloud()) return ceAlert('❌ ' + crL('Chưa lưu được: cần bật Đồng bộ cloud và có GitHub PAT (quyền ghi) để lưu thẻ và ảnh lên git.',
+    'Not saved: cloud sync must be ON with a GitHub PAT (write access) to save the card and photo to git.'));
   var key = careerName(name), old = ceProfile(name), style = ce.style;
   var rec = { style: style, tier: ce.tier || '', zoom: av.zoom || 1, x: av.x || 0, y: av.y || 0, t: Date.now() };
   var useImg = style !== 'career' && av.src;
@@ -140,15 +146,23 @@ function ceSetDefault(){
     if(path) rec.img = path;
     state.cardProfiles = state.cardProfiles || {};
     state.cardProfiles[key] = rec;
-    ceSaveProfiles();
-    if(old && old.img && old.img !== rec.img) ghDeleteFile(old.img, 'Remove old card photo: ' + key, CloudSync.pat).catch(function(){});
     if(path && ce.name === name && ce.av === av){ av.remote = path; ceAvPut(name, av); }
-    ceBusy(false, '✅ ' + crL('Đã đặt làm thẻ sự nghiệp của ', 'Set as the career card of ') + key + '.');
-    ceRender();
-    ceRefreshCareerViews();
+    ceStatus('⏳ ' + crL('Đang đồng bộ lên cloud…', 'Syncing to the cloud…'));
+    return ceSaveProfiles().then(function(sync){
+      if(old && old.img && old.img !== rec.img) ghDeleteFile(old.img, 'Remove old card photo: ' + key, CloudSync.pat).catch(function(){});
+      ceBusy(false, '');
+      ceRender();
+      ceRefreshCareerViews();
+      var same = style === 'career' && !rec.tier ? crL(' (mẫu mặc định, hạng tự động: thẻ trông như cũ)', ' (default design, auto tier: the card looks unchanged)') : '';
+      if(sync === 'fail') ceAlert('⚠️ ' + crL('Đã lưu thẻ sự nghiệp của ' + key + ' trên máy này nhưng đồng bộ cloud lỗi — kiểm tra trạng thái Sync rồi thử lại.',
+        'Saved the career card of ' + key + ' on this device but the cloud sync failed — check the Sync status and retry.'));
+      else ceStatus('✅ ' + crL('Đã lưu thẻ sự nghiệp của ', 'Saved the career card of ') + key + same +
+        (sync === 'later' ? crL(' — đang chờ đồng bộ…', ' — sync pending…') : crL(' và đồng bộ lên cloud.', ' and synced to the cloud.')));
+    });
   }).catch(function(err){
     console.error('Set default card failed:', err);
-    ceBusy(false, '❌ ' + crL('Không lưu được: ', 'Could not save: ') + (err && err.message ? err.message : err));
+    ceBusy(false, '');
+    ceAlert('❌ ' + crL('Không lưu được: ', 'Could not save: ') + (err && err.message ? err.message : err));
   });
 }
 
