@@ -7255,7 +7255,9 @@
         "top": 4,
         "euro": 6,
         "rel": 3,
-        "h2h": false
+        "h2h": false,
+        "playoff": 0,
+        "enableRegen": true
       },
       "createdAt": 1764321538491,
       "mode": "tournament",
@@ -7706,7 +7708,9 @@
       },
       "tournamentPhase": "knockout",
       "has3rdPlace": true,
-      "locked": true
+      "locked": true,
+      "kind": "official",
+      "format": "single"
     },
     "sw572sy9": {
       "name": "2023 - Dual",
