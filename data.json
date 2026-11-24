@@ -2261,11 +2261,15 @@
         "euro": 6,
         "rel": 3,
         "h2h": false,
-        "playoff": 0
+        "playoff": 0,
+        "enableRegen": true
       },
       "createdAt": 1761151953453,
       "mode": "league",
-      "locked": true
+      "locked": true,
+      "kind": "official",
+      "format": "single",
+      "has3rdPlace": true
     },
     "sbesi4l4": {
       "name": "2025 S - PlayOff",
