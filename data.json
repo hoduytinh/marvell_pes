@@ -5382,16 +5382,8 @@
             ],
             [
               {
-                "home": {
-                  "fromRound": 1,
-                  "matchId": 0,
-                  "isLoser": true
-                },
-                "away": {
-                  "fromRound": 1,
-                  "matchId": 1,
-                  "isLoser": true
-                }
+                "home": 0,
+                "away": 4
               }
             ],
             [
