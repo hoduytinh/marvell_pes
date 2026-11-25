@@ -1104,7 +1104,11 @@
       "locked": true,
       "kind": "official",
       "format": "single",
-      "has3rdPlace": true
+      "has3rdPlace": true,
+      "rankPts": {
+        "max": 20,
+        "min": 5
+      }
     },
     "sp5ol4p5": {
       "name": "2025 - Seri B",
@@ -2269,7 +2273,11 @@
       "locked": true,
       "kind": "official",
       "format": "single",
-      "has3rdPlace": true
+      "has3rdPlace": true,
+      "rankPts": {
+        "max": 13,
+        "min": 1
+      }
     },
     "sbesi4l4": {
       "name": "2025 S - PlayOff",
@@ -3771,7 +3779,9 @@
         "top": 4,
         "euro": 6,
         "rel": 3,
-        "h2h": false
+        "h2h": false,
+        "playoff": 0,
+        "enableRegen": true
       },
       "createdAt": 1764300163599,
       "mode": "cup",
@@ -3871,7 +3881,14 @@
           "Bán kết",
           "Chung kết"
         ]
-      }
+      },
+      "kind": "official",
+      "format": "single",
+      "rankPts": {
+        "max": 10,
+        "min": 1
+      },
+      "locked": true
     },
     "spzpcuzo": {
       "name": "2024 - Single",
@@ -4147,6 +4164,17 @@
             }
           ]
         },
+        "swiss-playoff-2-0": {
+          "hg": 1,
+          "ag": 0,
+          "games": [
+            {
+              "h": 0,
+              "a": 0,
+              "p": "h"
+            }
+          ]
+        },
         "swiss-playoff-3-0": {
           "hg": 3,
           "ag": 1,
@@ -4170,17 +4198,6 @@
               "h": 1,
               "a": 0,
               "auto": 1
-            }
-          ]
-        },
-        "swiss-playoff-2-0": {
-          "hg": 1,
-          "ag": 0,
-          "games": [
-            {
-              "h": 0,
-              "a": 0,
-              "p": "h"
             }
           ]
         }
@@ -5453,9 +5470,13 @@
           11
         ]
       },
+      "locked": true,
       "kind": "official",
       "format": "single",
-      "locked": true
+      "rankPts": {
+        "max": 10,
+        "min": 1
+      }
     },
     "spjtuhsi": {
       "name": "2023 - Single",
@@ -7710,7 +7731,11 @@
       "has3rdPlace": true,
       "locked": true,
       "kind": "official",
-      "format": "single"
+      "format": "single",
+      "rankPts": {
+        "max": 10,
+        "min": 1
+      }
     },
     "sw572sy9": {
       "name": "2023 - Dual",
@@ -9421,7 +9446,9 @@
         "top": 4,
         "euro": 6,
         "rel": 3,
-        "h2h": false
+        "h2h": false,
+        "playoff": 0,
+        "enableRegen": true
       },
       "createdAt": 1764299710530,
       "mode": "cup",
@@ -9522,7 +9549,13 @@
           "Chung kết"
         ]
       },
-      "locked": true
+      "locked": true,
+      "kind": "official",
+      "format": "single",
+      "rankPts": {
+        "max": 10,
+        "min": 1
+      }
     },
     "strxh7hr": {
       "name": "2023 - League",
@@ -19416,7 +19449,13 @@
         "seedVersion": 3
       },
       "tournamentPhase": "knockout",
-      "locked": true
+      "locked": true,
+      "kind": "official",
+      "format": "single",
+      "rankPts": {
+        "max": 10,
+        "min": 1
+      }
     },
     "su8gwuph": {
       "name": "2026 - Dual",
@@ -20366,6 +20405,14 @@
         "4-2": {
           "hg": 2,
           "ag": 3
+        },
+        "2-3": {
+          "hg": 0,
+          "ag": 0
+        },
+        "4-5": {
+          "hg": 2,
+          "ag": 4
         }
       },
       "rounds": [
@@ -20955,7 +21002,13 @@
       "has3rdPlace": false,
       "numGroups": 4,
       "numKnockoutTeams": 8,
-      "groupRoundRobin": "double"
+      "groupRoundRobin": "double",
+      "kind": "official",
+      "format": "single",
+      "rankPts": {
+        "max": 20,
+        "min": 5
+      }
     },
     "scsml9z1": {
       "name": "2026 - Seri B",
@@ -21132,6 +21185,10 @@
         "4-0": {
           "hg": 2,
           "ag": 2
+        },
+        "4-2": {
+          "hg": 3,
+          "ag": 3
         }
       },
       "rounds": [
@@ -22049,7 +22106,13 @@
       "has3rdPlace": false,
       "numGroups": 4,
       "numKnockoutTeams": 8,
-      "groupRoundRobin": "double"
+      "groupRoundRobin": "double",
+      "kind": "official",
+      "format": "single",
+      "rankPts": {
+        "max": 13,
+        "min": 1
+      }
     },
     "shmtqys4": {
       "name": "2026 W - Playoff",
@@ -25302,7 +25365,7 @@
       "tournamentPhase": "group"
     }
   },
-  "current": "s4fvc53z",
+  "current": "svaqi6fr",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
@@ -27519,5 +27582,18 @@
       "y": 0,
       "t": 1795526855078
     }
-  }
+  },
+  "pesRankOff": [
+    "clone1",
+    "clone2",
+    "clone3",
+    "clone4",
+    "duy jj",
+    "dũng prô",
+    "hùng hổ",
+    "lộc",
+    "ngọct",
+    "đức hà",
+    "đức ngô"
+  ]
 }
