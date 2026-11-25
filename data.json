@@ -1104,7 +1104,11 @@
       "locked": true,
       "kind": "official",
       "format": "single",
-      "has3rdPlace": true
+      "has3rdPlace": true,
+      "rankPts": {
+        "max": 20,
+        "min": 5
+      }
     },
     "sp5ol4p5": {
       "name": "2025 - Seri B",
