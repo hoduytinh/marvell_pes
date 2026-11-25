@@ -195,7 +195,10 @@ function renderSnapshotBlob(html2canvas, build, bg, withImages){
     flattenSnapshotColors(node);
     // Skip images outside the snapshot (e.g. lazy chat emoji GIFs): html2canvas waits for every image
     // in its cloned document, and lazy/offline ones never settle -> capture hangs forever.
-    return html2canvas(node, { backgroundColor: bg, scale: 2, useCORS: true, allowTaint: false, logging: false, windowWidth: 1280,
+    // Full node size regardless of page scroll / viewport height (tall nodes were cut off).
+    var w = Math.ceil(node.scrollWidth), h = Math.ceil(node.scrollHeight);
+    return html2canvas(node, { backgroundColor: bg, scale: 2, useCORS: true, allowTaint: false, logging: false,
+      width: w, height: h, windowWidth: Math.max(1280, w), windowHeight: Math.max(window.innerHeight, h), scrollX: 0, scrollY: 0,
       ignoreElements: function(el){ return el.tagName === 'IMG' && !node.contains(el); } });
   }).then(function(canvas){
     return new Promise(function(resolve, reject){

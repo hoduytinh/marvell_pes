@@ -1280,9 +1280,6 @@ function exportH2HImage(){
     });
     [].forEach.call(clone.querySelectorAll('details'), function(d){ d.open = true; });
     [].forEach.call(clone.querySelectorAll('summary'), function(sm){ sm.style.listStyle = 'none'; sm.style.display = 'block'; });
-    // Keep the image compact: only the latest meetings of the last section ("All meetings").
-    var secs = clone.querySelectorAll('.cr-sec'), last = secs[secs.length - 1];
-    if(last) [].slice.call(last.querySelectorAll('.team-match-row'), 8).forEach(function(r){ r.remove(); });
     wrap.appendChild(head);
     wrap.appendChild(clone);
     document.body.appendChild(wrap);
