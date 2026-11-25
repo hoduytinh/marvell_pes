@@ -801,6 +801,8 @@ function renderSwissBracket(s) {
 // Render Swiss playoff bracket without clearing parent container
 function renderSwissPlayoffBracket(s, playoffBracket, container) {
   if(!playoffBracket || !playoffBracket.rounds) return;
+  // 3rd-place round added after the semis were played: fill its slots from the played results.
+  if(typeof msResolveBracketRefs === 'function') msResolveBracketRefs(playoffBracket, 'swiss-playoff-', s.results || {});
   
   var qualifiers = s.swiss.playoffQualifiers || [];
   

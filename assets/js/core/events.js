@@ -136,21 +136,17 @@
       $('btnNewSeason').addEventListener('click',function(){ 
         if(!ensureAdmin()) return; 
         $('newSeasonName').value=''; 
+        $('newSeasonYear').value=String(new Date().getFullYear());
         $('newSeasonTeams').value=20;
         $('newSeasonKind').value='official';
         $('newSeasonFormat').value='single';
         $('numTournamentGroups').value=4;
         // Initialize option visibility
         var type = $('newSeasonType').value;
-        var thirdPlaceDiv = $('thirdPlaceOption');
         var groupsDiv = $('tournamentGroupOption');
         var chessSwissDiv = $('chessSwissOption');
         
-        if(type === 'cup' || type === 'tournament' || type === 'swiss') {
-          thirdPlaceDiv.style.display = 'block';
-        } else {
-          thirdPlaceDiv.style.display = 'none';
-        }
+        syncThirdPlaceOption(type);
         
         if(type === 'tournament') {
           groupsDiv.style.display = 'block';
@@ -164,10 +160,18 @@
         if(dlg && typeof dlg.showModal==='function'){dlg.showModal()} else {dlg.setAttribute('open','open')} 
       });
       
+      // 3rd place: knock-out modes add a 3rd-place match; table modes / double elimination only award bronze.
+      function syncThirdPlaceOption(type) {
+        var special = type === 'legend' || type === 'ranking';
+        $('thirdPlaceOption').style.display = special ? 'none' : 'block';
+        var lbl = $('enable3rdPlaceLabel');
+        if(lbl) lbl.textContent = (type === 'cup' || type === 'tournament' || type === 'swiss')
+          ? 'Thêm trận tranh hạng 3 (tính 🥉 HC đồng)' : 'Tính hạng 3 (🥉 HC đồng)';
+      }
+      
       // Show/hide 3rd place option based on mode
       $('newSeasonType').addEventListener('change', function() {
         var type = this.value;
-        var thirdPlaceDiv = $('thirdPlaceOption');
         var groupsDiv = $('tournamentGroupOption');
         var teamCountWrapper = $('teamCountWrapper');
         var chessSwissDiv = $('chessSwissOption');
@@ -179,11 +183,7 @@
           teamCountWrapper.style.display = 'flex';
         }
         
-        if(type === 'cup' || type === 'tournament' || type === 'swiss') {
-          thirdPlaceDiv.style.display = 'block';
-        } else {
-          thirdPlaceDiv.style.display = 'none';
-        }
+        syncThirdPlaceOption(type);
         
         if(type === 'tournament') {
           groupsDiv.style.display = 'block';
@@ -205,7 +205,9 @@
       
       $('createSeasonBtn').addEventListener('click',function(){
         if(!ensureAdmin()) return;
-        var name=(($('newSeasonName').value)||'').trim()||'Mùa mới';
+        var year=(($('newSeasonYear').value)||'').trim();
+        if(year && !/^\d{4}$/.test(year)){ alert('Năm phải gồm 4 chữ số (VD: 2026).'); return; }
+        var name=seasonComposeName(year, (($('newSeasonName').value)||'').trim()||'Mùa mới');
         var type = ($('newSeasonType').value || 'league');
         
         console.log('Creating season with type:', type);
@@ -275,6 +277,7 @@
         
         season.mode = type;
         season.has3rdPlace = has3rdPlace;
+        if(year) season.year = year;
         if(type !== 'legend' && type !== 'ranking') {
           season.kind = $('newSeasonKind').value === 'playoff' ? 'playoff' : 'official';
           season.format = $('newSeasonFormat').value === 'double' ? 'double' : 'single';
@@ -340,7 +343,7 @@
         if(dlg && typeof dlg.close === 'function') dlg.close();
         else dlg.removeAttribute('open');
       });
-      $('btnRenameSeason').addEventListener('click',function(){ if(!ensureAdmin()) return; var s=activeSeason(); var name=prompt('Tên mùa:',s.name); if(name){s.name=name.trim(); saveAll(); refreshSeasonUI()} });
+      $('btnRenameSeason').addEventListener('click',function(){ if(!ensureAdmin()) return; var s=activeSeason(); var det=this.closest('details'); if(det) det.open=false; seasonRenameDialog(s); });
       $('btnDeleteSeason').addEventListener('click',function(){ if(!ensureSeasonEditable()) return; if(Object.keys(state.seasons).length<=1){alert('Phải còn ít nhất 1 mùa.'); return} var s=activeSeason(); if(!confirm("Xoá mùa '"+s.name+"'?")) return; delete state.seasons[state.current]; var seasonKeys=Object.keys(state.seasons); var firstListed=(state.seasonOrder||[]).filter(function(id){ return state.seasons[id] && !pesIsSpecialSeason(state.seasons[id]); })[0]; state.current=firstListed||seasonKeys[seasonKeys.length-1]; saveAll(); refreshAll() });
       
       $('btnReorderSeasons').addEventListener('click',function(){ 

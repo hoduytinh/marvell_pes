@@ -1417,6 +1417,21 @@ input.lg-num{width:80px;text-align:center;padding:4px 4px}
 .lg-pick{text-align:left;width:100%}
 .lg-pick:hover{border-color:var(--accent)}
 .lg-dialog-foot{margin-top:12px;text-align:right}
+/* Season meta dialogs (features/season-meta.js): rename year + title, stats scope */
+.sm-dialog{width:min(440px,94vw)}
+.sm-yt{display:grid;grid-template-columns:110px 1fr;gap:10px}
+.sm-yt label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600}
+.sm-yt input{width:100%}
+.sm-yt-prev{margin-top:8px;font-size:12px}
+.sm-scope-note{font-size:12px;margin:0 0 8px}
+.sm-scope-tools{display:flex;gap:8px;margin-bottom:8px}
+.sm-scope-list{max-height:min(420px,60vh)}
+.sm-scope-row{display:flex;align-items:center;gap:8px;padding:5px 8px;border:1px solid var(--border);border-radius:8px;cursor:pointer}
+.sm-scope-row span{flex:1;font-weight:600}
+.sm-scope-row.ls-hidden{display:none}
+.sm-badge.sm-off{border-color:var(--muted);color:var(--muted)}
+.sp-scope{font-size:12px}
+.lg-auto-note{font-size:12px;margin:0 0 10px}
 @media (max-width:900px){
   .lg-hero{grid-template-columns:1fr}
   .lg-events.wide{grid-template-columns:1fr}

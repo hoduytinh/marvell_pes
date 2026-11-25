@@ -19,6 +19,122 @@ function seasonIsDoubles(s){
 
 function smFold(x){ return String(x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').trim(); }
 
+// ---- Year + title: the season name is "<year> - <title>" (s.year is the record year). ----
+// Older seasons without s.year take the 4-digit year at the start of their name.
+function seasonYearOf(s){
+  if(!s) return '';
+  var y = String(s.year == null ? '' : s.year).trim();
+  if(/^\d{4}$/.test(y)) return y;
+  var m = /^\s*(\d{4})(?!\d)/.exec(s.name || '');
+  return m ? m[1] : '';
+}
+function seasonTitleOf(s){
+  var full = String((s && s.name) || '').trim(), n = full, y = seasonYearOf(s);
+  if(y && n.indexOf(y) === 0) n = n.slice(y.length).replace(/^\s*[-–—:|·]?\s*/, '');
+  return n.trim() || full;
+}
+function seasonComposeName(year, title){
+  year = String(year == null ? '' : year).trim();
+  title = String(title == null ? '' : title).trim();
+  return year && title ? year + ' - ' + title : (title || year);
+}
+// Sets s.year + s.name; returns false when the input is invalid (nothing changed).
+function seasonSetYearTitle(s, year, title){
+  year = String(year == null ? '' : year).trim();
+  title = String(title == null ? '' : title).trim();
+  if(year && !/^\d{4}$/.test(year)){ alert(smL('Năm phải gồm 4 chữ số (VD: 2026).', 'The year must have 4 digits (e.g. 2026).')); return false; }
+  if(!title && !year){ alert(smL('Nhập tên giải.', 'Enter the tournament name.')); return false; }
+  if(year) s.year = year; else delete s.year;
+  s.name = seasonComposeName(year, title);
+  return true;
+}
+
+function smDialog(html, onClick){
+  var dlg = document.createElement('dialog');
+  dlg.className = 'lg-dialog sm-dialog';
+  dlg.innerHTML = html;
+  dlg.addEventListener('click', function(e){
+    if(e.target.closest('[data-close]')){ dlg.close(); return; }
+    onClick(e, dlg);
+  });
+  dlg.addEventListener('close', function(){ if(dlg.parentNode) dlg.parentNode.removeChild(dlg); });
+  document.body.appendChild(dlg);
+  if(typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', 'open');
+  return dlg;
+}
+
+// Header "Đổi tên": year + title inputs.
+function seasonRenameDialog(s){
+  if(!s) return;
+  var E = function(v){ return escapeHtml(String(v == null ? '' : v)); };
+  var dlg = smDialog('<h4>' + E(smL('Đổi tên mùa', 'Rename season')) + '</h4>' +
+    '<div class="sm-yt"><label>' + E(smL('Năm', 'Year')) + '<input id="smRenYear" type="number" min="1990" max="2100" step="1" value="' + E(seasonYearOf(s)) + '"></label>' +
+    '<label>' + E(smL('Tên giải', 'Title')) + '<input id="smRenTitle" type="text" class="no-i18n" value="' + E(seasonTitleOf(s)) + '"></label></div>' +
+    '<div class="muted sm-yt-prev" id="smRenPrev"></div>' +
+    '<div class="lg-dialog-foot"><button type="button" data-close>' + E(smL('Hủy', 'Cancel')) + '</button> <button type="button" class="primary" data-save>' + E(smL('Lưu', 'Save')) + '</button></div>',
+    function(e, d){
+      if(!e.target.closest('[data-save]')) return;
+      if(!seasonSetYearTitle(s, d.querySelector('#smRenYear').value, d.querySelector('#smRenTitle').value)) return;
+      d.close();
+      saveAll();
+      refreshSeasonUI();
+    });
+  var prev = function(){ dlg.querySelector('#smRenPrev').textContent = '→ ' + seasonComposeName(dlg.querySelector('#smRenYear').value, dlg.querySelector('#smRenTitle').value); };
+  dlg.addEventListener('input', prev);
+  prev();
+}
+
+// ---- Stats scope: admins turn seasons on/off (s.statsOff) for every cross-season stat. ----
+function seasonStatsIds(){
+  var seasons = state.seasons || {}, seen = {}, ids = [];
+  (state.seasonOrder || []).concat(Object.keys(seasons)).forEach(function(id){
+    var s = seasons[id];
+    if(s && !seen[id] && s.mode !== 'legend' && s.mode !== 'ranking'){ seen[id] = 1; ids.push(id); }
+  });
+  return ids;
+}
+function seasonStatsCount(){
+  var ids = seasonStatsIds();
+  return { on: ids.filter(function(id){ return !state.seasons[id].statsOff; }).length, all: ids.length };
+}
+function seasonScopeDialog(){
+  if(typeof isAdminUser !== 'function' || !isAdminUser()){ alert(smL('Chỉ admin được chọn mùa tính thống kê.', 'Only admins can choose the counted seasons.')); return; }
+  var E = function(v){ return escapeHtml(String(v == null ? '' : v)); };
+  var rows = seasonStatsIds().map(function(id){
+    var s = state.seasons[id];
+    return '<label class="sm-scope-row"><input type="checkbox" data-sid="' + E(id) + '"' + (s.statsOff ? '' : ' checked') + '>' +
+      '<span class="no-i18n">' + E(s.name || id) + '</span><small class="muted">' + E(s.mode || 'league') + (s.locked ? ' · 🔒' : '') + '</small></label>';
+  }).join('');
+  var dlg = smDialog('<h4>📊 ' + E(smL('Mùa giải tính thống kê', 'Seasons counted in stats')) + '</h4>' +
+    '<p class="muted sm-scope-note">' + E(smL('Bỏ tick = mùa bị loại khỏi Dashboard: thẻ, Elo, đối đầu, kỷ lục, danh hiệu và Hall of Legend (auto).', 'Unticked seasons are left out of the Dashboard: cards, Elo, head-to-head, records, trophies and the auto Hall of Legend.')) + '</p>' +
+    '<div class="sm-scope-tools"><button type="button" data-all>' + E(smL('Chọn tất cả', 'Select all')) + '</button><button type="button" data-none>' + E(smL('Bỏ chọn', 'Select none')) + '</button></div>' +
+    '<div class="lg-pick-list sm-scope-list">' + rows + '</div>' +
+    '<div class="lg-dialog-foot"><button type="button" data-close>' + E(smL('Hủy', 'Cancel')) + '</button> <button type="button" class="primary" data-save>' + E(smL('Lưu', 'Save')) + '</button></div>',
+    function(e, d){
+      var all = e.target.closest('[data-all]'), none = e.target.closest('[data-none]');
+      if(all || none){
+        d.querySelectorAll('.sm-scope-row').forEach(function(r){ if(!r.classList.contains('ls-hidden')) r.querySelector('input').checked = !!all; });
+        return;
+      }
+      if(!e.target.closest('[data-save]')) return;
+      var changed = 0;
+      d.querySelectorAll('input[data-sid]').forEach(function(cb){
+        var s = state.seasons[cb.getAttribute('data-sid')];
+        if(!s || !cb.checked === !!s.statsOff) return;
+        if(cb.checked) delete s.statsOff; else s.statsOff = true;
+        changed++;
+      });
+      d.close();
+      if(!changed) return;
+      saveAll();
+      if(typeof refreshSeasonUI === 'function') refreshSeasonUI();
+      var sp = document.getElementById('statsPage');
+      if(sp && !sp.hidden && typeof renderStatsPage === 'function') renderStatsPage();
+      if(typeof toast === 'function'){ var c = seasonStatsCount(); toast(smL('Đang tính thống kê trên ', 'Stats now use ') + c.on + '/' + c.all + smL(' mùa', ' seasons')); }
+    });
+  if(typeof addListSearch === 'function') addListSearch(dlg.querySelector('.sm-scope-list'), '.sm-scope-row', function(el){ return el.textContent; });
+}
+
 // Known single player names: master list + teams of every singles season.
 var smCandCache = { key: '', list: [] };
 function smCandidates(){
@@ -92,6 +208,7 @@ function seasonMetaUI(s){
       if(locked) b.push('<span class="sm-badge sm-lock">🔒 ' + smL('Đã khóa', 'Locked') + '</span>');
       if(seasonKind(s) === 'playoff') b.push('<span class="sm-badge sm-playoff">' + smL('Playoff · không tính điểm', 'Playoff · no trophy pts') + '</span>');
       if(seasonIsDoubles(s)) b.push('<span class="sm-badge sm-double">👥 ' + smL('Đá đôi', 'Doubles') + '</span>');
+      if(s.statsOff) b.push('<span class="sm-badge sm-off" title="' + escapeHtml(smL('Admin đã tắt mùa này khỏi thống kê toàn hệ thống', 'An admin turned this season off for all cross-season stats')) + '">📊 ' + smL('Không tính thống kê', 'Not in stats') + '</span>');
     }
     box.innerHTML = b.join('');
     box.hidden = !b.length;

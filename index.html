@@ -295,7 +295,8 @@
   <dialog id="seasonDialog"><form method="dialog">
     <h3>Tạo mùa mới</h3>
     <div style="display:flex;gap:10px;margin-bottom:10px">
-      <input id="newSeasonName" type="text" placeholder="Tên mùa (VD: 2025/26)" style="flex:1" />
+      <input id="newSeasonYear" type="number" min="1990" max="2100" step="1" placeholder="Năm" title="Năm (dùng cho Hall of Legend)" style="width:90px" />
+      <input id="newSeasonName" type="text" placeholder="Tên giải (VD: Seri A)" style="flex:1" />
       <div id="teamCountWrapper" style="display:flex;">
         <input id="newSeasonTeams" type="number" min="3" max="100" step="1" value="20" style="width:110px" />
       </div>
@@ -372,7 +373,7 @@
     <div id="thirdPlaceOption" style="margin-bottom:10px;display:none">
       <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
         <input type="checkbox" id="enable3rdPlace" />
-        <span>Thêm trận tranh hạng 3</span>
+        <span id="enable3rdPlaceLabel">Thêm trận tranh hạng 3</span>
       </label>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
@@ -403,6 +404,7 @@
       <label>Loại giải: <select id="cfgKind" data-no-search><option value="official">Chính thức</option><option value="playoff">Playoff (không tính điểm danh hiệu)</option></select></label>
       <label>Thể thức: <select id="cfgFormat" data-no-search><option value="single">Đơn (1 vs 1)</option><option value="double">Đôi (2 vs 2)</option></select></label>
       <label style="grid-column: span 2;" title="Mùa giải đã kết thúc: không thể sửa tỉ số hay cấu trúc cho tới khi mở khóa"><input id="cfgLock" type="checkbox"/> 🔒 Khóa mùa giải (đã kết thúc, không thể chỉnh sửa)</label>
+      <label style="grid-column: span 2;" title="Bỏ tick: mùa này không được tính vào Dashboard (thẻ, Elo, đối đầu, kỷ lục, danh hiệu, Hall of Legend)"><input id="cfgInStats" type="checkbox"/> 📊 Tính vào thống kê toàn hệ thống</label>
     </div>
     <div id="cfgModeSection" style="margin-top:12px;display:none">
       <h4 id="cfgModeTitle" style="margin:0 0 8px">Cài đặt thể thức</h4>
@@ -419,7 +421,7 @@
         </label>
       </div>
       <label id="cfgChessRoundsWrap" style="display:none;align-items:center;gap:8px">Số vòng đấu: <input id="cfgChessRounds" type="number" min="1" max="20" style="width:80px"/></label>
-      <label id="cfg3rdWrap" style="display:none;align-items:center;gap:8px;margin-top:8px"><input id="cfg3rdPlace" type="checkbox"/> Thêm trận tranh hạng 3</label>
+      <label id="cfg3rdWrap" style="display:none;align-items:center;gap:8px;margin-top:8px"><input id="cfg3rdPlace" type="checkbox"/> <span id="cfg3rdLabel">Thêm trận tranh hạng 3</span></label>
       <div style="font-size:12px;color:var(--muted);margin-top:8px">Thay đổi cấu trúc sẽ hỏi xác nhận nếu cần xóa kết quả liên quan, và tự động sao lưu mùa trước khi đổi.</div>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">

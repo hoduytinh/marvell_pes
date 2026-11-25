@@ -35,6 +35,12 @@
     'Đơn (1 vs 1)': 'Singles (1 vs 1)',
     'Đôi (2 vs 2)': 'Doubles (2 vs 2)',
     '🔒 Khóa mùa giải (đã kết thúc, không thể chỉnh sửa)': '🔒 Lock season (finished, no further edits)',
+    '📊 Tính vào thống kê toàn hệ thống': '📊 Count in system-wide stats',
+    'Thêm trận tranh hạng 3 (tính 🥉 HC đồng)': 'Add a 3rd place match (counts 🥉 bronze)',
+    'Tính hạng 3 (🥉 HC đồng)': 'Count 3rd place (🥉 bronze)',
+    'Tính hạng 3 (🥉 HC đồng cho đội đứng thứ 3)': 'Count 3rd place (🥉 bronze for the 3rd-placed team)',
+    'Tính hạng 3 (🥉 HC đồng cho đội thua chung kết nhánh thua)': 'Count 3rd place (🥉 bronze for the losers-bracket final loser)',
+    'Tên giải (VD: Seri A)': 'Season title (e.g., Seri A)',
     // Double-elimination tree view
     '🌳 Sơ đồ nhánh': '🌳 Bracket tree',
     '📋 Danh sách trận': '📋 Match list',

@@ -12,13 +12,14 @@ var CAREER_SKIP_MODES = { legend: 1, ranking: 1 };
 var ELO_BASE = 1500, ELO_K = 32, ELO_KO_FACTOR = 1.25, ELO_SWEEP_FACTOR = 1.25, ELO_PROVISIONAL = 10;
 
 // Header order lists the newest season first; history needs the oldest first.
+// Seasons turned off by an admin (s.statsOff) are left out of every cross-season stat.
 function careerSeasonIds(st){
   st = st || state;
   var seasons = st.seasons || {}, seen = {}, ids = [];
   var order = (st.seasonOrder && st.seasonOrder.length) ? st.seasonOrder : Object.keys(seasons);
   order.forEach(function(id){ if(seasons[id] && !seen[id]){ seen[id] = 1; ids.push(id); } });
   Object.keys(seasons).forEach(function(id){ if(!seen[id]){ seen[id] = 1; ids.unshift(id); } });
-  return ids.reverse().filter(function(id){ return !CAREER_SKIP_MODES[seasons[id].mode]; });
+  return ids.reverse().filter(function(id){ return !CAREER_SKIP_MODES[seasons[id].mode] && !seasons[id].statsOff; });
 }
 
 function careerName(n){ return String(n == null ? '' : n).trim(); }
@@ -226,12 +227,63 @@ function careerSeasonFinishes(s){
     if(pre) fin = crKoFinishes(matches, pre, br);
   }
   if(!fin) return null;
+  // Bronze only for seasons whose "3rd place" setting is ticked (Cài đặt giải); points stay the same.
+  if(!s.has3rdPlace) Object.keys(fin).forEach(function(k){
+    var f = fin[k];
+    if(f.medal === 'bronze') fin[k] = { pts: f.pts, place: (f.place === CR_PLACE[3] && f.pts === 4) ? CR_PLACE.sf : f.place };
+  });
   s.teams.forEach(function(_, i){ if(!fin[i]) fin[i] = { pts: 1, place: CR_PLACE.part }; });
   return fin;
 }
 
+// Hall of Legend photos by year: state.hallPhotos. Until an admin edits them they are read from the
+// old manual Hall (legend seasons); create=true copies them into state.hallPhotos.
+function hallPhotoMap(st, create){
+  st = st || state;
+  if(st.hallPhotos && typeof st.hallPhotos === 'object') return st.hallPhotos;
+  var map = {};
+  Object.keys(st.seasons || {}).forEach(function(id){
+    var s = st.seasons[id];
+    if(!s || s.mode !== 'legend' || !Array.isArray(s.timelines)) return;
+    s.timelines.forEach(function(tl){
+      var y = String((tl && tl.year) || '').trim();
+      ((tl && tl.pictures) || []).forEach(function(p){
+        if(!p || !y) return;
+        var a = map[y] || (map[y] = []);
+        if(a.indexOf(p) === -1) a.push(p);
+      });
+    });
+  });
+  if(create) st.hallPhotos = map;
+  return map;
+}
+
+// Hall of Legend: finished official seasons grouped by record year (seasonYearOf). Medals come from
+// the same career trophies data as the cards (careerData().medals). Same shape as a legend season.
+function careerAutoLegend(st){
+  st = st || state;
+  var medals = careerData(st).medals, byYear = {};
+  careerSeasonIds(st).forEach(function(sid){
+    var s = st.seasons[sid];
+    if(!s || !medals[sid]) return;
+    var year = typeof seasonYearOf === 'function' ? seasonYearOf(s) : '';
+    if(!year) return;
+    var tl = byYear[year] || (byYear[year] = { year: year, events: [], pictures: [] });
+    tl.events.push({ name: typeof seasonTitleOf === 'function' ? seasonTitleOf(s) : (s.name || ''), sid: sid, medals: medals[sid] });
+  });
+  var photos = hallPhotoMap(st);
+  Object.keys(photos).forEach(function(y){
+    if(!Array.isArray(photos[y])) return;
+    if(byYear[y]) byYear[y].pictures = photos[y];
+    else if(photos[y].length) byYear[y] = { year: y, events: [], pictures: photos[y] };
+  });
+  var timelines = Object.keys(byYear).sort().map(function(y){ return byYear[y]; });
+  return { mode: 'legend', name: 'Hall of Legend', auto: true, timelines: timelines };
+}
+
 // lower-cased name -> { name, pts, list: [{sid, season, team, medal|null, place, pts, dbl}] } (oldest first)
-function careerTrophies(st){
+// medalsOut (optional) is filled with sid -> {gold, silver, bronze: [names]} for the Hall of Legend.
+function careerTrophies(st, medalsOut){
   var map = {};
   careerSeasonIds(st).forEach(function(sid){
     var s = st.seasons[sid];
@@ -239,12 +291,14 @@ function careerTrophies(st){
     var fin;
     try { fin = careerSeasonFinishes(s); } catch(e){ fin = null; }
     if(!fin) return;
-    var dbl = crIsDoubles(s);
+    var dbl = crIsDoubles(s), md = { gold: [], silver: [], bronze: [] };
+    if(medalsOut) medalsOut[sid] = md;
     Object.keys(fin).forEach(function(idx){
       var f = fin[idx], team = careerName(s.teams[idx]);
       if(!team || /^bye$/i.test(team)) return;
       if(s.mode === 'chess-swiss' && s.chessSwiss && +idx === s.chessSwiss.byeIndex) return;
       var names = dbl ? (crPairOf(s, +idx) || []) : [team];
+      if(f.medal && md[f.medal]) names.forEach(function(n){ if(careerName(n)) md[f.medal].push(careerName(n)); });
       names.forEach(function(n){
         var k = careerName(n).toLowerCase();
         if(!k) return;
@@ -273,7 +327,8 @@ function careerData(st){
   crHook();
   if(crCache.cd && crCache.ver === crVer && crCache.st === st && crCache.seasons === st.seasons) return crCache.cd;
   var tl = careerTimeline(st);
-  var cd = { st: st, hist: tl.hist, ties: tl.ties, dbl: tl.all.filter(function(m){ return m.dbl; }), elo: computeElo(tl.all), trophies: careerTrophies(st) };
+  var medals = {};
+  var cd = { st: st, hist: tl.hist, ties: tl.ties, dbl: tl.all.filter(function(m){ return m.dbl; }), elo: computeElo(tl.all), trophies: careerTrophies(st, medals), medals: medals };
   crCache = { ver: crVer, st: st, seasons: st.seasons, cd: cd };
   return cd;
 }
@@ -1105,8 +1160,9 @@ var STATS_TABS = [
   { k: 'h2h', icon: '⚔️', label: crL('Đối đầu', 'Head-to-head') },
   { k: 'elo', icon: '📈', label: 'Elo' },
   { k: 'records', icon: '🏅', label: crL('Kỷ lục', 'Records') },
-  { k: 'legend', icon: '🏛️', label: 'Hall of Legend', special: true },
+  { k: 'autolegend', icon: '🏛️', label: 'Hall of Legend' },
   { k: 'ranking', icon: '🏆', label: 'PES Ranking', special: true },
+  { k: 'legend', icon: '🗄️', label: crL('Hall of Legend (cũ)', 'Hall of Legend (old)'), special: true, adminOnly: true },
   { k: 'admin', icon: '📝', label: crL('Nhập kết quả', 'Enter results'), admin: true } // features/admin-fixtures.js
 ];
 
@@ -1115,22 +1171,32 @@ function renderStatsPage(){
   if(!host) return;
   var tabs = STATS_TABS.filter(function(t){
     if(t.admin) return isAdminUser() && typeof amRenderHtml === 'function';
+    if(t.adminOnly && !isAdminUser()) return false;
     return !t.special || pesSpecialSeasonId(t.k);
   });
-  if(!tabs.some(function(t){ return t.k === statsTab; })) statsTab = 'career';
+  if(!tabs.some(function(t){ return t.k === statsTab; })) statsTab = statsTab === 'legend' ? 'autolegend' : 'career';
   var cd = careerData(state), hasMaster = !!(state.teamMasterList || []).length, only = hasMaster && statsMasterOnly;
-  var special = statsTab === 'legend' || statsTab === 'ranking', adminTab = statsTab === 'admin';
+  var special = statsTab === 'legend' || statsTab === 'ranking', adminTab = statsTab === 'admin', autoHall = statsTab === 'autolegend';
   var html = '<div class="view-tabs sp-tabs">' + tabs.map(function(t){
       return '<button type="button" class="view-tab' + (t.k === statsTab ? ' active' : '') + '" data-sp-tab="' + t.k + '">' + t.icon + ' ' + t.label + '</button>';
     }).join('') + crEloToggleBtn('view-tab elo-toggle') +
     '<button type="button" class="view-tab sp-back" id="spBack">← ' + crL('Về mùa giải', 'Back to season') + '</button></div>';
   var tools = '';
   if(statsTab === 'career' && !statsCareer) tools += '<input type="search" id="spSearch" class="sp-search" placeholder="' + escapeHtml(crL('Tìm tuyển thủ…', 'Search player…')) + '" value="' + escapeHtml(statsQuery) + '">';
-  if(hasMaster && !special && !adminTab && !(statsTab === 'career' && statsCareer)) tools += '<label class="sp-check"><input type="checkbox" id="spMasterOnly"' + (only ? ' checked' : '') + '> ' + crL('Chỉ tuyển thủ trong danh sách', 'Master-list players only') + '</label>';
+  if(hasMaster && !special && !adminTab && !autoHall && !(statsTab === 'career' && statsCareer)) tools += '<label class="sp-check"><input type="checkbox" id="spMasterOnly"' + (only ? ' checked' : '') + '> ' + crL('Chỉ tuyển thủ trong danh sách', 'Master-list players only') + '</label>';
   if(statsTab === 'career' && typeof openCardExport === 'function') tools += '<button type="button" class="ghost" id="spCardExport" title="' + escapeHtml(crL('Xuất thẻ 54 × 86 mm để in', 'Export a 54 × 86 mm card for printing')) + '">🖨️ ' + crL('In thẻ', 'Print card') + '</button>';
+  if(!special && !adminTab && typeof seasonStatsCount === 'function'){
+    var sc = seasonStatsCount();
+    if(sc.on < sc.all) tools += '<span class="sp-scope muted" title="' + escapeHtml(crL('Một số mùa đã được admin tắt khỏi thống kê', 'Some seasons were turned off by an admin')) + '">📊 ' + crL('Đang tính trên ', 'Counting ') + sc.on + '/' + sc.all + crL(' mùa', ' seasons') + '</span>';
+    if(isAdminUser()) tools += '<button type="button" class="ghost" id="spSeasonScope">⚙️ ' + crL('Mùa tính thống kê', 'Counted seasons') + '</button>';
+  }
   if(tools) html += '<div class="sp-tools">' + tools + '</div>';
   var body = '';
   if(special) body = '<div id="spModeHost" data-mode="' + statsTab + '"></div>';
+  else if(autoHall) body = '<p class="muted lg-auto-note">' + escapeHtml(crL(
+      'Tự động từ các giải chính thức đã kết thúc (cùng dữ liệu với thẻ & danh hiệu), nhóm theo năm của giải. 🥉 chỉ tính khi giải bật "hạng 3" trong Cài đặt giải.',
+      'Built automatically from finished official seasons (same data as cards & trophies), grouped by season year. 🥉 only for seasons with "3rd place" ticked in the season settings.')) + '</p>' +
+    '<div id="spModeHost" data-mode="legend"></div>';
   else if(adminTab) body = amRenderHtml();
   else if(statsTab === 'career'){
     if(statsCareer){
@@ -1157,6 +1223,11 @@ function renderStatsPage(){
     PES_MODE_HOST = $('spModeHost');
     try { if(statsTab === 'legend') renderLegendMode(ms); else renderRankingMode(ms); }
     catch(e){ console.error('Dashboard ' + statsTab + ' render failed:', e); }
+  }
+  if(autoHall){
+    PES_MODE_HOST = $('spModeHost');
+    try { renderLegendMode(careerAutoLegend(state)); }
+    catch(e){ console.error('Dashboard auto legend render failed:', e); }
   }
 }
 
@@ -1283,7 +1354,8 @@ document.addEventListener('click', function(e){
     return;
   }
   var tab = t.closest('[data-sp-tab]');
-  if(tab){ statsTab = tab.getAttribute('data-sp-tab'); statsCareer = null; renderStatsPage(); }
+  if(tab){ statsTab = tab.getAttribute('data-sp-tab'); statsCareer = null; renderStatsPage(); return; }
+  if(t.closest('#spSeasonScope') && typeof seasonScopeDialog === 'function') seasonScopeDialog();
 });
 
 document.addEventListener('keydown', function(e){

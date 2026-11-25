@@ -15,6 +15,32 @@ function msDeleteResults(s, prefixes){
   });
 }
 
+// Brackets that store numbers once a slot is known (swiss playoff): replace {fromRound, matchId, isLoser}
+// refs whose source match is already decided by the winner / loser. Returns true when something changed.
+function msResolveBracketRefs(br, prefix, results){
+  if(!br || !br.rounds) return false;
+  var changed = false;
+  results = results || {};
+  br.rounds.forEach(function(round){
+    (round || []).forEach(function(m){
+      if(!m) return;
+      ['home', 'away'].forEach(function(side){
+        var ref = m[side];
+        if(!ref || typeof ref !== 'object' || ref.fromRound == null || ref.matchId == null || ref.series) return;
+        var src = br.rounds[ref.fromRound] && br.rounds[ref.fromRound][ref.matchId];
+        var r = results[prefix + ref.fromRound + '-' + ref.matchId];
+        if(!src || typeof src.home !== 'number' || typeof src.away !== 'number' || !r) return;
+        var hg = parseInt(r.hg, 10), ag = parseInt(r.ag, 10);
+        if(!isFinite(hg) || !isFinite(ag) || hg === ag) return;
+        var homeWon = hg > ag;
+        m[side] = ref.isLoser ? (homeWon ? src.away : src.home) : (homeWon ? src.home : src.away);
+        changed = true;
+      });
+    });
+  });
+  return changed;
+}
+
 // Add/remove the 3rd-place round in an existing single-elimination bracket,
 // keeping played results (final result key is shifted accordingly).
 function msToggle3rdPlace(br, prefix, results, enable){
@@ -53,12 +79,16 @@ function msSyncSerieAB(){
   msShow('cfgNumKnockoutRow', !on, 'flex');
 }
 
+// Knock-out modes get a real 3rd-place match; the other modes only award the bronze medal.
+function msThirdIsMatch(m){ return m === 'tournament' || m === 'cup' || m === 'swiss'; }
+
 function fillModeSettings(s){
   var m = s.mode;
   var tour = m === 'tournament', chess = m === 'chess-swiss';
-  var third = m === 'tournament' || m === 'cup' || m === 'swiss';
+  var third = m !== 'legend' && m !== 'ranking';
   $('cfgForceEnd').checked = !!s.forceEnded;
   if($('cfgLock')) $('cfgLock').checked = !!s.locked;
+  if($('cfgInStats')) $('cfgInStats').checked = !s.statsOff;
   if($('cfgKind')) $('cfgKind').value = (typeof seasonKind === 'function') ? seasonKind(s) : (s.kind || 'official');
   if($('cfgFormat')) $('cfgFormat').value = (typeof seasonIsDoubles === 'function' && seasonIsDoubles(s)) ? 'double' : 'single';
   msShow('cfgModeSection', tour || chess || third);
@@ -66,6 +96,9 @@ function fillModeSettings(s){
   msShow('cfgChessRoundsWrap', chess, 'flex');
   msShow('cfg3rdWrap', third, 'flex');
   $('cfg3rdPlace').checked = !!s.has3rdPlace;
+  if($('cfg3rdLabel')) $('cfg3rdLabel').textContent = msThirdIsMatch(m)
+    ? 'Thêm trận tranh hạng 3 (tính 🥉 HC đồng)'
+    : (m === 'double-elimination' ? 'Tính hạng 3 (🥉 HC đồng cho đội thua chung kết nhánh thua)' : 'Tính hạng 3 (🥉 HC đồng cho đội đứng thứ 3)');
   if(tour){
     $('cfgNumGroups').value = s.numGroups || Object.keys(s.groups || {}).length || 4;
     var rr = s.groupRoundRobin || 'double';
@@ -154,6 +187,7 @@ function applyModeSettings(s){
       if(s.swiss && s.swiss.playoffBracket){
         if(msHasResults(s, ['swiss-playoff-'])) backup();
         msToggle3rdPlace(s.swiss.playoffBracket, 'swiss-playoff-', results, want3rd);
+        msResolveBracketRefs(s.swiss.playoffBracket, 'swiss-playoff-', results);
       }
       s.has3rdPlace = want3rd;
     }
@@ -177,6 +211,9 @@ function msApplyMeta(s){
   if($('cfgKind')) s.kind = $('cfgKind').value === 'playoff' ? 'playoff' : 'official';
   if($('cfgFormat')) s.format = $('cfgFormat').value === 'double' ? 'double' : 'single';
   if($('cfgLock')){ if($('cfgLock').checked) s.locked = true; else delete s.locked; }
+  if($('cfgInStats')){ if($('cfgInStats').checked) delete s.statsOff; else s.statsOff = true; }
+  // Bronze-only setting (no bracket change): allowed even for locked seasons.
+  if(s.mode !== 'legend' && s.mode !== 'ranking' && !msThirdIsMatch(s.mode)) s.has3rdPlace = $('cfg3rdPlace').checked;
 }
 
 document.addEventListener('change', function(e){
