@@ -7718,7 +7718,11 @@
       "has3rdPlace": true,
       "locked": true,
       "kind": "official",
-      "format": "single"
+      "format": "single",
+      "rankPts": {
+        "max": 10,
+        "min": 1
+      }
     },
     "sw572sy9": {
       "name": "2023 - Dual",
