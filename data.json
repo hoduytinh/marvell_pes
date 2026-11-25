@@ -2269,7 +2269,11 @@
       "locked": true,
       "kind": "official",
       "format": "single",
-      "has3rdPlace": true
+      "has3rdPlace": true,
+      "rankPts": {
+        "max": 13,
+        "min": 1
+      }
     },
     "sbesi4l4": {
       "name": "2025 S - PlayOff",
