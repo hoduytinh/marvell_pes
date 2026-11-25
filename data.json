@@ -4147,6 +4147,17 @@
             }
           ]
         },
+        "swiss-playoff-2-0": {
+          "hg": 1,
+          "ag": 0,
+          "games": [
+            {
+              "h": 0,
+              "a": 0,
+              "p": "h"
+            }
+          ]
+        },
         "swiss-playoff-3-0": {
           "hg": 3,
           "ag": 1,
@@ -4170,17 +4181,6 @@
               "h": 1,
               "a": 0,
               "auto": 1
-            }
-          ]
-        },
-        "swiss-playoff-2-0": {
-          "hg": 1,
-          "ag": 0,
-          "games": [
-            {
-              "h": 0,
-              "a": 0,
-              "p": "h"
             }
           ]
         }
@@ -5453,9 +5453,9 @@
           11
         ]
       },
+      "locked": true,
       "kind": "official",
-      "format": "single",
-      "locked": true
+      "format": "single"
     },
     "spjtuhsi": {
       "name": "2023 - Single",
@@ -25306,7 +25306,7 @@
       "tournamentPhase": "group"
     }
   },
-  "current": "s4fvc53z",
+  "current": "scsml9z1",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
