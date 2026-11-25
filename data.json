@@ -3779,7 +3779,9 @@
         "top": 4,
         "euro": 6,
         "rel": 3,
-        "h2h": false
+        "h2h": false,
+        "playoff": 0,
+        "enableRegen": true
       },
       "createdAt": 1764300163599,
       "mode": "cup",
@@ -3879,6 +3881,12 @@
           "Bán kết",
           "Chung kết"
         ]
+      },
+      "kind": "official",
+      "format": "single",
+      "rankPts": {
+        "max": 10,
+        "min": 1
       }
     },
     "spzpcuzo": {
