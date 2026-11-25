@@ -9429,7 +9429,9 @@
         "top": 4,
         "euro": 6,
         "rel": 3,
-        "h2h": false
+        "h2h": false,
+        "playoff": 0,
+        "enableRegen": true
       },
       "createdAt": 1764299710530,
       "mode": "cup",
@@ -9530,7 +9532,13 @@
           "Chung kết"
         ]
       },
-      "locked": true
+      "locked": true,
+      "kind": "official",
+      "format": "single",
+      "rankPts": {
+        "max": 10,
+        "min": 1
+      }
     },
     "strxh7hr": {
       "name": "2023 - League",
