@@ -89,6 +89,12 @@ function fillModeSettings(s){
   $('cfgForceEnd').checked = !!s.forceEnded;
   if($('cfgLock')) $('cfgLock').checked = !!s.locked;
   if($('cfgInStats')) $('cfgInStats').checked = !s.statsOff;
+  if($('cfgRankWrap') && typeof prRange === 'function'){
+    msShow('cfgRankWrap', third, 'flex');
+    var rg = prRange(s), df = prDefaults(s);
+    $('cfgRankMax').value = rg.max; $('cfgRankMax').placeholder = df.max;
+    $('cfgRankMin').value = rg.min; $('cfgRankMin').placeholder = df.min;
+  }
   if($('cfgKind')) $('cfgKind').value = (typeof seasonKind === 'function') ? seasonKind(s) : (s.kind || 'official');
   if($('cfgFormat')) $('cfgFormat').value = (typeof seasonIsDoubles === 'function' && seasonIsDoubles(s)) ? 'double' : 'single';
   msShow('cfgModeSection', tour || chess || third);
@@ -212,6 +218,8 @@ function msApplyMeta(s){
   if($('cfgFormat')) s.format = $('cfgFormat').value === 'double' ? 'double' : 'single';
   if($('cfgLock')){ if($('cfgLock').checked) s.locked = true; else delete s.locked; }
   if($('cfgInStats')){ if($('cfgInStats').checked) delete s.statsOff; else s.statsOff = true; }
+  // PES Ranking max/min points (features/pes-ranking.js): metadata, allowed for locked seasons too.
+  if($('cfgRankMax') && typeof prSetRange === 'function' && s.mode !== 'legend' && s.mode !== 'ranking') prSetRange(s, $('cfgRankMax').value, $('cfgRankMin').value);
   // Bronze-only setting (no bracket change): allowed even for locked seasons.
   if(s.mode !== 'legend' && s.mode !== 'ranking' && !msThirdIsMatch(s.mode)) s.has3rdPlace = $('cfg3rdPlace').checked;
 }

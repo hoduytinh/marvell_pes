@@ -139,7 +139,8 @@ var CR_MEDAL_ICON = { gold: '🥇', silver: '🥈', bronze: '🥉' };
 function crWinner(m){ return (m && m.res && m.res.hg !== m.res.ag) ? (m.res.hg > m.res.ag ? m.home : m.away) : null; }
 function crLoser(m){ var w = crWinner(m); return w == null ? null : (w === m.home ? m.away : m.home); }
 
-// Single-elimination bracket -> { teamIdx: {pts, medal, place} }, or null when the final is not decided.
+// Single-elimination bracket -> { teamIdx: {pts, medal, place, lv} }, or null when the final is not decided.
+// lv = how far the team went (higher = further), used by PES Ranking (features/pes-ranking.js).
 function crKoFinishes(matches, prefix, br){
   var third = -1;
   ((br && br.stageNames) || []).forEach(function(n, i){ if(/tranh hạng 3|3rd/i.test(n || '')) third = i; });
@@ -157,13 +158,14 @@ function crKoFinishes(matches, prefix, br){
     var dist = finalR - depth[t];
     out[t] = dist === 1 ? { pts: 4, medal: third >= 0 ? null : 'bronze', place: third >= 0 ? CR_PLACE.sf : CR_PLACE[3] }
       : dist === 2 ? { pts: 3, place: CR_PLACE.qf } : { pts: 2, place: CR_PLACE.ko };
+    out[t].lv = 50 - dist;
   });
-  out[crWinner(fin.m)] = { pts: 10, medal: 'gold', place: CR_PLACE[1] };
-  out[crLoser(fin.m)] = { pts: 7, medal: 'silver', place: CR_PLACE[2] };
+  out[crWinner(fin.m)] = { pts: 10, medal: 'gold', place: CR_PLACE[1], lv: 100 };
+  out[crLoser(fin.m)] = { pts: 7, medal: 'silver', place: CR_PLACE[2], lv: 90 };
   var tm = third >= 0 ? ms.filter(function(x){ return x.r === third; })[0] : null;
   if(tm && crWinner(tm.m) != null){
-    out[crWinner(tm.m)] = { pts: 5, medal: 'bronze', place: CR_PLACE[3] };
-    out[crLoser(tm.m)] = { pts: 4, place: CR_PLACE[4] };
+    out[crWinner(tm.m)] = { pts: 5, medal: 'bronze', place: CR_PLACE[3], lv: 80 };
+    out[crLoser(tm.m)] = { pts: 4, place: CR_PLACE[4], lv: 70 };
   }
   return out;
 }
@@ -177,6 +179,7 @@ function crTableFinishes(order){
       : pos === 2 ? { pts: 7, medal: 'silver', place: CR_PLACE[2] }
       : pos === 3 ? { pts: 5, medal: 'bronze', place: CR_PLACE[3] }
       : { pts: pos === 4 ? 4 : (pos <= Math.ceil(n / 2) ? 2 : 1), place: CR_PLACE.n + pos };
+    out[idx].pos = pos;
   });
   return out;
 }
@@ -195,10 +198,11 @@ function crDeFinishes(s, matches){
       var dist = lbN - 1 - (+mm[1]);
       out[lo] = dist <= 0 ? { pts: 5, medal: 'bronze', place: CR_PLACE[3] } : dist === 1 ? { pts: 4, place: CR_PLACE[4] }
         : dist === 2 ? { pts: 3, place: CR_PLACE.qf } : { pts: 2, place: CR_PLACE.ko };
-    } else if(m.key.indexOf('de-playoff-') === 0) out[lo] = { pts: 1, place: CR_PLACE.part };
+      out[lo].lv = 50 - Math.max(0, dist);
+    } else if(m.key.indexOf('de-playoff-') === 0) out[lo] = { pts: 1, place: CR_PLACE.part, lv: 1 };
   });
-  out[crWinner(last)] = { pts: 10, medal: 'gold', place: CR_PLACE[1] };
-  out[crLoser(last)] = { pts: 7, medal: 'silver', place: CR_PLACE[2] };
+  out[crWinner(last)] = { pts: 10, medal: 'gold', place: CR_PLACE[1], lv: 100 };
+  out[crLoser(last)] = { pts: 7, medal: 'silver', place: CR_PLACE[2], lv: 90 };
   return out;
 }
 
@@ -230,7 +234,7 @@ function careerSeasonFinishes(s){
   // Bronze only for seasons whose "3rd place" setting is ticked (Cài đặt giải); points stay the same.
   if(!s.has3rdPlace) Object.keys(fin).forEach(function(k){
     var f = fin[k];
-    if(f.medal === 'bronze') fin[k] = { pts: f.pts, place: (f.place === CR_PLACE[3] && f.pts === 4) ? CR_PLACE.sf : f.place };
+    if(f.medal === 'bronze') fin[k] = { pts: f.pts, pos: f.pos, lv: f.lv, place: (f.place === CR_PLACE[3] && f.pts === 4) ? CR_PLACE.sf : f.place };
   });
   s.teams.forEach(function(_, i){ if(!fin[i]) fin[i] = { pts: 1, place: CR_PLACE.part }; });
   return fin;
@@ -1165,7 +1169,8 @@ var STATS_TABS = [
   { k: 'elo', icon: '📈', label: 'Elo' },
   { k: 'records', icon: '🏅', label: crL('Kỷ lục', 'Records') },
   { k: 'autolegend', icon: '🏛️', label: 'Hall of Legend' },
-  { k: 'ranking', icon: '🏆', label: 'PES Ranking', special: true },
+  { k: 'pesrank', icon: '🏆', label: 'PES Ranking' }, // features/pes-ranking.js (automatic)
+  { k: 'ranking', icon: '🗃️', label: crL('PES Ranking (cũ)', 'PES Ranking (old)'), special: true, adminOnly: true },
   { k: 'legend', icon: '🗄️', label: crL('Hall of Legend (cũ)', 'Hall of Legend (old)'), special: true, adminOnly: true },
   { k: 'admin', icon: '📝', label: crL('Nhập kết quả', 'Enter results'), admin: true } // features/admin-fixtures.js
 ];
@@ -1178,7 +1183,7 @@ function renderStatsPage(){
     if(t.adminOnly && !isAdminUser()) return false;
     return !t.special || pesSpecialSeasonId(t.k);
   });
-  if(!tabs.some(function(t){ return t.k === statsTab; })) statsTab = statsTab === 'legend' ? 'autolegend' : 'career';
+  if(!tabs.some(function(t){ return t.k === statsTab; })) statsTab = statsTab === 'legend' ? 'autolegend' : statsTab === 'ranking' ? 'pesrank' : 'career';
   var cd = careerData(state), hasMaster = !!(state.teamMasterList || []).length, only = hasMaster && statsMasterOnly;
   var special = statsTab === 'legend' || statsTab === 'ranking', adminTab = statsTab === 'admin', autoHall = statsTab === 'autolegend';
   var html = '<div class="view-tabs sp-tabs">' + tabs.map(function(t){
@@ -1193,6 +1198,10 @@ function renderStatsPage(){
     var sc = seasonStatsCount();
     if(sc.on < sc.all) tools += '<span class="sp-scope muted" title="' + escapeHtml(crL('Một số mùa đã được admin tắt khỏi thống kê', 'Some seasons were turned off by an admin')) + '">📊 ' + crL('Đang tính trên ', 'Counting ') + sc.on + '/' + sc.all + crL(' mùa', ' seasons') + '</span>';
     if(isAdminUser()) tools += '<button type="button" class="ghost" id="spSeasonScope">⚙️ ' + crL('Mùa tính thống kê', 'Counted seasons') + '</button>';
+    if(isAdminUser() && statsTab === 'pesrank' && typeof prPlayersDialog === 'function'){
+      var pc = prPlayersCount();
+      tools += '<button type="button" class="ghost" id="spRankPlayers">👥 ' + crL('Người tính rank', 'Ranked players') + ' <small class="muted">' + pc.on + '/' + pc.all + '</small></button>';
+    }
   }
   if(tools) html += '<div class="sp-tools">' + tools + '</div>';
   var body = '';
@@ -1217,7 +1226,8 @@ function renderStatsPage(){
       '<select id="spH2HB" class="no-i18n">' + opts(statsH2H[1]) + '</select>' +
       (statsH2H[0] && statsH2H[1] ? '<button type="button" class="ghost" id="spH2HExport" title="' + escapeHtml(crL('Xuất ảnh để copy', 'Export as image to copy')) + '">📷 ' + crL('Xuất ảnh', 'Export image') + '</button>' : '') + '</div>' +
       (statsH2H[0] && statsH2H[1] ? '<div class="sp-h2h">' + renderH2HHtml(cd, statsH2H[0], statsH2H[1]) + '</div>' : '<div class="muted">' + crL('Chưa có dữ liệu.', 'No data yet.') + '</div>');
-  } else if(statsTab === 'elo') body = crEloHtml(cd, only);
+  } else if(statsTab === 'pesrank') body = prRenderHtml(only);
+  else if(statsTab === 'elo') body = crEloHtml(cd, only);
   else body = crRecordsHtml(cd, only);
   host.innerHTML = html + '<div class="sp-body">' + body + '</div>';
   if(statsTab === 'career' && !statsCareer) statsApplySearch();
@@ -1365,6 +1375,7 @@ document.addEventListener('click', function(e){
   var tab = t.closest('[data-sp-tab]');
   if(tab){ statsTab = tab.getAttribute('data-sp-tab'); statsCareer = null; renderStatsPage(); return; }
   if(t.closest('#spSeasonScope') && typeof seasonScopeDialog === 'function') seasonScopeDialog();
+  if(t.closest('#spRankPlayers') && typeof prPlayersDialog === 'function') prPlayersDialog();
 });
 
 document.addEventListener('keydown', function(e){

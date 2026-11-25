@@ -36,6 +36,10 @@
     'Đôi (2 vs 2)': 'Doubles (2 vs 2)',
     '🔒 Khóa mùa giải (đã kết thúc, không thể chỉnh sửa)': '🔒 Lock season (finished, no further edits)',
     '📊 Tính vào thống kê toàn hệ thống': '📊 Count in system-wide stats',
+    '🏆 Điểm PES Ranking:': '🏆 PES Ranking points:',
+    'Tối đa (vô địch)': 'Max (champion)',
+    'Tối thiểu (bét)': 'Min (last place)',
+    'Điểm PES Ranking của giải: hạng nhất nhận tối đa, hạng bét nhận tối thiểu, các hạng giữa giảm dần': 'PES Ranking points of this season: 1st place gets the max, last place the min, places in between go down evenly',
     'Thêm trận tranh hạng 3 (tính 🥉 HC đồng)': 'Add a 3rd place match (counts 🥉 bronze)',
     'Tính hạng 3 (🥉 HC đồng)': 'Count 3rd place (🥉 bronze)',
     'Tính hạng 3 (🥉 HC đồng cho đội đứng thứ 3)': 'Count 3rd place (🥉 bronze for the 3rd-placed team)',
@@ -614,6 +618,8 @@
   var VI_EXACT = {
     // Header / menus (index.html)
     'Team setup': 'Thiết lập đội',
+    '📊 Dashboard': '📊 Bảng thống kê',
+    'Dashboard': 'Bảng thống kê',
     'Team setup (': 'Thiết lập đội (',
     'Team List': 'Danh sách đội',
     'Logo List': 'Danh sách logo',

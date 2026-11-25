@@ -405,6 +405,11 @@
       <label>Thể thức: <select id="cfgFormat" data-no-search><option value="single">Đơn (1 vs 1)</option><option value="double">Đôi (2 vs 2)</option></select></label>
       <label style="grid-column: span 2;" title="Mùa giải đã kết thúc: không thể sửa tỉ số hay cấu trúc cho tới khi mở khóa"><input id="cfgLock" type="checkbox"/> 🔒 Khóa mùa giải (đã kết thúc, không thể chỉnh sửa)</label>
       <label style="grid-column: span 2;" title="Bỏ tick: mùa này không được tính vào Dashboard (thẻ, Elo, đối đầu, kỷ lục, danh hiệu, Hall of Legend)"><input id="cfgInStats" type="checkbox"/> 📊 Tính vào thống kê toàn hệ thống</label>
+      <div id="cfgRankWrap" class="cfg-rank" style="grid-column: span 2;" title="Điểm PES Ranking của giải: hạng nhất nhận tối đa, hạng bét nhận tối thiểu, các hạng giữa giảm dần">
+        <span>🏆 Điểm PES Ranking:</span>
+        <label>Tối đa (vô địch) <input id="cfgRankMax" type="number" min="0" max="1000" step="0.5"/></label>
+        <label>Tối thiểu (bét) <input id="cfgRankMin" type="number" min="0" max="1000" step="0.5"/></label>
+      </div>
     </div>
     <div id="cfgModeSection" style="margin-top:12px;display:none">
       <h4 id="cfgModeTitle" style="margin:0 0 8px">Cài đặt thể thức</h4>
@@ -506,6 +511,7 @@
       load('assets/js/features/card-profiles.js');
       load('assets/js/features/admin-fixtures.js');
       load('assets/js/features/season-meta.js');
+      load('assets/js/features/pes-ranking.js');
       load('assets/js/features/ko-games.js');
       load('assets/js/features/player-links.js');
       load('assets/js/features/news-bank.js');
