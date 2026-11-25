@@ -19448,7 +19448,13 @@
         "seedVersion": 3
       },
       "tournamentPhase": "knockout",
-      "locked": true
+      "locked": true,
+      "kind": "official",
+      "format": "single",
+      "rankPts": {
+        "max": 10,
+        "min": 1
+      }
     },
     "su8gwuph": {
       "name": "2026 - Dual",
