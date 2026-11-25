@@ -5463,7 +5463,11 @@
       },
       "locked": true,
       "kind": "official",
-      "format": "single"
+      "format": "single",
+      "rankPts": {
+        "max": 10,
+        "min": 1
+      }
     },
     "spjtuhsi": {
       "name": "2023 - Single",
@@ -25346,7 +25350,7 @@
       "tournamentPhase": "group"
     }
   },
-  "current": "spjtuhsi",
+  "current": "spzpcuzo",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
