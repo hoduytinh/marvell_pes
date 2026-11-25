@@ -25642,6 +25642,11 @@
       "source": "scan"
     },
     {
+      "name": "Playstation_icon",
+      "data": "logos/Playstation_icon.png",
+      "source": "scan"
+    },
+    {
       "name": "Porto",
       "data": "logos/Porto.jpg",
       "source": "scan"
