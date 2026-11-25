@@ -5,7 +5,9 @@
 //  - 'career': the Career card (renderFifaCardHtml) laid out for the print size (CSS .fc-print), captured with html2canvas.
 //  - 'player': FUT-style player card drawn on a canvas around an avatar: a photo picked from the computer
 //    (kept per player in this browser's IndexedDB) or the built-in default player illustration.
-//  - 'toty' / 'attax' / 'legend': more canvas designs, see card-templates.js.
+//  - 'toty' / 'attax' / 'legend' / 'allround' / 'adrenalyn' / 'ucl': more canvas designs, see card-templates.js.
+//  - 'back': the common card back (same for every player, for double-sided printing).
+// "Hiện ảnh trên thẻ" off (ce.noAv) draws the canvas designs without the photo (big club crest instead).
 // Photos with a background can be cut out in the browser ("✂️ Tách nền"): plain backgrounds by a colour flood
 // fill, others with the MediaPipe selfie segmenter (loaded from a CDN on first use). Transparent PNGs work as is.
 // Loaded after career.js and round-export.js (uses loadHtml2Canvas, fetchAsDataUrl, inlineSnapshotImages, flattenSnapshotColors).
@@ -20,13 +22,17 @@ var CE_STYLES = [
   { k: 'player', icon: '⚽', vi: 'FUT', en: 'FUT' },
   { k: 'toty', icon: '🌟', vi: 'Đội hình năm', en: 'Team of the Year' },
   { k: 'attax', icon: '💥', vi: 'Match Attax', en: 'Match Attax' },
-  { k: 'legend', icon: '👑', vi: 'Huyền thoại', en: 'Legend' }
+  { k: 'legend', icon: '👑', vi: 'Huyền thoại', en: 'Legend' },
+  { k: 'allround', icon: '🔷', vi: 'Match Attax 20', en: 'Match Attax 20' },
+  { k: 'adrenalyn', icon: '🟪', vi: 'Adrenalyn XL', en: 'Adrenalyn XL' },
+  { k: 'ucl', icon: '✨', vi: 'Champions', en: 'Champions' },
+  { k: 'back', icon: '🂠', vi: 'Mặt sau', en: 'Card back' }
 ];
 var CE_K = CE_PX_W / CE_W; // canvas px per design unit of the card being drawn
-var ce = { name: null, style: 'player', tier: '', av: null, avImg: null, avAlpha: false, logoImg: null, team: null, card: null, rank: 0, ranks: {}, seq: 0, saveT: 0 };
+var ce = { name: null, style: 'player', tier: '', label: '', noAv: false, av: null, avImg: null, avAlpha: false, logoImg: null, team: null, card: null, rank: 0, ranks: {}, seq: 0, saveT: 0 };
 try {
   var ceSaved = localStorage.getItem('pesCardStyle');
-  if(CE_STYLES.some(function(s){ return s.k === ceSaved; })) ce.style = ceSaved;
+  if(ceSaved !== 'back' && CE_STYLES.some(function(s){ return s.k === ceSaved; })) ce.style = ceSaved;
 } catch(e){}
 
 var CE_PAL = {
@@ -270,7 +276,7 @@ function ceDrawPlayerCard(ctx, o){
   ctx.globalAlpha = 0.06; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5;
   for(i = -H; i < W; i += 11){ ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i + H, H); ctx.stroke(); }
   ctx.globalAlpha = 1;
-  if(avImg) ceDrawAvatar(ctx, avImg, av, { x: 62, y: 20, w: 254, h: 302 }, { from: o.alpha ? 0.8 : 0.72, sides: !o.alpha });
+  ceArt(ctx, o, { x: 62, y: 20, w: 254, h: 302 }, { from: o.alpha ? 0.8 : 0.72, sides: !o.alpha }, p.rim[1]);
   ctx.restore();
 
   // Rims.
@@ -315,10 +321,11 @@ function ceDrawPlayerCard(ctx, o){
   ctx.lineWidth = 2.5; ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.stroke();
   ctx.beginPath(); ctx.arc(cx, ly, lr + 2.2, 0, Math.PI * 2);
   ctx.lineWidth = 1.5; ctx.strokeStyle = p.line; ctx.stroke();
-  ceRRect(ctx, cx - 25, 184, 50, 14, 7);
+  var tierTxt = ceLabelOr(o, tier.toUpperCase()), pw = cePillW(ctx, tierTxt, 8, 1.6, 50, 72);
+  ceRRect(ctx, cx - pw / 2, 184, pw, 14, 7);
   ctx.fillStyle = p.pill[0]; ctx.fill();
-  ceSpacing(ctx, 1.6); ctx.fillStyle = p.pill[1]; ctx.font = '900 8px ' + CE_FONT;
-  ctx.fillText(tier.toUpperCase(), cx + 0.8, 194);
+  ceSpacing(ctx, 1.6); ctx.fillStyle = p.pill[1]; ceFit(ctx, tierTxt, pw - 8, 8, 900, 4.5);
+  ctx.fillText(tierTxt, cx + 0.8, 194);
   ceSpacing(ctx, 0);
 
   // Name.
@@ -364,8 +371,8 @@ function ceDrawPlayerCard(ctx, o){
 }
 
 // ---------------- Career card (HTML, print layout) ----------------
-function ceCareerCardHtml(card, tier){
-  return renderFifaCardHtml(crExt(card, { tier: tier, noLive: true })).replace('class="fifa-card ', 'class="fifa-card fc-print ');
+function ceCareerCardHtml(card, tier, label){
+  return renderFifaCardHtml(crExt(card, { tier: tier, tierLabel: label || '', noLive: true })).replace('class="fifa-card ', 'class="fifa-card fc-print ');
 }
 // Shrinks the name until it fits on one line.
 function ceFitName(root){
@@ -456,10 +463,14 @@ var CE_DRAW = {
   player: ceDrawPlayerCard,
   toty: function(ctx, o){ ceDrawToty(ctx, o); },
   attax: function(ctx, o){ ceDrawAttax(ctx, o); },
-  legend: function(ctx, o){ ceDrawLegend(ctx, o); }
+  legend: function(ctx, o){ ceDrawLegend(ctx, o); },
+  allround: function(ctx, o){ ceDrawAllround(ctx, o); },
+  adrenalyn: function(ctx, o){ ceDrawAdrenalyn(ctx, o); },
+  ucl: function(ctx, o){ ceDrawUcl(ctx, o); },
+  back: function(ctx){ ceDrawBack(ctx); }
 };
 function ceCardOpts(){
-  return { card: ce.card, tier: ceTier(), img: ce.avImg, av: ce.av, alpha: ce.avAlpha, logo: ce.logoImg,
+  return { card: ce.card, tier: ceTier(), label: ce.label, img: ce.noAv ? null : ce.avImg, noAv: !!ce.noAv, av: ce.av, alpha: ce.avAlpha, logo: ce.logoImg,
     team: ce.team || { c1: [37, 99, 235], c2: [255, 255, 255] }, rank: ce.rank };
 }
 function ceDrawStyle(cv, style, k, o){
@@ -632,11 +643,22 @@ function ceRenderPng(){
 }
 
 function ceFileName(){
+  if(ce.style === 'back') return 'marvell-pes-card-back-54x86mm.png';
   return ceSlug(ce.name) + '-' + ce.style + '-54x86mm.png';
 }
 
 // ---------------- Dialog ----------------
 function ceTier(){ return ce.tier || (ce.card && ce.card.tier) || 'gold'; }
+// Custom tier text (o.label, upper-cased) or the design's default text.
+function ceLabelOr(o, def){ var l = String((o && o.label) || '').trim(); return l ? l.toUpperCase() : def; }
+function ceDefaultTierText(style, tier){ return style === 'attax' || style === 'legend' || style === 'allround' ? ceTierLabel(tier) : tier.toUpperCase(); }
+// Pill width that fits txt (900 weight, size px, letter spacing ls), clamped to [min, max].
+function cePillW(ctx, txt, size, ls, min, max){
+  ceSpacing(ctx, ls); ctx.font = '900 ' + size + 'px ' + CE_FONT;
+  var w = ctx.measureText(txt).width + 12;
+  ceSpacing(ctx, 0);
+  return Math.min(max, Math.max(min, w));
+}
 function ceStatus(msg){ var el = $('ceStatus'); if(el) el.textContent = msg || ''; }
 
 function ceDialog(){
@@ -656,8 +678,10 @@ function ceDialog(){
           '<span class="ce-lbl">' + s.icon + ' ' + crL(s.vi, s.en) + '</span></button>';
       }).join('') + '</div></div>' +
     '<label class="ce-field"><span>' + crL('Hạng thẻ', 'Card tier') + '</span><select id="ceTier"><option value="" id="ceTierAuto"></option>' + tierOpts + '</select></label>' +
+    '<label class="ce-field"><span>' + crL('Chữ hiển thị hạng (để trống = mặc định)', 'Tier label text (empty = default)') + '</span><input type="text" id="ceLabel" class="no-i18n" maxlength="18" autocomplete="off"></label>' +
     '<div class="ce-av" id="ceAvBox"><div class="ce-field"><span>' + crL('Ảnh đại diện', 'Avatar') + '</span></div>' +
-      '<div class="ce-av-btns"><button type="button" id="ceAvPick">📁 ' + crL('Chọn ảnh từ máy…', 'Choose a photo…') + '</button>' +
+      '<label class="ce-check"><input type="checkbox" id="ceAvOn"> ' + crL('Hiện ảnh trên thẻ (tắt = hiện logo CLB)', 'Show the photo on the card (off = club logo)') + '</label>' +
+      '<div class="ce-av-ctl" id="ceAvCtl"><div class="ce-av-btns"><button type="button" id="ceAvPick">📁 ' + crL('Chọn ảnh từ máy…', 'Choose a photo…') + '</button>' +
       '<button type="button" class="ghost" id="ceAvReset">↺ ' + crL('Ảnh mặc định', 'Default image') + '</button>' +
       '<button type="button" id="ceAvCut">✂️ ' + crL('Tách nền', 'Remove background') + '</button>' +
       '<button type="button" class="ghost" id="ceAvOrig">↶ ' + crL('Ảnh gốc', 'Original photo') + '</button>' +
@@ -666,13 +690,17 @@ function ceDialog(){
       '<label class="ce-range"><span>' + crL('Ngang', 'Left / right') + '</span><input type="range" id="ceX" min="-50" max="50" step="1"></label>' +
       '<label class="ce-range"><span>' + crL('Dọc', 'Up / down') + '</span><input type="range" id="ceY" min="-50" max="50" step="1"></label>' +
       '<small class="muted">' + crL('Ảnh được lưu theo từng tuyển thủ trên trình duyệt này. Ảnh PNG nền trong suốt dùng được ngay (mẫu Đội hình năm cho ảnh tràn ra khỏi khung). Ảnh có nền: bấm ✂️ Tách nền — nền trơn tách ngay, nền phức tạp dùng AI (lần đầu cần Internet, tải ~25 MB).',
-        'Photos are saved per player in this browser. Transparent PNGs work as is (the Team of the Year design lets them break out of the frame). Photo with a background: press ✂️ Remove background — plain backgrounds are removed instantly, others with AI (first use needs Internet, ~25 MB).') + '</small></div>' +
+        'Photos are saved per player in this browser. Transparent PNGs work as is (the Team of the Year design lets them break out of the frame). Photo with a background: press ✂️ Remove background — plain backgrounds are removed instantly, others with AI (first use needs Internet, ~25 MB).') + '</small></div></div>' +
     '<div class="ce-actions"><button type="button" class="primary" id="ceDownload">⬇️ ' + crL('Tải PNG 300 DPI', 'Download PNG 300 DPI') + '</button>' +
       '<button type="button" id="cePrint">🖨️ ' + crL('In / Lưu PDF', 'Print / Save PDF') + '</button></div>' +
     '<div class="ce-default" id="ceDefBox" hidden><div class="muted" id="ceDefInfo"></div><div class="ce-actions">' +
       '<button type="button" id="ceSetDefault" title="' + escapeHtml(crL('Lưu mẫu, hạng và ảnh này (ảnh tải lên git) làm thẻ hiển thị ở trang Sự nghiệp; chỉ số vẫn cập nhật theo thời gian thực.',
         'Save this design, tier and photo (uploaded to git) as the card shown on the Career page; stats stay live.')) + '">⭐ ' + crL('Đặt làm thẻ sự nghiệp', 'Set as career card') + '</button>' +
-      '<button type="button" class="ghost" id="ceClearDefault">✖ ' + crL('Bỏ thẻ mặc định', 'Remove default card') + '</button></div></div>' +
+      '<button type="button" class="ghost" id="ceClearDefault">✖ ' + crL('Bỏ thẻ mặc định', 'Remove default card') + '</button></div>' +
+      '<div class="muted ce-glob" id="ceGlobInfo"></div><div class="ce-actions">' +
+      '<button type="button" id="ceSetGlobal" title="' + escapeHtml(crL('Dùng mẫu này (hạng tự động, ảnh mặc định) cho thẻ sự nghiệp của mọi người chưa có thẻ riêng.',
+        'Use this design (auto tier, default photo) for the career card of everyone without their own card.')) + '">🌐 ' + crL('Đặt mẫu này cho tất cả', 'Use this design for everyone') + '</button>' +
+      '<button type="button" class="ghost" id="ceClearGlobal">✖ ' + crL('Bỏ mẫu chung', 'Remove the design for everyone') + '</button></div></div>' +
     '<div class="ce-status" id="ceStatus"></div>' +
     '<div class="muted ce-note">' + crL('Ảnh ' + CE_PX_W + ' × ' + CE_PX_H + ' px = đúng 54 × 86 mm ở 300 DPI. Khi in chọn tỉ lệ 100% (Actual size), lề = None.',
       'Image ' + CE_PX_W + ' × ' + CE_PX_H + ' px = exactly 54 × 86 mm at 300 DPI. When printing choose scale 100% (Actual size), margins = None.') + '</div>' +
@@ -689,7 +717,7 @@ function ceDialog(){
     var st = t.closest('[data-ce-style]');
     if(st){
       ce.style = st.getAttribute('data-ce-style');
-      try { localStorage.setItem('pesCardStyle', ce.style); } catch(_){}
+      if(ce.style !== 'back') try { localStorage.setItem('pesCardStyle', ce.style); } catch(_){}
       ceRender();
       return;
     }
@@ -707,6 +735,8 @@ function ceDialog(){
     }
     if(t.closest('#ceSetDefault')){ ceSetDefault(); return; }
     if(t.closest('#ceClearDefault')){ ceClearDefault(); return; }
+    if(t.closest('#ceSetGlobal')){ ceSetGlobalDefault(); return; }
+    if(t.closest('#ceClearGlobal')){ ceClearGlobalDefault(); return; }
     if(t.closest('#ceDownload')){ ceDownload(); return; }
     if(t.closest('#cePrint')){ cePrint(); }
   });
@@ -715,6 +745,7 @@ function ceDialog(){
     if(id === 'ceZoom' || id === 'ceX' || id === 'ceY') ceRenderThumbs();
     else if(id === 'ceTeam') ceSelect(e.target.value);
     else if(id === 'ceTier'){ ce.tier = e.target.value; ceLoadAvatar().then(ceRender); }
+    else if(id === 'ceAvOn'){ ce.noAv = !e.target.checked; ceRender(); }
     else if(id === 'ceAvFile'){
       var f = e.target.files && e.target.files[0];
       e.target.value = '';
@@ -733,6 +764,7 @@ function ceDialog(){
   });
   d.addEventListener('input', function(e){
     var id = e.target.id, k = id === 'ceZoom' ? 'zoom' : id === 'ceX' ? 'x' : id === 'ceY' ? 'y' : null;
+    if(id === 'ceLabel'){ ce.label = e.target.value; ceRender(); return; }
     if(!k) return;
     ce.av = ce.av || { src: null, zoom: 1, x: 0, y: 0 };
     ce.av[k] = k === 'zoom' ? +e.target.value / 100 : +e.target.value;
@@ -751,7 +783,7 @@ function ceLoadAvatar(){
 }
 
 function ceSelect(name){
-  var cd = careerData(state), seq = ++ce.seq, prof = ceProfile(name);
+  var cd = careerData(state), seq = ++ce.seq, prof = ceProfile(name), glob = !prof && ceGlobalDefault();
   ce.name = name;
   ce.card = careerFifaCard(cd, name);
   ce.rank = ce.ranks[name] || 0;
@@ -759,6 +791,11 @@ function ceSelect(name){
   if(prof){
     if(CE_STYLES.some(function(s){ return s.k === prof.style; })) ce.style = prof.style;
     ce.tier = CE_TIERS.indexOf(prof.tier) >= 0 ? prof.tier : '';
+    ce.label = prof.label || '';
+    ce.noAv = !!prof.noAv;
+  } else if(glob){
+    ce.style = glob.style;
+    ce.noAv = !!glob.noAv;
   }
   ceRender();
   if(!ce.card) return Promise.resolve();
@@ -780,7 +817,7 @@ function ceRenderThumbs(){
   [].forEach.call(d.querySelectorAll('[data-ce-style]'), function(b){
     var k = b.getAttribute('data-ce-style'), t = b.querySelector('.ce-thumb');
     if(!t) return;
-    if(k === 'career'){ t.innerHTML = ceCareerCardHtml(ce.card, ceTier()); return; }
+    if(k === 'career'){ t.innerHTML = ceCareerCardHtml(ce.card, ceTier(), ce.label); return; }
     var cv = t.querySelector('canvas');
     if(!cv){ t.innerHTML = ''; cv = t.appendChild(document.createElement('canvas')); }
     ceDrawStyle(cv, k, 0.4);
@@ -794,7 +831,15 @@ function ceRender(){
   var auto = $('ceTierAuto');
   if(auto) auto.textContent = crL('Tự động', 'Auto') + (ce.card ? ' (' + ce.card.tier.toUpperCase() + ')' : '');
   $('ceTier').value = ce.tier;
-  $('ceAvBox').hidden = ce.style === 'career';
+  var lbl = $('ceLabel');
+  if(lbl.value !== ce.label) lbl.value = ce.label;
+  lbl.placeholder = ceDefaultTierText(ce.style, ceTier());
+  var back = ce.style === 'back';
+  $('ceTier').closest('.ce-field').hidden = back;
+  lbl.closest('.ce-field').hidden = back;
+  $('ceAvBox').hidden = ce.style === 'career' || back;
+  $('ceAvOn').checked = !ce.noAv;
+  $('ceAvCtl').hidden = !!ce.noAv;
   var av = ce.av || {};
   $('ceAvCut').hidden = !av.src || !!av.orig;
   $('ceAvOrig').hidden = !av.orig;
@@ -809,13 +854,13 @@ function ceRender(){
     if(!box.querySelector('canvas')){ box.innerHTML = ''; box.appendChild(document.createElement('canvas')); }
     ceDrawPreview();
   } else {
-    box.innerHTML = ceCareerCardHtml(ce.card, ceTier());
+    box.innerHTML = ceCareerCardHtml(ce.card, ceTier(), ce.label);
     ceFitName(box);
   }
 }
 
 function ceBusy(on, msg){
-  ['ceDownload', 'cePrint', 'ceAvCut', 'ceSetDefault', 'ceClearDefault'].forEach(function(id){ var b = $(id); if(b) b.disabled = on || !ce.card; });
+  ['ceDownload', 'cePrint', 'ceAvCut', 'ceSetDefault', 'ceClearDefault', 'ceSetGlobal', 'ceClearGlobal'].forEach(function(id){ var b = $(id); if(b) b.disabled = on || !ce.card; });
   ceStatus(msg);
 }
 function ceFail(err){
@@ -873,7 +918,7 @@ function openCardExport(name){
   if(name && names.indexOf(name) === -1) names.unshift(name);
   name = name || names[0] || null;
   $('ceTeam').innerHTML = names.map(function(n){ return '<option value="' + escapeHtml(n) + '"' + (n === name ? ' selected' : '') + '>' + escapeHtml(n) + '</option>'; }).join('');
-  ce.tier = '';
+  ce.tier = ''; ce.label = ''; ce.noAv = false;
   ceStatus('');
   if(!d.open) d.showModal();
   if(name) ceSelect(name); else { ce.card = null; ceRender(); }

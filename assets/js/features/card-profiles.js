@@ -1,9 +1,12 @@
 // Marvell PES Club - features/card-profiles.js
 // Default career card per player, set by an admin in the card export dialog ("⭐ Đặt làm thẻ sự nghiệp"):
-//   state.cardProfiles[name] = { style, tier ('' = auto), img (repo path, optional), zoom, x, y, t }
+//   state.cardProfiles[name] = { style, tier ('' = auto), label (custom tier text, optional), img (repo path, optional),
+//                                noAv (true = photo turned off, optional), zoom, x, y, t }
 // Only the design settings and the photo are stored (data.json, cloud-synced; the photo is uploaded to the repo
 // under photos/cards/). Every career card (renderFifaCardHtml) of that player is then drawn live in that design
 // on a canvas, with the current stats. Loaded after card-templates.js.
+// Admins can also set a design for everyone ("🌐 Đặt mẫu này cho tất cả"): state.cardDefault = { style, noAv, t }
+// (auto tier, default photo); a player's own profile always wins over it.
 
 var CE_LIVE = { cards: {}, pending: {}, n: 0, img: {}, logo: {}, rk: null, rkKey: null, cd: null, obs: null, t: 0, until: 0 };
 
@@ -11,6 +14,12 @@ function ceProfile(name){
   var m = typeof state !== 'undefined' && state && state.cardProfiles;
   return m && name ? m[careerName(name)] || null : null;
 }
+function ceGlobalDefault(){
+  var g = typeof state !== 'undefined' && state && state.cardDefault;
+  return g && g.style && g.style !== 'back' && CE_STYLES.some(function(s){ return s.k === g.style; }) ? g : null;
+}
+// Design used for the live career card: own profile, else the design set for everyone.
+function ceLiveProfile(name){ return ceProfile(name) || (name ? ceGlobalDefault() : null); }
 function ceStyleLabel(k){
   var s = CE_STYLES.filter(function(x){ return x.k === k; })[0];
   return s ? s.icon + ' ' + crL(s.vi, s.en) : k;
@@ -23,10 +32,10 @@ function ceSlug(name){
 // ---------------- Live cards ----------------
 // Called by renderFifaCardHtml: '' = no profile (normal HTML card).
 function ceLiveCardHtml(card){
-  var p = ceProfile(card.name);
-  if(!p || !p.style) return '';
+  var p = ceLiveProfile(card.name);
+  if(!p || !p.style || p.style === 'back') return '';
   var tier = CE_TIERS.indexOf(p.tier) >= 0 ? p.tier : card.tier;
-  if(p.style === 'career' || !CE_DRAW[p.style]) return tier !== card.tier ? renderFifaCardHtml(crExt(card, { tier: tier, noLive: true })) : '';
+  if(p.style === 'career' || !CE_DRAW[p.style]) return tier !== card.tier || p.label ? renderFifaCardHtml(crExt(card, { tier: tier, tierLabel: p.label || '', noLive: true })) : '';
   var id = 'l' + (++CE_LIVE.n), ks = Object.keys(CE_LIVE.cards);
   if(ks.length > 400) ks.slice(0, ks.length - 300).forEach(function(k){ delete CE_LIVE.cards[k]; delete CE_LIVE.pending[k]; });
   CE_LIVE.cards[id] = card;
@@ -81,12 +90,12 @@ function ceLiveDraw(el){
   var id = el.getAttribute('data-ce-live'), card = CE_LIVE.cards[id];
   delete CE_LIVE.pending[id];
   if(!card){ try { card = careerFifaCard(careerData(state), el.getAttribute('data-ce-name')); } catch(e){ card = null; } }
-  var p = card && ceProfile(card.name), cv = el.querySelector('canvas');
-  if(!p || !CE_DRAW[p.style] || !cv) return;
+  var p = card && ceLiveProfile(card.name), cv = el.querySelector('canvas');
+  if(!p || p.style === 'back' || !CE_DRAW[p.style] || !cv) return;
   var tier = CE_TIERS.indexOf(p.tier) >= 0 ? p.tier : card.tier;
   var k = Math.min(3, Math.max(0.5, Math.max(el.clientWidth || 0, 230) * (window.devicePixelRatio || 1) / CE_W));
-  Promise.all([ceLivePhoto(p.img, tier), ceLiveLogo(card.logo), ceFonts()]).then(function(r){
-    ceDrawStyle(cv, p.style, k, { card: card, tier: tier, img: r[0].img, av: { zoom: p.zoom || 1, x: p.x || 0, y: p.y || 0 }, alpha: r[0].alpha,
+  Promise.all([p.noAv ? Promise.resolve({ img: null, alpha: false }) : ceLivePhoto(p.img, tier), ceLiveLogo(card.logo), ceFonts()]).then(function(r){
+    ceDrawStyle(cv, p.style, k, { card: card, tier: tier, label: p.label || '', img: r[0].img, noAv: !!p.noAv, av: { zoom: p.zoom || 1, x: p.x || 0, y: p.y || 0 }, alpha: r[0].alpha,
       logo: r[1].img, team: r[1].team || { c1: [37, 99, 235], c2: [255, 255, 255] }, rank: ceLiveRank(card.name) });
   }).catch(function(err){ console.error('Live card failed:', err); });
 }
@@ -136,11 +145,13 @@ function ceSetDefault(){
   var name = ce.name, av = ce.av || {};
   if(!name || !ce.card) return ceAlert('❌ ' + crL('Chưa chọn tuyển thủ có dữ liệu.', 'No player with data selected.'));
   if(!isAdminUser()) return ceAlert('❌ ' + crL('Cần đăng nhập admin để đặt thẻ sự nghiệp.', 'Log in as admin to set the career card.'));
+  if(ce.style === 'back') return ceAlert('❌ ' + crL('Mặt sau không dùng làm thẻ sự nghiệp.', 'The card back cannot be a career card.'));
   if(!ceCanWriteCloud()) return ceAlert('❌ ' + crL('Chưa lưu được: cần bật Đồng bộ cloud và có GitHub PAT (quyền ghi) để lưu thẻ và ảnh lên git.',
     'Not saved: cloud sync must be ON with a GitHub PAT (write access) to save the card and photo to git.'));
   var key = careerName(name), old = ceProfile(name), style = ce.style;
-  var rec = { style: style, tier: ce.tier || '', zoom: av.zoom || 1, x: av.x || 0, y: av.y || 0, t: Date.now() };
-  var useImg = style !== 'career' && av.src;
+  var rec = { style: style, tier: ce.tier || '', label: String(ce.label || '').trim(), zoom: av.zoom || 1, x: av.x || 0, y: av.y || 0, t: Date.now() };
+  var useImg = style !== 'career' && !ce.noAv && av.src;
+  if(ce.noAv && style !== 'career') rec.noAv = true;
   ceBusy(true, '⏳ ' + (useImg && !av.remote ? crL('Đang tải ảnh lên git…', 'Uploading the photo to git…') : crL('Đang lưu…', 'Saving…')));
   (useImg ? (av.remote ? Promise.resolve(av.remote) : ceUploadPhoto(name, av.src)) : Promise.resolve(null)).then(function(path){
     if(path) rec.img = path;
@@ -153,7 +164,7 @@ function ceSetDefault(){
       ceBusy(false, '');
       ceRender();
       ceRefreshCareerViews();
-      var same = style === 'career' && !rec.tier ? crL(' (mẫu mặc định, hạng tự động: thẻ trông như cũ)', ' (default design, auto tier: the card looks unchanged)') : '';
+      var same = style === 'career' && !rec.tier && !rec.label ? crL(' (mẫu mặc định, hạng tự động: thẻ trông như cũ)', ' (default design, auto tier: the card looks unchanged)') : '';
       if(sync === 'fail') ceAlert('⚠️ ' + crL('Đã lưu thẻ sự nghiệp của ' + key + ' trên máy này nhưng đồng bộ cloud lỗi — kiểm tra trạng thái Sync rồi thử lại.',
         'Saved the career card of ' + key + ' on this device but the cloud sync failed — check the Sync status and retry.'));
       else ceStatus('✅ ' + crL('Đã lưu thẻ sự nghiệp của ', 'Saved the career card of ') + key + same +
@@ -178,15 +189,47 @@ function ceClearDefault(){
   ceRefreshCareerViews();
 }
 
+// Design for everyone (players without their own career card); tier stays automatic.
+function ceSetGlobalDefault(){
+  if(!isAdminUser()) return ceAlert('❌ ' + crL('Cần đăng nhập admin.', 'Log in as admin.'));
+  if(ce.style === 'back') return ceAlert('❌ ' + crL('Mặt sau không dùng làm thẻ sự nghiệp.', 'The card back cannot be a career card.'));
+  var label = ceStyleLabel(ce.style);
+  if(!confirm(crL('Đặt mẫu ' + label + ' làm thẻ mặc định cho tất cả tuyển thủ (trừ người đã có thẻ riêng)?',
+    'Use ' + label + ' as the default card for every player (except those with their own card)?'))) return;
+  state.cardDefault = { style: ce.style, t: Date.now() };
+  if(ce.noAv && ce.style !== 'career') state.cardDefault.noAv = true;
+  ceGlobalSaved(crL('Đã đặt mẫu chung: ', 'Default design for everyone: ') + label);
+}
+function ceClearGlobalDefault(){
+  if(!isAdminUser() || !state.cardDefault) return;
+  if(!confirm(crL('Bỏ mẫu thẻ mặc định chung (về thẻ Sự nghiệp)?', 'Remove the default design for everyone (back to the Career card)?'))) return;
+  delete state.cardDefault;
+  ceGlobalSaved(crL('Đã bỏ mẫu chung.', 'Default design for everyone removed.'));
+}
+function ceGlobalSaved(msg){
+  ceBusy(true, '⏳ ' + crL('Đang lưu…', 'Saving…'));
+  ceSaveProfiles().then(function(sync){
+    ceBusy(false, '');
+    ceRender();
+    ceRefreshCareerViews();
+    if(sync === 'fail') ceAlert('⚠️ ' + msg + crL(' — đã lưu trên máy này nhưng đồng bộ cloud lỗi.', ' — saved on this device but the cloud sync failed.'));
+    else ceStatus('✅ ' + msg + (sync === 'ok' ? crL(' (đã đồng bộ cloud).', ' (synced to the cloud).') : sync === 'later' ? crL(' — đang chờ đồng bộ…', ' — sync pending…') : crL(' (chỉ trên máy này: chưa bật đồng bộ cloud).', ' (this device only: cloud sync is off).')));
+  });
+}
+
 // Info + buttons under the export actions (admins only).
 function ceRenderDefaultBox(){
   var box = $('ceDefBox');
   if(!box) return;
-  var admin = typeof isAdminUser === 'function' && isAdminUser(), p = ce.card ? ceProfile(ce.name) : null;
-  box.hidden = !admin || !ce.card;
+  var admin = typeof isAdminUser === 'function' && isAdminUser(), p = ce.card ? ceProfile(ce.name) : null, g = ceGlobalDefault();
+  box.hidden = !admin || !ce.card || ce.style === 'back';
   if(box.hidden) return;
+  $('ceGlobInfo').textContent = '🌐 ' + crL('Mẫu chung cho tất cả: ', 'Default design for everyone: ') +
+    (g ? ceStyleLabel(g.style) + (g.noAv ? crL(' · không ảnh', ' · no photo') : '') : crL('Sự nghiệp (mặc định)', 'Career (default)')) +
+    crL(' — thẻ riêng của từng người sẽ ghi đè.', ' — a player\'s own card overrides it.');
+  $('ceClearGlobal').hidden = !g;
   $('ceDefInfo').textContent = p
-    ? crL('Thẻ sự nghiệp hiện tại: ', 'Current career card: ') + ceStyleLabel(p.style) + ' · ' + (p.tier ? p.tier.toUpperCase() : crL('hạng tự động', 'auto tier')) + (p.img ? crL(' · có ảnh', ' · with photo') : '')
-    : crL('Thẻ sự nghiệp: mẫu mặc định.', 'Career card: default design.');
+    ? crL('Thẻ sự nghiệp hiện tại: ', 'Current career card: ') + ceStyleLabel(p.style) + ' · ' + (p.tier ? p.tier.toUpperCase() : crL('hạng tự động', 'auto tier')) + (p.label ? ' «' + p.label + '»' : '') + (p.noAv ? crL(' · không ảnh', ' · no photo') : p.img ? crL(' · có ảnh', ' · with photo') : '')
+    : g ? crL('Thẻ sự nghiệp của người này: theo mẫu chung.', 'This player\'s career card: the default design.') : crL('Thẻ sự nghiệp: mẫu mặc định.', 'Career card: default design.');
   $('ceClearDefault').hidden = !p;
 }

@@ -5,7 +5,15 @@
 //  'attax'  - trading-card style: shattered glass in the club colours (read from the team logo), vertical
 //             side banner, rating / Elo badges on the right, big DEF / ATT boxes, name bar.
 //  'legend' - gold-foil legend card: slanted photo panel, slanted name banner, stat bars, DEF / ATT boxes.
-// Each drawer gets o = { card, tier, img, av, alpha, logo, team: { c1, c2 }, rank } (ceCardOpts in card-export.js).
+//  'allround'  - Match Attax 20/21: white frame, club-colour shards + halftone, vertical name banner,
+//                coloured 6-stat ladder, big slanted title, DEF / ATT boxes around the crest.
+//  'adrenalyn' - Adrenalyn XL: grey striped geometric photo, white name panel, DEF / CLU / ATT / TOTAL boxes,
+//                position panel (tier flag, mini pitch, role) coloured by position.
+//  'ucl'       - Champions (Match Attax UCL): starball night photo, white info band, name bar.
+//  'back'      - common card back (same for everyone): navy field, PlayStation-button emblem and a
+//                hand-drawn "MARVELL PES CLUB" logotype (CE_GLYPH vector letters, no font).
+// Each drawer gets o = { card, tier, label (custom tier text), img, av, alpha, noAv (photo turned off),
+// logo, team: { c1, c2 }, rank } (ceCardOpts in card-export.js). ceArt draws the photo or, with noAv, a big crest.
 
 function ceRng(seed){
   var a = 7;
@@ -199,12 +207,12 @@ function ceDrawToty(ctx, o){
   ctx.lineWidth = 0.8; ctx.strokeStyle = ceHexA(T.acc, 0.55); ctx.stroke();
 
   // Photo: clipped to the field; a cut-out may also overlap the top of the frame.
-  if(o.img){
+  if(o.img || o.noAv){
     ctx.save();
     ceShield(ctx, ix, iy, iw, ih);
     if(o.alpha) ctx.rect(0, 0, W, 150);
     ctx.clip();
-    ceDrawAvatar(ctx, o.img, o.av, { x: 40, y: 0, w: 270, h: 352 }, { from: o.alpha ? 0.8 : 0.6, sides: !o.alpha });
+    ceArt(ctx, o, o.img ? { x: 40, y: 0, w: 270, h: 352 } : { x: 60, y: 40, w: 230, h: 280 }, { from: o.alpha ? 0.8 : 0.6, sides: !o.alpha }, T.acc);
     ctx.restore();
   }
 
@@ -224,8 +232,9 @@ function ceDrawToty(ctx, o){
   ceNoShadow(ctx);
   ctx.fillStyle = ceHexA(T.acc, 0.85); ctx.fillRect(50, 142, 32, 1.6);
   ceLogoDisc(ctx, o.logo, 66, 166, 15, T.acc);
-  ceRRect(ctx, 42, 189, 48, 12, 6); ctx.fillStyle = ceGrad(ctx, 42, 0, 90, 0, T.metal); ctx.fill();
-  ceText(ctx, o.tier.toUpperCase(), 66.6, 198, { size: 7, fill: T.dark, ls: 1.4 });
+  var tierTxt = ceLabelOr(o, o.tier.toUpperCase()), pw = cePillW(ctx, tierTxt, 7, 1.4, 48, 76);
+  ceRRect(ctx, 66 - pw / 2, 189, pw, 12, 6); ctx.fillStyle = ceGrad(ctx, 66 - pw / 2, 0, 66 + pw / 2, 0, T.metal); ctx.fill();
+  ceText(ctx, tierTxt, 66.6, 198, { size: 7, fill: T.dark, ls: 1.4, max: pw - 8, min: 4 });
 
   // Name, stats row, footer.
   var line = [ceHexA(T.acc, 0), T.acc, ceHexA(T.acc, 0)];
@@ -288,7 +297,7 @@ function ceDrawAttax(ctx, o){
   g.addColorStop(0, 'rgba(255,255,255,.55)'); g.addColorStop(1, 'rgba(255,255,255,0)');
   ctx.fillStyle = g; ctx.fillRect(P.x, P.y, P.w, P.h);
   ceHolo(ctx, P.x, P.y, P.w, P.h, T.holo * 1.4);
-  if(o.img) ceDrawAvatar(ctx, o.img, o.av, o.alpha ? { x: 34, y: 14, w: 240, h: 340 } : P, null);
+  ceArt(ctx, o, o.alpha ? { x: 34, y: 14, w: 240, h: 340 } : P, null, '#fff');
   g = ctx.createLinearGradient(0, 290, 0, P.y + P.h);
   g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.6)');
   ctx.fillStyle = g; ctx.fillRect(P.x, 290, P.w, 70);
@@ -301,7 +310,7 @@ function ceDrawAttax(ctx, o){
   ctx.fillStyle = ceGrad(ctx, 0, 0, 0, 292, T.metal); ctx.fillRect(44, 0, 3, 292);
   ctx.save();
   ctx.translate(28, 158); ctx.rotate(-Math.PI / 2);
-  ceText(ctx, ceTierLabel(o.tier), 0, 6, { size: 16, fill: ceGrad(ctx, -125, 0, 125, 0, T.metal), ls: 2, max: 250, min: 9 });
+  ceText(ctx, ceLabelOr(o, ceTierLabel(o.tier)), 0, 6, { size: 16, fill: ceGrad(ctx, -125, 0, 125, 0, T.metal), ls: 2, max: 250, min: 9 });
   ctx.restore();
   ctx.restore();
   ceLogoDisc(ctx, o.logo, 28, 322, 17, T.acc);
@@ -411,7 +420,7 @@ function ceDrawLegend(ctx, o){
   ctx.globalAlpha = 0.55;
   for(i = 0; i < 8; i++){ var a = i / 8 * Math.PI * 2 - Math.PI / 2; ceStar(ctx, 276 + Math.cos(a) * 15, 50 + Math.sin(a) * 15, 4); ctx.fill(); }
   ctx.globalAlpha = 1;
-  if(o.img) ceDrawAvatar(ctx, o.img, o.av, o.alpha ? { x: 40, y: 22, w: 260, h: 290 } : { x: 16, y: 16, w: 292, h: 286 }, { from: o.alpha ? 0.86 : 1 });
+  ceArt(ctx, o, o.alpha ? { x: 40, y: 22, w: 260, h: 290 } : { x: 16, y: 16, w: 292, h: 286 }, { from: o.alpha ? 0.86 : 1 }, T.metal[2]);
   ctx.restore();
   cePoly(ctx, PP);
   ctx.lineWidth = 3; ctx.strokeStyle = ceGrad(ctx, 0, 0, W, 300, T.metal); ctx.stroke();
@@ -436,7 +445,7 @@ function ceDrawLegend(ctx, o){
   cePoly(ctx, [[-150, -40], [-40, -40], [-46, -27], [-156, -27]]);
   ceShadow(ctx, 'rgba(0,0,0,.35)', 4, 1);
   ctx.fillStyle = ceGrad(ctx, -156, -40, -40, -27, T.metal); ctx.fill(); ceNoShadow(ctx);
-  ceText(ctx, ceTierLabel(o.tier), -98, -30.5, { size: 8.5, fill: T.dark, ls: 1.2, max: 100 });
+  ceText(ctx, ceLabelOr(o, ceTierLabel(o.tier)), -98, -30.5, { size: 8.5, fill: T.dark, ls: 1.2, max: 100, min: 5 });
   cePoly(ctx, [[-176, -27], [176, -27], [170, 13], [-182, 13]]);
   ceShadow(ctx, 'rgba(0,0,0,.5)', 8, 3);
   ctx.fillStyle = ceGrad(ctx, 0, -27, 0, 13, T.base); ctx.fill(); ceNoShadow(ctx);
@@ -481,4 +490,576 @@ function ceDrawLegend(ctx, o){
   // Footer.
   ceMedalStars(ctx, card.medalList, W / 2, 485, 250, 5.5);
   ceText(ctx, 'MARVELL PES CLUB  \u00b7  ' + card.P + crL(' TRẬN', ' MATCHES'), W / 2, 504, { size: 7.5, w: 800, fill: T.ink[3], ls: 1.5, max: 260 });
+}
+
+// ---------------- Shared helpers of the newer designs ----------------
+// Photo into box; with the photo turned off (o.noAv) a big club crest takes its place.
+function ceArt(ctx, o, box, fade, ring){
+  if(o.img){ ceDrawAvatar(ctx, o.img, o.av, box, fade); return; }
+  if(!o.noAv) return;
+  var r = Math.min(box.w, box.h) * 0.27, cx = box.x + box.w / 2, cy = box.y + box.h * 0.45;
+  var g = ctx.createRadialGradient(cx, cy, r * 0.8, cx, cy, r * 2.1);
+  g.addColorStop(0, 'rgba(255,255,255,.4)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = g; ctx.fillRect(box.x, box.y, box.w, box.h);
+  ceLogoDisc(ctx, o.logo, cx, cy, r, ring || '#fff');
+  if(!o.logo){
+    var ini = String(o.card.name || '?').split(/\s+/).map(function(w){ return w.charAt(0); }).join('').slice(0, 3).toUpperCase();
+    ceText(ctx, ini, cx, cy + r * 0.32, { size: r * 0.9, fill: '#334155', max: r * 1.6 });
+  }
+}
+function cePosRole(pos){
+  return pos === 'CB' ? crL('HẬU VỆ', 'DEFENDER') : pos === 'CDM' || pos === 'CAM' ? crL('TIỀN VỆ', 'MIDFIELDER') : crL('TIỀN ĐẠO', 'FORWARD');
+}
+// Position on a vertical pitch (attack at the top): [x, y] fractions.
+function cePosXY(pos){
+  return { ST: [0.5, 0.12], CF: [0.5, 0.22], LW: [0.2, 0.2], CAM: [0.5, 0.36], CDM: [0.5, 0.6], CB: [0.5, 0.84] }[pos] || [0.5, 0.5];
+}
+// Card body of the newer designs: thick tier-metal frame + light tier foil (shiny stripes for icon / gold / silver,
+// matte bronze, rainbow icon), so ICON / GOLD / SILVER / BRONZE read at a glance.
+function ceTierBase(ctx, T){
+  var W = CE_W, H = CE_H, i;
+  ceRRect(ctx, 0, 0, W, H, 18);
+  ctx.fillStyle = ceGrad(ctx, 0, 0, W, H, T.metal); ctx.fill();
+  ctx.save();
+  ceRRect(ctx, 6, 6, W - 12, H - 12, 13); ctx.clip();
+  ctx.fillStyle = ceGrad(ctx, 0, 0, W, H, T.foil.slice(0, 4)); ctx.fillRect(0, 0, W, H);
+  if(T.twinkle){
+    ctx.globalAlpha = 0.28; ctx.strokeStyle = '#fff'; ctx.lineWidth = 5;
+    for(i = -H; i < W; i += 17){ ctx.beginPath(); ctx.moveTo(i, H); ctx.lineTo(i + H, 0); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+  }
+  ceHolo(ctx, 0, 0, W, H, T.holo);
+  ctx.restore();
+  ceRRect(ctx, 6, 6, W - 12, H - 12, 13);
+  ctx.lineWidth = 1.2; ctx.strokeStyle = T.metal[5]; ctx.stroke();
+}
+// Recolours a panel toward the tier metal (gold keeps the club colours), as in 'attax'.
+function ceTierTint(ctx, tier, x, y, w, h){
+  var t = { icon: ['#9333ea', 0.72], silver: ['#94a3b8', 0.9], bronze: ['#b45309', 0.8] }[tier];
+  if(!t) return;
+  ctx.save(); ctx.globalCompositeOperation = 'color'; ctx.globalAlpha = t[1];
+  ctx.fillStyle = t[0]; ctx.fillRect(x, y, w, h); ctx.restore();
+}
+// Tier sparkles (none for bronze).
+function ceSparkles(ctx, rnd, T, x, y, w, h){
+  for(var i = 0; i < T.twinkle; i++) ceTwinkle(ctx, x + rnd() * w, y + rnd() * h, 3 + rnd() * 6);
+}
+// Metal outline of a path already built.
+function ceMetalLine(ctx, T, x0, y0, x1, y1, lw){
+  ctx.lineWidth = lw || 2; ctx.strokeStyle = ceGrad(ctx, x0, y0, x1, y1, T.metal); ctx.stroke();
+}
+
+// ---------------- 'allround' (Match Attax 20/21: white frame, shards, stat ladder) ----------------
+function ceDrawAllround(ctx, o){
+  var W = CE_W, H = CE_H, card = o.card, T = ceTm(o.tier), rnd = ceRng(card.name + '|allround'), c1 = o.team.c1, i, g;
+  var dark = ceRgb(ceShade(c1, -0.55)), mid = ceRgb(c1), lite = ceRgb(ceShade(c1, 0.62));
+  ceTierBase(ctx, T);
+
+  // Art: white -> club tint, shards around the player, halftone patch.
+  var P = { x: 12, y: 12, w: 300, h: 378 };
+  ctx.save();
+  ceRRect(ctx, P.x, P.y, P.w, P.h, 8); ctx.clip();
+  g = ctx.createLinearGradient(0, P.y, 0, P.y + P.h); g.addColorStop(0, '#ffffff'); g.addColorStop(1, lite);
+  ctx.fillStyle = g; ctx.fillRect(P.x, P.y, P.w, P.h);
+  var fx = 190, fy = 175;
+  for(i = 0; i < 28; i++){
+    var a = rnd() * Math.PI * 2, r1 = 55 + rnd() * 90, r2 = r1 + 90 + rnd() * 230, da = 0.05 + rnd() * 0.14, q = rnd();
+    cePoly(ctx, [[fx + Math.cos(a) * r1, fy + Math.sin(a) * r1], [fx + Math.cos(a - da) * r2, fy + Math.sin(a - da) * r2], [fx + Math.cos(a + da) * r2, fy + Math.sin(a + da) * r2]]);
+    ctx.globalAlpha = 0.55 + rnd() * 0.4;
+    ctx.fillStyle = q < 0.4 ? dark : q < 0.65 ? mid : q < 0.85 ? lite : '#ffffff';
+    ctx.fill();
+  }
+  ctx.fillStyle = dark;
+  for(var hy = 20; hy < 210; hy += 6) for(var hx = 130; hx < 312; hx += 6){
+    var dd = Math.sqrt((hx - 262) * (hx - 262) + (hy - 72) * (hy - 72)) / 120;
+    if(dd >= 1) continue;
+    ctx.globalAlpha = 0.4; ctx.beginPath(); ctx.arc(hx, hy, 1.7 * (1 - dd), 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  ceTierTint(ctx, o.tier, P.x, P.y, P.w, P.h);
+  ceHolo(ctx, P.x, P.y, P.w, P.h, T.holo * 1.4);
+  ceSparkles(ctx, rnd, T, 80, 30, 220, 300);
+  ceArt(ctx, o, o.img ? (o.alpha ? { x: 52, y: 22, w: 260, h: 368 } : P) : { x: 50, y: 24, w: 210, h: 300 }, o.alpha ? null : { from: 0.88 }, mid);
+  // Vertical name banner.
+  cePoly(ctx, [[12, 12], [64, 12], [64, 226], [12, 252]]);
+  ceShadow(ctx, 'rgba(0,0,0,.35)', 6, 0);
+  ctx.fillStyle = ceGrad(ctx, 0, 12, 0, 252, T.base); ctx.fill(); ceNoShadow(ctx);
+  ctx.fillStyle = ceGrad(ctx, 0, 12, 0, 226, T.metal); ctx.fillRect(64, 12, 3, 214);
+  ctx.save();
+  ctx.translate(38, 120); ctx.rotate(-Math.PI / 2);
+  ceText(ctx, 'MARVELL PES', 0, -8, { size: 8, w: 700, fill: T.acc, ls: 2, max: 190 });
+  ceText(ctx, String(card.name || '').toUpperCase(), 0, 15, { size: 24, fill: T.lite, ls: 0.5, max: 196, min: 9 });
+  ctx.restore();
+  ctx.restore();
+  ceRRect(ctx, P.x, P.y, P.w, P.h, 8); ceMetalLine(ctx, T, P.x, P.y, P.x + P.w, P.y + P.h, 2.5);
+
+  // Rating badge.
+  ctx.beginPath(); ctx.arc(282, 44, 22, 0, Math.PI * 2);
+  ceShadow(ctx, 'rgba(0,0,0,.35)', 5, 1.5); ctx.fillStyle = ceGrad(ctx, 260, 22, 304, 66, T.metal); ctx.fill(); ceNoShadow(ctx);
+  ctx.lineWidth = 1.5; ctx.strokeStyle = '#fff'; ctx.stroke();
+  ceText(ctx, String(card.ovr), 282, 52, { size: 21, fill: T.dark, ls: -0.5 });
+  ceText(ctx, card.pos, 282, 61.5, { size: 6.5, w: 800, fill: T.dark, ls: 0.5 });
+
+  // Coloured stat ladder.
+  var cols = ['#ec4899', '#a855f7', '#14b8a6', '#f97316', '#e11d48', '#334155'];
+  (card.stats || []).slice(0, 6).forEach(function(s, j){
+    var y = 206 + j * 21, xl = 196 + j * 3;
+    cePoly(ctx, [[xl + 6, y], [266, y], [262, y + 17], [xl, y + 17]]);
+    ceShadow(ctx, 'rgba(0,0,0,.3)', 3, 1); ctx.fillStyle = cols[j]; ctx.fill(); ceNoShadow(ctx);
+    ceText(ctx, s.label, 258, y + 12, { size: 8, w: 800, fill: '#fff', align: 'right', ls: 0.4, max: 54, min: 4.5 });
+    cePoly(ctx, [[268, y], [310, y], [306, y + 17], [264, y + 17]]);
+    ceShadow(ctx, 'rgba(0,0,0,.3)', 3, 1); ctx.fillStyle = '#fff'; ctx.fill(); ceNoShadow(ctx);
+    ceText(ctx, String(s.v), 287, y + 13, { size: 12, fill: s.v >= 90 ? '#b45309' : '#0f172a' });
+  });
+
+  // Big title band (tier / custom label) in the tier metal.
+  cePoly(ctx, [[14, 340], [262, 340], [252, 380], [14, 380]]);
+  ceShadow(ctx, 'rgba(0,0,0,.4)', 6, 2); ctx.fillStyle = ceGrad(ctx, 14, 340, 262, 380, T.metal); ctx.fill(); ceNoShadow(ctx);
+  ctx.lineWidth = 1.5; ctx.strokeStyle = T.metal[5]; ctx.stroke();
+  cePoly(ctx, [[14, 340], [30, 340], [22, 380], [14, 380]]); ctx.fillStyle = ceGrad(ctx, 0, 340, 0, 380, T.base); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.45)'; ctx.fillRect(30, 342, 226, 2);
+  ceShadow(ctx, 'rgba(255,255,255,.6)', 2, 1);
+  ceText(ctx, ceLabelOr(o, ceTierLabel(o.tier)), 36, 371, { size: 27, w: 'italic 900', fill: T.dark, align: 'left', ls: 0.5, max: 210, min: 9 });
+  ceNoShadow(ctx);
+
+  // DEF / ATT with the crest between them.
+  [[[[16, 396], [128, 396], [124, 410], [16, 410]], [[16, 410], [124, 410], [114, 466], [16, 466]], 66, crL('PHÒNG THỦ', 'DEFENCE'), ceStatV(card, 'def'), ['#67e8f9', '#0891b2']],
+   [[[196, 396], [308, 396], [308, 410], [200, 410]], [[200, 410], [308, 410], [308, 466], [210, 466]], 258, crL('TẤN CÔNG', 'ATTACK'), ceStatV(card, 'att'), ['#f9a8d4', '#db2777']]].forEach(function(b){
+    cePoly(ctx, b[0]); ctx.fillStyle = ceGrad(ctx, 0, 396, 0, 410, b[5]); ctx.fill();
+    ceText(ctx, b[3], b[2], 406.5, { size: 8.5, w: 900, fill: '#0f172a', ls: 1, max: 96 });
+    cePoly(ctx, b[1]);
+    ceShadow(ctx, 'rgba(0,0,0,.35)', 5, 2); ctx.fillStyle = ceGrad(ctx, 0, 410, 0, 466, T.base); ctx.fill(); ceNoShadow(ctx);
+    ceMetalLine(ctx, T, 0, 410, 0, 466, 1.5);
+    ceText(ctx, String(b[4]), b[2], 457, { size: 40, fill: T.lite, ls: -1 });
+  });
+  ctx.beginPath(); ctx.arc(W / 2, 434, 37, 0, Math.PI * 2);
+  ceShadow(ctx, 'rgba(0,0,0,.35)', 6, 2); ctx.fillStyle = ceGrad(ctx, 125, 397, 199, 471, T.metal); ctx.fill(); ceNoShadow(ctx);
+  ceLogoDisc(ctx, o.logo, W / 2, 434, 32, '#fff');
+
+  // Footer.
+  ceText(ctx, (o.rank ? '#' + o.rank + '  ' : '') + card.pos, 18, 490, { size: 11, fill: T.ink[1], align: 'left', max: 80 });
+  ceText(ctx, 'MARVELL PES  \u00b7  ' + card.P + crL(' TRẬN', ' MATCHES'), 18, 502, { size: 6, w: 700, fill: T.ink[0], align: 'left', ls: 0.5, max: 92 });
+  ceMedalStars(ctx, card.medalList, W / 2, 492, 104, 4.6);
+  ceRRect(ctx, 236, 478, 72, 26, 5); ctx.fillStyle = ceGrad(ctx, 0, 478, 0, 504, T.base); ctx.fill();
+  ceMetalLine(ctx, T, 236, 0, 308, 0, 1.5);
+  ceText(ctx, 'ELO ' + card.elo, 272, 495.5, { size: 12, fill: T.lite, max: 64 });
+}
+
+// ---------------- 'adrenalyn' (Panini Adrenalyn XL: geometric photo, white name panel, position panel) ----------------
+function ceDrawAdrenalyn(ctx, o){
+  var W = CE_W, H = CE_H, card = o.card, T = ceTm(o.tier), rnd = ceRng(card.name + '|adrenalyn'), c1 = o.team.c1, i, g;
+  var navy = ceRgb(ceShade(c1, -0.62)), PC = { CB: ['#f472b6', '#be185d'], CDM: ['#34d399', '#047857'], CAM: ['#34d399', '#047857'] }[card.pos] || ['#60a5fa', '#1d4ed8'];
+  ceTierBase(ctx, T);
+
+  // Photo panel with a slanted bottom edge: tier-foil stripes + club blocks with metal edges.
+  ctx.save();
+  ceRRect(ctx, 12, 12, 300, 390, 10); ctx.clip();
+  cePoly(ctx, [[0, 0], [W, 0], [W, 350], [0, 392]]); ctx.clip();
+  ctx.fillStyle = T.foil[1]; ctx.fillRect(12, 12, 300, 390);
+  for(i = 0; i < 6; i++){
+    var bx = -190 + i * 86;
+    cePoly(ctx, [[bx, 402], [bx + 46, 402], [bx + 46 + 330, 12], [bx + 330, 12]]);
+    ctx.fillStyle = i % 2 ? T.foil[0] : T.foil[2]; ctx.fill();
+    ctx.save(); ctx.clip();
+    ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.lineWidth = 1;
+    for(var s = -420; s < 420; s += 4.5){ ctx.beginPath(); ctx.moveTo(s, 402); ctx.lineTo(s + 330, 12); ctx.stroke(); }
+    ctx.restore();
+  }
+  ctx.fillStyle = navy;
+  [[[150, 12], [312, 12], [312, 236]], [[12, 250], [12, 402], [128, 402]], [[196, 402], [312, 262], [312, 318], [244, 402]]].forEach(function(pts){
+    cePoly(ctx, pts); ctx.fillStyle = navy; ctx.fill(); ceMetalLine(ctx, T, 12, 12, 312, 402, 3);
+  });
+  ceHolo(ctx, 12, 12, 300, 390, T.holo * 1.3);
+  ceSparkles(ctx, rnd, T, 30, 30, 270, 300);
+  ceArt(ctx, o, o.alpha ? { x: 30, y: 26, w: 270, h: 370 } : { x: 12, y: 12, w: 300, h: 390 }, null, navy);
+  ctx.restore();
+  ctx.beginPath(); ctx.moveTo(12, 392); ctx.lineTo(312, 350); ceMetalLine(ctx, T, 12, 392, 312, 350, 3);
+  ceLogoDisc(ctx, o.logo, 44, 46, 22, '#fff');
+  ceRRect(ctx, 244, 20, 60, 18, 3);
+  ceShadow(ctx, 'rgba(0,0,0,.3)', 3, 1); ctx.fillStyle = navy; ctx.fill(); ceNoShadow(ctx);
+  ctx.lineWidth = 1; ctx.strokeStyle = '#fff'; ctx.stroke();
+  ceText(ctx, 'PES', 274, 33.5, { size: 11, w: 'italic 900', fill: '#fff', ls: 2 });
+  if(o.rank){
+    ceShadow(ctx, 'rgba(0,0,0,.7)', 3, 1);
+    ceText(ctx, '#' + o.rank, 302, 52, { size: 9, fill: '#fff', align: 'right' });
+    ceNoShadow(ctx);
+  }
+
+  // Position panel: tier flag, mini pitch, role.
+  ceRRect(ctx, 244, 340, 68, 164, 8);
+  ceShadow(ctx, 'rgba(0,0,0,.3)', 6, 2); ctx.fillStyle = ceGrad(ctx, 0, 340, 0, 504, PC); ctx.fill(); ceNoShadow(ctx);
+  ceMetalLine(ctx, T, 244, 340, 312, 504, 2.5);
+  ceRRect(ctx, 250, 348, 56, 34, 3); ctx.fillStyle = ceGrad(ctx, 250, 348, 306, 382, T.metal); ctx.fill();
+  ctx.lineWidth = 1; ctx.strokeStyle = '#fff'; ctx.stroke();
+  ceText(ctx, ceLabelOr(o, o.tier.toUpperCase()), 278, 369.5, { size: 10, fill: T.dark, ls: 0.8, max: 50, min: 4 });
+  var px = 257, py = 390, pw = 42, ph = 58, xy = cePosXY(card.pos);
+  ctx.fillStyle = 'rgba(255,255,255,.16)'; ctx.fillRect(px, py, pw, ph);
+  ctx.fillStyle = 'rgba(255,255,255,.4)'; ctx.fillRect(px, py + ph * Math.max(0, Math.min(0.7, xy[1] - 0.15)), pw, ph * 0.3);
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 1;
+  ctx.strokeRect(px, py, pw, ph);
+  ctx.beginPath(); ctx.moveTo(px, py + ph / 2); ctx.lineTo(px + pw, py + ph / 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(px + pw / 2, py + ph / 2, 6, 0, Math.PI * 2); ctx.stroke();
+  ctx.strokeRect(px + pw * 0.25, py, pw * 0.5, ph * 0.16);
+  ctx.strokeRect(px + pw * 0.25, py + ph * 0.84, pw * 0.5, ph * 0.16);
+  ctx.beginPath(); ctx.arc(px + pw * xy[0], py + ph * xy[1], 3.5, 0, Math.PI * 2);
+  ctx.fillStyle = '#fff'; ctx.fill();
+  ceText(ctx, cePosRole(card.pos), 278, 466, { size: 8.5, fill: '#fff', ls: 0.5, max: 60, min: 5 });
+  ceText(ctx, card.pos, 278, 490, { size: 18, fill: '#fff', ls: 1 });
+
+  // Crest + name.
+  ceLogoDisc(ctx, o.logo, 42, 414, 22, T.metal[2]);
+  ceText(ctx, 'MARVELL PES CLUB', 74, 406, { size: 8, w: 700, fill: T.ink[0], align: 'left', ls: 1, max: 160 });
+  ceText(ctx, String(card.name || '').toUpperCase(), 74, 430, { size: 22, fill: T.ink[1], align: 'left', max: 164, min: 9 });
+
+  // DEF / CLU / ATT / TOTAL.
+  var def = ceStatV(card, 'def'), clu = ceStatV(card, 'clu'), att = ceStatV(card, 'att');
+  [['DEF', def, '#db2777', ['#f472b6', '#9d174d'], '#fff'], [CE_CODES.clu, clu, '#0d9488', ['#2dd4bf', '#0f766e'], '#fff'],
+   ['ATT', att, '#16a34a', ['#4ade80', '#15803d'], '#fff'], [crL('TỔNG', 'TOTAL'), def + clu + att, '#6d28d9', ['#fef08a', '#facc15'], '#4c1d95']].forEach(function(b, j){
+    var x = 16 + j * 56;
+    ceText(ctx, b[0], x + 26, 450, { size: 8.5, fill: b[2], ls: 0.5, max: 50 });
+    ceRRect(ctx, x, 454, 52, 30, 5);
+    ceShadow(ctx, 'rgba(0,0,0,.25)', 3, 1); ctx.fillStyle = ceGrad(ctx, 0, 454, 0, 484, b[3]); ctx.fill(); ceNoShadow(ctx);
+    ctx.lineWidth = 1.2; ctx.strokeStyle = b[2]; ctx.stroke();
+    ceText(ctx, String(b[1]), x + 26, 476, { size: j === 3 ? 17 : 19, fill: b[4], max: 46 });
+  });
+
+  // Footer: Elo badge + trophy stars.
+  ceRRect(ctx, 16, 490, 90, 16, 4); ctx.fillStyle = ceGrad(ctx, 0, 490, 0, 506, T.base); ctx.fill();
+  ceMetalLine(ctx, T, 16, 0, 106, 0, 1.2);
+  ceText(ctx, 'ELO ' + card.elo, 61, 501.5, { size: 9, fill: T.lite, ls: 0.6, max: 84 });
+  ceMedalStars(ctx, card.medalList, 174, 498, 124, 4.4);
+}
+
+// ---------------- 'ucl' (Topps Match Attax Champions: starball night, white info band) ----------------
+function ceDrawUcl(ctx, o){
+  var W = CE_W, H = CE_H, card = o.card, T = ceTm(o.tier), rnd = ceRng(card.name + '|ucl'), i, g, a;
+  ceTierBase(ctx, T);
+
+  ctx.save();
+  ceRRect(ctx, 10, 10, 304, 496, 13); ctx.clip();
+  g = ctx.createRadialGradient(200, 160, 10, 200, 160, 430);
+  g.addColorStop(0, T.field[0]); g.addColorStop(0.3, T.field[1]); g.addColorStop(0.7, T.field[2]); g.addColorStop(1, T.field[3]);
+  ctx.fillStyle = g; ctx.fillRect(10, 10, 304, 496);
+  // Starball: ring of stars + orbit lines.
+  var sx = 196, sy = 172;
+  ctx.strokeStyle = T.beam;
+  ctx.globalAlpha = 0.12; ctx.lineWidth = 1;
+  for(i = 0; i < 7; i++){ ctx.beginPath(); ctx.arc(sx, sy, 50 + i * 34, 0, Math.PI * 2); ctx.stroke(); }
+  ctx.globalAlpha = 0.3; ctx.lineWidth = 2;
+  ctx.strokeStyle = ceGrad(ctx, 40, 20, 320, 330, T.metal);
+  for(i = 0; i < 8; i++){ a = i / 8 * Math.PI * 2 + 0.2; ceStar(ctx, sx + Math.cos(a) * 128, sy + Math.sin(a) * 128, 30); ctx.stroke(); }
+  ceStar(ctx, sx, sy, 48); ctx.stroke();
+  ctx.fillStyle = T.beam;
+  for(i = 0; i < 40 + T.dust; i++){
+    ctx.globalAlpha = 0.25 + rnd() * 0.6;
+    ctx.beginPath(); ctx.arc(10 + rnd() * 304, 10 + rnd() * 380, 0.3 + rnd() * 1.1, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  ceHolo(ctx, 10, 10, 304, 400, T.holo * 1.3);
+  ceSparkles(ctx, rnd, T, 30, 30, 270, 320);
+  ceArt(ctx, o, o.alpha ? { x: 24, y: 40, w: 280, h: 356 } : { x: 10, y: 10, w: 304, h: 392 }, { from: 0.8 }, T.acc);
+  g = ctx.createLinearGradient(0, 320, 0, 410);
+  g.addColorStop(0, ceHexA(T.field[3], 0)); g.addColorStop(1, ceHexA(T.field[3], 0.85));
+  ctx.fillStyle = g; ctx.fillRect(10, 320, 304, 186);
+  ctx.restore();
+  ceRRect(ctx, 10, 10, 304, 496, 13); ceMetalLine(ctx, T, 10, 10, 314, 506, 3);
+
+  // Crest, brand, rank.
+  ceLogoDisc(ctx, o.logo, 40, 42, 19, '#fff');
+  ceRRect(ctx, 250, 22, 54, 20, 10);
+  ceShadow(ctx, 'rgba(0,0,0,.35)', 4, 1); ctx.fillStyle = '#fff'; ctx.fill(); ceNoShadow(ctx);
+  ceText(ctx, 'PES', 277, 36.5, { size: 12, w: 'italic 900', fill: T.field[2], ls: 1 });
+  if(o.rank){
+    ceRRect(ctx, 280, 50, 24, 16, 3); ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.fill();
+    ceText(ctx, String(o.rank), 292, 61.5, { size: 9, fill: '#0b1d51', max: 20 });
+  }
+  var n = Math.min((card.medalList || []).length, 30);
+  if(n){
+    var sw = Math.min(200, n * 12.4) + 16;
+    ceRRect(ctx, W / 2 - sw / 2, 370, sw, 18, 9); ctx.fillStyle = 'rgba(0,0,0,.5)'; ctx.fill();
+    ceMedalStars(ctx, card.medalList, W / 2, 379.5, sw - 16, 5.5);
+  }
+
+  // Info band in the light tier foil.
+  ceRRect(ctx, 18, 396, 288, 104, 10);
+  ceShadow(ctx, 'rgba(0,0,0,.45)', 8, 2); ctx.fillStyle = ceGrad(ctx, 18, 396, 306, 500, T.foil.slice(0, 4)); ctx.fill(); ceNoShadow(ctx);
+  ceMetalLine(ctx, T, 18, 396, 306, 500, 2);
+  ceRRect(ctx, 26, 404, 42, 44, 6); ctx.fillStyle = ceGrad(ctx, 0, 404, 0, 448, T.base); ctx.fill();
+  ctx.lineWidth = 1; ctx.strokeStyle = ceGrad(ctx, 26, 404, 68, 448, T.metal); ctx.stroke();
+  ceText(ctx, card.pos, 47, 430, { size: 15, fill: '#fff', max: 36 });
+  ceText(ctx, ceLabelOr(o, o.tier.toUpperCase()), 47, 442, { size: 6, w: 800, fill: T.acc, ls: 0.4, max: 38, min: 3.5 });
+  ctx.fillStyle = ceHexA(T.ink[0], 0.3); ctx.fillRect(76, 408, 1, 36); ctx.fillRect(140, 408, 1, 36); ctx.fillRect(222, 408, 1, 36);
+  ceText(ctx, crL('CHỈ SỐ', 'RATING'), 108, 414, { size: 6, w: 800, fill: T.ink[0], ls: 0.6, max: 58 });
+  ceText(ctx, String(card.ovr), 108, 444, { size: 30, fill: T.ink[1], ls: -1 });
+  [['ATT', ceStatV(card, 'att'), '#e11d48', 420], ['DEF', ceStatV(card, 'def'), '#2563eb', 440]].forEach(function(b){
+    ceText(ctx, b[0], 148, b[3], { size: 7.5, w: 800, fill: T.ink[0], align: 'left', ls: 0.5 });
+    ceText(ctx, String(b[1]), 214, b[3] + 0.5, { size: 13, fill: T.ink[1], align: 'right' });
+    ctx.fillStyle = 'rgba(0,0,0,.12)'; ctx.fillRect(148, b[3] + 3, 66, 2.5);
+    ctx.fillStyle = b[2]; ctx.fillRect(148, b[3] + 3, 66 * Math.max(0, Math.min(1, (b[1] - 40) / 59)), 2.5);
+  });
+  ctx.beginPath(); ctx.arc(238, 426, 10, 0, Math.PI * 2);
+  ctx.fillStyle = ceGrad(ctx, 228, 416, 248, 436, T.metal); ctx.fill();
+  ctx.lineWidth = 1; ctx.strokeStyle = T.metal[5]; ctx.stroke();
+  ceStar(ctx, 238, 426, 5); ctx.fillStyle = T.metal[5]; ctx.fill();
+  ceText(ctx, 'ELO', 252, 418, { size: 6, w: 800, fill: T.ink[0], align: 'left', ls: 0.6 });
+  ceText(ctx, String(card.elo), 252, 436, { size: 15, fill: T.ink[1], align: 'left', max: 48 });
+  ceText(ctx, card.P + crL(' TRẬN', ' MATCHES'), 252, 445, { size: 5.5, w: 700, fill: T.ink[0], align: 'left', max: 48 });
+  ceRRect(ctx, 26, 454, 272, 38, 7);
+  ctx.fillStyle = ceGrad(ctx, 0, 454, 0, 492, T.base); ctx.fill();
+  ctx.lineWidth = 1.2; ctx.strokeStyle = ceGrad(ctx, 26, 0, 298, 0, T.metal); ctx.stroke();
+  ceText(ctx, String(card.name || '').toUpperCase(), W / 2, 480, { size: 20, fill: '#fff', ls: 1, max: 250, min: 9 });
+}
+
+// ---------------- Card back (common to every card) ----------------
+// Hand-drawn lettering: each glyph = [advance, strokes] on a grid of cap height 10 (stroke centre lines,
+// chamfered corners), stroked in layers (shadow, rim, metal face, engraved inline).
+var CE_GLYPH = {
+  M: [6.5, [[[0, 10], [0, 0], [3.25, 6], [6.5, 0], [6.5, 10]]]],
+  A: [6, [[[0, 10], [0, 2.5], [2.5, 0], [3.5, 0], [6, 2.5], [6, 10]], [[0, 6], [6, 6]]]],
+  R: [6, [[[0, 10], [0, 0], [4.5, 0], [6, 1.5], [6, 3.5], [4.5, 5], [0, 5]], [[3.5, 5], [6, 7.5], [6, 10]]]],
+  V: [6, [[[0, 0], [0, 5.5], [2.4, 10], [3.6, 10], [6, 5.5], [6, 0]]]],
+  E: [5.5, [[[5.5, 0], [0, 0], [0, 10], [5.5, 10]], [[0, 5], [4, 5]]]],
+  L: [5, [[[0, 0], [0, 10], [5, 10]]]],
+  P: [6, [[[0, 10], [0, 0], [4.5, 0], [6, 1.5], [6, 4], [4.5, 5.5], [0, 5.5]]]],
+  S: [6, [[[6, 0], [1.5, 0], [0, 1.5], [0, 3.5], [1.5, 5], [4.5, 5], [6, 6.5], [6, 8.5], [4.5, 10], [0, 10]]]],
+  C: [6, [[[6, 0], [1.5, 0], [0, 1.5], [0, 8.5], [1.5, 10], [6, 10]]]],
+  U: [6, [[[0, 0], [0, 8.5], [1.5, 10], [4.5, 10], [6, 8.5], [6, 0]]]],
+  B: [6, [[[0, 0], [4, 0], [5.5, 1.5], [5.5, 3.5], [4, 5], [0, 5]], [[0, 0], [0, 10], [4.5, 10], [6, 8.5], [6, 6.5], [4.5, 5], [0, 5]]]],
+  ' ': [1.5, []]
+};
+// Word centred on cx with its baseline at y; st = { sw (stroke), track, skew, face[], rim[], inline }.
+function ceLogoWord(ctx, txt, cx, y, cap, st){
+  var s = cap / 10, sw = st.sw || 2.1, tr = st.track == null ? 1.6 : st.track, k = st.skew == null ? 0.16 : st.skew;
+  var chars = txt.split('').filter(function(c){ return CE_GLYPH[c]; }), wd = 0;
+  chars.forEach(function(c, i){ wd += CE_GLYPH[c][0] + sw + (i < chars.length - 1 ? tr : 0); });
+  ctx.save();
+  ctx.translate(cx - k * cap / 2, y);
+  ctx.transform(1, 0, -k, 1, 0, 0);
+  ctx.beginPath();
+  var x = -wd / 2 + sw / 2;
+  chars.forEach(function(c){
+    CE_GLYPH[c][1].forEach(function(ln){ ln.forEach(function(p, j){ ctx[j ? 'lineTo' : 'moveTo']((x + p[0]) * s, (p[1] - 10) * s); }); });
+    x += CE_GLYPH[c][0] + sw + tr;
+  });
+  ctx.lineJoin = 'miter'; ctx.miterLimit = 2.5; ctx.lineCap = 'square';
+  ceShadow(ctx, 'rgba(0,0,0,.8)', 9, 3);
+  ctx.lineWidth = (sw + 1.9) * s; ctx.strokeStyle = '#03050c'; ctx.stroke();
+  ceNoShadow(ctx);
+  ctx.lineWidth = (sw + 0.9) * s; ctx.strokeStyle = ceGrad(ctx, 0, -cap, 0, 0, st.rim); ctx.stroke();
+  ctx.lineWidth = sw * s; ctx.strokeStyle = ceGrad(ctx, 0, -cap, 0, 0, st.face); ctx.stroke();
+  ctx.lineCap = 'butt'; ctx.lineWidth = 0.3 * s; ctx.strokeStyle = st.inline || 'rgba(8,12,32,.8)'; ctx.stroke();
+  ctx.restore();
+  return wd * s;
+}
+var CE_PS = { tri: '#3fd9a8', cir: '#f2546b', x: '#6aa6ff', sq: '#e57fd0' };
+function cePsPath(ctx, k, cx, cy, s){
+  ctx.beginPath();
+  if(k === 'tri'){ ctx.moveTo(cx, cy - s * 1.02); ctx.lineTo(cx + s * 0.95, cy + s * 0.62); ctx.lineTo(cx - s * 0.95, cy + s * 0.62); ctx.closePath(); }
+  else if(k === 'cir') ctx.arc(cx, cy, s * 0.86, 0, Math.PI * 2);
+  else if(k === 'x'){ var d = s * 0.78; ctx.moveTo(cx - d, cy - d); ctx.lineTo(cx + d, cy + d); ctx.moveTo(cx + d, cy - d); ctx.lineTo(cx - d, cy + d); }
+  else ctx.rect(cx - s * 0.76, cy - s * 0.76, s * 1.52, s * 1.52);
+}
+// PlayStation symbol, glowing in its colour.
+function cePsSym(ctx, k, cx, cy, s, lw, glow, col){
+  cePsPath(ctx, k, cx, cy, s);
+  ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  if(glow) ceShadow(ctx, col || CE_PS[k], glow, 0);
+  ctx.lineWidth = lw; ctx.strokeStyle = col || CE_PS[k]; ctx.stroke();
+  ceNoShadow(ctx);
+}
+
+// Card-back logo image (put by the club in logos/, any plain background or transparent), loaded on first use and
+// turned into a mask: alpha = distance from the background colour (or the PNG alpha), so it can be finished in metal.
+var CE_PS_LOGO = { state: 0, mask: null, box: null, tint: null };
+function cePsLogoLoad(){
+  if(CE_PS_LOGO.state) return;
+  CE_PS_LOGO.state = 1;
+  var srcs = ['logos/Playstation_icon.png', 'logos/playstation.png', 'logos/playstation.jpg', 'logos/playstation.svg'];
+  (function next(i){
+    if(i >= srcs.length){ CE_PS_LOGO.state = 2; return; }
+    var im = new Image();
+    im.onload = function(){
+      try { cePsMask(im); } catch(e){ console.warn('Card back logo:', e); }
+      CE_PS_LOGO.state = 2;
+      var d = document.getElementById('cardExportDialog');
+      if(CE_PS_LOGO.mask && d && d.open && typeof ceRender === 'function') ceRender();
+    };
+    im.onerror = function(){ next(i + 1); };
+    im.src = srcs[i];
+  })(0);
+}
+function cePsMask(im){
+  var w = im.naturalWidth || 500, h = im.naturalHeight || 500, sc = 600 / Math.max(w, h);
+  var c = document.createElement('canvas'), x = c.getContext('2d');
+  c.width = Math.round(w * sc); c.height = Math.round(h * sc);
+  x.drawImage(im, 0, 0, c.width, c.height);
+  var id = x.getImageData(0, 0, c.width, c.height), d = id.data, n = d.length, i, W = c.width, H = c.height;
+  var cs = [0, (W - 1) * 4, (H - 1) * W * 4, (H * W - 1) * 4], bg = [0, 0, 0, 0];
+  cs.forEach(function(o){ for(var k = 0; k < 4; k++) bg[k] += d[o + k] / 4; });
+  var useA = bg[3] < 128, dist = new Float32Array(n / 4), mx = 0;
+  for(i = 0; i < n; i += 4){
+    var v = useA ? d[i + 3] : Math.sqrt((d[i] - bg[0]) * (d[i] - bg[0]) + (d[i + 1] - bg[1]) * (d[i + 1] - bg[1]) + (d[i + 2] - bg[2]) * (d[i + 2] - bg[2]));
+    dist[i / 4] = v; if(v > mx) mx = v;
+  }
+  if(mx < 40) return;
+  var x0 = W, y0 = H, x1 = -1, y1 = -1;
+  for(i = 0; i < n; i += 4){
+    var t = useA ? dist[i / 4] / 255 : Math.min(1, Math.max(0, (dist[i / 4] / mx - 0.3) / 0.4)), p = i / 4;
+    d[i] = d[i + 1] = d[i + 2] = 255; d[i + 3] = Math.round(t * 255);
+    if(t > 0.5){ var px = p % W, py = (p - px) / W; if(px < x0) x0 = px; if(px > x1) x1 = px; if(py < y0) y0 = py; if(py > y1) y1 = py; }
+  }
+  if(x1 < 0) return;
+  x.putImageData(id, 0, 0);
+  CE_PS_LOGO.mask = c; CE_PS_LOGO.box = { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 }; CE_PS_LOGO.tint = null;
+}
+// Draws the logo fitted in bw x bh around (cx, cy): blue glow, dark outline, gold rim, chrome face. false = no logo.
+function cePsLogo(ctx, cx, cy, bw, bh){
+  cePsLogoLoad();
+  var L = CE_PS_LOGO, m = L.mask, b = L.box;
+  if(!m) return false;
+  if(!L.tint){
+    var mk = function(fill){
+      var c = document.createElement('canvas'), x = c.getContext('2d');
+      c.width = m.width; c.height = m.height;
+      x.drawImage(m, 0, 0); x.globalCompositeOperation = 'source-in';
+      x.fillStyle = typeof fill === 'string' ? fill : ceGrad(x, b.x, b.y, b.x + b.w, b.y + b.h, fill);
+      x.fillRect(0, 0, c.width, c.height);
+      return c;
+    };
+    L.tint = { dark: mk('#05081a'), gold: mk(['#fff4cf', '#e9c46a', '#9c7631', '#f7e2a0', '#b88a3a']), chrome: mk(['#ffffff', '#dfe5f0', '#8f9ab3', '#f4f6fb', '#aab4c9']) };
+  }
+  var s = Math.min(bw / b.w, bh / b.h), dw = m.width * s, dh = m.height * s;
+  var x0 = cx - (b.x + b.w / 2) * s, y0 = cy - (b.y + b.h / 2) * s, T = L.tint, k, a;
+  ctx.save();
+  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  ceShadow(ctx, 'rgba(96,130,255,.65)', 14, 0);
+  ctx.drawImage(T.dark, x0, y0, dw, dh);
+  ceNoShadow(ctx);
+  [[T.dark, 2.6], [T.gold, 1.3]].forEach(function(l){
+    for(k = 0; k < 16; k++){ a = k / 16 * Math.PI * 2; ctx.drawImage(l[0], x0 + Math.cos(a) * l[1], y0 + Math.sin(a) * l[1], dw, dh); }
+  });
+  ctx.drawImage(T.chrome, x0, y0, dw, dh);
+  ctx.restore();
+  return true;
+}
+
+function ceDrawBack(ctx){
+  var W = CE_W, H = CE_H, rnd = ceRng('marvell-pes-back'), i, j, g, a;
+  var GOLD = ['#fff4cf', '#e9c46a', '#9c7631', '#f7e2a0', '#b88a3a'], CHROME = ['#ffffff', '#dfe5f0', '#8f9ab3', '#f4f6fb', '#aab4c9'];
+  var gun = ['#6b7489', '#1c2133', '#9aa3b8', '#262c40', '#b3bbcd', '#141826'];
+  // Gunmetal frame + deep navy field.
+  ceRRect(ctx, 0, 0, W, H, 18); ctx.fillStyle = ceGrad(ctx, 0, 0, W, H, gun); ctx.fill();
+  ctx.save();
+  ceRRect(ctx, 7, 7, W - 14, H - 14, 13); ctx.clip();
+  g = ctx.createRadialGradient(162, 190, 10, 162, 230, 360);
+  g.addColorStop(0, '#24306a'); g.addColorStop(0.4, '#141c44'); g.addColorStop(0.75, '#0a0f27'); g.addColorStop(1, '#04060e');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  // Faint PlayStation symbol wallpaper.
+  var ks = ['tri', 'cir', 'x', 'sq'];
+  ctx.globalAlpha = 0.07;
+  for(j = 0; j * 24 < H + 24; j++) for(i = 0; i * 24 < W + 24; i++){
+    cePsSym(ctx, ks[(i + j * 3) % 4], i * 24 + (j % 2) * 12, j * 24 + 6, 4.2, 1.1, 0, '#c7d2fe');
+  }
+  ctx.globalAlpha = 1;
+  // Soft light behind the emblem + diagonal sheen.
+  g = ctx.createRadialGradient(162, 190, 0, 162, 190, 170);
+  g.addColorStop(0, 'rgba(96,130,255,.38)'); g.addColorStop(1, 'rgba(96,130,255,0)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.save(); ctx.globalCompositeOperation = 'screen';
+  g = ctx.createLinearGradient(0, 120, W, 40);
+  g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(0.5, 'rgba(255,255,255,.07)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.restore();
+  ctx.fillStyle = '#fff';
+  for(i = 0; i < 70; i++){
+    ctx.globalAlpha = 0.15 + rnd() * 0.5;
+    ctx.beginPath(); ctx.arc(14 + rnd() * 296, 14 + rnd() * 488, 0.3 + rnd() * 0.9, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  // Vignette.
+  g = ctx.createRadialGradient(162, 258, 150, 162, 258, 330);
+  g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.55)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.restore();
+  ceRRect(ctx, 7, 7, W - 14, H - 14, 13); ctx.lineWidth = 1.2; ctx.strokeStyle = '#05070f'; ctx.stroke();
+  ceRRect(ctx, 14, 14, W - 28, H - 28, 9); ctx.lineWidth = 0.8; ctx.strokeStyle = ceGrad(ctx, 0, 0, W, H, ['rgba(233,196,106,.55)', 'rgba(233,196,106,.15)', 'rgba(233,196,106,.55)']); ctx.stroke();
+  // Corner brackets.
+  ctx.strokeStyle = ceGrad(ctx, 0, 0, W, H, GOLD); ctx.lineWidth = 1.6; ctx.lineCap = 'square'; ctx.lineJoin = 'miter';
+  [[22, 22, 1, 1], [W - 22, 22, -1, 1], [22, H - 22, 1, -1], [W - 22, H - 22, -1, -1]].forEach(function(c){
+    ctx.beginPath(); ctx.moveTo(c[0], c[1] + c[3] * 18); ctx.lineTo(c[0], c[1]); ctx.lineTo(c[0] + c[2] * 18, c[1]); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(c[0] + c[2] * 5, c[1] + c[3] * 9); ctx.lineTo(c[0] + c[2] * 5, c[1] + c[3] * 5); ctx.lineTo(c[0] + c[2] * 9, c[1] + c[3] * 5); ctx.stroke();
+  });
+
+  // Emblem: dial ring + the four buttons in controller layout.
+  var ex = 162, ey = 190;
+  ctx.beginPath(); ctx.arc(ex, ey, 104, 0, Math.PI * 2);
+  ctx.lineWidth = 2.2; ctx.strokeStyle = ceGrad(ctx, ex - 104, ey - 104, ex + 104, ey + 104, GOLD); ctx.stroke();
+  ctx.beginPath(); ctx.arc(ex, ey, 97, 0, Math.PI * 2);
+  ctx.lineWidth = 0.7; ctx.strokeStyle = 'rgba(233,196,106,.45)'; ctx.stroke();
+  ctx.strokeStyle = 'rgba(223,229,240,.35)'; ctx.lineWidth = 0.8; ctx.lineCap = 'butt';
+  for(i = 0; i < 48; i++){
+    a = i / 48 * Math.PI * 2; var r0 = i % 4 ? 99.5 : 98;
+    ctx.beginPath(); ctx.moveTo(ex + Math.cos(a) * r0, ey + Math.sin(a) * r0); ctx.lineTo(ex + Math.cos(a) * 102, ey + Math.sin(a) * 102); ctx.stroke();
+  }
+  // Centre logo: the image in logos/Playstation_icon.png in the card finish; placeholder P/S until it exists.
+  if(!cePsLogo(ctx, ex, ey + 2, 150, 126)){
+  var psS = function(near){
+    ctx.save();
+    if(near){ // redraw only around the foot of the P; device-pixel aligned clip = no seam line
+      var m = ctx.getTransform();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.beginPath(); ctx.rect(Math.round(128 * CE_K), Math.round(242 * CE_K), Math.round(46 * CE_K), Math.round(36 * CE_K)); ctx.clip();
+      ctx.setTransform(m);
+    }
+    ctx.translate(164, 228); ctx.transform(54, -5, -10, 30, 0, 0);
+    ctx.beginPath();
+    ctx.moveTo(0.9, -0.7);
+    ctx.bezierCurveTo(0.5, -1.05, -0.9, -1.0, -0.85, -0.5);
+    ctx.bezierCurveTo(-0.8, -0.1, 0.8, 0.05, 0.85, 0.5);
+    ctx.bezierCurveTo(0.9, 1.0, -0.5, 1.05, -0.95, 0.7);
+    ctx.lineCap = 'butt'; ctx.lineJoin = 'round';
+    if(!near) ceShadow(ctx, 'rgba(96,130,255,.6)', 12, 0);
+    ctx.lineWidth = 0.6; ctx.strokeStyle = 'rgba(5,8,22,.96)'; ctx.stroke();
+    ceNoShadow(ctx);
+    ctx.lineWidth = 0.46; ctx.strokeStyle = ceGrad(ctx, 0, -1, 0, 1, GOLD); ctx.stroke();
+    ctx.lineWidth = 0.38; ctx.strokeStyle = ceGrad(ctx, -1, -1, 1, 1, CHROME); ctx.stroke();
+    ctx.restore();
+  };
+  psS(false);
+  ctx.save(); ctx.translate(138, 116);
+  ctx.beginPath();
+  ctx.moveTo(0, 140); ctx.lineTo(0, 0); ctx.lineTo(34, 0);
+  ctx.bezierCurveTo(56, 0, 68, 12, 68, 29);
+  ctx.bezierCurveTo(68, 46, 54, 58, 32, 58);
+  ctx.lineTo(22, 58); ctx.lineTo(22, 140); ctx.closePath();
+  ctx.moveTo(22, 18); ctx.lineTo(31, 18);
+  ctx.bezierCurveTo(40, 18, 45, 23, 45, 29);
+  ctx.bezierCurveTo(45, 35, 40, 40, 31, 40);
+  ctx.lineTo(22, 40); ctx.closePath();
+  ctx.lineJoin = 'miter';
+  ceShadow(ctx, 'rgba(96,130,255,.6)', 12, 0);
+  ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(5,8,22,.96)'; ctx.stroke();
+  ceNoShadow(ctx);
+  ctx.lineWidth = 2.4; ctx.strokeStyle = ceGrad(ctx, 0, 0, 68, 140, GOLD); ctx.stroke();
+  ctx.fillStyle = ceGrad(ctx, 0, 0, 68, 140, CHROME); ctx.fill('evenodd');
+  ctx.restore();
+  psS(true);
+  }
+
+  // Logotype.
+  ceLogoWord(ctx, 'MARVELL', W / 2, 352, 33, { face: CHROME, rim: GOLD });
+  var pw = ceLogoWord(ctx, 'PES CLUB', W / 2, 392, 21, { face: GOLD, rim: ['#ffffff', '#8792ab'], sw: 2.2, track: 1.7 });
+  var lx0 = W / 2 - pw / 2 - 14, lx1 = W / 2 + pw / 2 + 12, ly = 381;
+  [[34, lx0], [lx1, W - 34]].forEach(function(seg, n){
+    ctx.fillStyle = ceGrad(ctx, seg[0], 0, seg[1], 0, n ? ['#e9c46a', 'rgba(233,196,106,0)'] : ['rgba(233,196,106,0)', '#e9c46a']);
+    ctx.fillRect(seg[0], ly - 0.8, seg[1] - seg[0], 1.6);
+    var dx = n ? seg[0] : seg[1];
+    cePoly(ctx, [[dx, ly - 3.5], [dx + 3.5, ly], [dx, ly + 3.5], [dx - 3.5, ly]]); ctx.fillStyle = '#e9c46a'; ctx.fill();
+  });
+  ceText(ctx, 'FOOTBALL  \u00b7  FRIENDSHIP  \u00b7  GLORY', W / 2, 418, { size: 6.5, w: 700, fill: 'rgba(223,229,240,.6)', ls: 2.6, max: 230 });
+
+  // Bottom: symbol row between rules.
+  var by0 = 458;
+  ctx.fillStyle = ceGrad(ctx, 60, 0, W - 60, 0, ['rgba(223,229,240,0)', 'rgba(223,229,240,.4)', 'rgba(223,229,240,0)']);
+  ctx.fillRect(60, by0 - 16, W - 120, 0.8); ctx.fillRect(60, by0 + 16, W - 120, 0.8);
+  ks.forEach(function(k, n){ cePsSym(ctx, k, W / 2 + (n - 1.5) * 26, by0 + (k === 'tri' ? 1 : 0), 6.5, 1.8, 6); });
 }

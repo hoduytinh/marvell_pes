@@ -680,7 +680,7 @@ function renderFifaCardHtml(card){
   var e = escapeHtml;
   return '<div class="fifa-card tier-' + card.tier + '">' +
     '<div class="fc-top"><div class="fc-id"><div class="fc-ovr">' + card.ovr + '</div><div class="fc-pos">' + card.pos + '</div>' +
-    '<div class="fc-tier no-i18n">' + card.tier.toUpperCase() + '</div></div>' +
+    '<div class="fc-tier no-i18n">' + e(card.tierLabel ? String(card.tierLabel).trim().toUpperCase() : card.tier.toUpperCase()) + '</div></div>' +
     (card.logo ? '<img class="fc-logo" src="' + e(card.logo) + '" alt="">' : '') + '</div>' +
     '<div class="fc-name no-i18n">' + e(card.name) + '</div>' +
     '<div class="fc-stats">' + card.stats.map(function(s){
@@ -943,10 +943,14 @@ function renderH2HHtml(cd, a, b){
   });
   function side(name, card, e, cls){
     var logo = card ? card.logo : careerTeamLogo(cd.st, name);
-    return '<div class="h2h-side ' + cls + '">' + (logo ? '<img class="h2h-logo" src="' + escapeHtml(logo) + '" alt="">' : '') +
+    // The FIFA card sits on the outer side of the name (A: left, B: right) so both sides mirror each other.
+    var cardHtml = card ? '<div class="h2h-card fc-pick" role="button" tabindex="0" data-career-team="' + escapeHtml(name) + '" title="' +
+      escapeHtml(crL('Xem toàn bộ sự nghiệp', 'View full career')) + '">' + renderFifaCardHtml(card) + '</div>' : '';
+    return '<div class="h2h-side ' + cls + (card ? ' has-card' : '') + '">' + cardHtml + '<div class="h2h-info">' +
+      (logo && !card ? '<img class="h2h-logo" src="' + escapeHtml(logo) + '" alt="">' : '') +
       '<div class="h2h-name">' + crTeam(name) + '</div>' +
       '<div class="h2h-meta">' + (card ? '<span class="h2h-ovr tier-' + card.tier + '" title="' + crL('Chỉ số tổng', 'Overall rating') + '">' + card.ovr + '</span>' : '') +
-      (e ? 'Elo ' + Math.round(e.elo) : crL('Chưa có trận', 'No matches')) + '</div></div>';
+      (e ? 'Elo ' + Math.round(e.elo) : crL('Chưa có trận', 'No matches')) + '</div></div></div>';
   }
   var html = '<div class="h2h-hero">' + side(a, ca, ea, 'a') +
     '<div class="h2h-score"><div class="h2h-big"><span class="a">' + cnt.W + '</span><span class="d">' + cnt.D + '</span><span class="b">' + cnt.L + '</span></div>' +
@@ -1266,6 +1270,14 @@ function exportH2HImage(){
     head.textContent = '⚔️ ' + title;
     head.style.cssText = 'font-size:20px;font-weight:800;margin:0 0 12px;text-align:center;color:var(--text);';
     var clone = src.cloneNode(true);
+    // cloneNode does not copy canvas pixels (live profile cards).
+    var cvs = src.querySelectorAll('canvas');
+    [].forEach.call(clone.querySelectorAll('canvas'), function(c, i){
+      var o = cvs[i];
+      if(!o || !o.width || !o.height) return;
+      c.width = o.width; c.height = o.height;
+      try { c.getContext('2d').drawImage(o, 0, 0); } catch(_){}
+    });
     [].forEach.call(clone.querySelectorAll('details'), function(d){ d.open = true; });
     [].forEach.call(clone.querySelectorAll('summary'), function(sm){ sm.style.listStyle = 'none'; sm.style.display = 'block'; });
     // Keep the image compact: only the latest meetings of the last section ("All meetings").
