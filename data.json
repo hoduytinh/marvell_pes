@@ -20971,7 +20971,13 @@
       "has3rdPlace": false,
       "numGroups": 4,
       "numKnockoutTeams": 8,
-      "groupRoundRobin": "double"
+      "groupRoundRobin": "double",
+      "kind": "official",
+      "format": "single",
+      "rankPts": {
+        "max": 20,
+        "min": 5
+      }
     },
     "scsml9z1": {
       "name": "2026 - Seri B",
