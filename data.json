@@ -22075,7 +22075,13 @@
       "has3rdPlace": false,
       "numGroups": 4,
       "numKnockoutTeams": 8,
-      "groupRoundRobin": "double"
+      "groupRoundRobin": "double",
+      "kind": "official",
+      "format": "single",
+      "rankPts": {
+        "max": 13,
+        "min": 1
+      }
     },
     "shmtqys4": {
       "name": "2026 W - Playoff",
