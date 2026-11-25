@@ -8049,8 +8049,7 @@
       ],
       "locked": true,
       "kind": "official",
-      "format": "double",
-      "statsOff": true
+      "format": "double"
     },
     "sm11z5b1": {
       "name": "2023 - Cup",
