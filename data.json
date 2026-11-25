@@ -3887,7 +3887,8 @@
       "rankPts": {
         "max": 10,
         "min": 1
-      }
+      },
+      "locked": true
     },
     "spzpcuzo": {
       "name": "2024 - Single",
@@ -25364,7 +25365,7 @@
       "tournamentPhase": "group"
     }
   },
-  "current": "s5fhf2z5",
+  "current": "svaqi6fr",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
