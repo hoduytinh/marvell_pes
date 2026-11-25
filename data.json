@@ -1104,8 +1104,7 @@
       "locked": true,
       "kind": "official",
       "format": "single",
-      "has3rdPlace": true,
-      "statsOff": true
+      "has3rdPlace": true
     },
     "sp5ol4p5": {
       "name": "2025 - Seri B",
@@ -2270,8 +2269,7 @@
       "locked": true,
       "kind": "official",
       "format": "single",
-      "has3rdPlace": true,
-      "statsOff": true
+      "has3rdPlace": true
     },
     "sbesi4l4": {
       "name": "2025 S - PlayOff",
@@ -2415,8 +2413,7 @@
       },
       "createdAt": 1760991057635,
       "mode": "league",
-      "locked": true,
-      "statsOff": true
+      "locked": true
     },
     "svaqi6fr": {
       "name": "2024 - Euro",
@@ -3874,8 +3871,7 @@
           "Bán kết",
           "Chung kết"
         ]
-      },
-      "statsOff": true
+      }
     },
     "spzpcuzo": {
       "name": "2024 - Single",
@@ -5459,8 +5455,7 @@
       },
       "kind": "official",
       "format": "single",
-      "locked": true,
-      "statsOff": true
+      "locked": true
     },
     "spjtuhsi": {
       "name": "2023 - Single",
@@ -7715,8 +7710,7 @@
       "has3rdPlace": true,
       "locked": true,
       "kind": "official",
-      "format": "single",
-      "statsOff": true
+      "format": "single"
     },
     "sw572sy9": {
       "name": "2023 - Dual",
@@ -14083,8 +14077,7 @@
           "Chung kết"
         ]
       },
-      "locked": true,
-      "statsOff": true
+      "locked": true
     },
     "s61o8upo": {
       "name": "2026 - Single",
@@ -15739,8 +15732,7 @@
           10
         ]
       },
-      "locked": true,
-      "statsOff": true
+      "locked": true
     },
     "s5fhf2z5": {
       "name": "2026 - World Cup",
@@ -19424,8 +19416,7 @@
         "seedVersion": 3
       },
       "tournamentPhase": "knockout",
-      "locked": true,
-      "statsOff": true
+      "locked": true
     },
     "su8gwuph": {
       "name": "2026 - Dual",
@@ -20239,8 +20230,7 @@
           "Tâm"
         ]
       ],
-      "locked": true,
-      "statsOff": true
+      "locked": true
     },
     "s4fvc53z": {
       "name": "2026 - Seri A",
@@ -20953,8 +20943,7 @@
       "has3rdPlace": false,
       "numGroups": 4,
       "numKnockoutTeams": 8,
-      "groupRoundRobin": "double",
-      "statsOff": true
+      "groupRoundRobin": "double"
     },
     "scsml9z1": {
       "name": "2026 - Seri B",
@@ -22048,8 +22037,7 @@
       "has3rdPlace": false,
       "numGroups": 4,
       "numKnockoutTeams": 8,
-      "groupRoundRobin": "double",
-      "statsOff": true
+      "groupRoundRobin": "double"
     },
     "shmtqys4": {
       "name": "2026 W - Playoff",
@@ -22465,8 +22453,7 @@
           "Chung kết"
         ]
       },
-      "locked": true,
-      "statsOff": true
+      "locked": true
     },
     "s87qc63r": {
       "name": "2026 - Champion League",
@@ -25296,8 +25283,7 @@
       },
       "groupStandings": {},
       "knockoutBracket": null,
-      "tournamentPhase": "group",
-      "statsOff": true
+      "tournamentPhase": "group"
     }
   },
   "current": "sdmvg88v",
