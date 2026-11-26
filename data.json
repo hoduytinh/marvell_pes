@@ -27537,10 +27537,12 @@
     "Tú": {
       "style": "toty",
       "tier": "",
+      "label": "",
       "zoom": 1,
-      "x": 0,
-      "y": 0,
-      "t": 1795526697376
+      "x": 4,
+      "y": 20,
+      "t": 1795662159995,
+      "img": "photos/cards/Tu-mwwyvy6r.png"
     },
     "Đức": {
       "style": "toty",
