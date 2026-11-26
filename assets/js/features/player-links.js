@@ -85,6 +85,23 @@ function plSchedule(){ clearTimeout(plTimer); plTimer = setTimeout(function(){ t
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();
 
+// Info popups (player / team / career path) never stack: opening any dialog closes the open ones.
+// Editing dialogs are left alone so typed data is never lost.
+var PL_VIEW_POPUPS = '#playerMini, #teamDialog, .cp-dialog';
+(function(){
+  var P = window.HTMLDialogElement && HTMLDialogElement.prototype;
+  if(!P || typeof P.showModal !== 'function' || P.showModal.plSolo) return;
+  var orig = P.showModal;
+  P.showModal = function(){
+    var self = this;
+    [].forEach.call(document.querySelectorAll(PL_VIEW_POPUPS), function(d){
+      if(d !== self && d.open){ try { d.close(); } catch(_){} }
+    });
+    return orig.apply(this, arguments);
+  };
+  P.showModal.plSolo = 1;
+})();
+
 // ---------------- Mini profile popup ----------------
 function plDialog(){
   var d = document.getElementById('playerMini');
@@ -100,6 +117,7 @@ function plDialog(){
     var act = b.getAttribute('data-pm-act'), nm = b.getAttribute('data-name');
     if(act === 'close') d.close();
     else if(act === 'career'){ d.close(); openCareerDialog(nm); }
+    else if(act === 'path'){ d.close(); if(typeof openCareerPath === 'function') openCareerPath(nm); }
     else if(act === 'season'){ d.close(); var i = +b.getAttribute('data-idx'); if(typeof openTeamDialog === 'function') openTeamDialog(i); }
     else if(act === 'h2h'){ d.close(); if(typeof statsH2H !== 'undefined'){ statsH2H[0] = nm; } openStatsPage('h2h'); }
   });
@@ -166,6 +184,7 @@ function openPlayerMini(name){
     '<div class="pm-actions">' +
     (sIdx >= 0 ? '<button type="button" class="ghost" data-pm-act="season" data-idx="' + sIdx + '">📋 ' + plL('Mùa này', 'This season') + '</button>' : '') +
     '<button type="button" class="ghost" data-pm-act="h2h" data-name="' + e(main) + '">⚔️ ' + plL('Đối đầu', 'Head-to-head') + '</button>' +
+    names.map(function(n){ return '<button type="button" class="ghost" data-pm-act="path" data-name="' + e(n) + '">🛤️ Career path' + (names.length > 1 ? ' · <span class="no-i18n">' + e(n) + '</span>' : '') + '</button>'; }).join('') +
     names.map(function(n){ return '<button type="button" class="primary" data-pm-act="career" data-name="' + e(n) + '">🃏 ' + plL('Sự nghiệp', 'Career') + (names.length > 1 ? ' · <span class="no-i18n">' + e(n) + '</span>' : '') + '</button>'; }).join('') +
     '</div></div>';
   if(!d.open){ if(typeof d.showModal === 'function') d.showModal(); else d.setAttribute('open', 'open'); }
