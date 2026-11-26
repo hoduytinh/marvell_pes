@@ -198,6 +198,9 @@
     'Supporter: chỉ được cập nhật tỉ số trận đấu': 'Supporter: can only update match scores',
     'Mod: chỉnh sửa toàn bộ · Supporter: chỉ nhập tỉ số · Player: chỉ gửi kết quả chờ admin/mod duyệt': 'Mod: full editing · Supporter: scores only · Player: submits results for admin/mod approval',
     'Player: gửi kết quả ở 📝 Nhập kết quả': 'Player: submit results in 📝 Enter results',
+    '📝 Nhập kết quả': '📝 Enter results',
+    'Nhập kết quả': 'Enter results',
+    'Tất cả trận chờ nhập kết quả của các giải chưa khóa': 'All pending matches of unlocked seasons',
     'Trình duyệt không hỗ trợ mã hóa (cần HTTPS)': 'Browser does not support encryption (HTTPS required)',
 
     // Systems & users dialog
