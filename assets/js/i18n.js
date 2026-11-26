@@ -615,7 +615,9 @@
 
   // Regex rules (applied to the trimmed string, before PHRASES).
   var EN_PATTERNS = [
-    [/\((\d+)đ\)/g, '($1 pts)']
+    [/\((\d+)đ\)/g, '($1 pts)'],
+    [/Vòng bảng · L(\d+)/g, 'Group stage · MD$1'],
+    [/Bảng ([A-Z0-9]{1,3}) · L(\d+)/g, 'Group $1 · MD$2']
   ];
 
   // ===========================================================================
