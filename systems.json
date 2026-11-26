@@ -30,9 +30,8 @@
     },
     {
       "u": "mod1",
-      "role": "mod",
+      "role": "sup",
       "systems": [
-        "football-club",
         "pes"
       ],
       "createdAt": 1793868995729,
