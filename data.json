@@ -27755,5 +27755,9 @@
     "ngọct",
     "đức hà",
     "đức ngô"
-  ]
+  ],
+  "cardDefault": {
+    "style": "allround",
+    "t": 1795663048947
+  }
 }
