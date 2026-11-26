@@ -30,9 +30,8 @@
     },
     {
       "u": "mod1",
-      "role": "mod",
+      "role": "sup",
       "systems": [
-        "football-club",
         "pes"
       ],
       "createdAt": 1793868995729,
@@ -45,6 +44,17 @@
         "ct": "+UjBbA63zsyHZtHmSqsLgRKEkipltaCaB/2+X21qh2LW9jPizGLaW/23a5PnkutQ1983KmFygORiE9XuNH4I2aUcQr7RoH4z4xGj2yFtiu2sIzuAfAkXbotREd+oF5wW9UmUe0bAtG9lbSc/aQ==",
         "iter": 150000
       }
+    },
+    {
+      "u": "user",
+      "role": "player",
+      "systems": [
+        "pes"
+      ],
+      "createdAt": 1795691188751,
+      "salt": "j4TjYNfJJGvo+3J42M2QnQ==",
+      "hash": "Sy+tjfNW5WhxK2jlMSZZX5JNErlw6PcMMZc7O4JvGnM=",
+      "iter": 150000
     }
   ],
   "version": 1
