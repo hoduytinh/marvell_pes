@@ -22121,7 +22121,7 @@
       }
     },
     "shmtqys4": {
-      "name": "2026 W - Playoff",
+      "name": "2026 - Playoff (Winter)",
       "logo": null,
       "teamCount": 8,
       "teams": [
@@ -22534,7 +22534,8 @@
           "Chung kết"
         ]
       },
-      "locked": true
+      "locked": true,
+      "year": "2026"
     },
     "s87qc63r": {
       "name": "2026 - Champion League",
