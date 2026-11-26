@@ -180,6 +180,8 @@ dialog::backdrop{background:rgba(2,6,23,.55);backdrop-filter:blur(3px);-webkit-b
 .sel-search-item:hover,.sel-search-item.active{background:var(--focus-ring)}
 .sel-search-item.selected{color:var(--accent);font-weight:700}
 .sel-search-item.disabled{opacity:.45;cursor:default}
+.sel-search-group{padding:8px 10px 3px;margin-top:4px;border-top:1px solid var(--border);font-size:11.5px;font-weight:800;letter-spacing:.4px;color:var(--muted);cursor:default;user-select:none}
+.sel-search-group:first-child{border-top:0;margin-top:0}
 .sel-search-empty{padding:10px;text-align:center;color:var(--muted)}
 .grid-names{display:grid;grid-template-columns:40px 1fr 90px 140px;gap:8px;align-items:center}
 
@@ -492,6 +494,8 @@ dialog::backdrop{background:rgba(2,6,23,.55);backdrop-filter:blur(3px);-webkit-b
 .ce-preview{flex:0 0 auto;width:324px;height:516px;display:flex;align-items:center;justify-content:center;border-radius:20px;
   background:repeating-conic-gradient(rgba(127,127,127,.18) 0 25%,transparent 0 50%) 0 0/16px 16px}
 .ce-preview canvas{display:block;width:324px;height:516px}
+.ce-preview.ce-drag canvas{cursor:move;touch-action:none}
+.ce-range select{width:100%}
 .ce-side{flex:1 1 280px;min-width:0;display:flex;flex-direction:column;gap:12px}
 .ce-field{display:flex;flex-direction:column;gap:5px}
 .ce-field>span{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
@@ -523,14 +527,21 @@ dialog::backdrop{background:rgba(2,6,23,.55);backdrop-filter:blur(3px);-webkit-b
 
 /* Stats page (features/career.js: openStatsPage) */
 body.page-stats main.container:not(.stats-page){display:none!important}
+/* The Dashboard is its own page: header shows "Dashboard" instead of the current season */
+.dash-title{display:none}
+body.page-stats .dash-title{display:inline}
+body.page-stats #seasonTitle,body.page-stats #seasonMetaBadges,body.page-stats #leagueLogo{display:none!important}
+body.page-stats #btnStatsPage{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}
 .stats-page{padding-top:14px}
 .sp-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .sp-head h2{margin:0;flex:1;min-width:0}
 .sp-tools{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:12px}
 .sp-search{min-width:200px;flex:0 1 280px}
 .sp-check{display:flex;align-items:center;gap:6px;font-size:13px}
-.sp-career-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.sp-career-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
 .sp-career-head h3{margin:0}
+.sp-asof{font-size:12.5px;font-weight:700;padding:3px 10px;border-radius:999px;background:rgba(245,158,11,.15);color:#b45309}
+#spCareerNow{margin-left:auto}
 .sp-h2h-pick{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin-bottom:12px}
 .sp-h2h-pick select{min-width:180px}
 .sp-body .cr-sec:first-child{margin-top:0;border-top:none}
@@ -1320,7 +1331,7 @@ body.hide-elo .elo-dl-line{display:none !important}
 .sys-footer { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 16px; position: sticky; bottom: -20px; background: var(--panel); padding: 10px 0; }
 .sys-status { flex: 1; font-size: 13px; }
 
-/* ===== Legend / Ranking (modes/legend.js, modes/ranking.js) ===== */
+/* ===== Hall of Legend / PES Ranking (modes/legend.js, features/pes-ranking.js) ===== */
 .lg-wrap{display:flex;flex-direction:column;gap:14px;width:100%;margin-top:4px}
 .lg-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .lg-kpi{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow-1)}
@@ -1351,6 +1362,28 @@ body.hide-elo .elo-dl-line{display:none !important}
 .lg-pod.p2 .lg-pod-step{height:80px;background:linear-gradient(180deg,#e2e8f0,#94a3b8)}
 .lg-pod.p3 .lg-pod-step{height:56px;background:linear-gradient(180deg,#f59e0b,#b45309);color:rgba(255,255,255,.8)}
 .lg-pod.empty .lg-pod-step{opacity:.25}
+/* top-3 career cards under the podium (zoom keeps the layout box in sync with the scaled card) */
+.lg-pod-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:start;justify-items:center;margin:-4px 0 14px}
+.lg-pod-card{min-width:0}
+.lg-pod-card .fifa-card{margin:0;zoom:.6}
+.lg-pod-card .fc-pick{border-radius:11px 11px 24px 24px}
+@media (max-width:1250px){ .lg-pod-card .fifa-card{zoom:.5} }
+@media (max-width:900px){ .lg-pod-card .fifa-card{zoom:.7} }
+@media (max-width:560px){ .lg-pod-card .fifa-card{zoom:.45} }
+/* Hall of Champions: career cards of the year's medal winners (legend.js lgYearCardsHtml) */
+.lg-ycards:empty{display:none}
+.lg-ycards{margin-top:14px;padding-top:12px;border-top:1px dashed var(--border)}
+.lg-ycards-head{font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:10px}
+.lg-ycards-row{display:flex;flex-wrap:wrap;gap:14px}
+.lg-yc{display:flex;flex-direction:column;align-items:center;gap:5px}
+.lg-yc .fifa-card{margin:0;zoom:.55}
+.lg-yc .fc-pick{border-radius:10px 10px 22px 22px}
+.lg-yc-tally{display:flex;gap:6px;font-size:12.5px;font-weight:700}
+@media (max-width:560px){ .lg-ycards-row{gap:8px} .lg-yc .fifa-card{zoom:.45} }
+/* PES Ranking: podium is full width -> bigger cards */
+.pr-wrap .lg-pod-card .fifa-card{zoom:.75}
+@media (max-width:900px){ .pr-wrap .lg-pod-card .fifa-card{zoom:.6} }
+@media (max-width:560px){ .pr-wrap .lg-pod-card .fifa-card{zoom:.45} }
 /* tables */
 .lg-table{width:100%;border-collapse:collapse;font-size:13.5px}
 .lg-table th,.lg-table td{padding:7px 8px;border-bottom:1px solid var(--border);text-align:center;white-space:nowrap}
@@ -1444,6 +1477,26 @@ input.lg-num{width:80px;text-align:center;padding:4px 4px}
 .lg-dialog-foot{margin-top:12px;text-align:right}
 /* Season meta dialogs (features/season-meta.js): rename year + title, stats scope */
 .sm-dialog{width:min(440px,94vw)}
+/* Career path popup (career.js openCareerPath) */
+.sm-dialog.cp-dialog{width:min(1240px,96vw)}
+.cp-row{display:flex;gap:22px;overflow-x:auto;padding:6px 4px 10px;scroll-snap-type:x proximity}
+.cp-item{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:6px;scroll-snap-align:end}
+.cp-item + .cp-item{position:relative}
+.cp-item + .cp-item::before{content:'›';position:absolute;left:-16px;top:46%;font-size:22px;color:var(--muted)}
+.cp-year{font-weight:800;font-size:17px}
+.cp-delta{font-size:13px;font-weight:700;margin-left:2px}
+.cp-item .fifa-card{margin:0;zoom:.85}
+.cp-tally{font-size:15px;font-weight:700;min-height:20px}
+@media (max-width:560px){ .cp-item .fifa-card{zoom:.62} .cp-row{gap:14px} }
+/* Career path export (full-size cards, wrapped rows) */
+.cp-snap .cp-row{flex-wrap:wrap;justify-content:center;overflow:visible;gap:30px 32px;padding:0}
+.cp-snap .cp-item .fifa-card{zoom:1}
+.cp-snap .cp-item + .cp-item::before{left:-22px;font-size:30px}
+.cp-snap .cp-year{font-size:24px}
+.cp-snap .cp-delta{font-size:18px}
+.cp-snap .cp-tally{font-size:20px;min-height:26px}
+.cp-snap-head{font-size:26px;font-weight:800;text-align:center;color:var(--text)}
+.cp-snap-sub{font-size:14px;text-align:center;color:var(--muted);margin:4px 0 20px}
 .sm-yt{display:grid;grid-template-columns:110px 1fr;gap:10px}
 .sm-yt label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600}
 .sm-yt input{width:100%}

@@ -95,15 +95,13 @@
       return stats;
     }
 
-    // Legend / Ranking are shown inside a Dashboard tab (career.js sets PES_MODE_HOST);
-    // the main page is only used when such a season is the active one (no other seasons).
+    // The Hall of Legend is a Dashboard tab (career.js sets PES_MODE_HOST and passes careerAutoLegend()).
     var PES_MODE_HOST = null;
-    function pesModeHost(s){
-      if(PES_MODE_HOST && PES_MODE_HOST.isConnected && PES_MODE_HOST.getAttribute('data-mode') === s.mode) return PES_MODE_HOST;
-      return activeSeason() === s ? document.querySelector('main.container') : null;
+    function pesModeHost(){
+      return PES_MODE_HOST && PES_MODE_HOST.isConnected ? PES_MODE_HOST : null;
     }
 
-    // ---- Shared Legend / Ranking view helpers (CSS: "Legend / Ranking" section in styles.css) ----
+    // ---- Shared Hall of Legend / PES Ranking view helpers (CSS: "Legend / Ranking" section in styles.css) ----
     function lgL(vi, en){ return typeof crL === 'function' ? crL(vi, en) : en; }
     function lgE(v){ return escapeHtml(v == null ? '' : String(v)); }
     function lgName(n){
@@ -137,26 +135,6 @@
           (sub ? '<div class="lg-pod-sub">' + sub(c) + '</div>' : '') + '<div class="lg-pod-step">' + (i + 1) + '</div></div>';
       }).join('') + '</div>';
     }
-    // Admin: pick a name from the Team List.
-    function lgPickTeam(onPick){
-      var teams = (state.teamMasterList || []).slice();
-      if(!teams.length){ alert('Team List is empty. Add teams to Team List first.'); return; }
-      teams.sort(function(a, b){ return a.toLowerCase().localeCompare(b.toLowerCase()); });
-      var dlg = document.createElement('dialog');
-      dlg.className = 'lg-dialog';
-      dlg.innerHTML = '<h4>' + lgE(lgL('Chọn đội', 'Select team')) + '</h4><div class="lg-pick-list">' +
-        teams.map(function(t){ return '<button type="button" class="lg-pick no-i18n" data-team="' + lgE(t) + '">' + lgE(t) + '</button>'; }).join('') +
-        '</div><div class="lg-dialog-foot"><button type="button" data-close>' + lgE(lgL('Hủy', 'Cancel')) + '</button></div>';
-      dlg.addEventListener('click', function(e){
-        var b = e.target.closest('.lg-pick');
-        if(b){ dlg.close(); onPick(b.getAttribute('data-team')); return; }
-        if(e.target.closest('[data-close]')) dlg.close();
-      });
-      dlg.addEventListener('close', function(){ if(dlg.parentNode) dlg.parentNode.removeChild(dlg); });
-      document.body.appendChild(dlg);
-      addListSearch(dlg.querySelector('.lg-pick-list'), '.lg-pick', function(el){ return el.getAttribute('data-team'); });
-      if(typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', 'open');
-    }
     function lgOpenPhoto(url){
       var m = document.createElement('div');
       m.className = 'lg-lightbox';
@@ -166,33 +144,23 @@
       m.onclick = function(){ m.remove(); };
       document.body.appendChild(m);
     }
-    // Clear the previous view; on the main page also hide the regular season sections.
-    function lgPrepHost(s, tag){
-      var host = pesModeHost(s);
+    function lgPrepHost(){
+      var host = pesModeHost();
       if(!host) return null;
-      if(host.id !== 'spModeHost'){
-        $('seasonTitle').textContent = '— ' + s.name + ' (' + tag + ')';
-        $('leagueLogo').style.backgroundImage = s.logo ? ('url("' + s.logo + '")') : 'none';
-        ['main.container section.card.grow', 'main.container section.card:has(#fixtures)', '.round-selector'].forEach(function(q){
-          var el = document.querySelector(q);
-          if(el) el.style.display = 'none';
-        });
-      }
-      ['legendContainer', 'rankingModeContainer'].forEach(function(id){ var el = document.getElementById(id); if(el) el.remove(); });
+      var old = document.getElementById('legendContainer');
+      if(old) old.remove();
       return host;
     }
-    // Year blocks are <details>; remember open/closed per mode + year across re-renders.
+    // Year blocks are <details>; remember open/closed per year across re-renders.
     var LG_OPEN = {};
-    function lgOpenKey(s, year){ return (s.auto ? 'auto-' : '') + s.mode + ':' + year; }
-    function lgYearOpen(s, tl){
-      return !!LG_OPEN[lgOpenKey(s, tl.year)];
+    function lgYearOpen(tl){
+      return !!LG_OPEN[tl.year];
     }
-    // One delegated handler per render: [data-lg] buttons (click) and [data-lg-in] inputs (change).
-    function lgBind(root, s, acts){
+    // One delegated handler per render: [data-lg] buttons (click).
+    function lgBind(root, acts){
       function args(el){
         var o = {};
-        ['ti', 'ei', 'mi', 'pi', 'ri'].forEach(function(k){ var v = el.getAttribute('data-' + k); if(v != null) o[k] = +v; });
-        o.mt = el.getAttribute('data-mt');
+        ['ti', 'pi'].forEach(function(k){ var v = el.getAttribute('data-' + k); if(v != null) o[k] = +v; });
         return o;
       }
       root.addEventListener('click', function(e){
@@ -202,13 +170,9 @@
         e.stopPropagation();
         acts[b.getAttribute('data-lg')](args(b), b);
       });
-      root.addEventListener('change', function(e){
-        var el = e.target.closest('[data-lg-in]');
-        if(el && acts[el.getAttribute('data-lg-in')]) acts[el.getAttribute('data-lg-in')](args(el), el);
-      });
       root.addEventListener('toggle', function(e){
         var d = e.target;
-        if(d && d.matches && d.matches('details[data-lg-year]')) LG_OPEN[lgOpenKey(s, d.getAttribute('data-lg-year'))] = d.open;
+        if(d && d.matches && d.matches('details[data-lg-year]')) LG_OPEN[d.getAttribute('data-lg-year')] = d.open;
       }, true);
     }
     function lgGallery(pics, ti, admin){
@@ -225,24 +189,30 @@
       { k: 'bronze', icon: '🥉' }
     ];
     function legendPts(c){ return c.gold * 4 + c.silver * 2 + c.bronze; }
-    function legendMigrateEvent(ev){
-      if(ev.gold !== undefined && typeof ev.gold === 'string'){
-        ev.medals = { gold: [ev.gold], silver: [ev.silver], bronze: [ev.bronze] };
-        delete ev.gold; delete ev.silver; delete ev.bronze;
-      }
-      if(!ev.medals) ev.medals = { gold: [], silver: [], bronze: [] };
+
+    // Career cards of the top 3 (features/career.js), in podium order 2nd - 1st - 3rd. Click = full career.
+    function lgPodiumCards(list){
+      if(!list.length || typeof careerData !== 'function' || typeof renderFifaCardHtml !== 'function') return '';
+      var cd = careerData(state), any = false;
+      var html = [1, 0, 2].map(function(i){
+        var c = list[i], n = c ? careerResolveName(cd, c.name) : null, card = n ? careerFifaCard(cd, n) : null;
+        if(!card) return '<div class="lg-pod-card empty"></div>';
+        any = true;
+        return '<div class="lg-pod-card"><div class="fc-pick" role="button" tabindex="0" data-career-team="' + lgE(n) + '" title="' +
+          lgE(lgL('Xem toàn bộ sự nghiệp', 'View full career')) + '">' + renderFifaCardHtml(card) + '</div></div>';
+      }).join('');
+      return any ? '<div class="lg-pod-cards">' + html + '</div>' : '';
     }
 
-    // Render Legend mode: KPIs, all-time medal table (podium + table), Hall of Champions by year.
+    // Hall of Legend (career.js careerAutoLegend: built from season results): KPIs, all-time medal
+    // table (podium + table), Hall of Champions by year. Read-only, except photos (admin).
     function renderLegendMode(s) {
       if(!s) return;
       if(!s.timelines) s.timelines = [];
-      var host = lgPrepHost(s, 'LEGEND');
+      var host = lgPrepHost();
       if(!host) return;
-      s.timelines.forEach(function(tl){ (tl.events || []).forEach(legendMigrateEvent); });
-      // s.auto: Hall of Legend built from season results (career.js careerAutoLegend) -> read-only, except photos (admin).
-      var st = calculateLegendStats(s), admin = isAdmin() && !s.auto, list = st.championsList;
-      var photoAdmin = s.auto ? isAdminUser() : admin;
+      var st = calculateLegendStats(s), list = st.championsList;
+      var photoAdmin = isAdminUser();
       var max = list.length ? legendPts(list[0]) : 0;
       var medalLine = function(c){ return '🥇' + c.gold + ' · 🥈' + c.silver + ' · 🥉' + c.bronze; };
 
@@ -266,90 +236,97 @@
 
       html += '<section class="lg-card"><div class="lg-head"><h3>🏅 ' + lgE(lgL('Bảng vàng mọi thời đại', 'All-time champions')) + '</h3>' +
         '<small>' + lgE(lgL('Điểm = 🥇×4 + 🥈×2 + 🥉×1', 'Points = 🥇×4 + 🥈×2 + 🥉×1')) + '</small></div>' +
-        (list.length ? '<div class="lg-hero"><div>' + lgPodium(list, function(c){ return legendPts(c) + ' <small>' + lgE(lgL('điểm', 'pts')) + '</small>'; }, medalLine) + '</div><div>' + table + '</div></div>' : table) +
+        (list.length ? '<div class="lg-hero"><div>' + lgPodium(list, function(c){ return legendPts(c) + ' <small>' + lgE(lgL('điểm', 'pts')) + '</small>'; }, medalLine) + lgPodiumCards(list) + '</div><div>' + table + '</div></div>' : table) +
         '</section>';
 
       var years = s.timelines.map(function(tl, ti){ return { tl: tl, ti: ti }; }).reverse();
-      html += '<section class="lg-card"><div class="lg-head"><h3>🏛️ Hall of Champions</h3><small>' + years.length + ' ' + lgE(lgL('năm', 'years')) + '</small>' +
-        (admin ? '<span class="lg-head-acts">' + lgBtn('addYear', '＋ ' + lgE(lgL('Thêm năm', 'Add year')), null, 'primary') + '</span>' : '') + '</div>' +
-        (years.length ? '<div class="lg-years">' + years.map(function(y, pos){ return legendYearHtml(s, y.tl, y.ti, pos, admin, photoAdmin); }).join('') + '</div>'
+      html += '<section class="lg-card"><div class="lg-head"><h3>🏛️ Hall of Champions</h3><small>' + years.length + ' ' + lgE(lgL('năm', 'years')) + '</small></div>' +
+        (years.length ? '<div class="lg-years">' + years.map(function(y){ return legendYearHtml(y.tl, y.ti, photoAdmin); }).join('') + '</div>'
           : '<div class="lg-empty">' + lgE(lgL('Chưa có năm nào.', 'No years yet.')) + '</div>') + '</section>';
 
       var root = document.createElement('div');
       root.id = 'legendContainer';
       root.className = 'lg-wrap';
       root.innerHTML = html;
-      var rr = function(){ saveAll(); legendRerender(s); };
       var T = function(a){ return s.timelines[a.ti]; };
-      var E = function(a){ return T(a).events[a.ei]; };
-      // Auto Hall photos live in state.hallPhotos[year] (copied from the old Hall on first edit).
-      var hallArr = function(a){ var map = hallPhotoMap(state, true), y = String(T(a).year); return map[y] || (map[y] = []); };
-      lgBind(root, s, {
-        addYear: function(){ addTimeline(s); },
-        renameYear: function(a){ var v = prompt('Rename timeline:', T(a).year); if(v && v.trim()){ T(a).year = v.trim(); rr(); } },
-        delYear: function(a){ if(confirm('Delete timeline for ' + T(a).year + '?')){ s.timelines.splice(a.ti, 1); rr(); } },
-        addEvent: function(a){ addEvent(s, a.ti); },
-        renameEvent: function(a){ var v = prompt('Rename event:', E(a).name); if(v && v.trim()){ E(a).name = v.trim(); rr(); } },
-        delEvent: function(a){ if(confirm('Delete event "' + E(a).name + '"?')){ T(a).events.splice(a.ei, 1); rr(); } },
-        addMedal: function(a){ var m = E(a).medals; (m[a.mt] = m[a.mt] || []).push(''); rr(); },
-        delMedal: function(a){ E(a).medals[a.mt].splice(a.mi, 1); rr(); },
-        pickMedal: function(a){ lgPickTeam(function(t){ E(a).medals[a.mt][a.mi] = t; rr(); }); },
-        setMedal: function(a, el){ E(a).medals[a.mt][a.mi] = el.value; rr(); },
-        addPhoto: function(a){ if(s.auto) T(a).pictures = hallArr(a); addPicture(s, a.ti); },
-        delPhoto: function(a){ if(confirm('Delete this photo?')){ (s.auto ? hallArr(a) : T(a).pictures).splice(a.pi, 1); rr(); } },
+      // Photos live in state.hallPhotos[year].
+      var hallArr = function(a){ var map = hallPhotoMap(state), y = String(T(a).year); return map[y] || (map[y] = []); };
+      lgBind(root, {
+        addPhoto: function(a){ T(a).pictures = hallArr(a); addPicture(s, a.ti); },
+        delPhoto: function(a){ if(confirm('Delete this photo?')){ hallArr(a).splice(a.pi, 1); saveAll(); legendRerender(); } },
         photo: function(a, el){ lgOpenPhoto(el.getAttribute('src')); }
       });
+      var fillCards = function(d){
+        var box = d.querySelector('[data-lg-ycards]');
+        if(!box || box.hasAttribute('data-done')) return;
+        box.setAttribute('data-done', '1');
+        var tl = s.timelines[+box.getAttribute('data-lg-ycards')];
+        try { box.innerHTML = tl ? lgYearCardsHtml(tl) : ''; } catch(e){ console.warn('Year cards failed:', e); }
+      };
+      root.addEventListener('toggle', function(e){
+        var d = e.target;
+        if(d && d.open && d.matches && d.matches('details[data-lg-year]')) fillCards(d);
+      }, true);
       host.appendChild(root);
+      [].forEach.call(root.querySelectorAll('details[data-lg-year][open]'), fillCards);
     }
-    // The auto Hall is rebuilt from the data on every render.
-    function legendRerender(s){ renderLegendMode(s.auto ? careerAutoLegend(state) : s); }
+    // The Hall is rebuilt from the data on every render.
+    function legendRerender(){ renderLegendMode(careerAutoLegend(state)); }
 
-    function legendYearHtml(s, tl, ti, pos, admin, photoAdmin){
+    function legendYearHtml(tl, ti, photoAdmin){
       var evs = tl.events || [], pics = tl.pictures || [], golds = [];
-      evs.forEach(function(ev){ (ev.medals.gold || []).forEach(function(n){ n = String(n || '').trim(); if(n && golds.indexOf(n) === -1) golds.push(n); }); });
+      evs.forEach(function(ev){ ((ev.medals || {}).gold || []).forEach(function(n){ n = String(n || '').trim(); if(n && golds.indexOf(n) === -1) golds.push(n); }); });
       var head = '<summary class="lg-year-head"><span class="lg-year-badge">' + lgE(tl.year) + '</span>' +
         '<span class="lg-year-meta">' + evs.length + ' ' + lgE(lgL('giải', 'events')) + (pics.length ? ' · 📸 ' + pics.length : '') + '</span>' +
         '<span class="lg-year-champs">' + golds.slice(0, 6).map(function(n){ return '<span class="lg-chip no-i18n">🥇 ' + lgE(n) + '</span>'; }).join('') + (golds.length > 6 ? '<span class="lg-chip">+' + (golds.length - 6) + '</span>' : '') + '</span>' +
-        (admin ? '<span class="lg-acts">' + lgBtn('renameYear', '✏️', { ti: ti }, 'icon', lgL('Đổi tên năm', 'Rename year')) +
-          lgBtn('addEvent', '＋ ' + lgE(lgL('Giải', 'Event')), { ti: ti }) + lgBtn('addPhoto', '📸 ' + lgE(lgL('Ảnh', 'Photo')), { ti: ti }) +
-          lgBtn('delYear', '🗑', { ti: ti }, 'icon danger', lgL('Xóa năm', 'Delete year')) + '</span>'
-          : photoAdmin ? '<span class="lg-acts">' + lgBtn('addPhoto', '📸 ' + lgE(lgL('Ảnh', 'Photo')), { ti: ti }) + '</span>' : '') +
+        (photoAdmin ? '<span class="lg-acts">' + lgBtn('addPhoto', '📸 ' + lgE(lgL('Ảnh', 'Photo')), { ti: ti }) + '</span>' : '') +
         '<span class="lg-chev">▾</span></summary>';
-      var events = evs.map(function(ev, ei){
+      var events = evs.map(function(ev){
+        var medals = ev.medals || {};
         var rows = LG_MEDALS.map(function(m){
-          return (ev.medals[m.k] || []).map(function(n, mi){
-            var o = { ti: ti, ei: ei, mt: m.k, mi: mi };
-            return '<div class="lg-medal ' + m.k + '"><span class="lg-medal-ico">' + m.icon + '</span>' + (admin
-              ? '<input class="lg-in no-i18n" type="text" value="' + lgE(n) + '" placeholder="' + lgE(lgL('Tên đội...', 'Team name...')) + '" data-lg-in="setMedal"' + lgA(o) + '>' +
-                lgBtn('pickMedal', '▾', o, 'icon', lgL('Chọn từ danh sách đội', 'Pick from Team List')) + lgBtn('delMedal', '✕', o, 'icon danger')
-              : '<span class="lg-medal-n">' + lgName(n) + '</span>') + '</div>';
+          return (medals[m.k] || []).map(function(n){
+            return '<div class="lg-medal ' + m.k + '"><span class="lg-medal-ico">' + m.icon + '</span><span class="lg-medal-n">' + lgName(n) + '</span></div>';
           }).join('');
         }).join('');
-        return '<div class="lg-event"><div class="lg-event-head"><span class="lg-event-name no-i18n">' + lgE(ev.name) + '</span>' +
-          (admin ? lgBtn('renameEvent', '✏️', { ti: ti, ei: ei }, 'icon', lgL('Đổi tên giải', 'Rename event')) + lgBtn('delEvent', '✕', { ti: ti, ei: ei }, 'icon danger', lgL('Xóa giải', 'Delete event')) : '') + '</div>' +
-          '<div class="lg-medals">' + (rows || '<div class="lg-empty sm">—</div>') + '</div>' +
-          (admin ? '<div class="lg-add">' + LG_MEDALS.map(function(m){ return lgBtn('addMedal', '＋ ' + m.icon, { ti: ti, ei: ei, mt: m.k }, 'sm'); }).join('') + '</div>' : '') + '</div>';
+        return '<div class="lg-event"><div class="lg-event-head"><span class="lg-event-name no-i18n">' + lgE(ev.name) + '</span></div>' +
+          '<div class="lg-medals">' + (rows || '<div class="lg-empty sm">—</div>') + '</div></div>';
       }).join('');
-      return '<details class="lg-year" data-lg-year="' + lgE(tl.year) + '"' + (lgYearOpen(s, tl) ? ' open' : '') + '>' + head +
+      return '<details class="lg-year" data-lg-year="' + lgE(tl.year) + '"' + (lgYearOpen(tl) ? ' open' : '') + '>' + head +
         '<div class="lg-year-body">' + (events ? '<div class="lg-events">' + events + '</div>' : '<div class="lg-empty sm">' + lgE(lgL('Chưa có giải nào.', 'No events yet.')) + '</div>') +
+        (evs.length ? '<div class="lg-ycards" data-lg-ycards="' + ti + '"></div>' : '') +
         lgGallery(pics, ti, photoAdmin) + '</div></details>';
     }
-    
-    function addTimeline(s) {
-      var year = prompt('Enter year:');
-      if(!year) return;
-      
-      if(!s.timelines) s.timelines = [];
-      s.timelines.push({
-        year: year,
-        events: [],
-        pictures: []
+
+    // Career cards of the year's medal winners (one card per player, best medals first), with the
+    // career as of the end of that year (careerDataUntil). Built when the year block is first opened.
+    function lgYearCardsHtml(tl){
+      if(typeof careerDataUntil !== 'function' || typeof renderFifaCardHtml !== 'function') return '';
+      var cd = careerDataUntil(tl.year), by = {}, list = [];
+      (tl.events || []).forEach(function(ev){
+        LG_MEDALS.forEach(function(m){
+          ((ev.medals || {})[m.k] || []).forEach(function(n){
+            n = String(n || '').trim();
+            if(!n) return;
+            var k = n.toLowerCase(), e = by[k];
+            if(!e){ e = by[k] = { name: n, gold: 0, silver: 0, bronze: 0 }; list.push(e); }
+            e[m.k]++;
+          });
+        });
       });
-      s.timelines.sort(function(a, b) { return parseInt(a.year) - parseInt(b.year); });
-      saveAll();
-      renderLegendMode(s);
+      list.sort(function(a, b){ return b.gold - a.gold || b.silver - a.silver || b.bronze - a.bronze; });
+      var only = !!(typeof statsMasterOnly !== 'undefined' && statsMasterOnly && (state.teamMasterList || []).length), rank = {};
+      careerEloTable(cd, only).forEach(function(t, i){ rank[t.name] = i + 1; });
+      var cards = list.map(function(e){
+        var n = careerResolveName(cd, e.name), card = careerFifaCard(cd, n);
+        if(!card) return '';
+        card.rank = rank[n] || 0;
+        var tally = LG_MEDALS.map(function(m){ return e[m.k] ? '<span>' + m.icon + (e[m.k] > 1 ? '×' + e[m.k] : '') + '</span>' : ''; }).join('');
+        return '<div class="lg-yc"><div class="fc-pick" role="button" tabindex="0" data-career-team="' + lgE(n) + '" data-career-year="' + lgE(tl.year) + '" title="' +
+          lgE(lgL('Xem sự nghiệp tính đến hết ' + tl.year, 'View career as of the end of ' + tl.year)) + '">' + renderFifaCardHtml(card) + '</div><div class="lg-yc-tally">' + tally + '</div></div>';
+      }).join('');
+      return cards ? '<div class="lg-ycards-head">🃏 ' + lgE(lgL('Thẻ sự nghiệp tính đến hết ', 'Career cards as of the end of ') + tl.year) + '</div><div class="lg-ycards-row">' + cards + '</div>' : '';
     }
-    
+
     function addPicture(s, timelineIndex) {
       var input = document.createElement('input');
       input.type = 'file';
@@ -362,7 +339,7 @@
         var year = s.timelines[timelineIndex].year || ('y' + timelineIndex);
         var done = 0;
         files.forEach(function(file, idx) {
-          var baseName = (s.auto ? 'hall' : (typeof careerSeasonIdOf === 'function' && careerSeasonIdOf(s) || state.current)) + '_' + year + '_' + (s.timelines[timelineIndex].pictures.length + idx + 1) + (s.auto ? '_' + Date.now().toString(36) : '');
+          var baseName = 'hall_' + year + '_' + (s.timelines[timelineIndex].pictures.length + idx + 1) + '_' + Date.now().toString(36);
           RepoUploader.uploadResizedFile(file, {
             folder: 'photos',
             baseName: baseName,
@@ -376,27 +353,10 @@
             done++;
             if(done === files.length) {
               saveAll();
-              legendRerender(s);
+              legendRerender();
             }
           });
         });
       };
       input.click();
-    }
-    
-    function addEvent(s, timelineIndex) {
-      var eventName = prompt('Enter event name:');
-      if(!eventName) return;
-      
-      if(!s.timelines[timelineIndex].events) s.timelines[timelineIndex].events = [];
-      s.timelines[timelineIndex].events.push({
-        name: eventName,
-        medals: {
-          gold: [],
-          silver: [],
-          bronze: []
-        }
-      });
-      saveAll();
-      renderLegendMode(s);
     }

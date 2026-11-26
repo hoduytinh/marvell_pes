@@ -655,10 +655,6 @@
           badgeEl.classList.add('show');
           startAttention();
           pingFab();
-          var last = unread[unread.length - 1];
-          var preview = (last.name ? last.name + ': ' : '') + (last.text || '');
-          if(preview.length > 60) preview = preview.slice(0, 60) + '…';
-          showInvite('💬 ' + preview);
         }
       }).catch(function(){});
     }
@@ -692,9 +688,8 @@
       }, 45000);
     }
 
-    // Khởi động các tính năng chú ý
+    // Khởi động các tính năng chú ý (popup lời mời đã tắt theo yêu cầu, chỉ giữ badge tin chưa đọc)
     startBackgroundPolling();
-    startInviteRotation();
   }
 
   if(document.readyState === 'loading') {

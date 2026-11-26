@@ -110,24 +110,6 @@ var PES_MODES = {
         ui.cupHost.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--muted); border: 1px dashed var(--border); border-radius: 6px; background: var(--card);">⏳ Complete all group stage matches to unlock knockout bracket</div>';
       }
     }
-  },
-  'legend': {
-    label: 'Legend',
-    roundSelector: 'none', standings: false, fixtures: false, extras: false,
-    leagueExtras: false, autoRounds: true, stageColumn: false, bracket: false,
-    refresh: function(s){ renderLegendMode(s); },
-    standingsFn: null,
-    fixturesFn: function(s){ renderFixtures(); },
-    bracketFn: function(s){ renderLegendMode(s); }
-  },
-  'ranking': {
-    label: 'Ranking',
-    roundSelector: 'none', standings: false, fixtures: false, extras: false,
-    leagueExtras: false, autoRounds: true, stageColumn: false, bracket: false,
-    refresh: function(s){ renderRankingMode(s); },
-    standingsFn: null,
-    fixturesFn: function(s){ renderFixtures(); },
-    bracketFn: null
   }
 };
 

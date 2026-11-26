@@ -32,7 +32,7 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%BD%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Oswald:wght@500;700&amp;display=swap" />
   <!--
     Early boot (runs before CSS):
     - Apply saved theme on <html> to avoid a flash of the wrong theme.
@@ -58,7 +58,7 @@
     <div class="container header-bar">
       <div class="brand">
         <span id="leagueLogo" class="logo" title="Logo giải"></span>
-        <h1><span id="brandName" class="no-i18n">Marvell Pes Club</span> <span id="seasonTitle" class="muted"></span></h1>
+        <h1><span id="brandName" class="no-i18n">Marvell Pes Club</span> <span id="seasonTitle" class="muted"></span><span id="dashTitle" class="muted dash-title">— 📊 Dashboard</span></h1>
       </div>
       <div class="right header-actions">
   <span id="customLinks"></span>
@@ -307,8 +307,6 @@
         <option value="tournament">Tournament</option>
         <option value="swiss">Swiss System</option>
         <option value="chess-swiss">Chess-Swiss</option>
-        <option value="legend">Legend</option>
-        <option value="ranking">Ranking</option>
       </select>
     </div>
     <div id="seasonKindRow" style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px">
@@ -524,7 +522,6 @@
       load('assets/js/modes/tournament.js');
       load('assets/js/modes/league.js');
       load('assets/js/modes/legend.js');
-      load('assets/js/modes/ranking.js');
       load('assets/js/core/registry.js');
       load('assets/js/core/render.js');
       load('assets/js/core/events.js');

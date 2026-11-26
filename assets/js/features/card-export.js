@@ -26,13 +26,20 @@ var CE_STYLES = [
   { k: 'allround', icon: '🔷', vi: 'Match Attax 20', en: 'Match Attax 20' },
   { k: 'adrenalyn', icon: '🟪', vi: 'Adrenalyn XL', en: 'Adrenalyn XL' },
   { k: 'ucl', icon: '✨', vi: 'Champions', en: 'Champions' },
-  { k: 'back', icon: '🂠', vi: 'Mặt sau', en: 'Card back' }
+  { k: 'back', icon: '🂠', vi: 'Mặt sau', en: 'Card back' },
+  { k: 'back2', icon: '⚡', vi: 'Mặt sau – Carbon Neon', en: 'Back – Carbon Neon' },
+  { k: 'back3', icon: '💠', vi: 'Mặt sau – Hoàng gia', en: 'Back – Prestige' }
 ];
+// Card-back designs (common to everyone, never a career card).
+function ceIsBack(style){ return /^back\d*$/.test(String(style || '')); }
 var CE_K = CE_PX_W / CE_W; // canvas px per design unit of the card being drawn
-var ce = { name: null, style: 'player', tier: '', label: '', noAv: false, av: null, avImg: null, avAlpha: false, logoImg: null, team: null, card: null, rank: 0, ranks: {}, seq: 0, saveT: 0 };
+var ce = { name: null, style: 'player', tier: '', label: '', noAv: false, av: null, avImg: null, avAlpha: false, logoImg: null, team: null, card: null, rank: 0, ranks: {}, seq: 0, saveT: 0,
+  bt: { txt: '', vert: false, x: 50, y: 9, size: 24, col: 'gold' } };
 try {
   var ceSaved = localStorage.getItem('pesCardStyle');
-  if(ceSaved !== 'back' && CE_STYLES.some(function(s){ return s.k === ceSaved; })) ce.style = ceSaved;
+  if(!ceIsBack(ceSaved) && CE_STYLES.some(function(s){ return s.k === ceSaved; })) ce.style = ceSaved;
+  var ceBtSaved = JSON.parse(localStorage.getItem('pesCardBackText') || 'null');
+  if(ceBtSaved && typeof ceBtSaved === 'object') Object.keys(ce.bt).forEach(function(k){ if(ceBtSaved[k] != null) ce.bt[k] = ceBtSaved[k]; });
 } catch(e){}
 
 var CE_PAL = {
@@ -467,11 +474,13 @@ var CE_DRAW = {
   allround: function(ctx, o){ ceDrawAllround(ctx, o); },
   adrenalyn: function(ctx, o){ ceDrawAdrenalyn(ctx, o); },
   ucl: function(ctx, o){ ceDrawUcl(ctx, o); },
-  back: function(ctx){ ceDrawBack(ctx); }
+  back: function(ctx, o){ ceDrawBack(ctx, o); },
+  back2: function(ctx, o){ ceDrawBack2(ctx, o); },
+  back3: function(ctx, o){ ceDrawBack3(ctx, o); }
 };
 function ceCardOpts(){
   return { card: ce.card, tier: ceTier(), label: ce.label, img: ce.noAv ? null : ce.avImg, noAv: !!ce.noAv, av: ce.av, alpha: ce.avAlpha, logo: ce.logoImg,
-    team: ce.team || { c1: [37, 99, 235], c2: [255, 255, 255] }, rank: ce.rank };
+    team: ce.team || { c1: [37, 99, 235], c2: [255, 255, 255] }, rank: ce.rank, bt: ce.bt };
 }
 function ceDrawStyle(cv, style, k, o){
   var ctx = cePrep(cv, k);
@@ -637,13 +646,13 @@ function ceRenderCanvas(){
 }
 
 function ceRenderPng(){
-  return ceFonts().then(ceRenderCanvas).then(function(c){
+  return ceFonts().then(ceBtFont).then(ceRenderCanvas).then(function(c){
     return new Promise(function(res, rej){ c.toBlob(function(b){ if(b) res(b); else rej(new Error('PNG')); }, 'image/png'); });
   }).then(function(b){ return cePngWithDpi(b, CE_DPI); });
 }
 
 function ceFileName(){
-  if(ce.style === 'back') return 'marvell-pes-card-back-54x86mm.png';
+  if(ceIsBack(ce.style)) return 'marvell-pes-card-' + ce.style + '-54x86mm.png';
   return ceSlug(ce.name) + '-' + ce.style + '-54x86mm.png';
 }
 
@@ -691,6 +700,18 @@ function ceDialog(){
       '<label class="ce-range"><span>' + crL('Dọc', 'Up / down') + '</span><input type="range" id="ceY" min="-50" max="50" step="1"></label>' +
       '<small class="muted">' + crL('Ảnh được lưu theo từng tuyển thủ trên trình duyệt này. Ảnh PNG nền trong suốt dùng được ngay (mẫu Đội hình năm cho ảnh tràn ra khỏi khung). Ảnh có nền: bấm ✂️ Tách nền — nền trơn tách ngay, nền phức tạp dùng AI (lần đầu cần Internet, tải ~25 MB).',
         'Photos are saved per player in this browser. Transparent PNGs work as is (the Team of the Year design lets them break out of the frame). Photo with a background: press ✂️ Remove background — plain backgrounds are removed instantly, others with AI (first use needs Internet, ~25 MB).') + '</small></div></div>' +
+    '<div class="ce-av" id="ceBtBox" hidden><div class="ce-field"><span>' + crL('Chữ trên mặt sau', 'Text on the card back') + '</span>' +
+      '<input type="text" id="ceBtTxt" class="no-i18n" maxlength="40" autocomplete="off" placeholder="' + escapeHtml(crL('Nhập chữ muốn in (để trống = không in)', 'Text to print (empty = none)')) + '"></div>' +
+      '<div class="ce-seg"><button type="button" data-ce-bt-dir="h">↔ ' + crL('Ngang', 'Horizontal') + '</button><button type="button" data-ce-bt-dir="v">↕ ' + crL('Dọc', 'Vertical') + '</button></div>' +
+      '<label class="ce-range"><span>' + crL('Màu chữ', 'Colour') + '</span><select id="ceBtCol">' +
+        '<option value="gold">' + crL('Vàng kim', 'Gold') + '</option><option value="silver">' + crL('Bạc', 'Silver') + '</option>' +
+        '<option value="white">' + crL('Trắng', 'White') + '</option><option value="black">' + crL('Đen', 'Black') + '</option></select></label>' +
+      '<label class="ce-range"><span>' + crL('Cỡ chữ', 'Size') + '</span><input type="range" id="ceBtSize" min="10" max="64" step="1"></label>' +
+      '<label class="ce-range"><span>' + crL('Vị trí ngang', 'Left / right') + '</span><input type="range" id="ceBtX" min="0" max="100" step="0.5"></label>' +
+      '<label class="ce-range"><span>' + crL('Vị trí dọc', 'Up / down') + '</span><input type="range" id="ceBtY" min="0" max="100" step="0.5"></label>' +
+      '<div class="ce-av-btns"><button type="button" class="ghost" id="ceBtReset">↺ ' + crL('Đặt lại vị trí', 'Reset position') + '</button></div>' +
+      '<small class="muted">' + crL('Kéo chữ trực tiếp trên ảnh xem trước để di chuyển. Font Oswald (có dấu tiếng Việt). Chữ dùng chung cho mọi mặt sau, lưu trên trình duyệt này.',
+        'Drag the text on the preview to move it. Font: Oswald. The text is shared by every card back and saved in this browser.') + '</small></div>' +
     '<div class="ce-actions"><button type="button" class="primary" id="ceDownload">⬇️ ' + crL('Tải PNG 300 DPI', 'Download PNG 300 DPI') + '</button>' +
       '<button type="button" id="cePrint">🖨️ ' + crL('In / Lưu PDF', 'Print / Save PDF') + '</button></div>' +
     '<div class="ce-default" id="ceDefBox" hidden><div class="muted" id="ceDefInfo"></div><div class="ce-actions">' +
@@ -717,10 +738,13 @@ function ceDialog(){
     var st = t.closest('[data-ce-style]');
     if(st){
       ce.style = st.getAttribute('data-ce-style');
-      if(ce.style !== 'back') try { localStorage.setItem('pesCardStyle', ce.style); } catch(_){}
+      if(!ceIsBack(ce.style)) try { localStorage.setItem('pesCardStyle', ce.style); } catch(_){}
       ceRender();
       return;
     }
+    var bd = t.closest('[data-ce-bt-dir]');
+    if(bd){ ce.bt.vert = bd.getAttribute('data-ce-bt-dir') === 'v'; ceBtChanged(true); return; }
+    if(t.closest('#ceBtReset')){ ce.bt.x = 50; ce.bt.y = ce.bt.vert ? 50 : 9; ceBtChanged(true); return; }
     if(t.closest('#ceAvPick')){ $('ceAvFile').click(); return; }
     if(t.closest('#ceAvReset')){ ce.av = null; ceAvPut(ce.name, null); ceLoadAvatar().then(ceRender); return; }
     if(t.closest('#ceAvCut')){ ceCutBackground(); return; }
@@ -746,6 +770,8 @@ function ceDialog(){
     else if(id === 'ceTeam') ceSelect(e.target.value);
     else if(id === 'ceTier'){ ce.tier = e.target.value; ceLoadAvatar().then(ceRender); }
     else if(id === 'ceAvOn'){ ce.noAv = !e.target.checked; ceRender(); }
+    else if(id === 'ceBtCol'){ ce.bt.col = e.target.value; ceBtChanged(true); }
+    else if(id === 'ceBtTxt' || id === 'ceBtSize' || id === 'ceBtX' || id === 'ceBtY') ceRenderThumbs();
     else if(id === 'ceAvFile'){
       var f = e.target.files && e.target.files[0];
       e.target.value = '';
@@ -765,6 +791,8 @@ function ceDialog(){
   d.addEventListener('input', function(e){
     var id = e.target.id, k = id === 'ceZoom' ? 'zoom' : id === 'ceX' ? 'x' : id === 'ceY' ? 'y' : null;
     if(id === 'ceLabel'){ ce.label = e.target.value; ceRender(); return; }
+    if(id === 'ceBtTxt'){ ce.bt.txt = e.target.value; ceBtChanged(false); ceBtFont().then(ceDrawPreview); return; }
+    if(id === 'ceBtSize' || id === 'ceBtX' || id === 'ceBtY'){ ce.bt[id === 'ceBtSize' ? 'size' : id === 'ceBtX' ? 'x' : 'y'] = +e.target.value; ceBtChanged(false); return; }
     if(!k) return;
     ce.av = ce.av || { src: null, zoom: 1, x: 0, y: 0 };
     ce.av[k] = k === 'zoom' ? +e.target.value / 100 : +e.target.value;
@@ -773,7 +801,69 @@ function ceDialog(){
     clearTimeout(ce.saveT);
     ce.saveT = setTimeout(function(){ ceAvPut(name, rec.src || rec.zoom !== 1 || rec.x || rec.y ? rec : null); }, 400);
   });
+  ceBtDrag(d);
   return d;
+}
+
+// ---------------- Card back text ----------------
+// thumbs: also redraw the design buttons (not while typing / dragging).
+function ceBtChanged(thumbs){
+  try { localStorage.setItem('pesCardBackText', JSON.stringify(ce.bt)); } catch(e){}
+  ceBtSync();
+  ceDrawPreview();
+  if(thumbs) ceRenderThumbs();
+}
+function ceBtSync(){
+  var bt = ce.bt, d = $('cardExportDialog');
+  if(!d) return;
+  var tx = $('ceBtTxt');
+  if(tx.value !== bt.txt) tx.value = bt.txt;
+  $('ceBtCol').value = CE_BT_COLS[bt.col] ? bt.col : 'gold';
+  $('ceBtSize').value = bt.size; $('ceBtX').value = bt.x; $('ceBtY').value = bt.y;
+  [].forEach.call(d.querySelectorAll('[data-ce-bt-dir]'), function(b){ b.classList.toggle('active', (b.getAttribute('data-ce-bt-dir') === 'v') === !!bt.vert); });
+  $('cePreview').classList.toggle('ce-drag', ceIsBack(ce.style) && !!String(bt.txt || '').trim());
+}
+// Loads the Oswald glyphs needed for the current text (Google Fonts serves Vietnamese as its own subset).
+function ceBtFont(){
+  var txt = String(ce.bt.txt || '').trim();
+  if(!txt || !document.fonts || !document.fonts.load) return Promise.resolve();
+  return document.fonts.load('700 30px ' + CE_BT_FONT, txt).catch(function(){});
+}
+// Drag the text on the preview (pointer inside the text keeps its grab offset, elsewhere the text jumps there).
+function ceBtDrag(d){
+  var box = d.querySelector('#cePreview'), drag = null;
+  function pos(e){
+    var cv = box.querySelector('canvas'), r = cv && cv.getBoundingClientRect();
+    return r && r.width ? { x: (e.clientX - r.left) / r.width * CE_W, y: (e.clientY - r.top) / r.height * CE_H } : null;
+  }
+  function move(e, p){
+    ce.bt.x = Math.round(Math.max(0, Math.min(100, (p.x + drag.dx) / CE_W * 100)) * 2) / 2;
+    ce.bt.y = Math.round(Math.max(0, Math.min(100, (p.y + drag.dy) / CE_H * 100)) * 2) / 2;
+    ceBtChanged(false);
+  }
+  box.addEventListener('pointerdown', function(e){
+    if(!ceIsBack(ce.style) || !String(ce.bt.txt || '').trim() || e.button) return;
+    var p = pos(e);
+    if(!p) return;
+    var b = CE_BT_BOX, cx = ce.bt.x / 100 * CE_W, cy = ce.bt.y / 100 * CE_H;
+    var inside = b && p.x >= b.x - 6 && p.x <= b.x + b.w + 6 && p.y >= b.y - 6 && p.y <= b.y + b.h + 6;
+    drag = { id: e.pointerId, dx: inside ? cx - p.x : 0, dy: inside ? cy - p.y : 0 };
+    try { box.setPointerCapture(e.pointerId); } catch(_){}
+    e.preventDefault();
+    move(e, p);
+  });
+  box.addEventListener('pointermove', function(e){
+    if(!drag || e.pointerId !== drag.id) return;
+    var p = pos(e);
+    if(p) move(e, p);
+  });
+  function end(e){
+    if(!drag || e.pointerId !== drag.id) return;
+    drag = null;
+    ceRenderThumbs();
+  }
+  box.addEventListener('pointerup', end);
+  box.addEventListener('pointercancel', end);
 }
 
 function ceLoadAvatar(){
@@ -834,9 +924,11 @@ function ceRender(){
   var lbl = $('ceLabel');
   if(lbl.value !== ce.label) lbl.value = ce.label;
   lbl.placeholder = ceDefaultTierText(ce.style, ceTier());
-  var back = ce.style === 'back';
+  var back = ceIsBack(ce.style);
   $('ceTier').closest('.ce-field').hidden = back;
   lbl.closest('.ce-field').hidden = back;
+  $('ceBtBox').hidden = !back;
+  ceBtSync();
   $('ceAvBox').hidden = ce.style === 'career' || back;
   $('ceAvOn').checked = !ce.noAv;
   $('ceAvCtl').hidden = !!ce.noAv;
@@ -922,13 +1014,13 @@ function openCardExport(name){
   ceStatus('');
   if(!d.open) d.showModal();
   if(name) ceSelect(name); else { ce.card = null; ceRender(); }
-  ceFonts().then(function(){ if(d.open && ce.card) ceRender(); });
+  ceFonts().then(ceBtFont).then(function(){ if(d.open && ce.card) ceRender(); });
 }
 
 var CE_FONTS = null;
 function ceFonts(){
   if(!CE_FONTS) CE_FONTS = !document.fonts || !document.fonts.load ? Promise.resolve() :
-    Promise.all(['800 14px Inter', '900 30px Inter'].map(function(f){ return document.fonts.load(f).catch(function(){}); }));
+    Promise.all(['800 14px Inter', '900 30px Inter', '700 30px ' + CE_BT_FONT].map(function(f){ return document.fonts.load(f).catch(function(){}); }));
   return CE_FONTS;
 }
 

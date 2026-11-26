@@ -162,8 +162,6 @@
       
       // 3rd place: knock-out modes add a 3rd-place match; table modes / double elimination only award bronze.
       function syncThirdPlaceOption(type) {
-        var special = type === 'legend' || type === 'ranking';
-        $('thirdPlaceOption').style.display = special ? 'none' : 'block';
         var lbl = $('enable3rdPlaceLabel');
         if(lbl) lbl.textContent = (type === 'cup' || type === 'tournament' || type === 'swiss')
           ? 'Thêm trận tranh hạng 3 (tính 🥉 HC đồng)' : 'Tính hạng 3 (🥉 HC đồng)';
@@ -173,16 +171,7 @@
       $('newSeasonType').addEventListener('change', function() {
         var type = this.value;
         var groupsDiv = $('tournamentGroupOption');
-        var teamCountWrapper = $('teamCountWrapper');
         var chessSwissDiv = $('chessSwissOption');
-        
-        // Hide team count for Legend and Ranking modes
-        if(type === 'legend' || type === 'ranking') {
-          teamCountWrapper.style.display = 'none';
-        } else {
-          teamCountWrapper.style.display = 'flex';
-        }
-        
         syncThirdPlaceOption(type);
         
         if(type === 'tournament') {
@@ -212,8 +201,7 @@
         
         console.log('Creating season with type:', type);
         
-        // For Legend and Ranking modes, don't need team count
-        var n = (type === 'legend' || type === 'ranking') ? 0 : clamp(parseInt($('newSeasonTeams').value,10)||10,3,100);
+        var n = clamp(parseInt($('newSeasonTeams').value,10)||10,3,100);
         
         var has3rdPlace = $('enable3rdPlace').checked;
         var numGroups = type === 'tournament' ? clamp(parseInt($('numTournamentGroups').value,10)||4,2,8) : 4;
@@ -278,10 +266,8 @@
         season.mode = type;
         season.has3rdPlace = has3rdPlace;
         if(year) season.year = year;
-        if(type !== 'legend' && type !== 'ranking') {
-          season.kind = $('newSeasonKind').value === 'playoff' ? 'playoff' : 'official';
-          season.format = $('newSeasonFormat').value === 'double' ? 'double' : 'single';
-        }
+        season.kind = $('newSeasonKind').value === 'playoff' ? 'playoff' : 'official';
+        season.format = $('newSeasonFormat').value === 'double' ? 'double' : 'single';
         if(type === 'tournament') {
           season.numGroups = numGroups;
           season.numKnockoutTeams = numKnockoutTeams;
@@ -290,9 +276,6 @@
             season.knockoutFormat = 'serieAB';
             season.numSerieA = numSerieA;
           }
-        }
-        if(type === 'legend') {
-          season.timelines = []; // Array of timeline years
         }
         var ok = true;
         if(type==='cup' && n>=2){
@@ -336,7 +319,6 @@
           if(Array.isArray(state.seasonOrder) && state.seasonOrder.length && state.seasonOrder.indexOf(id) === -1) state.seasonOrder.unshift(id);
           saveAll();
           refreshAll();
-          if((type === 'legend' || type === 'ranking') && typeof openStatsPage === 'function') openStatsPage(type);
         }
         // Always close dialog after attempt
         var dlg = document.getElementById('seasonDialog');
@@ -367,44 +349,22 @@
         var list = $('seasonOrderList');
         list.innerHTML = '';
         
-        // Add "Insert Separator" button at top
-        var addSeparatorBtn = document.createElement('button');
-        addSeparatorBtn.type = 'button';
-        addSeparatorBtn.className = 'primary';
-        addSeparatorBtn.textContent = '➕ Add Separator Line';
-        addSeparatorBtn.style.cssText = 'margin-bottom: 12px; width: 100%;';
-        addSeparatorBtn.onclick = function() {
-          var separatorId = 'separator-' + Date.now();
-          seasonOrder.unshift(separatorId);
-          renderSeasonOrderList();
-        };
-        list.appendChild(addSeparatorBtn);
+        // The season list is grouped by year automatically (render.js refreshSeasonUI); this order applies inside each year
+        var listNote = document.createElement('div');
+        listNote.className = 'muted small';
+        listNote.textContent = '📅 Danh sách mùa giải tự nhóm theo năm; thứ tự dưới đây áp dụng trong từng năm.';
+        listNote.style.cssText = 'margin-bottom: 12px;';
+        list.appendChild(listNote);
         
         function renderSeasonOrderList() {
-          // Clear list except button
+          // Clear list except the note
           while(list.children.length > 1) {
             list.removeChild(list.lastChild);
           }
           
-          seasonOrder.forEach(function(id, index) {
-            // Check if this is a separator
-            if(id.indexOf('separator-') === 0) {
-              var separatorItem = document.createElement('div');
-              separatorItem.className = 'season-separator-item';
-              separatorItem.setAttribute('draggable', 'true');
-              separatorItem.setAttribute('data-season-id', id);
-              separatorItem.style.cssText = 'display: flex; align-items: center; gap: 4px; padding: 2px 4px; background: transparent; border: none; border-bottom: 1px solid var(--accent); margin: 2px 0; cursor: move; height: 12px;';
-              
-              separatorItem.innerHTML = '<span style="flex: 1; text-align: center; color: var(--accent); font-weight: 400; font-size: 10px; opacity: 0.6;">────</span>' +
-                '<button type="button" onclick="event.stopPropagation(); this.parentElement.remove(); seasonOrder.splice(' + index + ', 1);" style="background: #dc2626; color: white; border: none; padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 10px;">✕</button>';
-              
-              setupDragForItem(separatorItem);
-              list.appendChild(separatorItem);
-              return;
-            }
-            
+          seasonOrder.forEach(function(id) {
             var season = state.seasons[id];
-            if (!season) return;
+            if (!season || pesIsSpecialSeason(season)) return;
             
             var item = document.createElement('div');
             item.className = 'season-reorder-item';
@@ -415,8 +375,7 @@
                            season.mode === 'swiss' ? 'Swiss' : 
                            season.mode === 'chess-swiss' ? 'Chess-Swiss' : 
                            season.mode === 'double-elimination' ? 'DE' : 
-                           season.mode === 'tournament' ? 'Tournament' : 
-                           season.mode === 'legend' ? 'Legend' : 'League';
+                           season.mode === 'tournament' ? 'Tournament' : 'League';
             
             item.innerHTML = '<span class="drag-handle">☰</span>' +
                             '<span class="season-name">' + escapeHtml(season.name) + '</span>' +
@@ -449,7 +408,7 @@
           item.addEventListener('dragover', function(e) {
             e.preventDefault();
             var draggingItem = list.querySelector('.dragging');
-            if (draggingItem && draggingItem !== item && draggingItem !== addSeparatorBtn) {
+            if (draggingItem && draggingItem !== item && draggingItem !== listNote) {
               var rect = item.getBoundingClientRect();
               var offset = e.clientY - rect.top;
               if (offset > rect.height / 2) {
@@ -486,7 +445,10 @@
         toast('✅ Đã lưu thứ tự mùa giải');
       });
       
-      $('seasonSel').addEventListener('change',function(){ state.current=this.value; saveAll(); refreshAll() });
+      // Picking another season always leaves the Dashboard page
+      $('seasonSel').addEventListener('change',function(){ if(!this.value) return; if(typeof closeStatsPage === 'function') closeStatsPage(true); state.current=this.value; saveAll(); refreshAll(); window.scrollTo(0, 0) });
+      // Re-picking the current season (no 'change') also leaves the Dashboard
+      $('seasonSel').addEventListener('reselect',function(){ if(document.body.classList.contains('page-stats') && typeof closeStatsPage === 'function'){ closeStatsPage(); window.scrollTo(0, 0) } });
       $('btnTeamCount').addEventListener('click',function(){ if(!ensureSeasonEditable()) return; var s=activeSeason(); $('editTeamCount').value=s.teamCount; var dlg=$('teamCountDialog'); if(dlg && typeof dlg.showModal==='function'){dlg.showModal()} else {dlg.setAttribute('open','open')} });
       $('applyTeamCount').addEventListener('click',function(){ if(!ensureSeasonEditable()) return; var s=activeSeason(); var n=clamp(parseInt($('editTeamCount').value,10)||s.teamCount,3,30); if(!confirm('Đổi số đội sẽ xoá mọi kết quả. Tiếp tục?')) return; s.teamCount=n; if(s.teams.length<n){ var add=Array.from({length:n-s.teams.length},function(_,i){return 'Team '+(s.teams.length+i+1)}); s.teams=s.teams.concat(add); s.teamColors=s.teamColors.concat(Array(n-s.teamColors.length).fill('#1b2550')); s.teamLogos=s.teamLogos.concat(Array(n-s.teamLogos.length).fill(DEFAULT_TEAM_LOGO)) } else if(s.teams.length>n){ s.teams=s.teams.slice(0,n); s.teamColors=s.teamColors.slice(0,n); s.teamLogos=s.teamLogos.slice(0,n) } s.rounds=generateFixtures(n); s.results={}; saveAll(); refreshSeasonUI() });
       $('btnEditNames').addEventListener('click',function(){ 

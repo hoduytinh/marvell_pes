@@ -55,6 +55,24 @@
     // One-time: games filled before the `auto` flag existed were tagged above. Later games typed in
     // by hand (🎮 editor, no auto flag) are never re-tagged, even if they are all 1-0.
     if(!st.koAutoTagged){ st.koAutoTagged = 1; koGamesFilled++; }
+    // The old manual Hall of Legend (mode 'legend' seasons) was removed: keep its photos as the
+    // auto Hall's state.hallPhotos[year]. The old seasons stay in the data, hidden from the list.
+    if(!st.hallPhotos || typeof st.hallPhotos !== 'object'){
+      var hp = {};
+      Object.keys(st.seasons).forEach(function(key){
+        var se = st.seasons[key];
+        if(!se || se.mode !== 'legend' || !Array.isArray(se.timelines)) return;
+        se.timelines.forEach(function(tl){
+          var y = String((tl && tl.year) || '').trim();
+          ((tl && tl.pictures) || []).forEach(function(p){
+            if(!p || !y) return;
+            var a = hp[y] || (hp[y] = []);
+            if(a.indexOf(p) === -1) a.push(p);
+          });
+        });
+      });
+      st.hallPhotos = hp;
+    }
     normalizeTeamLogos(st);
     st.schemaVersion = SCHEMA_VERSION;
     return st;

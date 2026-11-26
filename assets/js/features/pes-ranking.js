@@ -226,7 +226,7 @@ function prRenderHtml(only){
   }).join('');
   html += '<section class="lg-card"><div class="lg-head"><h3>🏆 PES Ranking <span class="lg-year-badge sm">' + lgE(PR_YEAR) + '</span></h3>' +
     '<small>' + lgE(crL('Tổng = điểm ' + PR_YEAR + ' + ' + PR_CARRY + ' × tổng ' + prevY, 'Total = ' + PR_YEAR + ' points + ' + PR_CARRY + ' × ' + prevY + ' total')) + '</small></div>' +
-    (rows.length ? lgPodium(rows, function(r){ return lgNum(r.total) + ' <small>' + lgE(crL('điểm', 'pts')) + '</small>'; }) +
+    (rows.length ? lgPodium(rows, function(r){ return lgNum(r.total) + ' <small>' + lgE(crL('điểm', 'pts')) + '</small>'; }) + lgPodiumCards(rows) +
       '<div class="cr-table-wrap"><table class="lg-table pr-table"><thead><tr><th>#</th><th class="lg-l">' + lgE(crL('Tuyển thủ', 'Player')) + '</th>' +
       '<th>' + lgE(crL('Tổng', 'Total')) + '</th><th>' + lgE(crL('Điểm ', 'Points ') + PR_YEAR) + '</th>' +
       '<th title="' + lgE(crL('Tổng năm trước × ', 'Previous year total × ') + PR_CARRY) + '">' + lgE(crL('Từ ', 'From ') + prevY + ' (×' + PR_CARRY + ')') + '</th>' +

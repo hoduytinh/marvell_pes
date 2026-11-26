@@ -559,10 +559,9 @@
     var trophies = []; // { year, eventName, medal }
     if(!state || !state.seasons) return trophies;
     var nameLower = String(teamName).toLowerCase();
-    // Hall of Legend (auto, career.js) = same medals as the cards; the old manual Hall is only a fallback.
-    var hall = typeof careerAutoLegend === 'function' ? [careerAutoLegend(state)] : null;
-    (hall || Object.keys(state.seasons).map(function(sk) { return state.seasons[sk]; })).forEach(function(s) {
-      if(!s || s.mode !== 'legend' || !Array.isArray(s.timelines)) return;
+    // Hall of Legend (auto, career.js) = same medals as the cards.
+    (typeof careerAutoLegend === 'function' ? [careerAutoLegend(state)] : []).forEach(function(s) {
+      if(!s || !Array.isArray(s.timelines)) return;
       s.timelines.forEach(function(timeline) {
         if(!timeline || !Array.isArray(timeline.events)) return;
         timeline.events.forEach(function(event) {

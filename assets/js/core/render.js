@@ -160,12 +160,23 @@ $('seasonTitle').textContent='— '+s.name+' (LEAGUE)';
       drawRankSparks(rows.map(function(x){return x.idx}))
     }
 
-    // Hall of Legend / PES Ranking live in Dashboard tabs, not in the season list
+    // Old manual Hall of Legend / PES Ranking seasons (features removed) stay in the data, hidden from the list
     function pesIsSpecialSeason(s){ return !!s && (s.mode === 'legend' || s.mode === 'ranking'); }
-    function pesSpecialSeasonId(mode){
-      var ids = (state.seasonOrder && state.seasonOrder.length ? state.seasonOrder : []).concat(Object.keys(state.seasons));
-      for(var i = 0; i < ids.length; i++){ var x = state.seasons[ids[i]]; if(x && x.mode === mode) return ids[i]; }
-      return null;
+
+    // #seasonSel always shows the current season (also on the Dashboard); picking another season leaves the Dashboard.
+    function pesSeasonSelSync(){
+      var sel = $('seasonSel');
+      if(sel) sel.value = state.current;
+    }
+
+    // Season list status: 'done' (ended/locked/complete), 'live' (has results), 'idle' (not started)
+    var PES_SEASON_ICON = { done: '🏁', live: '🟢', idle: '⚪' };
+    function pesSeasonStatus(s){
+      if(s.locked || s.forceEnded) return 'done';
+      try { if(typeof careerSeasonFinishes === 'function' && careerSeasonFinishes(s)) return 'done'; } catch(e){}
+      var res = s.results || {};
+      for(var k in res){ var r = res[k]; if(r && !r.bye && r.hg != null && r.hg !== '') return 'live'; }
+      return 'idle';
     }
 
     function refreshSeasonUI(){
@@ -203,38 +214,41 @@ var sel=$('seasonSel'); sel.innerHTML='';
         });
       }
 
-      // Legend/Ranking are Dashboard tabs: drop them (and leading/double/trailing separators) from the list
-      var listIds = [];
-      seasonIds.forEach(function(id){
-        var isSep = id.indexOf('separator-') === 0;
-        if(!isSep && pesIsSpecialSeason(state.seasons[id])) return;
-        if(isSep && (!listIds.length || listIds[listIds.length - 1].indexOf('separator-') === 0)) return;
-        listIds.push(id);
+      // Old Legend/Ranking seasons and manual separators are not listed
+      var listIds = seasonIds.filter(function(id){
+        return id.indexOf('separator-') !== 0 && !pesIsSpecialSeason(state.seasons[id]);
       });
-      while(listIds.length && listIds[listIds.length - 1].indexOf('separator-') === 0) listIds.pop();
       if(pesIsSpecialSeason(s) && listIds.length){
         state.current = listIds[0];
         s = activeSeason();
       }
-      seasonIds = listIds;
-      
-      seasonIds.forEach(function(id){ 
-        // Check if this is a separator
-        if(id.indexOf('separator-') === 0) {
-          var separator = document.createElement('option');
-          separator.disabled = true;
-          separator.textContent = '──────';
-          separator.style.cssText = 'text-align: left; background: transparent; font-size: 8px; padding: 0; margin: 0; height: 6px; line-height: 6px;';
-          sel.appendChild(separator);
-          return;
-        }
-        
-        var o=document.createElement('option'); 
-        o.value=id; 
-        o.textContent=state.seasons[id].name; 
-        sel.appendChild(o) 
-      }); 
+
+      // One <optgroup> per season year (newest year first, custom order kept inside a year);
+      // seasons without a year go to a last "Khác" group.
+      var byYear = {}, years = [];
+      listIds.forEach(function(id){
+        var y = typeof seasonYearOf === 'function' ? seasonYearOf(state.seasons[id]) : '';
+        if(!byYear[y]){ byYear[y] = []; years.push(y); }
+        byYear[y].push(id);
+      });
+      years.sort(function(a, b){ return !a ? 1 : !b ? -1 : (+b) - (+a); });
+      var L2 = function(vi, en){ return typeof crL === 'function' ? crL(vi, en) : vi; };
+      years.forEach(function(y){
+        var grp = document.createElement('optgroup');
+        grp.label = y ? '📅 ' + y : (typeof crL === 'function' ? crL('Khác', 'Other') : 'Khác');
+        byYear[y].forEach(function(id){
+          var o = document.createElement('option');
+          var st = pesSeasonStatus(state.seasons[id]);
+          o.value = id;
+          o.textContent = PES_SEASON_ICON[st] + ' ' + state.seasons[id].name;
+          o.title = st === 'done' ? L2('Đã kết thúc', 'Ended') : st === 'live' ? L2('Đang diễn ra', 'In progress') : L2('Chưa bắt đầu', 'Not started');
+          o.setAttribute('data-status', st);
+          grp.appendChild(o);
+        });
+        sel.appendChild(grp);
+      });
       sel.value=state.current;
+      pesSeasonSelSync();
       var legendText='Top '+(s.settings.top||4)+' (🔵), '+(s.settings.euro||6)+' (🟠)'; if((s.settings.playoff||0)>0){ legendText+=', Playoff ('+(s.settings.playoff||0)+', 🟣)'; } legendText+=', rớt hạng ('+(s.settings.rel||3)+', 🔴)'; $('bandLegend').textContent=legendText;
       var def = getModeDef(s);
       var isChessSwiss = (s.mode === 'chess-swiss');
@@ -275,15 +289,6 @@ var sel=$('seasonSel'); sel.innerHTML='';
       
       // Containers owned by one mode are removed when another season is shown
       // (renderTournamentGroups() re-creates #tournamentGroups for tournament seasons)
-      // (the Dashboard tabs host their own copy inside #statsPage - leave that one alone)
-      if(s.mode !== 'legend') {
-        var legendContainer = document.getElementById('legendContainer');
-        if(legendContainer && !legendContainer.closest('#statsPage')) legendContainer.remove();
-      }
-      if(s.mode !== 'ranking') {
-        var rankingModeContainer = document.getElementById('rankingModeContainer');
-        if(rankingModeContainer && !rankingModeContainer.closest('#statsPage')) rankingModeContainer.remove();
-      }
       var tournamentGroups = document.getElementById('tournamentGroups');
       if(tournamentGroups) tournamentGroups.remove();
 

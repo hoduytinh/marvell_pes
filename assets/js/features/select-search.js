@@ -90,16 +90,31 @@
       pop.appendChild(list);
       pop.appendChild(empty);
 
-      var items = [];
+      var items = [], groups = [], lastGrp = null;
       Array.prototype.forEach.call(sel.options, function(opt, i) {
         if(opt.hidden) return;
+        var grpEl = (opt.parentNode && opt.parentNode.tagName === 'OPTGROUP') ? opt.parentNode : null;
+        var grp = grpEl ? grpEl.label : '';
+        // <optgroup> -> header row (hidden while none of its items match the search)
+        if(grpEl !== lastGrp){
+          lastGrp = grpEl;
+          if(grpEl){
+            var gh = document.createElement('div');
+            gh.className = 'sel-search-group';
+            gh.textContent = grp;
+            gh.addEventListener('mousedown', function(e) { e.preventDefault(); });
+            groups.push({ el: gh, items: [] });
+            list.appendChild(gh);
+          }
+        }
         var el = document.createElement('div');
         el.className = 'sel-search-item';
         if(opt.disabled) el.classList.add('disabled');
         if(i === sel.selectedIndex) el.classList.add('selected');
         el.textContent = opt.text;
-        var grp = (opt.parentNode && opt.parentNode.tagName === 'OPTGROUP') ? opt.parentNode.label : '';
+        if(opt.title) el.title = opt.title;
         var item = { el: el, idx: i, disabled: opt.disabled, key: normalizeSearch(opt.text + ' ' + grp) };
+        if(grpEl) groups[groups.length - 1].items.push(item);
         el.addEventListener('mousedown', function(e) { e.preventDefault(); });
         el.addEventListener('click', function() { choose(item); });
         items.push(item);
@@ -130,6 +145,9 @@
           it.el.classList.remove('active');
           if(match) visible.push(it);
         });
+        groups.forEach(function(g) {
+          g.el.style.display = g.items.some(function(it) { return it.el.style.display !== 'none'; }) ? '' : 'none';
+        });
         empty.style.display = visible.length ? 'none' : 'block';
         active = -1;
         var firstEnabled = -1;
@@ -144,6 +162,8 @@
           sel.selectedIndex = item.idx;
           sel.dispatchEvent(new Event('input', { bubbles: true }));
           sel.dispatchEvent(new Event('change', { bubbles: true }));
+        } else {
+          sel.dispatchEvent(new Event('reselect', { bubbles: true }));
         }
         try { sel.focus({ preventScroll: true }); } catch(_) {}
       }
