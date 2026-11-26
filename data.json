@@ -21211,6 +21211,10 @@
         "5-4": {
           "hg": 2,
           "ag": 1
+        },
+        "2-2": {
+          "hg": 2,
+          "ag": 3
         }
       },
       "rounds": [
@@ -25392,7 +25396,7 @@
       "tournamentPhase": "group"
     }
   },
-  "current": "s4fvc53z",
+  "current": "scsml9z1",
   "teamMasterList": [
     "Chính",
     "Duy Jj",
