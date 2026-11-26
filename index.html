@@ -32,7 +32,7 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%BD%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Oswald:wght@500;700&amp;display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Oswald:wght@500;700&amp;family=Noto+Serif:wght@700;800&amp;display=swap" />
   <!--
     Early boot (runs before CSS):
     - Apply saved theme on <html> to avoid a flash of the wrong theme.
@@ -114,9 +114,9 @@
 
   <!-- Thống kê (mọi người): mở trang thống kê toàn hệ thống -->
   <button id="btnStatsPage" class="ghost">📊 Dashboard</button>
-  <button id="btnAdminFixtures" class="ghost adminOnly hidden" title="Tất cả trận chờ nhập kết quả của các giải chưa khóa">📝 Nhập kết quả</button>
+  <button id="btnAdminFixtures" class="ghost fixturesOnly hidden" title="Tất cả trận chờ nhập kết quả của các giải chưa khóa">📝 Nhập kết quả</button>
 
-  <span id="cloudSyncStatus" class="adminOnly hidden" title="Trạng thái đồng bộ" style="font-size:12px;padding:4px 8px;border-radius:4px;background:var(--card);border:1px solid var(--border);color:var(--muted);white-space:nowrap;">☁️ —</span>
+  <span id="cloudSyncStatus" class="scoreOnly hidden" title="Trạng thái đồng bộ" style="font-size:12px;padding:4px 8px;border-radius:4px;background:var(--card);border:1px solid var(--border);color:var(--muted);white-space:nowrap;">☁️ —</span>
   <button id="btnAdmin" class="ghost">Admin</button>
   <button id="btnLang" class="ghost no-i18n" title="Language / Ngôn ngữ">🌐 EN</button>
   <select id="themeSel" title="Theme">
@@ -508,11 +508,16 @@
       load('assets/js/features/card-templates.js');
       load('assets/js/features/card-profiles.js');
       load('assets/js/features/admin-fixtures.js');
+      load('assets/js/features/result-submit.js');
       load('assets/js/features/season-meta.js');
       load('assets/js/features/pes-ranking.js');
       load('assets/js/features/ko-games.js');
       load('assets/js/features/player-links.js');
       load('assets/js/features/news-bank.js');
+      load('assets/js/features/news-gossip.js');
+      if ((function(){ try { return localStorage.getItem('pesLang') !== 'vi'; } catch(e){ return true; } })()) {
+        ['bank-1','bank-2','bank-3','bank-4','bank-5','bank-6','bank-7','gossip-1','gossip-2'].forEach(function(f){ load('assets/js/features/news-en/' + f + '.js'); });
+      }
       load('assets/js/features/season-news.js');
       load('assets/js/features/season-stats.js');
       load('assets/js/modes/cup.js');

@@ -1,7 +1,9 @@
 // Marvell PES Club - core/auth.js
 // Username/password login backed by the systems.json registry (see systems.js).
 // - Passwords are stored only as salted PBKDF2-SHA256 hashes (WebCrypto).
-// - Roles: 'admin' (everything) and 'mod' (edit the systems assigned to it).
+// - Roles: 'admin' (everything), 'mod' (edit the systems assigned to it) and 'sup' (supporter:
+//   only enters match scores in the systems assigned to it, see canEditScores) and 'player'
+//   (only SUBMITS results, once per match; an admin/mod approves them, see features/result-submit.js).
 // - Optional cloud write grant: the admin's GitHub PAT encrypted with AES-GCM using a key
 //   derived from the user's password, so only someone who knows that password can unlock it.
 // NOTE: UI gating is client-side only; the real write protection is the GitHub token.
@@ -36,6 +38,18 @@ function seasonLocked(s){
   return !!(s && s.locked);
 }
 function isAdmin(){ return isAdminUser() && !seasonLocked(); }
+// Supporter of the current system: may only enter match scores.
+function isSupporter(){
+  var a = authSession();
+  return !!(a && a.role === 'sup' && Array.isArray(a.systems) && a.systems.indexOf(PES_SYSTEM_ID) !== -1);
+}
+// Player of the current system: may only submit results for approval (never gets a PAT).
+function isPlayer(){
+  var a = authSession();
+  return !!(a && a.role === 'player' && Array.isArray(a.systems) && a.systems.indexOf(PES_SYSTEM_ID) !== -1);
+}
+// Score inputs of the active season (admin, mod or supporter; locked seasons stay read-only).
+function canEditScores(){ return (isAdminUser() || isSupporter()) && !seasonLocked(); }
 
 // Legacy flag still read by teo-widget.js.
 function syncLegacyAdminFlag(){
@@ -185,7 +199,7 @@ function authLogin(username, password){
       syncLegacyAdminFlag();
       updateAuthButton();
       // Unlock the shared PAT only if this browser has none of its own.
-      if(user.tok && !CloudSync.pat){
+      if(user.tok && user.role !== 'player' && !CloudSync.pat){
         return unwrapToken(user.tok, password).then(function(pat){
           CloudSync.setSessionPAT(pat);
           return { ok: true, cloud: true };
@@ -217,15 +231,16 @@ function authLogout(silent){
 function refreshAuthFromRegistry(){
   var a = authSession();
   if(!a || !pesRegistry){ syncLegacyAdminFlag(); return false; }
-  var before = isAdmin();
+  var sig = function(){ return isAdmin() + '|' + canEditScores() + '|' + isPlayer(); };
+  var before = sig();
   var user = findUser(pesRegistry, a.u);
   if(!user || user.disabled){
     authLogout(true);
-    return before;
+    return before !== sig();
   }
   try {
     sessionStorage.setItem(AUTH_KEY, JSON.stringify({ u: user.u, role: user.role, systems: (user.systems || []).slice() }));
   } catch(_) {}
   syncLegacyAdminFlag();
-  return before !== isAdmin();
+  return before !== sig();
 }

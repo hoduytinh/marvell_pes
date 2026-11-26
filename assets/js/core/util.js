@@ -20,6 +20,12 @@ function escapeHtml(v){
     // isAdmin / ensureAdmin / openAdminLogin live in core/auth.js
     function showAdmin(on){
       [].forEach.call(document.querySelectorAll('.adminOnly'),function(el){el.classList.toggle('hidden',!on)});
+      // Score-entry UI: admins/mods plus supporters.
+      var score = !!on || (typeof isSupporter === 'function' && isSupporter());
+      [].forEach.call(document.querySelectorAll('.scoreOnly'),function(el){el.classList.toggle('hidden',!score)});
+      // Result list (📝): score editors plus players (who submit results for approval).
+      var fix = score || (typeof isPlayer === 'function' && isPlayer());
+      [].forEach.call(document.querySelectorAll('.fixturesOnly'),function(el){el.classList.toggle('hidden',!fix)});
       var sup = !!on && isSuperAdmin();
       [].forEach.call(document.querySelectorAll('.superAdminOnly'),function(el){el.classList.toggle('hidden',!sup)});
       if(typeof CloudSync !== 'undefined') CloudSync.updateUI();

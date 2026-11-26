@@ -1201,7 +1201,7 @@
       var a = awayScore;
       
       // Admin permissions
-      if (isAdmin()) {
+      if (canEditScores()) {
         h.removeAttribute('readonly');
         a.removeAttribute('readonly');
         h.disabled = false;
@@ -1214,7 +1214,7 @@
       }
       
       function commit() {
-        if(!isAdmin()) {
+        if(!canEditScores()) {
           toast('Chỉ admin được phép sửa');
           return;
         }
@@ -1329,7 +1329,7 @@
         var a = awayScore;
         
         // Admin permissions
-        if (isAdmin()) {
+        if (canEditScores()) {
           h.removeAttribute('readonly');
           a.removeAttribute('readonly');
           h.disabled = false;
@@ -1342,7 +1342,7 @@
         }
         
         function commit() {
-          if(!isAdmin()) {
+          if(!canEditScores()) {
             toast('Chỉ admin được phép sửa');
             return;
           }
@@ -1757,7 +1757,7 @@
             el.appendChild(matchRow);
             
             // Admin permissions
-            if (isAdmin() && bothTeamsDetermined) {
+            if (canEditScores() && bothTeamsDetermined) {
               homeScore.removeAttribute('readonly');
               awayScore.removeAttribute('readonly');
               homeScore.removeAttribute('disabled');
@@ -1770,7 +1770,7 @@
             }
             
             function commit() {
-              if(!isAdmin()) {
+              if(!canEditScores()) {
                 toast('Chỉ admin được phép sửa');
                 return;
               }
@@ -1921,7 +1921,7 @@
             }
             
             // Attach events
-            if(isAdmin() && bothTeamsDetermined) {
+            if(canEditScores() && bothTeamsDetermined) {
               homeScore.addEventListener('focus', function(){ if(this.value === '') this.value = '0'; });
               awayScore.addEventListener('focus', function(){ if(this.value === '') this.value = '0'; });
               homeScore.addEventListener('blur', commit);

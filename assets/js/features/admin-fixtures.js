@@ -1,5 +1,5 @@
 // Marvell PES Club - features/admin-fixtures.js (shared global scope, load order set in index.html)
-// Admin-only Dashboard tab "Nhập kết quả": the current round(s) of every unlocked season, mirrored
+// Admin/supporter Dashboard tab "Nhập kết quả": the current round(s) of every unlocked season, mirrored
 // with score inputs. A score typed here is committed THROUGH the season's own fixture/bracket UI
 // (amCommit), so knock-out advancement, next-round generation, etc. behave exactly as in the season.
 
@@ -50,24 +50,29 @@ function amSeasonHtml(sid){
     '<option value="*"' + (sel === '*' ? ' selected' : '') + '>' + escapeHtml(crL('Tất cả các vòng', 'All rounds')) + '</option>' +
     allGroups.map(function(g){
       var n = byRound[g].length, d = byRound[g].filter(function(m){ return m.res; }).length;
-      return '<option value="' + escapeHtml(String(g)) + '"' + (sel === String(g) ? ' selected' : '') + '>' + (d === n ? '✓ ' : '') + escapeHtml(String(g)) + ' (' + d + '/' + n + ')</option>';
+      return '<option value="' + escapeHtml(String(g)) + '"' + (sel === String(g) ? ' selected' : '') + '>' + pesRoundStatus(d, n).icon + ' ' + escapeHtml(String(g)) + ' (' + d + '/' + n + ')</option>';
     }).join('') + '</select></label></div>';
   var teams = s.teams || [], played = all.length - pending.length;
   var pct = all.length ? Math.round(played * 100 / all.length) : 0;
   var openTitle = escapeHtml(crL('Mở trận này trong giải', 'Open this match in its season'));
   var rows = groups.map(function(g){
-    var left = byRound[g].filter(function(m){ return !m.res; }).length;
-    return '<div class="am-round"><div class="am-round-h">' + escapeHtml(g) + ' <small>' + (byRound[g].length - left) + '/' + byRound[g].length + '</small></div>' +
+    var left = byRound[g].filter(function(m){ return !m.res; }).length, rst = pesRoundStatus(byRound[g].length - left, byRound[g].length);
+    return '<div class="am-round"><div class="am-round-h" title="' + escapeHtml(rst.title) + '">' + rst.icon + ' ' + escapeHtml(g) + ' <small>' + (byRound[g].length - left) + '/' + byRound[g].length + '</small></div>' +
       byRound[g].map(function(m){
         var h = teams[m.home] || ('#' + (m.home + 1)), a = teams[m.away] || ('#' + (m.away + 1));
-        return '<div class="am-row' + (m.res ? ' done' : '') + '" data-am-sid="' + escapeHtml(sid) + '" data-am-key="' + escapeHtml(m.key) + '" data-am-t="' + escapeHtml((h + ' ' + a).toLowerCase()) + '">' +
+        // Player submissions (features/result-submit.js): {cls, lock, hg, ag, acts, line}
+        var x = typeof rsAmRow === 'function' ? rsAmRow(sid, s, m) : null;
+        var vh = m.res ? m.res.hg : x && x.hg != null ? x.hg : '', va = m.res ? m.res.ag : x && x.ag != null ? x.ag : '';
+        var dis = x && x.lock ? ' disabled' : '';
+        return '<div class="am-row' + (m.res ? ' done' : '') + (x && x.cls ? ' ' + x.cls : '') + '" data-am-sid="' + escapeHtml(sid) + '" data-am-key="' + escapeHtml(m.key) + '" data-am-t="' + escapeHtml((h + ' ' + a).toLowerCase()) + '">' +
           '<span class="am-stage">' + (m.stage !== g ? escapeHtml(m.stage) : '') + '</span>' +
           '<span class="am-team am-h no-i18n">' + escapeHtml(h) + '</span>' +
-          '<input type="number" min="0" inputmode="numeric" class="am-in am-hg" value="' + (m.res ? m.res.hg : '') + '">' +
+          '<input type="number" min="0" inputmode="numeric" class="am-in am-hg" value="' + vh + '"' + dis + '>' +
           '<span class="am-dash">-</span>' +
-          '<input type="number" min="0" inputmode="numeric" class="am-in am-ag" value="' + (m.res ? m.res.ag : '') + '">' +
+          '<input type="number" min="0" inputmode="numeric" class="am-in am-ag" value="' + va + '"' + dis + '>' +
           '<span class="am-team am-a no-i18n">' + escapeHtml(a) + '</span>' +
-          '<button type="button" class="am-open" data-am-open title="' + openTitle + '">↗</button></div>';
+          '<span class="am-acts">' + (x && x.acts ? x.acts : '') + '<button type="button" class="am-open" data-am-open title="' + openTitle + '">↗</button></span>' +
+          (x && x.line ? x.line : '') + '</div>';
       }).join('') + '</div>';
   }).join('');
   return '<details class="am-season" data-am-season="' + escapeHtml(sid) + '"' + (AM_OPEN[sid] ? ' open' : '') + '><summary>' +
@@ -90,7 +95,8 @@ function amRenderHtml(){
         return '<option value="' + o[0] + '"' + (amStatus === o[0] ? ' selected' : '') + '>' + escapeHtml(o[1]) + '</option>';
       }).join('') + '</select>' +
     '<label class="sp-check"><input type="checkbox" id="amNextOnly"' + (amNextOnly ? ' checked' : '') + '> ' + crL('Chỉ vòng tiếp theo của mỗi giải', 'Next round of each season only') + '</label>' +
-    '<span class="muted am-sum">' + crL(parts.length + ' giải đang mở có trận chờ nhập', parts.length + ' open season(s) with pending matches') + '</span></div>';
+    '<span class="muted am-sum">' + crL(parts.length + ' giải đang mở có trận chờ nhập', parts.length + ' open season(s) with pending matches') + '</span></div>' +
+    (typeof rsPanelHtml === 'function' ? rsPanelHtml() : '');
   if(!parts.length) return tools + '<div class="muted am-empty">🎉 ' + crL('Không còn trận nào chờ nhập kết quả ở các giải chưa khóa.', 'No pending matches in unlocked seasons.') + '</div>';
   return tools + '<div class="am-list">' + parts.join('') + '</div><div class="muted am-none" hidden>' + crL('Không có trận nào khớp.', 'No matching match.') + '</div>';
 }
@@ -175,7 +181,7 @@ function amSaved(s, key, hg, ag){
 // the events its handlers listen to (change / blur / Enter), then render the previous season back.
 function amCommit(sid, key, hg, ag){
   var s = state.seasons[sid];
-  if(!s || seasonLocked(s) || !isAdminUser()) return false;
+  if(!s || seasonLocked(s) || !(isAdminUser() || isSupporter())) return false;
   if(amSaved(s, key, hg, ag)) return true;
   var prev = state.current, bview = getBracketView(), keep = amReadFilters(), ok = false;
   var rnd = /^(\d+)-\d+$/.exec(key) || /^cswiss-(\d+)-\d+$/.exec(key);
@@ -223,7 +229,7 @@ function amNum(inp){
   return inp.value === '' || isNaN(v) ? null : Math.max(0, v);
 }
 function amRowCommit(row){
-  if(amBusy || !row) return;
+  if(amBusy || !row || !(isAdminUser() || isSupporter())) return;
   var hi = row.querySelector('.am-hg'), ai = row.querySelector('.am-ag');
   var hg = amNum(hi), ag = amNum(ai);
   if((hg == null) !== (ag == null)) return; // wait for the other side
@@ -276,7 +282,7 @@ document.addEventListener('click', function(e){
   if(!t || !t.closest) return;
   if(t.closest('#amBack')){
     amShowBack(false);
-    if(isAdminUser()) openStatsPage('admin');
+    if(isAdminUser() || isSupporter() || isPlayer()) openStatsPage('admin');
     return;
   }
   if(t.closest('#btnAdminFixtures')){

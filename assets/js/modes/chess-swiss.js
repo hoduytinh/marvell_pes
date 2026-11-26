@@ -371,7 +371,7 @@ function buildChessSwissRoundDiv(s, roundIdx, filters){
     if(!isByeMatch){
       var homeScore = el.querySelector('.scoreH');
       var awayScore = el.querySelector('.scoreA');
-      if(isAdmin()){
+      if(canEditScores()){
         homeScore.removeAttribute('readonly'); awayScore.removeAttribute('readonly');
         homeScore.disabled = false; awayScore.disabled = false;
       } else {
@@ -380,7 +380,7 @@ function buildChessSwissRoundDiv(s, roundIdx, filters){
       }
 
       var commit = function(){
-        if(!isAdmin()){ toast('Chỉ admin được phép sửa'); return; }
+        if(!canEditScores()){ toast('Chỉ admin được phép sửa'); return; }
         var hv = homeScore.value.trim(), av = awayScore.value.trim();
         // Only one side entered: wait for the other
         if((hv === '') !== (av === '')) return;
@@ -453,8 +453,12 @@ function renderChessSwissFixtures(s){
       checkbox.className = 'round-checkbox';
       if(selectedRounds.indexOf(i) !== -1) checkbox.checked = true;
       var span = document.createElement('span');
-      span.textContent = 'V' + (i + 1);
+      var csm = (cs.rounds[i] && cs.rounds[i].matches) || [];
+      var rst = pesRoundStatus(csm.filter(function(_, mi){ return !!s.results['cswiss-' + i + '-' + mi]; }).length, csm.length);
+      span.textContent = rst.icon + ' V' + (i + 1);
       span.style.fontSize = '12px';
+      label.className = rst.cls;
+      label.title = rst.title;
       label.appendChild(checkbox);
       label.appendChild(span);
       box.appendChild(label);

@@ -435,7 +435,7 @@ function renderCupBracket(s, customHost){
         el.appendChild(matchRow);
         
         // Admin permissions
-        if (isAdmin() && bothTeamsDetermined) {
+        if (canEditScores() && bothTeamsDetermined) {
           homeScore.removeAttribute('readonly');
           awayScore.removeAttribute('readonly');
           homeScore.removeAttribute('disabled');
@@ -449,7 +449,7 @@ function renderCupBracket(s, customHost){
         
         // Commit function
         function commit() {
-          if(!isAdmin()) { toast('Chỉ admin được phép sửa'); return; }
+          if(!canEditScores()) { toast('Chỉ admin được phép sửa'); return; }
           
           // Check if this round is locked (has results and next round has results)
           var isRoundLocked = false;
@@ -700,7 +700,7 @@ function renderCupBracket(s, customHost){
         }
         
         // Attach events
-        if(isAdmin() && bothTeamsDetermined) {
+        if(canEditScores() && bothTeamsDetermined) {
           homeScore.addEventListener('focus', function(){ if(this.value === '') this.value = '0'; });
           awayScore.addEventListener('focus', function(){ if(this.value === '') this.value = '0'; });
           homeScore.addEventListener('blur', commit);

@@ -475,7 +475,7 @@ function renderSwissBracket(s) {
       el.appendChild(matchRow);
       
       // Admin permissions
-      if(isAdmin()) {
+      if(canEditScores()) {
         homeScore.removeAttribute('readonly');
         awayScore.removeAttribute('readonly');
         homeScore.removeAttribute('disabled');
@@ -489,9 +489,9 @@ function renderSwissBracket(s) {
       
       // Commit function
       function commit() {
-        if(!isAdmin()) { toast('Chỉ admin được phép sửa'); return; }
-        
-        // Check if this round is locked (fully completed with next round generated)
+        if(!canEditScores()) { toast('Chỉ admin được phép sửa'); return; }
+
+        // Check if this round is locked(fully completed with next round generated)
         var isRoundLocked = false;
         if(swiss.rounds.length > roundIdx + 1) {
           // Next round exists, check if current round was fully completed
@@ -731,7 +731,7 @@ function renderSwissBracket(s) {
       }
       
       // Attach events for admin
-      if(isAdmin()) {
+      if(canEditScores()) {
         homeScore.addEventListener('focus', function(){ if(this.value === '') this.value = '0'; });
         awayScore.addEventListener('focus', function(){ if(this.value === '') this.value = '0'; });
         homeScore.addEventListener('blur', commit);
@@ -951,7 +951,7 @@ function renderSwissPlayoffBracket(s, playoffBracket, container) {
       el.appendChild(matchRow);
       
       // Admin permissions
-      if(isAdmin() && homeIdx != null && awayIdx != null) {
+      if(canEditScores() && homeIdx != null && awayIdx != null) {
         homeScore.removeAttribute('readonly');
         awayScore.removeAttribute('readonly');
         homeScore.removeAttribute('disabled');
@@ -965,8 +965,8 @@ function renderSwissPlayoffBracket(s, playoffBracket, container) {
       
       // Commit function
       function commit() {
-        if(!isAdmin()) { toast('Chỉ admin được phép sửa'); return; }
-        
+        if(!canEditScores()) { toast('Chỉ admin được phép sửa'); return; }
+
         var hg = homeScore.value.trim();
         var ag = awayScore.value.trim();
         
@@ -1030,7 +1030,7 @@ function renderSwissPlayoffBracket(s, playoffBracket, container) {
       }
       
       // Attach events
-      if(isAdmin() && homeIdx != null && awayIdx != null) {
+      if(canEditScores() && homeIdx != null && awayIdx != null) {
         homeScore.addEventListener('focus', function(){ if(this.value === '') this.value = '0'; });
         awayScore.addEventListener('focus', function(){ if(this.value === '') this.value = '0'; });
         homeScore.addEventListener('blur', commit);

@@ -728,8 +728,15 @@ function careerCommentary(cd, i){
     eW: Math.round(homeWin ? m.eloH : m.eloA), eL: Math.round(homeWin ? m.eloA : m.eloH) };
   v.d = v.eL - v.eW;
   v.s = Math.max(m.hg, m.ag) + '-' + Math.min(m.hg, m.ag); v.st = m.stage;
-  var sW = careerStreakAt(cd, W, i), sL = careerStreakAt(cd, L, i), lines = [];
-  function add(id, extra){ if(extra) Object.keys(extra).forEach(function(k){ v[k] = extra[k]; }); var t = snLine(id, v); if(t) lines.push(t); }
+  var sW = careerStreakAt(cd, W, i), sL = careerStreakAt(cd, L, i), lines = [], ids = [];
+  // Each line may also quote the career facts of the player it is about (snPlayerCtx, news-bank.js).
+  function add(id, extra){
+    if(extra) Object.keys(extra).forEach(function(k){ v[k] = extra[k]; });
+    var ctx = m.dbl ? null : snPlayerCtx(cd, v[SN_SUBJ[id] || 'W']), vv = v;
+    if(ctx){ vv = {}; [ctx, v].forEach(function(o){ Object.keys(o).forEach(function(k){ vv[k] = o[k]; }); }); }
+    var t = snLine(id, vv);
+    if(t){ lines.push(t); ids.push(id); }
+  }
   // Earlier meetings of the two teams and W's best Elo before this match.
   var met = 0, wBeat = 0, last = null, peak = ELO_BASE, wP = 0;
   for(var j = 0; j < i; j++){
@@ -760,7 +767,7 @@ function careerCommentary(cd, i){
   if(!draw && !m.dbl && wP >= 10 && postW > peak) add('r_peak', { e: Math.round(postW) });
   if(!draw && swing >= 25) add('r_swing', { x: Math.round(swing) });
   if(!lines.length) add(draw ? 'r_draw' : v.gd >= 2 ? 'r_convincing' : 'r_narrow');
-  return { head: '[' + m.season + ' · ' + m.stage + '] ' + m.home + ' ' + m.hg + ' – ' + m.ag + ' ' + m.away, lines: lines.slice(0, 2) };
+  return { head: '[' + m.season + ' · ' + m.stage + '] ' + m.home + ' ' + m.hg + ' – ' + m.ag + ' ' + m.away, lines: lines.slice(0, 2), ids: ids.slice(0, 2) };
 }
 
 // ---------------- Dialog rendering ----------------
@@ -1274,7 +1281,7 @@ function renderStatsPage(){
   var host = $('statsPage');
   if(!host) return;
   var tabs = STATS_TABS.filter(function(t){
-    return !t.admin || (isAdminUser() && typeof amRenderHtml === 'function');
+    return !t.admin || ((isAdminUser() || isSupporter() || isPlayer()) && typeof amRenderHtml === 'function');
   });
   if(!tabs.some(function(t){ return t.k === statsTab; })) statsTab = statsTab === 'legend' ? 'autolegend' : statsTab === 'ranking' ? 'pesrank' : 'career';
   var cd = careerData(state), hasMaster = !!(state.teamMasterList || []).length, only = hasMaster && statsMasterOnly;

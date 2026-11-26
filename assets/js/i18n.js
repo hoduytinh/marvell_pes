@@ -195,6 +195,9 @@
     'Đăng xuất': 'Log out',
     'Đã đăng xuất': 'Logged out',
     'Tài khoản không có quyền chỉnh sửa hệ thống này': 'This account cannot edit this system',
+    'Supporter: chỉ được cập nhật tỉ số trận đấu': 'Supporter: can only update match scores',
+    'Mod: chỉnh sửa toàn bộ · Supporter: chỉ nhập tỉ số · Player: chỉ gửi kết quả chờ admin/mod duyệt': 'Mod: full editing · Supporter: scores only · Player: submits results for admin/mod approval',
+    'Player: gửi kết quả ở 📝 Nhập kết quả': 'Player: submit results in 📝 Enter results',
     'Trình duyệt không hỗ trợ mã hóa (cần HTTPS)': 'Browser does not support encryption (HTTPS required)',
 
     // Systems & users dialog
@@ -212,6 +215,7 @@
     '(mới)': '(new)',
     '➕ Tạo hệ thống': '➕ Create system',
     '➕ Thêm mod': '➕ Add mod',
+    '➕ Thêm user': '➕ Add user',
     'Mật khẩu mới': 'New password',
     'Đặt mật khẩu mới': 'Set new password',
     'Ghi cloud': 'Cloud write',

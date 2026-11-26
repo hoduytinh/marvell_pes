@@ -44,7 +44,7 @@ function kgGamesText(games, names){
 function kgDecorate(){
   var s = typeof activeSeason === 'function' ? activeSeason() : null;
   if(!s || !s.results) return;
-  var admin = typeof isAdmin === 'function' && isAdmin(), teamsCache = null;
+  var admin = typeof canEditScores === 'function' && canEditScores(), teamsCache = null;
   document.querySelectorAll('main [data-key]').forEach(function(el){
     var key = el.getAttribute('data-key');
     if(!kgIsKoKey(key)) return;

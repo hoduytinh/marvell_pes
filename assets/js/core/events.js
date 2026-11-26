@@ -107,8 +107,10 @@
               updateCustomLinks();
               refreshSeasonUI();
               renderSystemSwitcher();
-              if(!isAdminUser()) toast('Tài khoản không có quyền chỉnh sửa hệ thống này');
-              else if(!CloudSync.hasPAT()) alert('Thiết bị này chưa có quyền ghi cloud: tỉ số nhập ở đây chỉ lưu trên máy, KHÔNG đồng bộ lên server.\n\nCách bật: trên máy tính đã có PAT, mở Hệ thống → tài khoản này → tick "Ghi cloud", nhập mật khẩu → Lưu. Sau đó đăng nhập lại trên thiết bị này.');
+              if(isSupporter()) toast('Supporter: chỉ được cập nhật tỉ số trận đấu');
+              else if(isPlayer()) toast('Player: gửi kết quả ở 📝 Nhập kết quả');
+              else if(!isAdminUser()) toast('Tài khoản không có quyền chỉnh sửa hệ thống này');
+              if((isAdminUser() || isSupporter()) && !CloudSync.hasPAT()) alert('Thiết bị này chưa có quyền ghi cloud: tỉ số nhập ở đây chỉ lưu trên máy, KHÔNG đồng bộ lên server.\n\nCách bật: trên máy tính đã có PAT, mở Hệ thống → tài khoản này → tick "Ghi cloud", nhập mật khẩu → Lưu. Sau đó đăng nhập lại trên thiết bị này.');
             }else{
               if(err){ err.textContent=res.error || 'Sai tên đăng nhập hoặc mật khẩu'; err.style.display='block'; }
               if(input){ input.focus(); input.select(); }

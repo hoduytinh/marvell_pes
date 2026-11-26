@@ -341,10 +341,26 @@ function buildSystemsDialog(draft){
 
   function usersSection(){
     pendingGrants = [];
+    var ROLE_TITLE = 'Mod: chỉnh sửa toàn bộ · Supporter: chỉ nhập tỉ số · Player: chỉ gửi kết quả chờ admin/mod duyệt';
+    function roleOptions(){
+      return [sysEl('option', { value: 'mod', text: 'Mod' }), sysEl('option', { value: 'sup', text: 'Supporter' }), sysEl('option', { value: 'player', text: 'Player' })];
+    }
+    function roleOf(v){ return v === 'sup' || v === 'player' ? v : 'mod'; }
     var rows = draft.users.map(function(user){
-      var isAdm = user.role === 'admin';
+      var isAdm = user.role === 'admin', isPl = user.role === 'player';
+      var roleSel = null;
+      if(!isAdm){
+        roleSel = sysEl('select', { class: 'sys-role', title: ROLE_TITLE, on: { change: function(){
+          user.role = roleOf(roleSel.value);
+          if(user.role === 'player') delete user.tok; // players never get the cloud token
+          dirty = true;
+          render();
+          setStatus('Có thay đổi chưa lưu');
+        } } }, roleOptions());
+        roleSel.value = roleOf(user.role);
+      }
       var pwIn = sysEl('input', { type: 'password', class: 'sys-pw', placeholder: 'Mật khẩu mới', autocomplete: 'new-password' });
-      var cloudCb = sysEl('input', { type: 'checkbox', checked: !!user.tok,
+      var cloudCb = sysEl('input', { type: 'checkbox', checked: !!user.tok && !isPl, disabled: isPl,
         on: { change: function(){
           if(!cloudCb.checked){ delete user.tok; markDirty(); return; }
           if(!cloudGrantAvailable()){ cloudCb.checked = false; setStatus('Trình duyệt này chưa có PAT để cấp', true); return; }
@@ -357,7 +373,7 @@ function buildSystemsDialog(draft){
         var pw = pwIn.value;
         if(pw.length < MIN_PASSWORD_LEN){ setStatus('Mật khẩu tối thiểu 8 ký tự', true); return; }
         keyBtn.disabled = true;
-        applyPassword(user, pw, cloudCb.checked).then(function(){
+        applyPassword(user, pw, cloudCb.checked && !isPl).then(function(){
           pwIn.value = '';
           markDirty();
           setStatus('Đã đặt mật khẩu mới cho ' + user.u + ' (bấm Lưu để áp dụng)');
@@ -368,7 +384,7 @@ function buildSystemsDialog(draft){
       var kids = [
         sysEl('div', { class: 'sys-user-head' }, [
           sysEl('b', { class: 'no-i18n', text: user.u }),
-          sysEl('span', { class: 'sys-badge', text: isAdm ? 'Admin' : 'Mod' }),
+          isAdm ? sysEl('span', { class: 'sys-badge', text: 'Admin' }) : roleSel,
           user.tok ? sysEl('span', { title: 'Có quyền ghi cloud', text: '☁️' }) : null
         ])
       ];
@@ -399,15 +415,20 @@ function buildSystemsDialog(draft){
     var uIn = sysEl('input', { class: 'no-i18n', placeholder: 'Tên đăng nhập', autocomplete: 'off' });
     var pIn = sysEl('input', { type: 'password', placeholder: 'Mật khẩu', autocomplete: 'new-password' });
     var grantCb = sysEl('input', { type: 'checkbox', checked: cloudGrantAvailable(), disabled: !cloudGrantAvailable() });
-    var addBtn = sysEl('button', { type: 'button', class: 'primary', text: '➕ Thêm mod', on: { click: function(){
+    var newRole = sysEl('select', { class: 'sys-role', title: ROLE_TITLE, on: { change: function(){
+      var pl = newRole.value === 'player';
+      grantCb.disabled = pl || !cloudGrantAvailable();
+      if(pl) grantCb.checked = false;
+    } } }, roleOptions());
+    var addBtn = sysEl('button', { type: 'button', class: 'primary', text: '➕ Thêm user', on: { click: function(){
       var name = uIn.value.trim().toLowerCase();
       var pw = pIn.value;
       if(!USERNAME_RE.test(name)){ setStatus('Tên đăng nhập 3-24 ký tự: a-z, 0-9, . _ -', true); return; }
       if(draft.users.some(function(x){ return x.u === name; })){ setStatus('Tên đăng nhập đã tồn tại', true); return; }
       if(pw.length < MIN_PASSWORD_LEN){ setStatus('Mật khẩu tối thiểu 8 ký tự', true); return; }
-      var user = { u: name, role: 'mod', systems: newSel.slice(), createdAt: Date.now() };
+      var user = { u: name, role: roleOf(newRole.value), systems: newSel.slice(), createdAt: Date.now() };
       addBtn.disabled = true;
-      applyPassword(user, pw, grantCb.checked).then(function(){
+      applyPassword(user, pw, grantCb.checked && user.role !== 'player').then(function(){
         draft.users.push(user);
         dirty = true;
         render();
@@ -419,7 +440,7 @@ function buildSystemsDialog(draft){
       sysEl('h4', { text: '👤 Người dùng' }),
       sysEl('div', { class: 'sys-list' }, rows),
       sysEl('div', { class: 'sys-user sys-add' }, [
-        sysEl('div', { class: 'sys-row' }, [uIn, pIn,
+        sysEl('div', { class: 'sys-row' }, [uIn, pIn, newRole,
           sysEl('label', { class: 'sys-check', title: 'Mã hóa PAT hiện tại bằng mật khẩu của user' }, [grantCb, ' ', sysEl('span', { text: 'Ghi cloud' })])]),
         systemChecks(newSel, function(id, on){
           var i = newSel.indexOf(id);

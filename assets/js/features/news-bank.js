@@ -6,10 +6,27 @@
 //   {placeholders} are filled by careerFill; values may be HTML (newspaper) or plain text (commentary),
 //   so templates themselves never contain markup.
 //   snLine(id, vars, rng) picks one variant in the current language.
+//   English packs (features/news-en/*.js, loaded only in English) replace each id's en list via
+//   snSetEn with a full translation (same order and placeholders as vi).
 
 var SN_BANK = {
   // ================= Finished season =================
   champ: { tag: 'hot', vi: [
+    "🏆 {c} vô địch {s}! Đây là chiếc cúp vàng thứ {gold} trong sự nghiệp — tủ kính lại được lau bóng.",
+    "🏆 Từ {debut} tới {s}: hành trình {mp} trận của {c} vừa có thêm một trang vàng.",
+    "👑 {c} lên ngôi {s} với tỉ lệ thắng sự nghiệp {wr}%. Không phải ngẫu nhiên mà có.",
+    "🎊 {c} là nhà vô địch {s}. Bảng vàng câu lạc bộ cần thêm một dòng, thợ khắc đã được gọi.",
+    "🏆 {c} đã làm được! {s} kết thúc với một cái tên duy nhất trên bục cao nhất.",
+    "🥇 {c} vô địch {s} với phong độ {sForm} ở chặng cuối. Về đích như một cơn lốc.",
+    "🏆 Elo của {c} đã đứng ở mức {elo} sau chức vô địch {s} — hạng {eloRank} trong toàn câu lạc bộ.",
+    "👑 {s} đã khép lại, và {c} là người cười cuối cùng. Người cười cuối là người cười to nhất.",
+    "🏆 {c} vô địch {s}! Tổng cộng {medals} huy chương sự nghiệp — cổ {c} chắc phải khỏe lắm.",
+    "🎊 Nhiệt liệt chúc mừng {c} — tân vương {s}. Nhóm chat công ty sắp bị sticker cúp vàng nhấn chìm.",
+    "🏆 Sau {nS} mùa giải trong câu lạc bộ, {c} lại đứng trên đỉnh ở {s}. Kinh nghiệm là vàng.",
+    "🥇 {c} giành {s} sau {sP} trận, ghi {sGF} bàn. Người gác đền các đội khác xin phép nghỉ phép.",
+    "🏆 {c} vô địch {s}! Hôm nay cà phê công ty do {c} bao — PesNews đã đăng ký trước.",
+    "👑 Đâu đó có một đối thủ đang khóc, còn {c} thì đang ngủ ôm cúp {s}.",
+    "🏆 {c} đăng quang {s}. Nào, ai là người dám bảo “năm nay không có cửa”?",
     "🏆 {c} chính thức lên ngôi vô địch {s}! PesNews xin cúi đầu bái phục.",
     "👑 Ngai vàng {s} đã có chủ: {c}. Các đội còn lại hẹn mùa sau nhé!",
     "🏆 {c} vô địch {s}! Champagne đâu, mở ra cho PesNews một chai.",
@@ -25,6 +42,21 @@ var SN_BANK = {
     "🥇 {c} stand on top of {s}. All the sweat, tears and broken controllers paid off."
   ] },
   runnerUp: { tag: 'troll', vi: [
+    "🥈 {r} về nhì — đây đã là lần thứ {silver} trong sự nghiệp. Tủ kính màu bạc đang đầy dần.",
+    "🥈 Á quân {r}: có {silver} huy chương bạc nhưng vẫn chưa có một chiếc vàng nào. Đau hơn cả thua đậm.{g0}",
+    "🥈 {r} từng vô địch {gold} lần, lần này dừng ở vị trí thứ 2. Nhà vô địch cũ cũng biết buồn.",
+    "🥈 {r} á quân. Lần cuối {r} nâng cúp là ở {lastGold} — lâu rồi đấy nhỉ.",
+    "🥈 Chỉ cách ngôi vương đúng một bước chân. {r} hãy nhớ cảm giác này để mùa sau trở lại.",
+    "🥈 {r} về nhì với phong độ {sForm} cuối mùa. Chút may mắn nữa thôi là đổi màu huy chương.",
+    "🥈 {r} đứng thứ 2. Tỉ lệ thắng sự nghiệp {wr}% — đủ giỏi để vào chung kết, chưa đủ để cầm cúp.",
+    "🥈 Hôm nay {r} sẽ ăn cơm một mình, nhìn chiếc huy chương bạc và hỏi: “Tại sao?”",
+    "🥈 {r} á quân. Tin vui: {medals} huy chương sự nghiệp. Tin buồn: chẳng ai nhớ huy chương bạc cả.",
+    "🥈 {r} đã chiến đấu {sP} trận để về nhì. Một mùa giải đáng tự hào, một cái kết đáng tiếc.",
+    "🥈 Vị trí thứ 2 của {r} được PesNews đánh giá là “rất đẹp”. {r} đánh giá là “rất đau”.",
+    "🥈 {r} về nhì. Nhà vô địch mở champagne, {r} mở... trà đá.",
+    "🥈 Không ai nhớ người về nhì? PesNews nhớ: {r}, á quân, người đã rất gần.",
+    "🥈 {r} vẫn còn làm chưa tròn việc với chiếc cúp vàng. Nhưng {r} đã có {bronze} đồng và giờ là bạc — màu nào cũng có, trừ vàng.{g0}",
+    "🥈 Á quân {r} nhắn lên nhóm chat: “Mùa sau.” Hai chữ, ngàn nỗi niềm.",
     "🥈 {r} về nhì. Huy chương bạc cũng đẹp mà... đúng không? 🥲",
     "🥈 {r} á quân — gần lắm rồi mà vẫn xa. PesNews hiểu cảm giác đó.",
     "🥈 {r} dừng bước ở vị trí thứ 2. Lịch sử thường chỉ nhớ người thắng, nhưng PesNews vẫn nhớ {r}.",
@@ -38,6 +70,23 @@ var SN_BANK = {
     "🥈 {r} are the greatest losers of the season. Sounds better than “runners-up”, doesn't it?"
   ] },
   bronze: { tag: 'stats', vi: [
+    "🥉 {b} đứng thứ 3 — chiếc huy chương đồng thứ {bronze} trong sự nghiệp. Bộ sưu tập đồng ngày càng phong phú.",
+    "🥉 Podium có {b}! Tổng cộng {medals} huy chương sự nghiệp — kệ trưng bày cần thêm tầng.",
+    "🥉 {b} giành hạng 3. Không phải cúp, nhưng vẫn hơn khối người về tay không.",
+    "🥉 {b} có mặt trong top 3 với {sW} trận thắng. Một mùa đủ để không ai chê, chưa đủ để ai ghen.",
+    "🥉 Huy chương đồng cho {b}. Màu đồng được giới mỹ thuật gọi là “vàng cổ điển”.",
+    "🥉 {b} đứng bậc thứ 3 trên bục. Nhìn lên thấy 2 người, nhìn xuống thấy cả giải đấu.",
+    "🥉 {b} lần đầu chạm tay vào huy chương? Không, đây đã là chiếc thứ {medals}. Người quen của bục vinh quang.",
+    "🥉 {b} kết thúc mùa ở vị trí thứ 3. Lần cuối {b} vô địch là ở {lastGold} — hành trình tìm lại vàng vẫn tiếp diễn.",
+    "🥉 {b} giành đồng. Chưa từng vô địch, nhưng mỗi năm lại gần thêm một chút.{g0}",
+    "🥉 Hạng 3 là của {b}. Chụp ảnh podium xong, {b} được đứng ngoài cùng — nhưng vẫn trong khung hình.",
+    "🥉 {b}: {sW} thắng, {sD} hòa, {sL} thua và một tấm huy chương đồng. Công bằng.",
+    "🥉 {b} về thứ 3. Không ai hỏi “sao không vô địch”, cũng không ai hỏi “sao lại thua”. Vị trí an toàn nhất.",
+    "🥉 Bục vinh quang có 3 bậc, và {b} đã đứng lên một trong số đó. Chúc mừng!",
+    "🥉 {b} giành đồng với Elo {elo}. Muốn lên bậc cao hơn thì Elo cũng phải lên theo.",
+    "🥉 {b} ăn mừng huy chương đồng bằng một ly trà sữa size M. Vàng thì size L, PesNews đoán vậy.",
+    "🥉 {b} có {bronze} huy chương đồng. Nếu đồng có thể đổi ra vàng, {b} đã giàu rồi.",
+    "🥉 Thứ 3 chung cuộc: {b}. Mùa sau chỉ cần leo thêm 2 bậc — nghe thì dễ.",
     "🥉 {b} giành huy chương đồng. Không vàng, không bạc, nhưng vẫn có mặt trong ảnh podium!",
     "🥉 {b} đứng thứ 3 — vừa đủ để khoe với bạn bè mà không bị hỏi “sao không vô địch?”.",
     "🥉 Đồng là của {b}. Mùa sau đổi màu huy chương nhé!"
@@ -47,6 +96,23 @@ var SN_BANK = {
     "🥉 Bronze goes to {b}. Change the colour next season!"
   ] },
   champRecord: { tag: 'stats', vi: [
+    "📋 {c} vô địch với {w} thắng – {d} hòa – {l} thua. Ghi {sGF} bàn, thủng lưới {sGA} — cán cân nghiêng hẳn một phía.",
+    "📋 Bảng điểm của nhà vô địch {c}: {w}T-{d}H-{l}B. Elo kết thúc mùa: {e}.",
+    "📋 {c} giữ sạch lưới {sCS} trận trên đường tới ngôi vương ({w} thắng, {l} thua). Phòng ngự làm nên nhà vô địch.",
+    "📋 {w} chiến thắng, {l} thất bại — {c} không hoàn hảo, nhưng đủ để lên ngôi.",
+    "📋 Elo của {c} thay đổi {sEloD} trong mùa vô địch ({w}T-{d}H-{l}B). Cúp có, điểm cũng có.",
+    "📋 Sau {w} trận thắng và {d} trận hòa, {c} đứng trên đỉnh với Elo {e}. Con số đẹp như mơ.",
+    "📋 {c}: {w} thắng, {l} thua. Tỉ lệ thắng sự nghiệp nâng lên {wr}% sau mùa này.",
+    "📋 Thống kê mùa vô địch của {c}: {sP} trận, {sGF} bàn thắng, {w} chiến thắng. Mỗi con số là một viên gạch xây ngôi đền.",
+    "📋 {c} vô địch dù thua {l} trận. Ai nói nhà vô địch không biết thua?",
+    "📋 Thành tích {w}-{d}-{l} và một chiếc cúp. {c} đã biến con số thành vinh quang.",
+    "📋 Phong độ cuối mùa của {c}: {sForm}. Tổng thành tích {w}T-{d}H-{l}B — về đích đầy thuyết phục.",
+    "📋 {c} ghi trung bình hơn một bàn mỗi trận trên đường tới chức vô địch: {sGF} bàn sau {sP} trận.",
+    "📋 Elo {e}, {w} trận thắng: {c} khép lại mùa giải như một bản báo cáo tài chính lãi to.",
+    "📋 {d} trận hòa, {l} trận thua — ít vấp ngã nhất giải, và {c} xứng đáng với chiếc cúp.",
+    "📋 Bảng thành tích {c} dán lên tường: {w} thắng, {d} hòa, {l} thua. Ai đi ngang cũng phải ngả mũ.",
+    "📋 {c} khép lại mùa với {w} chiến thắng. Đã có {cW} trận thắng sự nghiệp, và đếm tiếp.",
+    "📋 {w}T-{d}H-{l}B là bảng thành tích của {c}. PesNews đề nghị đóng khung treo phòng họp.",
     "📋 Thành tích của nhà vô địch {c}: {w} thắng – {d} hòa – {l} thua, Elo {e} sau mùa giải.",
     "📋 Hồ sơ lên ngôi của {c}: {w}T-{d}H-{l}B, và {e} Elo bỏ túi.",
     "📋 Con số không biết nói dối: {c} vô địch với {w} trận thắng, {l} trận thua, Elo {e}."
@@ -56,6 +122,23 @@ var SN_BANK = {
     "📋 Numbers don't lie: {c} won it with {w} wins, {l} losses and {e} Elo."
   ] },
   champFirst: { tag: 'hist', vi: [
+    "🌟 Sau {mp} trận đấu từ {debut}, {c} cuối cùng cũng có chiếc cúp vàng đầu tiên. Chờ đợi đã được đền đáp.",
+    "🌟 {silver} lần về nhì, giờ là vàng! {c} phá lời nguyền bạc một cách ngoạn mục.",
+    "🌟 {c} vô địch lần đầu sau {nS} mùa giải. Ai bảo kiên nhẫn không được gì?",
+    "🌟 Chiếc cúp đầu tiên của {c}! Đêm nay chắc {c} ngủ ôm cúp, mà có khi ngủ không nổi.",
+    "🌟 Từng chỉ có {bronze} huy chương đồng, giờ {c} đã có vàng. Lột xác thật sự!",
+    "🌟 {c} lần đầu tiên đứng trên bục cao nhất. Mẹ {c} đã được gọi điện báo tin.",
+    "🌟 Khoảnh khắc lịch sử: {c} vô địch lần đầu. Từ nay trở đi, {c} được gọi là “nhà vô địch”.",
+    "🌟 {c} đã thua {cL} trận trong sự nghiệp để có được giây phút này. Đáng từng giây.",
+    "🌟 Nhà vô địch mới xuất hiện: {c}! Bảng vàng câu lạc bộ chào đón thành viên mới.",
+    "🌟 {c} có chiếc cúp đầu tay với phong độ {sForm}. Cú nước rút đúng lúc.",
+    "🌟 Ngày này đã đến! {c} vô địch, và cái tủ kính để trống bao lâu giờ đã có chủ.",
+    "🌟 {c} lên ngôi lần đầu. Nếu bạn từng cược {c} không bao giờ vô địch, xin mời trả tiền.",
+    "🌟 Từ kẻ thách thức thành nhà vô địch: {c} giành danh hiệu đầu tiên với Elo {elo}.",
+    "🌟 {c} vô địch lần đầu, kết thúc chuỗi ngày dài chờ đợi. Đồng nghiệp đề nghị nghỉ làm một ngày để ăn mừng.",
+    "🌟 Danh hiệu đầu tiên luôn là danh hiệu đáng nhớ nhất. {c}, hãy tận hưởng!",
+    "🌟 {c} từng là khách quen ở nhóm giữa bảng. Hôm nay {c} là chủ nhân của chiếc cúp.",
+    "🌟 Lần đầu vô địch của {c} đến sau {sW} trận thắng mùa này. Mỗi chiến thắng là một bước lên thiên đường.",
     "🌟 Lần đầu tiên trong sự nghiệp, {c} chạm tay vào cúp vàng! Tủ kính cuối cùng cũng có đồ.",
     "🌟 Chức vô địch đầu tiên của {c}! Ai từng cười {c} thì giờ im lặng đi.",
     "🌟 {c} phá dớp: danh hiệu vàng đầu tiên trong đời. Tối nay chắc không ai ngủ được."
@@ -65,6 +148,23 @@ var SN_BANK = {
     "🌟 {c} break the curse: the first gold of their life. Nobody is sleeping tonight."
   ] },
   champDynasty: { tag: 'hist', vi: [
+    "🏰 {k} cúp vàng! Chiếc đầu tiên đến từ {firstGold}, và {c} vẫn chưa có dấu hiệu dừng lại.",
+    "🏰 Danh hiệu thứ {k} cho {c}. Thêm {silver} bạc và {bronze} đồng — bộ sưu tập đủ màu.",
+    "🏰 {c} đã vô địch {k} lần với tỉ lệ thắng {wr}%. Đế chế không được xây trong một ngày.",
+    "🏰 Chiếc cúp thứ {k}! {c} đang đứng thứ {eloRank} bảng Elo với {elo} điểm — vị thế của kẻ thống trị.",
+    "🏰 {k} lần vô địch. {c} đã biến chức vô địch thành thói quen — một thói quen rất khó bỏ.",
+    "🏰 Các đối thủ bắt đầu hỏi nhau: “Bao giờ {c} mới chán vô địch?” Câu trả lời: chưa phải lúc này. Lần thứ {k}.",
+    "🏰 {c} lại lên ngôi, nâng tổng số cúp lên {k}. Phòng trưng bày nhà {c} cần giấy phép xây dựng mới.",
+    "🏰 {k} chiếc cúp vàng sau {nS} mùa giải. {c} chính là định nghĩa của sự ổn định.",
+    "🏰 Thêm một danh hiệu cho {c} — tổng là {k}. Nếu bạn mới gia nhập câu lạc bộ, đây là cái tên cần nhớ.",
+    "🏰 {c} vô địch lần thứ {k}. Trong {mp} trận sự nghiệp, {cW} trận thắng — phép tính của một đế chế.",
+    "🏰 Lịch sử câu lạc bộ có nhiều chương, và {k} chương trong đó mang tên {c}.",
+    "🏰 {c} đứng trên đỉnh lần thứ {k}. Không còn ai ngạc nhiên, chỉ còn ngưỡng mộ — và một chút ganh tị.",
+    "🏰 Người ta nói giữ ngôi khó hơn giành ngôi. {c} thì giành {k} lần mà trông vẫn dễ như ăn kẹo.",
+    "🏰 {k} danh hiệu! Nếu mỗi chiếc cúp nặng 2 kg, {c} đang sở hữu cả một phong tào bằng kim loại.",
+    "🏰 {c} viết tiếp trang sử vàng: danh hiệu thứ {k}, chuỗi thắng dài nhất sự nghiệp {bestW} trận.",
+    "🏰 Triều đại {c} tiếp tục! Cúp thứ {k} đã về, các đối thủ có thể bắt đầu nộp đơn xin gia nhập.",
+    "🏰 {k} lần vô địch. Hỏi {c} bí quyết, chỉ nhận được một nụ cười bí hiểm.",
     "🏰 Danh hiệu vàng thứ {k} của {c}. Đây không còn là đội bóng, đây là một đế chế.",
     "🏰 {c} lại vô địch — lần thứ {k}. Các đội khác bắt đầu thấy chán rồi đấy.",
     "🏰 {k} chiếc cúp vàng! {c} cần mua thêm tủ kính gấp."
@@ -74,6 +174,23 @@ var SN_BANK = {
     "🏰 {k} gold trophies! {c} urgently need a bigger cabinet."
   ] },
   champDefend: { tag: 'hist', vi: [
+    "🔁 {c} lại là vua {s}! Mùa trước vô địch, mùa này vô địch — công thức không đổi.",
+    "🔁 Bảo vệ ngôi vương thành công! {c} hiện đã có {gold} cúp vàng trong sự nghiệp.",
+    "🔁 {c} không cho ai cơ hội: đương kim vô địch giữ cúp {s} ở lại nhà.",
+    "🔁 Đội nào cũng muốn hạ bệ {c}, nhưng chẳng ai làm được. {s} vẫn mang tên {c}.",
+    "🔁 Hai mùa liên tiếp, một nhà vô địch: {c} với phong độ {sForm} ở chặng cuối.",
+    "🔁 {c} bảo vệ danh hiệu {s}. Cái khó không phải là lên đỉnh, mà là ở lại trên đỉnh.",
+    "🔁 Chiếc cúp {s} đã quen đường về nhà {c}. Nó không muốn đi đâu khác.",
+    "🔁 {c} vô địch {s} lần nữa. Ai đó cần viết luận văn về cách đánh bại {c} — câu lạc bộ rất cần.",
+    "🔁 Đương kim vô địch vẫn là đương kim vô địch. {c} tiếp tục giữ ngôi ở {s}.",
+    "🔁 {c} bảo vệ ngôi vương với {sW} trận thắng. Mỗi mùa là một bài kiểm tra, {c} đều đạt điểm 10.",
+    "🔁 Chức vô địch trước không phải ngẫu nhiên — {c} đã chứng minh bằng cách vô địch {s} lần nữa.",
+    "🔁 {c} đã làm điều mà ít ai làm được: bảo vệ thành công chiếc cúp. Elo hiện tại: {elo}.",
+    "🔁 Các đối thủ đã có cả một mùa để chuẩn bị, nhưng {c} vẫn đứng đó, vẫn ôm cúp {s}.",
+    "🔁 {c} lại vô địch {s}! Lần sau PesNews sẽ viết sẵn bài để đỡ mất công.",
+    "🔁 Bảo vệ ngôi vương, bảo vệ danh dự: {c} không chỉ giữ cúp mà còn giữ cả vị thế.",
+    "🔁 {c} tái đắc cử ở {s}. Không cần vận động, không cần hứa hẹn, chỉ cần thắng.",
+    "🔁 Cúp {s} chưa kịp nguội thì {c} đã giành lại. Những người khác chỉ biết đứng nhìn.",
     "🔁 {c} bảo vệ thành công ngôi vương {s}. Đương kim vẫn là đương kim!",
     "🔁 Hai lần liên tiếp, một cái tên: {c}. Ai đó làm ơn ngăn họ lại.",
     "🔁 {c} giữ cúp {s} ở lại nhà thêm một năm. Chẳng ai mượn được."
@@ -83,6 +200,23 @@ var SN_BANK = {
     "🔁 {c} keep the {s} trophy at home for another year. Nobody gets to borrow it."
   ] },
   champUnbeaten: { tag: 'mile', vi: [
+    "🛡️ {c} vô địch với {sW} thắng, {sD} hòa và 0 thất bại. Con số 0 đẹp nhất của mùa giải.",
+    "🛡️ Không ai đánh bại được {c} ở giải này. Không một ai. Không một lần.",
+    "🛡️ {c} bất bại từ đầu đến cuối, chỉ thủng lưới {sGA} bàn. Bức tường thép đã lên ngôi.",
+    "🛡️ Một mùa giải hoàn hảo: {c} vô địch mà không phải cúi đầu rời sân lần nào.",
+    "🛡️ {c} đi hết {sP} trận không thua. Các đối thủ đã thử mọi cách, trừ cách duy nhất hiệu quả — không có.",
+    "🛡️ Bất bại và vô địch: {c} đã làm được điều mà mọi tay chơi đều mơ tới.",
+    "🛡️ {c} kết thúc mùa với cột “thua” trống trơn. PesNews đã kiểm tra lại 3 lần — đúng là trống.",
+    "🛡️ {c} giữ sạch lưới {sCS} trận và không thua trận nào. Mùa giải của những con số biết nói.",
+    "🛡️ Vô địch bất bại! {c} có chuỗi bất bại dài nhất sự nghiệp là {bestU} trận — và mùa này góp phần không nhỏ.",
+    "🛡️ {c}: đến, đá, không thua, nâng cúp. Một mùa giải gọn gàng như một đường chuyền.",
+    "🛡️ Thất bại đã quên địa chỉ nhà {c} trong suốt mùa này. Kết quả: vô địch, bất bại.",
+    "🛡️ {c} bất bại cả mùa. Ai muốn biết cảm giác thắng {c}? Xin lỗi, mùa này không có ai.",
+    "🛡️ Thần bất khả chiến bại {c} lên ngôi, ghi {sGF} bàn, không thua trận nào.",
+    "🛡️ {c} vô địch không thua trận nào. Câu hỏi duy nhất: có ai dám gặp {c} mùa sau?",
+    "🛡️ Một mùa không tì vết. {c} đã vẽ nên bức tranh hoàn hảo, khung tranh là chiếc cúp.",
+    "🛡️ Bất bại là đẳng cấp. Bất bại và vô địch là huyền thoại. {c} là huyền thoại.",
+    "🛡️ {c} bất bại — nâng tỉ lệ thắng sự nghiệp lên {wr}%. Mùa giải đẹp nhất của {c}?",
     "🛡️ {c} vô địch mà không thua một trận nào! Bất khả chiến bại đúng nghĩa đen.",
     "🛡️ Cả mùa không biết mùi thất bại — {c} xứng đáng được dựng tượng.",
     "🛡️ {c} đi qua cả giải như đi dạo công viên: vô địch, bất bại."
@@ -92,6 +226,24 @@ var SN_BANK = {
     "🛡️ {c} strolled through the competition like a walk in the park: champions, unbeaten."
   ] },
   champSeriesKing: { tag: 'hist', vi: [
+    "👑 {k} lần vô địch cùng một giải đấu. {c} không chỉ tham gia, {c} sở hữu giải này.",
+    "👑 {c} và giải đấu này: một mối tình {k} lần viên mãn.",
+    "👑 Lần thứ {k} {c} đăng quang ở đây. Các đối thủ có nên cân nhắc chọn giải khác?",
+    "👑 Ở giải này, {c} đã vô địch {k} lần. Đây là “vườn nhà” — và {c} là người làm vườn.",
+    "👑 {k} danh hiệu tại đây! {c} thuộc giải này như thuộc đường về nhà.",
+    "👑 Đối với các đội khác, giải này là thử thách. Đối với {c}, đây là nơi nhận cúp lần thứ {k}.",
+    "👑 Giải đấu này có nhiều mùa, nhưng {k} mùa có chung một nhà vô địch: {c}.",
+    "👑 {c} lần thứ {k} thống trị giải. PesNews đề nghị đặt tượng {c} ở lối vào.",
+    "👑 Vua của giải đấu này vẫn là {c} với {k} chức vô địch. Triều đại vẫn tiếp diễn.",
+    "👑 {k} lần! {c} vô địch giải này nhiều tới mức chiếc cúp đã nhận ra chủ của nó.",
+    "👑 Bảng vàng giải này có {k} dòng ghi tên {c}. Thợ khắc chữ đã quen tay.",
+    "👑 {c} và giải đấu này như hình với bóng: {k} lần vô địch, và còn tiếp tục.",
+    "👑 Lần vô địch thứ {k} ở đây đưa {c} lên tổng cộng {gold} cúp vàng sự nghiệp.",
+    "👑 Đây là giải của {c}. {k} chiếc cúp không thể sai được.",
+    "👑 {c} đã biến giải này thành lãnh địa riêng: {k} lần vô địch, vô số nỗi ám ảnh cho đối thủ.",
+    "👑 Muốn vô địch giải này? Trước hết phải vượt qua {c} — người đã làm điều đó {k} lần.",
+    "👑 {k} lần nâng cúp ở cùng một giải. {c} có lẽ nên được cấp thẻ thành viên danh dự.",
+    "👑 Sân nhà của {c}: giải đấu này, {k} chức vô địch, không ai tranh nổi.",
     "👑 {c} đã vô địch giải này tổng cộng {k} lần. Đây là “sân nhà” của họ.",
     "👑 Lần thứ {k} {c} lên ngôi ở giải đấu này. Giải nên đổi tên theo họ luôn đi."
   ], en: [
@@ -99,6 +251,23 @@ var SN_BANK = {
     "👑 Title number {k} in this competition for {c}. Maybe name the trophy after them."
   ] },
   champYearDouble: { tag: 'mile', vi: [
+    "🎯 {k} danh hiệu trong một năm! {c} đang biến lịch năm nay thành lịch cá nhân.",
+    "🎯 Năm nay {c} đã nâng {k} chiếc cúp. Chưa hết năm đâu, còn thêm nữa không?",
+    "🎯 {c} có {k} cúp trong năm — tổng cộng {gold} cúp vàng sự nghiệp. Năm bội thu!",
+    "🎯 Cú ăn {k} của {c}! Các đội khác hãy chờ năm sau, năm nay đã có chủ.",
+    "🎯 {k} danh hiệu, một năm, một cái tên: {c}. Năm của những kỷ lục.",
+    "🎯 {c} đang có năm đẹp nhất: {k} cúp vàng. Nếu năm sau cũng thế, PesNews xin đổi tên báo thành “{c} News”.",
+    "🎯 {k} giải, {k} cúp! {c} không để lại gì cho ai trong năm nay.",
+    "🎯 Năm nay là năm của {c}: đã vô địch {k} lần. Tủ kính quá tải, cần mua thêm kệ.",
+    "🎯 {c} vô địch lần thứ {k} trong năm. Các đối thủ bắt đầu tin vào vận mệnh.",
+    "🎯 Lịch thi đấu của {c} năm nay: thi đấu, vô địch, lặp lại {k} lần.",
+    "🎯 {k} danh hiệu năm nay, Elo {elo}. {c} đang ở đỉnh cao phong độ.",
+    "🎯 {c} lập cú {k} năm nay. Mùa giải tiếp theo, mọi ánh mắt sẽ đổ dồn vào {c}.",
+    "🎯 Thành tích năm nay của {c}: {k} cúp. Thành tích năm nay của các đội khác: đứng nhìn.",
+    "🎯 {c} với {k} cúp trong năm. Năm sau {c} sẽ phải cạnh tranh với chính mình.",
+    "🎯 {k} lần vô địch trong một năm. Đồng nghiệp của {c} đã bắt đầu gọi {c} là “người sưu tập cúp”.",
+    "🎯 {c} khép lại năm với {k} danh hiệu? Chưa chắc — năm vẫn còn, cúp vẫn còn.",
+    "🎯 Một năm, {k} chiếc cúp: {c} viết nên năm huy hoàng nhất trong sự nghiệp.",
     "🎯 {c} đã có {k} danh hiệu trong năm nay. Năm của {c}, không bàn cãi!",
     "🎯 Cú ăn {k} trong năm cho {c}! Các đội khác chỉ còn biết đứng nhìn.",
     "🎯 {k} cúp trong một năm — {c} đang càn quét như cơn bão."
@@ -108,6 +277,22 @@ var SN_BANK = {
     "🎯 {k} trophies in one year — {c} are sweeping through like a storm."
   ] },
   relegated: { tag: 'rel', vi: [
+    "⬇️ Xuống hạng: {t}. Mùa sau giải dưới sẽ đông vui hơn.",
+    "⬇️ {t} chào tạm biệt giải đấu này. Hành lý mang theo: nỗi buồn và quyết tâm trở lại.",
+    "⬇️ Cánh cửa xuống hạng đã mở, và {t} bước qua. PesNews không nói gì thêm.",
+    "⬇️ {t} rớt hạng. Giải dưới đang trải thảm đỏ chào đón.",
+    "⬇️ Chuyến tàu xuống hạng đã lăn bánh với hành khách: {t}. Ga cuối: giải dưới.",
+    "⬇️ {t} xuống hạng. Đây không phải kết thúc, chỉ là một đoạn đường vòng.",
+    "⬇️ Buồn nhưng là sự thật: {t} không trụ hạng được. Mùa sau gặp lại ở giải dưới.",
+    "⬇️ {t} đã chiến đấu, nhưng không đủ. Vé xuống hạng đã được xác nhận.",
+    "⬇️ {t} rơi xuống hạng. Đồng nghiệp đã chuẩn bị sẵn khoai lang để an ủi.",
+    "⬇️ Thông báo chính thức từ PesNews: {t} xuống hạng. Không có kháng cáo.",
+    "⬇️ {t} xuống chơi giải dưới. Ở đó, họ sẽ là “ông lớn” — ít nhất là trên giấy.",
+    "⬇️ Mùa giải kết thúc, {t} xuống hạng. Đứng dậy, phủi bụi, và quay lại mạnh mẽ hơn.",
+    "⬇️ {t} rớt hạng. PesNews xin dành một phút mặc niệm... rồi tiếp tục chọc.",
+    "⬇️ {t} xuống hạng. Tin vui: ở giải dưới, không ai biết {t} từng thua nhiều thế nào.",
+    "⬇️ Lịch sử ghi nhận: {t} xuống hạng mùa này. Lịch sử cũng sẽ ghi nhận nếu họ trở lại.",
+    "⬇️ {t} không trụ được. Tay cầm đã được cất vào hộp, nước mắt đã được lau khô.",
     "⬇️ {t} chính thức xuống hạng. Hẹn gặp lại... hoặc không.",
     "⬇️ {t} rớt hạng. Mùa sau nhớ mang theo bản đồ đường về.",
     "⬇️ Vé xuống hạng đã in tên {t}. Tàu chạy rồi, không đổi vé được.",
@@ -119,6 +304,22 @@ var SN_BANK = {
     "⬇️ {t} say goodbye to this competition. PesNews will miss them... a little."
   ] },
   woodenSpoon: { tag: 'troll', vi: [
+    "🥄 {t} bét bảng với {p} điểm sau {sW} thắng và {sL} thua. Chiếc thìa gỗ được trao tận tay.",
+    "🥄 {p} điểm, đứng cuối: {t} khép lại mùa với phong độ {sForm}. Chẳng có gì để không nhớ.",
+    "🥄 {t} bét bảng và thủng lưới {sGA} bàn. Lưới nhà {t} cần được thay mới toàn bộ.",
+    "🥄 Thìa gỗ mùa này cho {t} ({p} điểm). Dùng để ăn cháo, ăn chè, ăn... nỗi buồn.",
+    "🥄 {t} cuối bảng. Elo hiện tại {elo} — bảng xếp hạng thì không quan tâm Elo.",
+    "🥄 {t} kết thúc ở đáy bảng với {p} điểm. Nhìn lên trên: cả một bầu trời cơ hội.",
+    "🥄 {t} bét bảng. Tỉ lệ thắng sự nghiệp vẫn là {wr}% — mùa này chỉ là một tai nạn?",
+    "🥄 Thìa gỗ thuộc về {t}. Đây là vật kỷ niệm duy nhất mà không ai muốn xếp hàng nhận.",
+    "🥄 {t} cuối bảng với {p} điểm. Ghi {sGF} bàn cả mùa — tiền đạo cần được hỏi thăm.",
+    "🥄 {t} bét bảng. Nhưng nhớ nhé, {t} từng có chuỗi {bestW} trận thắng. Phong độ là nhất thời.",
+    "🥄 Đáy bảng {p} điểm: {t}. Tin tốt là không ai có thể lấy vị trí này khỏi {t} nữa.",
+    "🥄 {t} đứng cuối cùng. PesNews xin đề xuất giải “kiên trì nhất mùa” — ít ra cũng đá đủ {sP} trận.",
+    "🥄 {t} nhận thìa gỗ. Từ {debut} tới giờ, đây có lẽ là mùa khó quên nhất — theo nghĩa không tốt.",
+    "🥄 {t} bét bảng với {p} điểm. Xin đừng buồn, vị trí cuối cũng có view nhìn toàn cảnh.",
+    "🥄 Đáy bảng gọi tên {t}. Bảng xếp hạng có đầu có đuôi, và {t} là cái đuôi.",
+    "🥄 {t} khép lại mùa ở đáy bảng. Đã thua {sL} trận — mỗi trận là một bài học đắt giá.",
     "🥄 Chiếc thìa gỗ thuộc về {t}: bét bảng với {p} điểm.",
     "🥄 {t} đứng cuối cùng với {p} điểm. Ít nhất thì cũng là một vị trí độc nhất.",
     "🥄 Đáy bảng có chủ: {t} ({p} điểm). Từ đây chỉ có thể đi lên!",
@@ -130,6 +331,23 @@ var SN_BANK = {
     "🥄 {t} end the season in last place. PesNews prescribes a long holiday and a new controller."
   ] },
   eloFlop: { tag: 'troll', vi: [
+    "🎭 {f} vào giải với Elo cao nhất, ra về với tay trắng. {c} mới là người cầm cúp.",
+    "🎭 {f} đứng thứ {sPos} chung cuộc dù là ứng viên số 1. Cúp về tay {c} — cú lừa của mùa.",
+    "🎭 Elo {elo} không mua được cúp: {f} thất bại, {c} lên ngôi.",
+    "🎭 {f} là đội mạnh nhất trên giấy. Nhưng giải đấu được đá trên sân, và {c} là người thắng.",
+    "🎭 {f} được đặt cược nhiều nhất, và cũng khiến nhiều người mất tiền nhất. {c} cười tươi.",
+    "🎭 {f} vào giải như một ông vua, ra về như một khách mời. Ngai vàng thuộc về {c}.",
+    "🎭 {f}: {sW} thắng, {sL} thua, không cúp. {c}: cúp. Đôi khi bóng đá đơn giản vậy thôi.",
+    "🎭 Ai cũng nghĩ {f} sẽ vô địch. Ai cũng sai. {c} đã làm tất cả phải ngạc nhiên.",
+    "🎭 {f} trắng tay. Elo cao thì sao, tay cầm run thì cũng thua. {c} đăng quang.",
+    "🎭 {f} đã có {gold} cúp vàng trong sự nghiệp, nhưng lần này không có thêm. {c} là nhà vô địch.",
+    "🎭 {f} và cái danh “ứng viên số 1” — một gánh nặng quá lớn. {c} không phải mang, nên nhẹ nhàng vô địch.",
+    "🎭 Máy tính của PesNews dự đoán {f}. Thực tế: {c}. Máy tính đang được bảo hành.",
+    "🎭 {f} có Elo cao nhất và buồn nhất giải. {c} có chiếc cúp và vui nhất giải.",
+    "🎭 {f} thất bại, {c} thành công. Bài học của mùa: đừng tin vào giấy tờ.",
+    "🎭 {f} đã chuẩn bị bài phát biểu nhận cúp. Bài phát biểu đó giờ thuộc về {c}.",
+    "🎭 {f} đứng thứ {eloRank} bảng Elo câu lạc bộ nhưng không thắng nổi giải này. {c} không quan tâm thứ hạng.",
+    "🎭 {f} mạnh nhất trên giấy, nhưng giấy thì bị {c} xé vụn rồi.",
     "🎭 {f} có Elo cao nhất giải nhưng chiếc cúp lại về tay {c}. Elo chỉ là con số!",
     "🎭 Ứng viên số 1 {f} trắng tay, còn {c} thì ôm cúp. Giấy tờ chẳng nói lên điều gì.",
     "🎭 {f} mạnh nhất trên giấy, {c} mạnh nhất trên sân. Đoán xem ai được nhớ tới?"
@@ -139,6 +357,23 @@ var SN_BANK = {
     "🎭 {f} were strongest on paper, {c} strongest on the pitch. Guess who gets remembered?"
   ] },
   silverCurse: { tag: 'troll', vi: [
+    "🥈 {r} lại á quân — lần thứ {k}. Sau {nS} mùa giải, chiếc cúp vàng vẫn là giấc mơ.",
+    "🥈 {k} lần về nhì, 0 lần về nhất. {r} có lẽ nên đi chùa giải hạn.",
+    "🥈 Lời nguyền bạc tiếp tục với {r}: {k} huy chương bạc, không có vàng.",
+    "🥈 {r} đã gần với vàng {k} lần, nhưng lần nào cũng trượt. Cái ngưỡng cuối cùng thật khó.",
+    "🥈 {k} lần á quân! {r} là vua của vị trí thứ 2 — một ngôi vua mà không ai muốn.",
+    "🥈 {r} về nhì lần thứ {k}. Tỉ lệ thắng {wr}% — đủ mạnh, nhưng thiếu một chút may mắn.",
+    "🥈 {r} sưu tập {k} bạc. Nếu đổi được 3 bạc lấy 1 vàng, {r} đã vô địch rồi.",
+    "🥈 Vị trí thứ 2 lại gọi tên {r} — lần thứ {k}. Chung kết là nơi {r} đến, nhưng không phải nơi {r} thắng.",
+    "🥈 {r} có {k} huy chương bạc, {bronze} đồng, 0 vàng. Một bộ sưu tập thiếu một món quan trọng nhất.",
+    "🥈 “Lần sau sẽ khác”, {r} nói. Đây là lần thứ {k} {r} nói câu đó.",
+    "🥈 {r} á quân thêm lần nữa. Chuyên gia tâm lý của PesNews: “Bệnh này chữa được, nhưng cần thời gian.”",
+    "🥈 {k} lần về nhì trong {nS} mùa giải. {r} đang xây dựng kỷ lục — một kỷ lục buồn.",
+    "🥈 {r} chạm tay vào cúp {k} lần, nhưng lần nào cúp cũng tuột mất. Tay cầm trơn hay số phận?",
+    "🥈 Huy chương bạc thứ {k} của {r}. Màu bạc giờ đã trở thành màu nhận diện thương hiệu.",
+    "🥈 {r} lại đứng thứ 2. {k} lần như vậy, và trái tim {r} vẫn chưa chịu bỏ cuộc.",
+    "🥈 Á quân lần thứ {k} cho {r}. PesNews đề nghị đổi tên giải bạc thành “giải {r}”.",
+    "🥈 {r} và chiếc cúp vàng: gần nhau {k} lần, nhưng chưa bao giờ thuộc về nhau.",
     "🥈 Lại về nhì ({k} lần) và vẫn chưa có cúp vàng nào cho {r}. Lời nguyền bạc là có thật.",
     "🥈 {r} sưu tầm huy chương bạc như sưu tầm tem: {k} chiếc, 0 vàng.",
     "🥈 {k} lần á quân. {r} ơi, chỉ cần một bước nữa thôi mà!"
@@ -150,6 +385,22 @@ var SN_BANK = {
 
   // ================= Not started =================
   kickoff: { tag: 'hot', vi: [
+    "📣 {s} chính thức mở màn với {n} tay chơi. {f} (Elo {e}) là cái tên được soi kỹ nhất.",
+    "📣 {f} bước vào {s} với {gold} cúp vàng trong tủ và Elo {e}. Ứng viên số 1 là đây.",
+    "📣 {n} đội, ai cũng nói “mùa này khác”. Chỉ có {f} là có số liệu để nói điều đó: Elo {e}.",
+    "📣 {s} khởi tranh! {f} đang có tỉ lệ thắng sự nghiệp {wr}% — ai dám cản?",
+    "📣 Tay cầm đã sạc đầy, ghế đã kê, {n} tay chơi đã sẵn sàng cho {s}.",
+    "📣 {s} bắt đầu! PesNews dự đoán {f} sẽ ra sân với áp lực của kẻ được kỳ vọng nhất.",
+    "📣 Mùa giải mới, hy vọng mới, tay cầm mới (của vài người). {s} có {n} đội tham dự.",
+    "📣 {f} đứng đầu bảng Elo trước {s} với {e} điểm. Đứng đầu trước giải và sau giải là hai chuyện khác nhau.",
+    "📣 Lịch đã xếp, cặp đấu đã rõ. {s} với {n} đội hứa hẹn không thiếu drama.",
+    "📣 {s} sắp bắt đầu. {f} đã có {mp} trận kinh nghiệm — còn bạn thì sao?",
+    "📣 Chào mừng đến với {s}! {n} đội, vô số tham vọng, và một PesNews luôn sẵn sàng chọc ngáy.",
+    "📣 {f} vào {s} với Elo {e}, xếp thứ {eloRank} toàn câu lạc bộ. Ứng viên hàng đầu không cần giới thiệu.",
+    "📣 Tiếng còi đã gần. {n} đội, và PesNews cược rằng ít nhất 3 tay cầm sẽ hỏng trước khi {s} kết thúc.",
+    "📣 {s} mở màn. Nếu bạn không phải {f}, bạn đang là kẻ thách thức — và đó là vị trí thú vị nhất.",
+    "📣 {f} từng có chuỗi {bestW} trận thắng liên tiếp. Ở {s}, liệu phép màu đó có lặp lại?",
+    "📣 {n} tay chơi bước vào {s}. Đến cuối mùa, chỉ một người cười. Những người khác sẽ đọc PesNews để tự an ủi.",
     "📣 {s} sắp khởi tranh với {n} đội. Ứng viên số 1 trên giấy tờ: {f} (Elo {e}).",
     "📣 Tiếng còi khai cuộc {s} sắp vang lên! {n} đội, 1 chiếc cúp, và {f} là cái tên được đánh giá cao nhất.",
     "📣 {n} đội đã sẵn sàng cho {s}. PesNews đã mài bút, {f} (Elo {e}) là đội bị soi đầu tiên.",
@@ -161,6 +412,23 @@ var SN_BANK = {
     "📣 Everyone starts from zero in {s}. Well, {f} with {e} Elo start from... slightly higher."
   ] },
   weakest: { tag: 'troll', vi: [
+    "🐣 {t} vào giải với Elo {e} — thấp nhất. Nhưng đã bao giờ bạn nghe chuyện David và Goliath chưa?",
+    "🐣 {t} là đội lót đường trên giấy (Elo {e}). Nhiệm vụ: biến giấy thành giấy vụn.",
+    "🐣 Elo thấp nhất giải: {t} với {e}. Tỉ lệ thắng sự nghiệp {wr}% — cũng không tệ đến thế.",
+    "🐣 {t} vào giải với khát khao chứng minh. Elo {e} chỉ là điểm khởi đầu.",
+    "🐣 {t} được các đội khác xem là “3 điểm miễn phí”. {t} có ý kiến khác.",
+    "🐣 Elo {e}, thấp nhất giải. {t} không có gì để mất, và đó là điều đáng sợ nhất.",
+    "🐣 {t} đứng cuối bảng Elo trước giải. PesNews đề nghị các đội khác đừng chủ quan.",
+    "🐣 {t} từng đánh bại {bwOpp} {bwSc}. Elo thấp đâu có nghĩa là không biết cắn.",
+    "🐣 Với Elo {e}, {t} bước vào giải như một chú gà con giữa bầy đại bàng. Gà con cũng có mỏ.",
+    "🐣 {t} là đội yếu nhất theo Elo ({e}). Nhưng Elo không ra sân — {t} mới là người ra sân.",
+    "🐣 Cả giải nhìn {t} với ánh mắt thương hại. {t} nhìn lại với ánh mắt của kẻ đi săn.",
+    "🐣 {t} có Elo {e} — thấp nhất giải, nhưng {t} từng chạm mốc {peak}. Ngọn lửa cũ vẫn còn đó.",
+    "🐣 {t} là “con mồi” theo số liệu. Nhưng con mồi cũng biết cắn khi bị dồn vào góc.",
+    "🐣 Không ai đặt cược cho {t} (Elo {e}). Và đó là lý do {t} có thể làm nên bất ngờ.",
+    "🐣 {t} đến giải với tâm thế thoải mái nhất: Elo thấp nhất, kỳ vọng thấp nhất, áp lực bằng 0.",
+    "🐣 Chú ngựa ô tiềm năng? Hay chỉ là “ngựa”? {t} với Elo {e} sẽ trả lời trên sân.",
+    "🐣 {t} có Elo thấp nhất ({e}) nhưng tim thì lớn nhất giải. PesNews tin vào điều đó... một chút.",
     "🐣 {t} vào giải với Elo thấp nhất ({e}). Mục tiêu: không thua quá đậm?",
     "🐣 {t} là đội yếu nhất trên giấy tờ. Nhưng giấy thì... dễ rách lắm.",
     "🐣 Elo {e}, thấp nhất giải: {t} được kỳ vọng thấp nhất — nghĩa là chẳng có gì để mất!"
@@ -170,6 +438,23 @@ var SN_BANK = {
     "🐣 Lowest Elo in the field ({e}): {t} have the lowest expectations — which means nothing to lose!"
   ] },
   defending: { tag: 'hist', vi: [
+    "🛡️ {t} trở lại {s} với tư cách nhà vô địch. {gold} cúp vàng trong tủ, và còn chỗ cho thêm một chiếc.",
+    "🛡️ Đương kim vô địch {t} đã có mặt. Mỗi đối thủ gặp {t} ở {s} đều sẽ chơi trận của đời mình.",
+    "🛡️ {t} bước vào {s} với chiếc vương miện của lần trước. Vương miện nặng lắm đấy.",
+    "🛡️ Bảo vệ ngôi vương: nhiệm vụ của {t} ở {s}. Elo {elo}, tỉ lệ thắng {wr}% — đủ hành trang.",
+    "🛡️ {t} là đương kim vô địch. Các đội khác đã lên kế hoạch — kế hoạch tên là “hạ bệ {t}”.",
+    "🛡️ {t} trở lại để bảo vệ danh hiệu. Lịch sử cho thấy: giữ ngôi khó gấp đôi giành ngôi.",
+    "🛡️ Chiếc cúp lần trước vẫn còn ấm tay {t}. {s} sẽ quyết định cúp có ở lại hay ra đi.",
+    "🛡️ {t} — nhà vô địch lần trước — đã sẵn sàng cho {s}. Đương kim luôn là mục tiêu số 1.",
+    "🛡️ {t} vào {s} với hào quang đương kim vô địch và chuỗi thắng dài nhất {bestW} trận trong sự nghiệp.",
+    "🛡️ {t} là người giữ cúp. Mọi đội đều muốn là người lấy cúp từ tay {t}.",
+    "🛡️ Nhà vô địch trở lại: {t}. {t} đang có {gold} cúp vàng và chưa có ý định dừng lại.",
+    "🛡️ {t} đã thắng giải này lần trước. Lần này, {t} đến để chứng minh đó không phải ngẫu nhiên.",
+    "🛡️ Áp lực của đương kim vô địch đè lên vai {t}. {s} sẽ là bài kiểm tra bản lĩnh.",
+    "🛡️ {t} và chiếc cúp lần trước đã có một năm bên nhau. Liệu mối quan hệ có kéo dài thêm?",
+    "🛡️ {t} là nhà vô địch. Ở {s}, {t} không còn là kẻ đi săn — {t} là con mồi.",
+    "🛡️ {t} bảo vệ ngôi vương {s}. PesNews đã chuẩn bị sẵn 2 tiêu đề: “Triều đại” và “Sụp đổ”.",
+    "🛡️ Đương kim vô địch {t} trở lại với Elo {elo}. Cúp có ở lại hay không, {s} sẽ trả lời.",
     "🛡️ Đương kim vô địch {t} trở lại {s}. Giữ cúp khó hơn giành cúp đấy!",
     "🛡️ {t} bước vào giải với tư cách nhà vô địch lần trước. Mọi đội đều muốn hạ họ.",
     "🛡️ Cúp lần trước vẫn đang nằm ở nhà {t}. Ai đủ sức tới lấy về?"
@@ -179,6 +464,23 @@ var SN_BANK = {
     "🛡️ Last edition's trophy is still at {t}'s place. Who is strong enough to come and take it?"
   ] },
   debutant: { tag: 'profile', vi: [
+    "🆕 {t} lần đầu ra mắt. Chưa có Elo, chưa có kẻ thù, chưa có nỗi ám ảnh nào.",
+    "🆕 Chào mừng {t}! Trang lý lịch trên PesNews còn trắng tinh — hãy viết nó bằng bàn thắng.",
+    "🆕 {t} — tân binh của mùa. Ai biết được, biết đâu đây là nhà vô địch tương lai?",
+    "🆕 {t} gia nhập câu lạc bộ. Các cựu binh đang lén xem tân binh cầm tay cầm như thế nào.",
+    "🆕 {t} bước vào giải đấu đầu tiên. Tim đập nhanh, tay hơi run, nhưng mắt thì sáng rực.",
+    "🆕 Tân binh {t} ra mắt. Trong câu lạc bộ này, không có ai là quá mới để ghi bàn.",
+    "🆕 {t} chưa có trận nào trong hồ sơ PesNews. Đây là lúc lịch sử bắt đầu.",
+    "🆕 {t} xuất hiện — các đội lâu năm nên cẩn thận: tân binh luôn là ẩn số lớn nhất.",
+    "🆕 Chào đón {t} với một tràng pháo tay! Trận đầu tiên luôn là trận đáng nhớ nhất.",
+    "🆕 {t} là gương mặt mới. Elo khởi điểm 1500 — lên hay xuống, tùy vào đôi tay.",
+    "🆕 {t} tham gia giải lần đầu. PesNews đã chuẩn bị sẵn mục “Tân binh xuất sắc” — hoặc “Tân binh học việc”.",
+    "🆕 {t} đến với câu lạc bộ. Chưa ai biết {t} mạnh hay yếu, và đó chính là điều thú vị.",
+    "🆕 Tân binh {t} đã đăng ký. Lời khuyên từ PesNews: đừng tin lời các cựu binh nói “thật ra tôi cũng không giỏi”.",
+    "🆕 {t} ra mắt giải. Mọi huyền thoại đều từng là tân binh.",
+    "🆕 {t} lần đầu cầm tay cầm trong giải đấu chính thức. Nhóm chat đã sẵn sàng bình luận.",
+    "🆕 {t} — cái tên mới trong danh sách. Chỉ sau vài trận, cái tên này sẽ có câu chuyện riêng.",
+    "🆕 Chào {t}! Câu lạc bộ có 3 luật: không ném tay cầm, không đổ lỗi lag, và luôn đọc PesNews.",
     "🆕 {t} lần đầu xuất hiện trong dữ liệu của PesNews. Chào mừng tới câu lạc bộ!",
     "🆕 Gương mặt mới {t}: chưa có Elo, chưa có lịch sử, chỉ có tham vọng.",
     "🆕 {t} ra mắt. PesNews chưa có gì để chọc... tạm thời."
@@ -188,6 +490,24 @@ var SN_BANK = {
     "🆕 {t} make their debut. PesNews has nothing to tease them about... yet."
   ] },
   preVeteran: { tag: 'profile', vi: [
+    "🎖️ {t} có {k} trận sự nghiệp từ {debut}. Không ai trong giải này có nhiều kinh nghiệm hơn.",
+    "🎖️ Lão tướng {t}: {k} trận, {cW} thắng, {cL} thua. Chưa thấy điều gì thì chưa phải {t}.",
+    "🎖️ {t} đã đá {k} trận qua {nS} mùa giải. Tay cầm của {t} có lẽ đã thay vài đời.",
+    "🎖️ {k} trận sự nghiệp, {gold} cúp vàng. {t} là cựu binh có huy chương trên ngực.",
+    "🎖️ {t} là cuốn từ điển sống của giải với {k} trận. Hỏi gì cũng biết, trừ cách thắng {nem}.",
+    "🎖️ {k} trận đấu — {t} đã trải qua đủ vui buồn. Giải này chỉ là thêm một chương.",
+    "🎖️ {t} bước vào giải với {k} trận kinh nghiệm. Những tân binh nên ngồi ghi chép.",
+    "🎖️ Cựu binh {t} ({k} trận): “Tôi đã thấy nhiều nhà vô địch đến rồi đi. Tôi vẫn ở đây.”",
+    "🎖️ {t} đã ghi {cgf} bàn sau {k} trận. Một kho báu kinh nghiệm và bàn thắng.",
+    "🎖️ {k} trận sự nghiệp! {t} là người biết rõ nhất cảm giác của mọi loại kết quả.",
+    "🎖️ Lão làng {t} với {k} trận đấu. Kinh nghiệm không mua được, nhưng có thể thắng được trận.",
+    "🎖️ {t} đã có mặt từ {debut}. {k} trận sau, {t} vẫn còn đây với ngọn lửa đam mê.",
+    "🎖️ {k} trận sự nghiệp và tỉ lệ thắng {wr}%. {t} là bảng thống kê biết đi.",
+    "🎖️ {t} là cựu binh của giải với {k} trận. Già gân hay gừng càng già càng cay?",
+    "🎖️ {k} trận đã đá: {t} thuộc mọi chiêu trò của đối thủ. Đối thủ cũng thuộc chiêu của {t}.",
+    "🎖️ {t} — {k} trận, {medals} huy chương. Cựu binh này vẫn muốn thêm một chiếc nữa.",
+    "🎖️ {t} có {k} trận sự nghiệp, nhiều nhất giải. Nếu kinh nghiệm là vũ khí, {t} đang cầm cả kho đạn.",
+    "🎖️ Lão tướng {t} từng có chuỗi thắng {bestW} trận. {k} trận kinh nghiệm không phải chỉ để đếm.",
     "🎖️ {t} là lão làng của giải với {k} trận sự nghiệp. Kinh nghiệm có thắng được sức trẻ?",
     "🎖️ {k} trận sự nghiệp — {t} đã thấy mọi thứ. Mọi thứ trừ... à mà thôi."
   ], en: [
@@ -195,6 +515,24 @@ var SN_BANK = {
     "🎖️ {k} career matches — {t} have seen it all. Well, almost all."
   ] },
   preGap: { tag: 'pred', vi: [
+    "⚖️ Chỉ {g} điểm Elo tách {f} và {t2}. Hai ứng viên, một chiếc cúp.",
+    "⚖️ {f} nhỉnh hơn {t2} {g} điểm Elo. Trên giấy là vậy, trên sân thì chưa biết.",
+    "⚖️ {f} và {t2}: cuộc đua song mã với khoảng cách {g} điểm Elo. PesNews cược... chưa dám cược.",
+    "⚖️ Chênh lệch {g} điểm là quá nhỏ. {f} và {t2} đang ở cùng một đẳng cấp.",
+    "⚖️ {f} đứng đầu bảng Elo, nhưng {t2} chỉ cách {g} điểm. Ngôi đầu chưa bao giờ chông chênh đến thế.",
+    "⚖️ Cuộc chiến của hai ông lớn: {f} và {t2}, chênh nhau {g} điểm Elo. Ai sẽ chớp thời cơ?",
+    "⚖️ {f} hay {t2}? Khoảng cách {g} điểm Elo không đủ để PesNews đưa ra kết luận.",
+    "⚖️ {f} có {gold} cúp vàng sự nghiệp, hơn {t2} {g} điểm Elo. Kinh nghiệm có quyết định?",
+    "⚖️ Một mùa giải, hai ứng viên ngang ngửa: {f} và {t2}, chỉ cách {g} điểm.",
+    "⚖️ {g} điểm Elo — ít hơn một trận thắng. {f} và {t2} có thể đổi chỗ ngay tuần đầu.",
+    "⚖️ {f} và {t2} đang ngồi chung một con thuyền: chênh {g} điểm, áp lực như nhau.",
+    "⚖️ Nếu bạn thích kịch tính, {f} và {t2} (chênh {g} Elo) là cặp đáng xem nhất mùa.",
+    "⚖️ {f} dẫn trước {t2} {g} điểm Elo — một lợi thế mỏng như tờ giấy.",
+    "⚖️ Hai cái tên, một giấc mơ: {f} và {t2}. Chênh {g} điểm Elo, chênh 0 về khát khao.",
+    "⚖️ {f} có Elo {elo}, {t2} kém {g} điểm. Mùa giải này sẽ là cuộc đấu trí.",
+    "⚖️ {f} và {t2}, cách nhau {g} điểm Elo. Bảng dự đoán của PesNews đang chia đôi.",
+    "⚖️ Chỉ {g} điểm Elo! {f} và {t2} sẽ khiến cả giải nín thở tới vòng cuối.",
+    "⚖️ {f} nhìn {t2}, {t2} nhìn {f}. {g} điểm Elo — một khoảng cách chỉ đủ để nhìn thấy nhau.",
     "⚖️ {f} và {t2} chỉ cách nhau {g} điểm Elo. Cuộc đua song mã đã được báo trước.",
     "⚖️ Elo của {f} và {t2} gần như ngang nhau (chênh {g}). PesNews đã chuẩn bị bỏng ngô."
   ], en: [
@@ -204,6 +542,23 @@ var SN_BANK = {
 
   // ================= Title race =================
   runaway: { tag: 'race', vi: [
+    "🚀 {l} đã thắng {sW}/{sP} trận, hơn {s2} {g} điểm. Cuộc đua chỉ còn là hình thức?",
+    "🚀 {g} điểm cách biệt. {s2} cần {l} vấp vài lần — mà {l} thì không có vẻ gì sẽ vấp.",
+    "🚀 {l} ghi {sGF} bàn, chỉ thủng {sGA}, bỏ xa {s2} {g} điểm. Một mùa giải trong mơ.",
+    "🚀 {l} đang chạy một mình trên đường đua. {s2} kém {g} điểm và đang hụt hơi.",
+    "🚀 PesNews đã bắt đầu soạn bài chúc mừng {l}. {g} điểm là khoảng cách quá xa.",
+    "🚀 {l} vs phần còn lại: {g} điểm hơn đội nhì {s2}. Có ai còn tin vào phép màu không?",
+    "🚀 Phong độ gần đây của {l}: {sForm}. {s2} kém {g} điểm chỉ biết nhìn theo.",
+    "🚀 {l} bỏ xa {s2} {g} điểm. {s2} giờ phải chạy nhanh gấp đôi mới có hy vọng.",
+    "🚀 {l} đang có {sPts} điểm, hơn {s2} {g} điểm. Nếu đây là cuộc đua F1, {l} đã vượt {s2} một vòng.",
+    "🚀 {l} không chỉ dẫn đầu — {l} đang định nghĩa lại từ “thống trị” với {g} điểm cách biệt.",
+    "🚀 {s2} đá rất hay, nhưng {l} đá hay hơn {g} điểm. Toán học không nói dối.",
+    "🚀 Cuộc đua vô địch đang có nguy cơ kết thúc sớm: {l} hơn {s2} tới {g} điểm.",
+    "🚀 {l} với {sW} thắng, {sD} hòa, {sL} thua. Một cỗ máy không có nút dừng.",
+    "🚀 {s2} đã cố gắng, nhưng còn {g} điểm nữa. Khoảng cách đó có thể đo bằng kính viễn vọng.",
+    "🚀 {l} đang đứng trên đỉnh với {g} điểm đệm. Gió trên đó chắc dễ chịu lắm.",
+    "🚀 {l} đã quá quen với vị trí số 1: {gold} cúp vàng sự nghiệp và giờ là {g} điểm cách biệt.",
+    "🚀 {g} điểm! Nếu {l} đi ngủ một tuần, {s2} có lẽ vẫn chưa đuổi kịp.",
     "🚀 {l} bỏ xa {s2} tới {g} điểm. Cuộc đua vô địch sắp thành cuộc dạo chơi?",
     "🏃 {l} đang chạy một mình: hơn đội nhì {s2} {g} điểm. Ai đó gọi họ quay lại đi!",
     "🚀 {g} điểm cách biệt! {s2} giờ chỉ còn nhìn thấy gót giày của {l}."
@@ -213,6 +568,23 @@ var SN_BANK = {
     "🚀 A {g}-point gap! {s2} can only see the heels of {l} now."
   ] },
   level: { tag: 'race', vi: [
+    "🔥 {l} và {s2} cùng {p} điểm. Không ai chịu nhường ai một bước.",
+    "🔥 Bằng điểm tuyệt đối: {l} và {s2} ({p} điểm). Hiệu số bàn thắng trở thành vàng.",
+    "🔥 {l} đứng trên nhờ hiệu số, nhưng {s2} cũng có {p} điểm. Ngôi đầu mỏng như sợi chỉ.",
+    "🔥 {p} điểm — {p} điểm. {l} và {s2} đang chơi trò “ai chớp mắt trước”.",
+    "🔥 Cuộc đua song mã đúng nghĩa: {l} và {s2} bằng điểm {p}. Mỗi bàn thắng đều có giá trị ngàn vàng.",
+    "🔥 {l} ghi {sGF} bàn, thủng {sGA}. {s2} bằng điểm ({p}) đang so từng con số.",
+    "🔥 Hai đội, một số điểm: {p}. {l} và {s2} đang để cả giải ngồi trên đống lửa.",
+    "🔥 Ngôi đầu đang được chia đôi: {l} và {s2} cùng {p} điểm. Ai sẽ bẻ được miếng to hơn?",
+    "🔥 {l} và {s2} bằng điểm nhau. Phong độ gần đây của {l}: {sForm} — đủ để bứt phá?",
+    "🔥 Không có khoảng cách nào để thở: {l} và {s2} cùng {p} điểm. Mỗi trận là một trận chung kết.",
+    "🔥 {p} điểm chia đều cho hai ông lớn {l} và {s2}. Thông báo: chức vô địch không chia đôi được.",
+    "🔥 {l} đứng đầu với {p} điểm — và {s2} cũng vậy. Bảng xếp hạng chưa bao giờ căng đến thế.",
+    "🔥 {l} và {s2} bằng điểm. Nếu bạn thích bóng đá kịch tính, đây là thời điểm tuyệt vời để theo dõi.",
+    "🔥 Cả {l} lẫn {s2} đều có {p} điểm. Chỉ một trận hòa cũng có thể thay đổi tất cả.",
+    "🔥 {l} có {sW} trận thắng, đủ để có {p} điểm. {s2} cũng vậy. Ai sẽ chớp mắt trước?",
+    "🔥 {l} và {s2} đang dính nhau như sam: cùng {p} điểm. PesNews cần thêm cà phê.",
+    "🔥 {p} điểm đều nhau. {l} và {s2} sẽ phải chứng minh ai mới là vua của mùa giải này.",
     "🔥 {l} và {s2} đang bằng điểm nhau ({p} điểm). Ngôi đầu chỉ còn tính bằng hiệu số!",
     "⚔️ Hai con hổ chung một núi: {l} và {s2} cùng có {p} điểm.",
     "🔥 {p} điểm – {p} điểm. {l} và {s2} đang soi nhau qua kính lúp."
@@ -222,6 +594,23 @@ var SN_BANK = {
     "🔥 {p} points each. {l} and {s2} are eyeing each other through a magnifying glass."
   ] },
   tight: { tag: 'race', vi: [
+    "😰 {g} điểm là tất cả những gì tách {l} khỏi {s2}. Một trận vấp là mọi thứ đảo lộn.",
+    "😰 {l} dẫn đầu, nhưng {s2} chỉ kém {g} điểm. Ngủ được không {l}?",
+    "😰 {s2} đang đuổi sát {l} với khoảng cách {g} điểm. Ngôi đầu chưa an toàn.",
+    "😰 {l} đang dẫn {g} điểm — đủ để vui, không đủ để yên tâm.",
+    "😰 Phong độ gần đây của {l}: {sForm}. {s2} chỉ cách {g} điểm và đang chờ đợi.",
+    "😰 {l} có {sPts} điểm, {s2} kém {g}. Khoảng cách mỏng như lớp sơn.",
+    "😰 {g} điểm — chưa bằng một trận thắng. {s2} đã nhìn thấy đỉnh, {l} đã cảm thấy áp lực.",
+    "😰 Cuộc đua vô địch căng như dây đàn: {l} hơn {s2} đúng {g} điểm.",
+    "😰 {l} ghi {sGF} bàn mùa này, nhưng {s2} vẫn bám được, chỉ cách {g} điểm.",
+    "😰 Không ai dám nói chắc: {l} dẫn {g} điểm trước {s2}. Cuộc đua còn nhiều chương.",
+    "😰 {s2} cần {l} trượt chân đúng một lần. {g} điểm là khoảng cách có thể xóa trong một đêm.",
+    "😰 {l} và {s2}: cách nhau {g} điểm, cách nhau một cú vấp.",
+    "😰 {l} đang đứng đầu với {sW} thắng, {sL} thua — nhưng {s2} chỉ kém {g} điểm.",
+    "😰 Đồng hồ đếm ngược đã bắt đầu. {l} dẫn {g} điểm, {s2} đang nín thở chờ thời cơ.",
+    "😰 {g} điểm cách biệt — cả {l} lẫn {s2} đều biết mỗi trận còn lại là “sinh tử”.",
+    "😰 {l} dẫn đầu mà tay vẫn đổ mồ hôi: {s2} chỉ kém {g} điểm.",
+    "😰 Cả giải đang theo dõi khoảng cách {g} điểm giữa {l} và {s2}. Không ai muốn bỏ lỡ vòng nào.",
     "🔥 Cuộc đua nghẹt thở: {l} và {s2} chỉ cách nhau {g} điểm!",
     "⚔️ Ngôi đầu đang bị đe dọa: {s2} bám sát {l} chỉ {g} điểm.",
     "😰 {l} dẫn đầu nhưng nghe rõ tiếng thở của {s2} sau gáy — chỉ {g} điểm."
@@ -231,6 +620,23 @@ var SN_BANK = {
     "😰 {l} lead, but can hear {s2} breathing down their neck — only {g} point(s)."
   ] },
   lead: { tag: 'race', vi: [
+    "📊 {l} đang ngồi ghế số 1 với {p} điểm. {s2} đứng thứ 2, kém {g} điểm — còn nhiều việc để làm.",
+    "📊 {l} ({p} điểm) đang dẫn đầu. Thành tích mùa này: {sW} thắng, {sD} hòa, {sL} thua.",
+    "📊 {l} tạm thời ở trên đỉnh, {s2} cách {g} điểm. Chữ “tạm thời” là quan trọng.",
+    "📊 Bảng xếp hạng mới nhất: {l} đứng đầu, {s2} đuổi theo với khoảng cách {g} điểm.",
+    "📊 {l} ghi {sGF} bàn, thủng {sGA}, và đang đứng đầu với {p} điểm.",
+    "📊 {l} dẫn đầu, {s2} đứng nhì kém {g} điểm. Phần còn lại đang chờ thời cơ.",
+    "📊 {l} với {p} điểm là đội số 1. Phong độ gần đây: {sForm}.",
+    "📊 {l} ở trên đỉnh. {s2} còn {g} điểm để lấp đầy — không dễ, nhưng không phải không thể.",
+    "📊 {l} hiện dẫn đầu, {s2} kém {g} điểm. PesNews chưa dám in chữ “vô địch”.",
+    "📊 Người đứng đầu: {l}. Người đuổi theo: {s2}, kém {g} điểm. Người còn lại: đang tính toán.",
+    "📊 {l} có {p} điểm và Elo mùa này thay đổi {sEloD}. Một mùa giải đang đi đúng hướng.",
+    "📊 {l} dẫn đầu, {s2} bám theo {g} điểm. Trận tiếp theo của {l} sẽ quyết định nhiều thứ.",
+    "📊 Theo bảng xếp hạng, {l} đang dẫn. Theo PesNews, {l} đang dẫn và cũng đang bị soi.",
+    "📊 {l} đứng thứ 1 với {p} điểm. Đội này từng có {gold} cúp vàng — vị trí này không xa lạ.",
+    "📊 {l} đang ở vị trí dẫn đầu, {g} điểm trên {s2}. Giữ được hay không là câu hỏi của tuần.",
+    "📊 {l} có {p} điểm. {s2} có {p} trừ {g}. Toán lớp 1, áp lực lớp 12.",
+    "📊 {l} dẫn đầu, {s2} theo sát. Một mùa giải còn dài để mọi thứ thay đổi.",
     "📊 {l} tạm dẫn đầu với {p} điểm, hơn {s2} {g} điểm.",
     "📊 {l} đang ngồi trên đỉnh ({p} điểm). {s2} đứng thứ 2, kém {g} điểm.",
     "📊 Bảng xếp hạng hôm nay: {l} số 1 ({p} điểm), {s2} theo sau {g} điểm. Chưa có gì là chắc."
@@ -240,6 +646,23 @@ var SN_BANK = {
     "📊 Today's table: {l} first ({p} pts), {s2} {g} behind. Nothing is settled."
   ] },
   under: { tag: 'troll', vi: [
+    "🎭 {t} có Elo {elo} (thứ {e} giải), nhưng bảng xếp hạng chỉ cho {t} vị trí {p}. Ai đã lấy cắp phong độ?",
+    "🎭 {t}: Elo thứ {e}, thực tế thứ {p}. Khoảng cách giữa kỳ vọng và thực tế chưa bao giờ rõ đến thế.",
+    "🎭 {t} đang đá dưới sức: Elo thứ {e} mà chỉ đứng thứ {p}. Phong độ gần đây: {sForm}.",
+    "🎭 {t} từng có Elo đỉnh {peak}. Giờ đứng thứ {p} — hào quang cũ không ra sân giúp được.",
+    "🎭 {t} được kỳ vọng đứng thứ {e}, nhưng đang ở thứ {p}. Chắc đang “khởi động chậm”?",
+    "🎭 {t} có tỉ lệ thắng sự nghiệp {wr}%, nhưng mùa này chỉ đứng thứ {p}. Mùa này có gì khác?",
+    "🎭 Elo thứ {e}, bảng xếp hạng thứ {p}. {t} đang là một câu đố của mùa giải.",
+    "🎭 {t} đang đứng thứ {p} với {sW} thắng và {sL} thua. Với Elo thứ {e}, đây không phải kịch bản mong đợi.",
+    "🎭 Ai đó gọi {t} dậy đi! Elo thứ {e} nhưng đang ngủ gật ở vị trí {p}.",
+    "🎭 {t} có {gold} cúp vàng sự nghiệp, nhưng mùa này đang ở vị trí {p}. Huy chương cũ không tính điểm.",
+    "🎭 {t} đang là “cổ phiếu định giá cao”: Elo thứ {e}, lợi nhuận thực tế: vị trí {p}.",
+    "🎭 {t} đã thủng {sGA} bàn mùa này. Elo thứ {e} mà phòng ngự thế này thì chỉ đứng thứ {p} là phải.",
+    "🎭 Theo số liệu, {t} phải đứng thứ {e}. Theo thực tế, {t} đang thứ {p}. Thực tế thắng.",
+    "🎭 {t} đang đứng thứ {p}. Elo thứ {e} giờ chỉ còn là con số để an ủi.",
+    "🎭 {t} cần tìm lại chính mình: Elo thứ {e} nhưng chỉ đứng thứ {p}. Thời gian vẫn còn.",
+    "🎭 {t} đã từng có chuỗi thắng {bestW} trận. Mùa này, vị trí {p} cho thấy chuỗi đó đang được cất đi đâu mất.",
+    "🎭 Elo thứ {e} mà đứng thứ {p}: {t} đang khiến fan cảm thấy như mua vé hạng nhất mà ngồi ghế nhựa.",
     "🎭 {t} có Elo cao thứ {e} giải nhưng đang đứng thứ {p}. Hữu danh vô thực?",
     "🫠 {t}: Elo xếp thứ {e}, bảng xếp hạng thứ {p}. Có ai thấy phong độ của {t} đâu không?",
     "🎭 Hàng hiệu mà đá như hàng chợ: {t} (Elo thứ {e}) đang lẹt đẹt ở vị trí {p}."
@@ -249,6 +672,23 @@ var SN_BANK = {
     "🎭 Designer label, market-stall football: {t} (#{e} by Elo) are stuck at #{p}."
   ] },
   over: { tag: 'form', vi: [
+    "🌟 {t} (Elo thứ {e}) đang đứng thứ {p}. Không ai dự đoán được điều này, kể cả {t}.",
+    "🌟 {t} đang đá trên sức: Elo thứ {e} nhưng đứng thứ {p}. Phong độ: {sForm}.",
+    "🌟 {t} với {sW} trận thắng đã vươn lên vị trí {p}. Elo thứ {e} giờ trông thật khiêm tốn.",
+    "🌟 Bất ngờ của mùa: {t} đang ở vị trí {p} dù chỉ có Elo thứ {e}.",
+    "🌟 {t} đang chứng minh Elo chỉ là con số: thứ {e} theo Elo, thứ {p} trên bảng xếp hạng.",
+    "🌟 {t} đã kiếm được {sEloD} Elo mùa này và đang đứng thứ {p}. Hiện tượng đây rồi!",
+    "🌟 {t} là “con ngựa ô” của mùa: Elo thứ {e} nhưng đang phí nước đại ở vị trí {p}.",
+    "🌟 {t} ghi {sGF} bàn, đứng thứ {p}. Ai bảo Elo thứ {e} là không thể vươn cao?",
+    "🌟 {t} đang chơi hay hơn số liệu của mình: Elo thứ {e}, bảng xếp hạng thứ {p}.",
+    "🌟 Từ Elo thứ {e} lên vị trí {p}: {t} đang viết câu chuyện cổ tích của riêng mình.",
+    "🌟 {t} đang đứng thứ {p}. Các đội có Elo cao hơn đang tự hỏi: “Họ làm thế nào?”.",
+    "🌟 {t} từng có tỉ lệ thắng {wr}%. Mùa này, {t} đang chơi như một phiên bản nâng cấp.",
+    "🌟 {t} không quan tâm Elo thứ {e}. {t} chỉ quan tâm vị trí {p} và điểm số trên bảng.",
+    "🌟 {t} đang làm nên chương đẹp nhất sự nghiệp? Elo thứ {e} mà đứng thứ {p}.",
+    "🌟 Nếu PesNews phải chọn “đội đáng xem nhất mùa”, {t} (Elo thứ {e}, đứng thứ {p}) là ứng viên sáng giá.",
+    "🌟 {t} đã vượt qua nhiều đội có Elo cao hơn để đứng thứ {p}. Đây không phải may mắn.",
+    "🌟 {t} đang ở vị trí {p}, cao hơn hẳn Elo thứ {e}. Một ngày nào đó, Elo sẽ phải đuổi theo.",
     "🌟 {t} đứng thứ {p} dù Elo chỉ xếp thứ {e}. Vượt xa kỳ vọng!",
     "🌟 Hiện tượng của mùa: {t} (Elo thứ {e}) đang chễm chệ vị trí thứ {p}.",
     "🌟 Không ai mời {t} lên bàn tiệc, nhưng họ vẫn ngồi ở ghế thứ {p} (Elo chỉ thứ {e})."
@@ -258,6 +698,23 @@ var SN_BANK = {
     "🌟 Nobody invited {t} to the party, yet there they are in seat #{p} (only #{e} by Elo)."
   ] },
   leaderSlip: { tag: 'shock', vi: [
+    "🍌 {l} đang đứng đầu mà vẫn thua {o} {sc}. Không ai miễn nhiễm với vỏ chuối.",
+    "🍌 Thất bại bất ngờ: {l} thua {o} {sc}. Các đội bám đuổi vừa nhận được món quà.",
+    "🍌 {o} đã khiến đội đầu bảng {l} phải cúi đầu ({sc}). Ngôi đầu không còn vững như trước.",
+    "🍌 {l} đã có {sW} trận thắng mùa này, nhưng không phải trận với {o} ({sc}).",
+    "🍌 {l} trượt chân: thua {o} {sc}. Các đội bám đuổi đang vỗ tay trong lòng.",
+    "🍌 {o} vừa làm nên chuyện: đánh bại đội đầu bảng {l} {sc}. Một đêm đáng nhớ của {o}.",
+    "🍌 Đội đầu bảng cũng là con người: {l} thua {o} {sc}. Phong độ gần đây: {sForm}.",
+    "🍌 {l} đã gặp khắc tinh {o} ({sc}). Một cú vấp nhỏ, hay khởi đầu của sự sụp đổ?",
+    "🍌 {o} không quan tâm {l} đang dẫn đầu. Kết quả {sc} nói lên tất cả.",
+    "🍌 {l} vừa đánh rơi 3 điểm trước {o} ({sc}). Ngôi đầu giờ đang nóng lên.",
+    "🍌 {l} thua {o} {sc}. Nếu đây là phim, đây chính là lúc nhạc nền chuyển sang gấp gáp.",
+    "🍌 Đội đầu bảng {l} thua {o} {sc}. Mọi thứ vẫn ở trong tầm kiểm soát... cho đến khi không còn nữa.",
+    "🍌 {l} đã thủng {sGA} bàn mùa này. Trận thua {o} ({sc}) cho thấy hàng thủ có vấn đề.",
+    "🍌 {o} vừa đánh thức cả giải: đội đầu bảng {l} không phải không thể đánh bại ({sc}).",
+    "🍌 {l} thua {o} {sc}. Một đêm khó ngủ cho đội đầu bảng.",
+    "🍌 {l} thua {o} {sc}. Fan của {l} đang tự nhủ: “Thất bại là mẹ thành công”.",
+    "🍌 Bảng xếp hạng sắp có biến? {l} vừa thua {o} {sc}.",
     "🍌 Đội đầu bảng {l} vừa trượt vỏ chuối trước {o} ({sc}). Các đội bám đuổi mừng thầm.",
     "🍌 {l} thua {o} {sc}. Ngôi đầu bắt đầu lung lay!",
     "🍌 Cú vấp của {l}: thua {o} {sc}. PesNews nghe thấy tiếng ngai vàng kêu cót két."
@@ -267,6 +724,23 @@ var SN_BANK = {
     "🍌 {l} stumble: {sc} defeat to {o}. PesNews can hear the throne creaking."
   ] },
   bottom: { tag: 'troll', vi: [
+    "🪫 {t} đang nằm đáy với {p} điểm. Từ đáy thì chỉ có một hướng: đi lên.",
+    "🪫 {t} có {sW} thắng, {sL} thua mùa này và đang đứng cuối. Cần một cú hích.",
+    "🪫 {t} thủng {sGA} bàn, ghi {sGF}. Con số đó giải thích vì sao {t} đang cuối bảng.",
+    "🪫 {t} đang đứng chót. PesNews đề nghị kiểm tra lại tay cầm, ghế ngồi, và cả phong thủy.",
+    "🪫 Phong độ gần đây của {t}: {sForm}. Có lẽ đó là lý do {t} đang ở cuối bảng.",
+    "🪫 {t} đã mất {sEloD} Elo mùa này và đang nằm đáy bảng. Thời gian để phản ứng là ngay bây giờ.",
+    "🪫 {t} cuối bảng với {p} điểm. Nhưng nhớ nhé: {t} từng có tỉ lệ thắng {wr}% — chưa phải hết.",
+    "🪫 Đáy bảng không phải nơi {t} muốn ở. Nhưng {p} điểm là tất cả những gì {t} có.",
+    "🪫 {t} đang ở vị trí cuối cùng. Cả giải nhìn {t} bằng ánh mắt “điểm dễ lấy”.",
+    "🪫 {t} từng có Elo đỉnh {peak}. Giờ đứng cuối bảng với {p} điểm — thời thế đổi thay.",
+    "🪫 {t} đang đứng chót bảng. Một trận thắng lúc này có giá trị bằng cả mùa giải.",
+    "🪫 {t} đang ở cuối bảng. Fan của {t} bắt đầu nói: “Mùa này chỉ để học hỏi thôi”.",
+    "🪫 {t} nằm đáy với {p} điểm. Cần một “liftoff” — và cần ngay bây giờ.",
+    "🪫 {t} đang đứng cuối bảng. {nem} đã từng thắng {t} {nemW} lần — ám ảnh vẫn còn đó.",
+    "🪫 Đáy bảng có chủ: {t}, {p} điểm. Các đội ở trên đang thở phào vì không phải mình.",
+    "🪫 {t} đang đứng cuối. Không sao, mọi câu chuyện ngược dòng đều bắt đầu từ đáy.",
+    "🪫 {t} cuối bảng với {p} điểm. Nếu đây là game, đã đến lúc bấm nút “continue”.",
     "🪫 {t} đang đứng cuối bảng với {p} điểm. Pin yếu, cần sạc gấp.",
     "🪫 Đáy bảng hiện tại: {t} ({p} điểm). Còn thời gian, nhưng không nhiều.",
     "🪫 {t} ở vị trí cuối cùng. Nhìn từ dưới lên, bảng xếp hạng trông thật cao."
@@ -276,6 +750,24 @@ var SN_BANK = {
     "🪫 {t} sit in last place. From down there, the table looks very tall."
   ] },
   topSpots: { tag: 'race', vi: [
+    "🎟️ {n} ghế, không đủ cho tất cả: {list} đang đấu nhau từng điểm.",
+    "🎟️ Tốp {n} đang nóng: {list}. Một trận thua có thể đẩy bạn ra khỏi danh sách.",
+    "🎟️ Danh sách ứng viên tốp {n}: {list}. Bảng xếp hạng sẽ còn đảo lộn nhiều lần.",
+    "🎟️ {list} — tất cả đều muốn một trong {n} suất tốp đầu. Không ai chịu nhường.",
+    "🎟️ Cuộc chiến giành tốp {n}: {list}. Người xem hưởng lợi, người chơi đau tim.",
+    "🎟️ {n} suất, nhiều ứng viên: {list}. Mỗi điểm số giờ đắt như vàng.",
+    "🎟️ Tốp {n} vẫn còn bỏ ngỏ: {list} đang bám nhau từng bước.",
+    "🎟️ {list} đang chen nhau vào cửa hẹp của tốp {n}. Cẩn thận kẹt cửa!",
+    "🎟️ Chỉ có {n} chỗ đứng trên bục. {list} đang xếp hàng, và hàng thì quá dài.",
+    "🎟️ Danh sách “muốn vào tốp {n}”: {list}. PesNews sẽ ghi lại ai bị gạch tên đầu tiên.",
+    "🎟️ {list}: cùng chung một mục tiêu là tốp {n}. Nhưng chỉ {n} đội được cười.",
+    "🎟️ Tốp {n} không có chỗ cho sự do dự. {list} đang chứng minh điều đó mỗi tuần.",
+    "🎟️ Tranh giành tốp {n} đang là “phim bộ” hay nhất giải: {list} đều là nhân vật chính.",
+    "🎟️ {list} đang đứng cạnh nhau trên bảng. Chỉ {n} đội sẽ đứng cạnh nhau trên bục.",
+    "🎟️ Tốp {n} còn rộng cửa: {list}. Bất kỳ đội nào cũng có thể lọt vào hoặc rơi ra.",
+    "🎟️ Cuộc đua tốp {n} còn nhiều biến: {list}. PesNews chưa dám dự đoán ai sẽ rớt.",
+    "🎟️ {list} — một trong số này sẽ phải đứng ngoài tốp {n}. Ai sẽ là người đó?",
+    "🎟️ Tốp {n} đang được tranh chấp quyết liệt: {list}. Không có trận nào là trận dễ.",
     "🎟️ Cuộc chiến giành {n} vị trí dẫn đầu: {list} đang chen chúc nhau.",
     "🎟️ {n} suất tốp đầu, quá nhiều ứng viên: {list}. Sẽ có người phải khóc."
   ], en: [
@@ -283,6 +775,23 @@ var SN_BANK = {
     "🎟️ {n} top spots, too many candidates: {list}. Someone will cry."
   ] },
   clinch: { tag: 'hot', vi: [
+    "🔒 {l} đã chốt sổ! Không còn ai đủ điểm để đuổi kịp. Vô địch sớm!",
+    "🔒 {l} vô địch trước khi giải kết thúc với {sW} thắng, {sD} hòa, {sL} thua.",
+    "🔒 Vô địch sớm: {l}. Những trận còn lại chỉ là buổi diễu hành chiến thắng.",
+    "🔒 {l} đã đặt tay lên chiếc cúp và không ai có thể lấy đi nữa.",
+    "🔒 {l} ghi {sGF} bàn, thủng {sGA} và đã vô địch trước vài vòng. Đẳng cấp khác biệt.",
+    "🔒 Không cần chờ đến cuối: {l} đã là nhà vô địch. Các đội khác chơi cho danh dự.",
+    "🔒 {l} khóa chức vô địch sớm. Tủ cúp đang có {gold} chiếc vàng sắp phải nới thêm một ngăn.",
+    "🔒 {l} đã vượt xa đến mức toán học phải đầu hàng. Chức vô địch đã có chủ.",
+    "🔒 Với {sPts} điểm, {l} không còn bị đe dọa. Chúc mừng nhà vô địch sớm!",
+    "🔒 {l} đã chấm dứt mọi tranh cãi. Vô địch trước khi tiếng còi cuối cùng vang lên.",
+    "🔒 Phần còn lại của mùa giải là màn chào của {l}. Phong độ gần đây: {sForm}.",
+    "🔒 {l} vô địch sớm, còn PesNews thì vừa mất chủ đề “cuộc đua vô địch”. Cảm ơn {l}.",
+    "🔒 {l} đã khóa cúp. Chìa khóa đã được ném xuống biển.",
+    "🔒 {l} không cần thêm điểm nào nữa. Chức vô địch đã nằm trong túi.",
+    "🔒 Các đội khác vẫn đá tiếp, nhưng {l} đã là nhà vô địch. Đôi khi cuộc sống không công bằng.",
+    "🔒 {l} đã vô địch dù còn trận chưa đá. Tỉ lệ thắng sự nghiệp {wr}% — không phải ngẫu nhiên.",
+    "🔒 {l} là nhà vô địch. Những trận còn lại: đá vui, đá đẹp, đá cho fan xem.",
     "🔒 Toán học đã lên tiếng: {l} chắc chắn vô địch dù các trận còn lại có ra sao!",
     "🔒 Không ai còn đuổi kịp {l} nữa. Phần còn lại của mùa giải chỉ là thủ tục.",
     "🔒 {l} khóa chức vô địch trước khi giải kết thúc. Mở champagne sớm được rồi!"
@@ -294,6 +803,22 @@ var SN_BANK = {
 
   // ================= Predictions =================
   titleOdds: { tag: 'pred', vi: [
+    "🔮 {t} đang có {p} cơ hội vô địch ({h}). Elo {elo}, tỉ lệ thắng sự nghiệp {wr}% — đủ thuyết phục.",
+    "🔮 PesNews chạy mô phỏng ({h}): {t} lên ngôi {p}. Máy tính nóng ran vì tính toán.",
+    "🔮 {t}, {p} cơ hội ({h}). Với {gold} cúp vàng sự nghiệp, {t} biết cách về đích.",
+    "🔮 Nếu bạn cần một cái tên để đặt cược: {t} ({p}, {h}). PesNews không chịu trách nhiệm nếu sai.",
+    "🔮 {t} được PesNews đánh giá cao nhất: {p} ({h}). Các đối thủ nên đọc tin này và lo lắng.",
+    "🔮 {t} mùa này đã có {sW} trận thắng. Máy tính của PesNews cho {t} {p} cơ hội vô địch ({h}).",
+    "🔮 {p} ({h}) — đó là cơ hội của {t}. Không phải chắc chắn, nhưng cũng không xa vời.",
+    "🔮 {t} là ứng viên số 1 của PesNews ({p}, {h}). Chức vô địch đang vẫy tay gọi.",
+    "🔮 {t} có {p} cơ hội theo PesNews ({h}). Phong độ gần đây {sForm} cũng ủng hộ dự đoán này.",
+    "🔮 Bói của PesNews ({h}): {t} có {p} cơ hội. Thầy bói nói trúng hay trật, hạ hồi phân giải.",
+    "🔮 {t} {p} ({h}). Các đội khác vẫn còn cơ hội, nhưng {t} đang đi trước một bước.",
+    "🔮 Theo {h}, {t} đang có {p} cơ hội vô địch. Elo {elo} là bệ phóng vững chắc.",
+    "🔮 {t}: {p} cơ hội vô địch ({h}). Đủ cao để mơ, đủ thấp để lo.",
+    "🔮 PesNews cược {t} ({p}, {h}). Nếu sai, PesNews sẽ đổ lỗi cho máy tính.",
+    "🔮 {t} có {p} cơ hội ({h}). Với chuỗi thắng dài nhất sự nghiệp {bestW} trận, {t} biết cách bứt phá.",
+    "🔮 Tính toán ({h}) cho thấy {t} là ứng viên sáng giá nhất với {p}. Giờ chỉ còn cần đá cho đúng.",
     "🔮 Máy tính của PesNews ({h}): {t} vô địch với xác suất {p}.",
     "🔮 PesNews đặt cửa {t} lên ngôi ({p}, {h}). Ai không đồng ý thì ra sân chứng minh!",
     "🔮 Nếu phải đặt cược, PesNews chọn {t}: {p} cơ hội vô địch ({h}).",
@@ -307,6 +832,23 @@ var SN_BANK = {
     "🔮 The data has spoken: {t} are favourites with a {p} title chance ({h})."
   ] },
   shared: { tag: 'pred', vi: [
+    "🎲 {t} ({p}) và {t2} ({p2}) đang chia nhau giấc mơ vô địch. Chưa ai dám nói chắc.",
+    "🎲 Máy tính của PesNews đang bối rối: {t} {p}, {t2} {p2}. Hai ứng viên, một chiếc cúp.",
+    "🎲 Cuộc đua song mã: {t} ({p}) vs {t2} ({p2}). Ai sẽ về đích trước?",
+    "🎲 {t} {p}, {t2} {p2}. PesNews đã chuẩn bị 2 tiêu đề — một trong hai sẽ phải xóa.",
+    "🎲 Không có ứng viên sáng giá tuyệt đối: {t} ({p}) và {t2} ({p2}) đang ngang ngửa.",
+    "🎲 {t} có Elo {elo}, đang có {p} cơ hội. {t2} {p2}. Một mùa giải khó đoán.",
+    "🎲 Cơ hội vô địch đang chia đôi: {t} {p}, {t2} {p2}. Phần còn lại là khán giả.",
+    "🎲 {t} ({p}) hay {t2} ({p2})? Câu hỏi này sẽ được trả lời ở những vòng cuối.",
+    "🎲 {t} và {t2} đang nắm giữ số phận của mình: {p} vs {p2}. Không ai chịu buông.",
+    "🎲 {t} {p}, {t2} {p2}. Tung đồng xu? Không, hãy để họ đá trên sân.",
+    "🎲 {t} đang có {p} cơ hội và phong độ {sForm}. {t2} {p2}. Cuộc đua còn dài.",
+    "🎲 Hai cái tên, hai con số: {t} {p}, {t2} {p2}. PesNews đứng giữa và không dám chọn.",
+    "🎲 {t} ({p}) và {t2} ({p2}) đang khiến cuộc đua trở nên hấp dẫn hơn bao giờ hết.",
+    "🎲 {t} từng có {gold} cúp vàng, nhưng lần này chỉ có {p}. {t2} {p2} đang chờ thời cơ.",
+    "🎲 Bảng dự đoán của PesNews: {t} {p}, {t2} {p2}. Một mùa giải cho những ai thích hồi hộp.",
+    "🎲 {t} và {t2} đang chạy song song: {p} vs {p2}. Chỉ một đội được cầm cúp.",
+    "🎲 {p} và {p2} — cơ hội của {t} và {t2}. Không ai đủ mạnh để bỏ xa người kia.",
     "🎲 Chưa ai chắc suất: {t} ({p}) và {t2} ({p2}) đang chia nhau cơ hội vô địch.",
     "🎲 Cuộc đua mở toang: {t} {p}, {t2} {p2}. PesNews không dám chắc điều gì.",
     "🎲 {t} ({p}) hay {t2} ({p2})? Tung đồng xu có khi còn chính xác hơn máy tính của PesNews."
@@ -316,6 +858,23 @@ var SN_BANK = {
     "🎲 {t} ({p}) or {t2} ({p2})? A coin toss might beat the PesNews computer."
   ] },
   darkHorse: { tag: 'pred', vi: [
+    "🐴 {t} (Elo {e}) có {p} cơ hội vô địch. Ngựa ô đang phi nước đại.",
+    "🐴 Không ai để ý đến {t} (Elo {e}). PesNews để ý: {p} cơ hội vô địch.",
+    "🐴 {t} đã thắng {sW} trận mùa này dù Elo chỉ {e}. {p} cơ hội vô địch không phải chuyện đùa.",
+    "🐴 {t} — cái tên ít ai nhắc đến, nhưng máy tính vẫn cho {p} cơ hội.",
+    "🐴 Ngựa ô {t} với Elo {e}: {p} cơ hội vô địch. Các đội lớn nên nhìn qua vai.",
+    "🐴 {t} chưa từng có cúp vàng{g0}, nhưng {p} cơ hội là đủ để mơ.",
+    "🐴 {t} là mối đe dọa thầm lặng: Elo {e}, {p} cơ hội vô địch.",
+    "🐴 Phong độ gần đây của {t}: {sForm}. Ngựa ô (Elo {e}) đang có {p} cơ hội.",
+    "🐴 {t} có Elo {e} — không cao. Nhưng {p} cơ hội vô địch thì không thấp chút nào.",
+    "🐴 Nếu {t} (Elo {e}) vô địch, đó sẽ là câu chuyện cổ tích của mùa. Hiện tại: {p}.",
+    "🐴 {t} đang lặng lẽ tích điểm. {p} cơ hội — đủ để khiến các đội lớn mất ngủ.",
+    "🐴 {t} từng đánh bại {bwOpp} {bwSc}. Ngựa ô này biết cách gây sốc ({p} cơ hội).",
+    "🐴 {t} — Elo {e}, {p} cơ hội vô địch. Một chút may mắn, một chút bản lĩnh là đủ.",
+    "🐴 {t} đang có {p} cơ hội, điều mà ít ai dám nghĩ với Elo {e}.",
+    "🐴 Không có kỳ vọng, không có áp lực: {t} (Elo {e}) đang tận hưởng {p} cơ hội vô địch.",
+    "🐴 {t} đang chơi hay hơn Elo {e} của mình. {p} cơ hội là phần thưởng xứng đáng.",
+    "🐴 Ngựa ô {t} đang chạy. Elo {e}, {p} cơ hội. Các đội lớn: bạn đã được cảnh báo.",
     "🐴 Ngựa ô: {t} có {p} cơ hội vô địch dù Elo chỉ {e}.",
     "🐴 Đừng ngạc nhiên nếu {t} gây sốc — PesNews cho họ {p} cơ hội.",
     "🐴 Elo {e} thôi, nhưng {t} vẫn có {p} cơ hội. Ngựa ô thích chạy đường vòng."
@@ -325,6 +884,24 @@ var SN_BANK = {
     "🐴 Only {e} Elo, yet {t} still have a {p} chance. Dark horses love the long way round."
   ] },
   trustOther: { tag: 'pred', vi: [
+    "🤔 {l} dẫn đầu bảng, nhưng máy tính của PesNews vẫn chọn {t} ({p} vs {p2}).",
+    "🤔 {t} chưa dẫn đầu, nhưng lại có cơ hội vô địch cao hơn {l} ({p} vs {p2}). Lịch đấu nói lên tất cả.",
+    "🤔 {l} đứng đầu, {t} được đánh giá cao hơn ({p} vs {p2}). Ai sẽ cười cuối?",
+    "🤔 Bảng xếp hạng và PesNews đang cãi nhau: {l} hay {t}? Máy tính nói {t} ({p} vs {p2}).",
+    "🤔 {t} có Elo {elo} và {p} cơ hội — cao hơn {l} ({p2}). Đứng đầu chưa chắc đã vô địch.",
+    "🤔 {l} vẫn đang ở trên đỉnh, nhưng {t} có lịch thi đấu dễ thở hơn ({p} vs {p2}).",
+    "🤔 PesNews tin {t} hơn {l}: {p} vs {p2}. Có khi bảng xếp hạng chưa phản ánh đúng sự thật.",
+    "🤔 {l} đứng đầu, nhưng PesNews nhìn vào {t} — {p} cơ hội, so với {p2} của {l}.",
+    "🤔 {t} đang đuổi theo {l}, nhưng máy tính cho {t} {p} cơ hội, hơn {l} ({p2}).",
+    "🤔 {l} có điểm, {t} có xác suất ({p} vs {p2}). Điểm hay xác suất sẽ thắng?",
+    "🤔 {t} có {gold} cúp vàng sự nghiệp và {p} cơ hội lần này. {l} đang dẫn đầu với {p2}.",
+    "🤔 {l} đang dẫn đầu nhưng không phải ứng viên số 1: {t} {p}, {l} {p2}.",
+    "🤔 {t} chưa lên đỉnh, nhưng máy tính đã đặt {t} vào vị trí ứng viên ({p} vs {p2} của {l}).",
+    "🤔 {l} và {t}: một đội có vị trí, một đội có cơ hội ({p} vs {p2}).",
+    "🤔 Đừng vội kết luận: {l} đang dẫn đầu, nhưng {t} có {p} cơ hội, cao hơn {p2}.",
+    "🤔 {t} có phong độ {sForm} và {p} cơ hội vô địch. {l} đang dẫn nhưng chỉ có {p2}.",
+    "🤔 {l} ngồi trên đỉnh, nhưng ghế của {l} có thể là của {t} ({p} vs {p2}).",
+    "🤔 {t} đang có {p} cơ hội, cao hơn {p2} của {l}. Bảng xếp hạng sắp đổi chủ?",
     "🤔 {l} đang đứng đầu nhưng PesNews vẫn tin {t} hơn ({p} vs {p2}). Lịch đấu còn dài!",
     "🤔 Bảng xếp hạng nói {l}, máy tính nói {t} ({p} vs {p2}). Ai đúng? Chờ xem."
   ], en: [
@@ -332,6 +909,23 @@ var SN_BANK = {
     "🤔 The table says {l}, the computer says {t} ({p} vs {p2}). Who is right? Wait and see."
   ] },
   nearlyDone: { tag: 'pred', vi: [
+    "🏁 {t} có {p} cơ hội vô địch. Champagne đã ướp lạnh, chỉ chờ mở nắp.",
+    "🏁 {p} — {t} đang đứng trước cửa ngôi vương. Chỉ cần một bước nữa.",
+    "🏁 {t} đã thắng {sW} trận và giờ có {p} cơ hội vô địch. Các đối thủ chỉ còn biết cầu nguyện.",
+    "🏁 Trừ khi trời sập, {t} sẽ vô địch ({p}).",
+    "🏁 {t} đang ở rất gần vạch đích: {p} cơ hội. PesNews đã viết sẵn bài chúc mừng.",
+    "🏁 {p} cơ hội! {t} chỉ cần không tự bắn vào chân mình.",
+    "🏁 {t} đang có {p} cơ hội vô địch, phong độ {sForm}. Cúp gần như đã có chủ.",
+    "🏁 {t} đã chạm một tay vào cúp ({p}). Tay kia đang cầm điện thoại để chụp ảnh.",
+    "🏁 {t} sắp có thêm một cúp vàng ({p}). Bộ sưu tập {gold} chiếc sắp được mở rộng.",
+    "🏁 Chỉ còn vài bước: {t} có {p} cơ hội vô địch. Các đội khác chỉ còn cách cầu may.",
+    "🏁 {t} đang có {p} cơ hội. Phép màu của các đối thủ cần phải rất lớn.",
+    "🏁 {t} ghi {sGF} bàn, thủng {sGA}, và có {p} cơ hội vô địch. Một mùa giải hoàn hảo.",
+    "🏁 {p}! {t} đã gần như nắm chắc ngôi vương. PesNews đã đặt sẵn vương miện.",
+    "🏁 {t} đang có {p} cơ hội. Không phải 100%, nhưng đủ để ngủ ngon.",
+    "🏁 {t} đang chạy về đích với {p} cơ hội. Khán giả đã bắt đầu vỗ tay.",
+    "🏁 {t} có Elo {elo} và {p} cơ hội vô địch. Mọi thứ đang đi đúng kịch bản.",
+    "🏁 {t} chỉ còn cách cúp vài bước ({p}). Cẩn thận đừng vấp của nhà nhé!",
     "🏁 {t} đã đặt một tay lên chiếc cúp: {p} cơ hội vô địch.",
     "🏁 Với {p} cơ hội, {t} chỉ còn cách ngôi vương vài bước chân.",
     "🏁 {p}! Trừ khi có phép màu, chức vô địch sẽ về tay {t}."
@@ -341,6 +935,24 @@ var SN_BANK = {
     "🏁 {p}! Barring a miracle, the title is going to {t}."
   ] },
   bigOut: { tag: 'troll', vi: [
+    "💤 {t} có Elo {e}, nhưng cơ hội vô địch đã về 0. Elo cao không phải vé vào chung kết.",
+    "💤 {t} bị gạch tên khỏi cuộc đua vô địch. Với Elo {e}, đây là cú sốc thực sự.",
+    "💤 {t} đã không còn cơ hội. {sW} thắng và {sL} thua — không đủ cho một đội Elo {e}.",
+    "💤 {t} có {gold} cúp vàng sự nghiệp, nhưng mùa này sẽ không có chiếc nào thêm.",
+    "💤 Elo {e} mà đã hết cơ hội? {t} đang là nỗi thất vọng lớn nhất mùa.",
+    "💤 {t} giờ chỉ còn đá cho danh dự. Elo {e} đã không giúp được gì.",
+    "💤 {t} đã bị loại khỏi cuộc đua vô địch. Phong độ {sForm} nói lên tất cả.",
+    "💤 {t} (Elo {e}) đã hết cơ hội. Fan của {t} đang đọc lại lịch thi đấu mùa sau.",
+    "💤 Ông lớn {t} đã ra khỏi cuộc đua. Elo {e} giờ chỉ còn là con số để nhìn.",
+    "💤 {t} có Elo {e}, nhưng máy tính nói: không. Mùa này không phải của {t}.",
+    "💤 {t} đã mất {sEloD} Elo mùa này và cơ hội vô địch. Một mùa giải đáng quên.",
+    "💤 Elo {e} không đủ để cứu {t}. Cơ hội vô địch: 0%.",
+    "💤 {t} đã bị loại khỏi cuộc đua. Giờ hãy đá để làm khó các đội đang đua.",
+    "💤 {t} đã lỡ chuyến tàu vô địch dù có Elo {e}. Chuyến sau khởi hành vào mùa sau.",
+    "💤 {t} từng có tỉ lệ thắng {wr}%, nhưng mùa này đã bị loại khỏi cuộc đua.",
+    "💤 {t} — ông lớn không còn cơ hội. Elo {e}, nhưng chiếc cúp đã quá xa.",
+    "💤 {t} giờ có vai trò mới: “vua phá đám”. Elo {e} đủ để làm khó bất kỳ ai.",
+    "💤 {t} có Elo {e}, nhưng cuộc đua vô địch không còn tên {t}. Đáng tiếc.",
     "💤 {t} có Elo {e} nhưng đã hết cơ hội vô địch. Mùa sau nhé, ông lớn.",
     "💤 Máy tính của PesNews đã gạch tên {t} khỏi cuộc đua vô địch. Elo cao cũng không cứu được."
   ], en: [
@@ -348,6 +960,24 @@ var SN_BANK = {
     "💤 The PesNews computer has crossed {t} off the title race. High Elo could not save them."
   ] },
   topN: { tag: 'pred', vi: [
+    "🎯 {t} có {p} cơ hội vào tốp {n}. Mỗi trận còn lại đều là trận chung kết.",
+    "🎯 Tốp {n}: {t} có {p} cơ hội. Một con số đủ để hy vọng, đủ để lo lắng.",
+    "🎯 {t} với {sW} thắng mùa này có {p} cơ hội vào tốp {n}. Không còn đường lùi.",
+    "🎯 {t} đang ở rìa tốp {n}: {p} cơ hội. Chỉ một trận thua là mọi thứ thay đổi.",
+    "🎯 {p} cơ hội vào tốp {n} — {t} cần thêm điểm, và cần ngay bây giờ.",
+    "🎯 {t} đang đứng trước cửa tốp {n} ({p}). Cánh cửa đang mở, nhưng cũng có thể đóng.",
+    "🎯 {t} có phong độ {sForm} và {p} cơ hội vào tốp {n}. Còn nhiều việc phải làm.",
+    "🎯 {t}: tốp {n} hay không? PesNews nói {p}. {t} sẽ trả lời trên sân.",
+    "🎯 {t} có {p} cơ hội vào tốp {n}. Với Elo {elo}, {t} đủ sức để làm điều đó.",
+    "🎯 {p} — cơ hội của {t} để đứng trong tốp {n}. Một mùa giải đang ở ngã ba đường.",
+    "🎯 {t} cần thắng để giữ {p} cơ hội vào tốp {n}. Thua là con số này sẽ giảm mạnh.",
+    "🎯 Tốp {n} không xa: {t} có {p} cơ hội. Giờ chỉ cần giữ bình tĩnh.",
+    "🎯 {t} đã ghi {sGF} bàn mùa này. Để vào tốp {n} ({p}), cần thêm vài bàn nữa.",
+    "🎯 {t} đang chạy đua với thời gian: {p} cơ hội vào tốp {n}.",
+    "🎯 {t} có {p} cơ hội vào tốp {n}. Nếu được, đó sẽ là thành công của mùa.",
+    "🎯 Cuộc chiến tốp {n} của {t}: {p} cơ hội. Mọi điểm số đều có giá.",
+    "🎯 {t} có {p} cơ hội vào tốp {n}. Không phải chắc chắn, nhưng đủ để chiến đấu.",
+    "🎯 {t} đang ở vùng xám: {p} cơ hội tốp {n}. Màu sắc sẽ rõ dần sau mỗi trận.",
     "🎯 {t} có {p} cơ hội lọt vào tốp {n}. Nửa ly đầy, nửa ly vơi.",
     "🎯 Tốp {n} trong tầm với của {t}: {p}. Mỗi điểm số từ giờ đều đáng giá vàng."
   ], en: [
@@ -355,6 +985,23 @@ var SN_BANK = {
     "🎯 Top {n} is within reach for {t}: {p}. Every point is gold from now on."
   ] },
   relSure: { tag: 'rel', vi: [
+    "⚰️ {t} đang ở ngưỡng cửa xuống hạng ({p}). Một phép màu lớn mới cứu nổi.",
+    "⚰️ {p} khả năng rớt hạng: {t} đang chuẩn bị hành lý cho mùa sau.",
+    "⚰️ {t} chỉ có {sW} trận thắng mùa này. {p} khả năng rớt hạng là hệ quả tất yếu.",
+    "⚰️ {t} đang đứng trên bờ vực ({p}). Đẩy nhẹ là rơi.",
+    "⚰️ {t} có {p} khả năng rớt hạng. PesNews xin gửi lời chia buồn sớm.",
+    "⚰️ {t} thủng {sGA} bàn mùa này. Không ngạc nhiên khi {p} khả năng rớt hạng.",
+    "⚰️ {t} đã gần như rớt hạng ({p}). Mùa sau sẽ là cuộc chiến để trở lại.",
+    "⚰️ {p} khả năng rớt hạng! {t} cần thắng tất cả và cầu nguyện cho các đội khác thua.",
+    "⚰️ {t} đang ở vùng đỏ ({p}). Phong độ {sForm} không cho thấy dấu hiệu hồi phục.",
+    "⚰️ {t} có Elo {elo} và {p} khả năng rớt hạng. Giải hạng dưới đang vẫy gọi.",
+    "⚰️ {t}: {p} khả năng rớt hạng. Chưa chết hẳn, nhưng đang thở oxy.",
+    "⚰️ Máy tính của PesNews không còn tin vào {t}: {p} khả năng rớt hạng.",
+    "⚰️ {t} đang có {p} khả năng rớt hạng. Fan của {t}: “Không sao, xuống hạng dưới để vô địch”.",
+    "⚰️ {t} đã mất {sEloD} Elo và đang có {p} khả năng rớt hạng. Mùa giải đáng quên.",
+    "⚰️ {t} có {p} khả năng rớt hạng. Nhưng nhớ nhé: chưa kết thúc thì chưa kết thúc.",
+    "⚰️ {t} đang chờ phán quyết cuối cùng ({p}). Các trận còn lại là cơ hội cuối.",
+    "⚰️ {p} khả năng rớt hạng — {t} cần một chuỗi thắng như chuỗi {bestW} trận ngày xưa.",
     "⚰️ {t} gần như chắc chắn xuống hạng ({p}). Đặt vé tàu chưa?",
     "⚰️ Phép màu cũng khó cứu {t}: {p} khả năng rớt hạng.",
     "⚰️ {t} đã đặt một chân xuống hạng dưới ({p}). Chân còn lại cũng sắp theo."
@@ -364,6 +1011,23 @@ var SN_BANK = {
     "⚰️ {t} have one foot in the division below ({p}). The other one is following."
   ] },
   relDanger: { tag: 'rel', vi: [
+    "🚨 {t} đang có {p} nguy cơ rớt hạng. Chuông báo động đã reo.",
+    "🚨 {p} khả năng rớt hạng — {t} cần thắng ngay, không còn thời gian để chờ.",
+    "🚨 {t} đang ở vùng nguy hiểm ({p}). Mùa này mới có {sW} trận thắng.",
+    "🚨 {t} đang chơi với lửa: {p} khả năng rớt hạng.",
+    "🚨 {t} có phong độ {sForm} và {p} nguy cơ rớt hạng. Cần thay đổi gì đó.",
+    "🚨 {t} đang đứng trên băng mỏng ({p}). Một bước sai là rơi xuống nước lạnh.",
+    "🚨 {t} có {p} khả năng rớt hạng. Các trận sắp tới là những trận chung kết ngược.",
+    "🚨 {t} đã thủng {sGA} bàn mùa này và đang có {p} nguy cơ rớt hạng.",
+    "🚨 {t} đang trong tình trạng “vàng” ({p}). Chưa đỏ hẳn, nhưng sắp.",
+    "🚨 {p} — {t} cần thắng để thoát khỏi vùng xuống hạng. Thời gian không còn nhiều.",
+    "🚨 {t} từng có Elo đỉnh {peak}. Giờ đang có {p} khả năng rớt hạng.",
+    "🚨 {t} đang ở trong vùng bão: {p} nguy cơ rớt hạng. Cần một chiếc phao.",
+    "🚨 {t} có {p} khả năng rớt hạng. PesNews khuyên: bớt nghĩ, thêm thắng.",
+    "🚨 {t} đang có {p} nguy cơ. Nhưng {t} từng có chuỗi thắng {bestW} trận — vẫn còn hy vọng.",
+    "🚨 Vùng xuống hạng đang kéo {t} xuống ({p}). Cần vùng lên ngay.",
+    "🚨 {t} có {p} khả năng rớt hạng. Mỗi điểm từ giờ đều là phép cứu mạng.",
+    "🚨 {t} đang là ứng viên rớt hạng ({p}). Các đội khác đang thở phào vì đó không phải mình.",
     "⚠️ {t} đang đứng trước nguy cơ rớt hạng: {p}.",
     "🚨 Báo động đỏ cho {t}: {p} khả năng phải xuống chơi giải dưới.",
     "🚨 {t} đang đứng trên miệng hố ({p}). Một cú trượt chân là xong."
@@ -373,6 +1037,24 @@ var SN_BANK = {
     "🚨 {t} are standing at the edge of the pit ({p}). One slip and it is over."
   ] },
   relSecond: { tag: 'rel', vi: [
+    "😰 {t} vẫn còn {p} nguy cơ rớt hạng. Chưa thể thở phào.",
+    "😰 {t} đang ở rìa vùng nguy hiểm ({p}). Một trận thua là rơi xuống.",
+    "😰 {t} có {sW} thắng, {sL} thua và {p} nguy cơ rớt hạng. Cần thêm vài trận thắng.",
+    "😰 {p} — không cao, nhưng {t} vẫn chưa an toàn.",
+    "😰 {t} đang đi trên dây: {p} khả năng rớt hạng.",
+    "😰 {t} có {p} nguy cơ rớt hạng. Chưa phải lúc để lơ là.",
+    "😰 {t} vẫn đang nhìn xuống vùng xuống hạng ({p}). Nhìn lâu là chóng mặt.",
+    "😰 {t} có phong độ {sForm} và {p} nguy cơ. Cần giữ vững tinh thần.",
+    "😰 {p} nguy cơ rớt hạng: {t} cần thêm điểm để ngủ ngon.",
+    "😰 {t} đang ở vùng xám ({p}). Không an toàn, nhưng cũng chưa nguy kịch.",
+    "😰 {t} còn {p} khả năng rớt hạng. Một chiến thắng sẽ làm con số này giảm mạnh.",
+    "😰 {t} đang là “đội an toàn tạm thời” với {p} nguy cơ. Chữ “tạm thời” rất quan trọng.",
+    "😰 {t} có Elo {elo} và {p} nguy cơ rớt hạng. Không nên chủ quan.",
+    "😰 {t}: {p} nguy cơ. Nếu đây là phim, đây là lúc nhạc nền bắt đầu hồi hộp.",
+    "😰 {t} còn {p} nguy cơ rớt hạng. Các trận còn lại sẽ quyết định tất cả.",
+    "😰 {t} đã thủng {sGA} bàn mùa này và vẫn còn {p} nguy cơ rớt hạng.",
+    "😰 {t} đang ở vị trí “nhìn lên thì xa, nhìn xuống thì gần”. {p} nguy cơ.",
+    "😰 {t} còn {p} khả năng rớt hạng. Một điểm hòa cũng có thể là một điểm vàng.",
     "😰 {t} vẫn chưa an toàn ({p} nguy cơ rớt hạng). Đừng vội ăn mừng!",
     "😰 {t} đang nín thở: {p} nguy cơ rớt hạng. Vùng nguy hiểm vẫn còn đó."
   ], en: [
@@ -380,6 +1062,24 @@ var SN_BANK = {
     "😰 {t} are holding their breath: {p} relegation risk. The danger zone is still there."
   ] },
   yearHunt: { tag: 'pred', vi: [
+    "🎯 {t} đã có {k} cúp năm nay, và đang có {p} cơ hội để có thêm. Tham vọng không đáy.",
+    "🎯 {k} danh hiệu chưa đủ: {t} đang săn thêm với {p} cơ hội.",
+    "🎯 {t} đang có một năm tuyệt vời với {k} cúp. {p} cơ hội để biến năm nay thành huyền thoại.",
+    "🎯 {t} đã có {k} cúp năm nay. Nếu thắng thêm ({p}), tủ cúp sẽ cần thêm kệ.",
+    "🎯 {t} — {k} cúp năm nay — đang đến để lấy thêm. Cơ hội: {p}.",
+    "🎯 Không ai có thể ngăn {t}? {k} cúp năm nay và {p} cơ hội thêm một chiếc nữa.",
+    "🎯 {t} đang đói: {k} cúp chưa đủ, {p} cơ hội để ăn thêm.",
+    "🎯 {t} có {k} cúp năm nay và {gold} cúp vàng sự nghiệp. {p} cơ hội để tăng cả hai con số.",
+    "🎯 Năm của {t}: {k} cúp và còn đang đếm. Cơ hội thêm một chiếc: {p}.",
+    "🎯 {t} đã có {k} cúp. Các đội khác đang hỏi: “Bạn không thấy đủ sao?”. {t}: “Không.” ({p})",
+    "🎯 {t} đang trong năm thu hoạch: {k} cúp, và {p} cơ hội cho chiếc tiếp theo.",
+    "🎯 {t} với {k} cúp năm nay đang muốn thêm. PesNews cho {p} cơ hội.",
+    "🎯 {k} cúp năm nay, {p} cơ hội thêm một chiếc. {t} đang viết lại lịch sử.",
+    "🎯 {t} không dừng lại: {k} cúp năm nay, và {p} cơ hội cho thêm một.",
+    "🎯 {t} có {k} cúp năm nay. Thêm một chiếc nữa ({p}) là đủ để gọi là “năm vàng”.",
+    "🎯 {t} đã có {k} cúp trong năm và vẫn đang săn tiếp. Cơ hội: {p}.",
+    "🎯 {t} có {k} cúp năm nay. Các đối thủ đang cầu nguyện {p} cơ hội kia không thành hiện thực.",
+    "🎯 {t} đang đếm cúp năm nay: {k}. Con số có thể tăng với {p} cơ hội.",
     "🎯 {t} đã có {k} danh hiệu trong năm nay và đang săn thêm ({p} cơ hội). Tham thế!",
     "🎯 Đã {k} cúp trong năm, {t} vẫn chưa no: {p} cơ hội ăn thêm chiếc nữa."
   ], en: [
@@ -389,6 +1089,23 @@ var SN_BANK = {
 
   // ================= Knock-out =================
   alive: { tag: 'ko', vi: [
+    "🎯 {n} đội vẫn còn trong cuộc: {list}. Mỗi trận từ giờ là một trận sinh tử.",
+    "🎯 Danh sách sống sót: {list}. {n} đội, một chiếc cúp.",
+    "🎯 {list} — {n} cái tên còn lại. Ai sẽ là người cầm cúp?",
+    "🎯 Còn {n} đội: {list}. Các đội bị loại đang ngồi ngoài bình luận rất sôi nổi.",
+    "🎯 {n} đội, {n} giấc mơ: {list}. Chỉ một giấc mơ thành hiện thực.",
+    "🎯 Vòng loại trực tiếp đã thu hẹp còn {n} đội: {list}. Không có cơ hội thứ hai.",
+    "🎯 {list} vẫn đang đứng vững. {n} đội, và con số này sẽ sớm giảm đi.",
+    "🎯 Còn {n} đội trong cuộc chơi: {list}. Thắng là đi tiếp, thua là về nhà.",
+    "🎯 {n} đội sống sót: {list}. Không ai muốn là người tiếp theo xách vali.",
+    "🎯 {list}: {n} đội, {n} câu chuyện. PesNews đang theo dõi từng bước.",
+    "🎯 Còn {n} đội: {list}. Cuộc chơi đang đến hồi gay cấn.",
+    "🎯 {n} đội vẫn còn cơ hội cầm cúp: {list}. Ai có bản lĩnh nhất?",
+    "🎯 Cánh cửa đang hẹp dần: {n} đội ({list}) đang chen nhau đi qua.",
+    "🎯 {list} — những chiến binh cuối cùng. {n} đội, một đích đến.",
+    "🎯 {n} đội còn lại: {list}. Các đội khác đã chuyển sang vai khán giả và bình luận viên.",
+    "🎯 Cuộc chơi còn {n} đội: {list}. Mỗi sai lầm bây giờ đều có giá bằng cả mùa giải.",
+    "🎯 {list} đang là {n} đội mạnh nhất — hoặc may mắn nhất. Sẽ sớm biết.",
     "🎯 Còn {n} đội trên đường đua: {list}.",
     "🎯 Cuộc chơi thu hẹp lại còn {n} đội: {list}. Ai sẽ là người cuối cùng?",
     "🎯 {n} đội sống sót: {list}. Phần còn lại đã về nhà xem tivi."
@@ -398,6 +1115,23 @@ var SN_BANK = {
     "🎯 {n} survivors: {list}. Everyone else has gone home to watch TV."
   ] },
   fallen: { tag: 'shock', vi: [
+    "💔 {t} (Elo thứ {k}) đã rời cuộc chơi{by}. Ứng viên sáng giá ngã ngựa.",
+    "💔 Không ai ngờ: {t} — Elo thứ {k} — đã bị loại{by}.",
+    "💔 {t} có Elo {elo} (thứ {k}), nhưng đã phải về nước sớm{by}.",
+    "💔 {t} bị loại{by}. Elo thứ {k} không phải tấm vé an toàn.",
+    "💔 Cú sốc của vòng đấu: {t} (Elo thứ {k}) đã dừng bước{by}.",
+    "💔 {t} rời giải{by}. Tỉ lệ thắng vòng loại sự nghiệp {koPct}% giờ trông thật buồn.",
+    "💔 {t} — một trong những ứng viên hàng đầu — đã bị loại{by}. Chân trời mở rộng cho các đội khác.",
+    "💔 {t} (Elo thứ {k}) bị loại{by}. Các đội còn lại đang thở phào nhẹ nhõm.",
+    "💔 {t} đã bị loại{by}. {gold} cúp vàng sự nghiệp không đủ để cứu {t} lần này.",
+    "💔 Elo thứ {k}, nhưng {t} đã phải rời giải{by}. Bóng đá không đọc bảng xếp hạng.",
+    "💔 {t} bị loại{by}. Fan của {t} đang tắt TV và đi ngủ sớm.",
+    "💔 {t} (Elo thứ {k}) đã bị loại{by}. Một cái kết buồn cho một ứng viên mạnh.",
+    "💔 {t} đã rời khỏi cuộc chơi{by}. Cúp giờ đã có thêm cơ hội cho người khác.",
+    "💔 {t} bị loại{by}. {t} từng thắng {koW}/{koP} trận loại trực tiếp — lần này không.",
+    "💔 {t} (Elo thứ {k}) đã phải rời giải{by}. Đôi khi, đội mạnh hơn không phải lúc nào cũng thắng.",
+    "💔 Cái tên lớn đầu tiên bị loại: {t} (Elo thứ {k}){by}.",
+    "💔 {t} bị loại{by}. Elo thứ {k} giờ chỉ còn là một con số trên giấy.",
     "💔 Cú sốc: {t} — Elo cao thứ {k} giải — đã bị loại{by}!",
     "😵 Ứng viên {t} (Elo thứ {k}) đã phải dừng bước{by}. Ai đoán được chứ?",
     "💔 {t} (Elo thứ {k}) xách vali về sớm{by}. Sân bay hôm nay đông lắm."
@@ -407,6 +1141,24 @@ var SN_BANK = {
     "💔 {t} (#{k} by Elo) pack their bags early{by}. The airport is busy today."
   ] },
   swissTickets: { tag: 'ko', vi: [
+    "🎟️ {list} đã có vé playoff. {n} đội đã an toàn.",
+    "🎟️ Vé playoff đã được phát cho {n} đội: {list}. Những đội khác đang xếp hàng.",
+    "🎟️ {n} đội đã qua cửa: {list}. Phần còn lại vẫn đang chiến đấu.",
+    "🎟️ {list} — {n} đội đã đặt chỗ ở vòng playoff. Ai sẽ là người tiếp theo?",
+    "🎟️ Vé playoff đã về tay {n} đội: {list}. Các đội này giờ có thể thở.",
+    "🎟️ {n} đội đã chắc chắn đi tiếp: {list}. Các đội khác cần nhanh chân.",
+    "🎟️ {list} đã có vé. {n} đội đang ngồi chờ đối thủ ở vòng sau.",
+    "🎟️ Vé playoff: {n} đã được trao. {list} đã hoàn thành nhiệm vụ vòng Swiss.",
+    "🎟️ {n} đội đã lên tàu: {list}. Tàu sắp chạy, ai chưa lên thì nhanh lên!",
+    "🎟️ {list} đã vượt qua vòng Swiss. {n} đội, và còn vài suất nữa.",
+    "🎟️ {n} vé đã có chủ: {list}. Những vé còn lại đang được tranh giành quyết liệt.",
+    "🎟️ {list} — {n} đội đã an toàn. Họ có thể ngồi xem các đội khác đổ mồ hôi.",
+    "🎟️ Playoff đang dần hình thành: {list} ({n} đội) đã có vé.",
+    "🎟️ {n} đội đã có vé: {list}. Những đội còn lại cần thắng để có cơ hội.",
+    "🎟️ {list} đã đặt chân vào playoff. {n} đội, {n} câu chuyện thành công.",
+    "🎟️ {n} tấm vé đã được in tên: {list}. Ai sẽ có tấm vé cuối cùng?",
+    "🎟️ {list} đã qua vòng Swiss. {n} đội đang chờ đợi những thử thách lớn hơn.",
+    "🎟️ {n} đội đã chắc suất: {list}. Vòng Swiss đang đi vào giai đoạn quyết định.",
     "🎟️ {n} đội đã có vé playoff: {list}.",
     "🎟️ Vé playoff đã nằm trong túi {n} đội: {list}. Những đội còn lại hãy nhanh tay!"
   ], en: [
@@ -414,6 +1166,23 @@ var SN_BANK = {
     "🎟️ {n} teams have a playoff ticket in their pocket: {list}. The rest, hurry up!"
   ] },
   underdogAlive: { tag: 'ko', vi: [
+    "🐭 {t} (Elo {e}) vẫn còn sống! Đội yếu nhất còn lại đang khiến các đội mạnh lo lắng.",
+    "🐭 Ai ngờ {t} với Elo {e} lại đi xa đến thế? Câu chuyện cổ tích đang tiếp diễn.",
+    "🐭 {t} là đội có Elo thấp nhất còn trụ lại ({e}). Mỗi chiến thắng là một phép màu.",
+    "🐭 {t} đang làm nên chuyện: Elo chỉ {e} nhưng vẫn đang trong cuộc.",
+    "🐭 Đừng xem thường {t}! Elo {e} nhưng vẫn còn đứng đây khi nhiều ông lớn đã về nhà.",
+    "🐭 {t} (Elo {e}) đang viết nên câu chuyện “David và Goliath” của riêng mình.",
+    "🐭 {t} có Elo {e}, thấp nhất còn lại. Nhưng ở vòng loại, Elo không ra sân.",
+    "🐭 {t} vẫn sống sót với Elo {e}. Các đội mạnh nên bắt đầu cảm thấy áp lực.",
+    "🐭 {t} chưa từng có cúp vàng{g0}, nhưng với Elo {e}, {t} vẫn đang mơ giấc mơ lớn.",
+    "🐭 Chú chuột {t} (Elo {e}) đang lách qua từng cái bẫy. Ai sẽ bắt được?",
+    "🐭 {t} — đội yếu nhất còn lại theo Elo ({e}). Nhưng trái tim thì mạnh nhất.",
+    "🐭 {t} đang tận hưởng từng phút: Elo {e}, không ai kỳ vọng, và vẫn còn trong cuộc.",
+    "🐭 {t} có Elo {e}. Đối thủ tiếp theo của {t} nên chơi thật cẩn thận.",
+    "🐭 {t} (Elo {e}) đang đi xa hơn mọi dự đoán. PesNews đã phải viết lại kịch bản.",
+    "🐭 {t} đang ở đây với Elo {e}. Ai dám nói đây là may mắn?",
+    "🐭 {t} vẫn còn sống với Elo {e}. Mỗi trận đấu là một cơ hội để gây sốc.",
+    "🐭 {t} đang là niềm cảm hứng của giải: Elo {e} mà vẫn còn chỗ đứng.",
     "🐭 {t} (Elo {e}) là đội yếu nhất còn trụ lại. Chú chuột nhắt vẫn chưa bị bắt!",
     "🐭 Không ai nghĩ {t} đi xa đến thế với Elo {e}. Cổ tích có thật?",
     "🐭 {t} vẫn còn sống với Elo chỉ {e}. Các ông lớn hãy coi chừng!"
@@ -423,6 +1192,23 @@ var SN_BANK = {
     "🐭 {t} are still alive with only {e} Elo. Big teams, beware!"
   ] },
   finalPair: { tag: 'hot', vi: [
+    "🏟️ {a} vs {b}: trận chung kết đã được xác định. Các tay cầm đã sẵn sàng.",
+    "🏟️ Chung kết: {a} gặp {b}. Một đội sẽ cười, một đội sẽ khóc.",
+    "🏟️ {a} và {b} đã vượt qua tất cả để đến đây. Giờ là lúc phân định thắng thua.",
+    "🏟️ Trận đấu cuối cùng: {a} vs {b}. PesNews đã chuẩn bị hai trang nhất.",
+    "🏟️ {a} đấu {b} — một trận chung kết xứng đáng với chờ đợi.",
+    "🏟️ {a} hay {b}? Câu hỏi của mùa giải sẽ được trả lời trong một trận.",
+    "🏟️ Chung kết đã có: {a} vs {b}. Ai mang cúp về, ai mang nước mắt về?",
+    "🏟️ {a} và {b} sẽ quyết định nhà vô địch. Cả câu lạc bộ đang hồi hộp.",
+    "🏟️ {a} vs {b}: hai đội, một chiếc cúp, và cả mùa giải dồn vào 90 phút.",
+    "🏟️ Trận chung kết giữa {a} và {b} hứa hẹn sẽ là trận đấu đáng nhớ nhất mùa.",
+    "🏟️ {a} và {b} đã có mặt ở trận cuối. Không còn đường lùi cho ai.",
+    "🏟️ {a} gặp {b} ở chung kết. Nhóm chat đã chia phe, tranh luận đã bắt đầu.",
+    "🏟️ {a} vs {b} — chung kết của những chiến binh. Ai sẽ là người hùng?",
+    "🏟️ Chung kết {a} – {b}: các đội bị loại đã chuẩn bị sẵn ghế và bỏng ngô.",
+    "🏟️ {a} và {b} đã đến đích cuối. Chỉ một đội được ghi tên vào lịch sử.",
+    "🏟️ {a} vs {b}. Không có trận sau, không có cơ hội thứ hai. Chỉ có bây giờ.",
+    "🏟️ Mọi con đường đều dẫn đến đây: {a} vs {b}. Chung kết bắt đầu!",
     "🏟️ Chung kết đã xác định: {a} vs {b}. Một trận, một chiếc cúp, một người hùng.",
     "🏟️ {a} đối đầu {b} ở trận cuối cùng. PesNews đã đặt chỗ ngồi hàng đầu.",
     "🏟️ Hai đội cuối cùng: {a} và {b}. Mọi thứ sẽ được định đoạt ở đây."
@@ -432,6 +1218,23 @@ var SN_BANK = {
     "🏟️ The last two: {a} and {b}. Everything will be decided here."
   ] },
   deSurvivor: { tag: 'ko', vi: [
+    "🧟 {t} đã rơi xuống nhánh thua nhưng chưa chịu buông. Mạng thứ hai đang được dùng rất hiệu quả.",
+    "🧟 {t} vẫn còn sống ở nhánh thua. Đội này không biết đầu hàng là gì.",
+    "🧟 Nhánh thua không phải nghĩa địa: {t} đang leo lên từng bước.",
+    "🧟 {t} đã thua một lần, nhưng chưa thua lần hai. Các đối thủ nên cẩn thận.",
+    "🧟 {t} — zombie của giải: đã ngã một lần nhưng vẫn đứng dậy và đi tiếp.",
+    "🧟 {t} đang đi con đường khó nhất — nhánh thua. Nhưng con đường nào cũng dẫn đến chung kết.",
+    "🧟 {t} chỉ còn một mạng, và đang chơi như thể không có gì để mất.",
+    "🧟 {t} vẫn sống sót ở nhánh thua. Tỉ lệ thắng vòng loại sự nghiệp {koPct}% đang giúp ích.",
+    "🧟 {t} đã thua, đã đau, và đã trở lại. Nhánh thua là nơi {t} chứng minh bản lĩnh.",
+    "🧟 {t} đang ở nhánh thua nhưng vẫn còn hy vọng. Mỗi chiến thắng là một bước gần hơn cúp.",
+    "🧟 {t} chưa bao giờ được coi là đã bị loại cho đến khi thua lần hai. Và lần hai chưa đến.",
+    "🧟 {t} đang chơi với tâm thế “thắng hoặc về nhà”. Và {t} đang thắng.",
+    "🧟 {t} đã bị đánh gục một lần, nhưng vẫn đang đứng trên võ đài.",
+    "🧟 {t} đang ở nhánh thua và đang khiến các đội ở nhánh thắng phải lo lắng.",
+    "🧟 {t} đã thua một trận, nhưng chưa thua cuộc chiến. Nhánh thua là sân khấu của {t}.",
+    "🧟 {t} đang đi đường vòng đến chung kết. Đường vòng dài hơn, nhưng vẫn đến nơi.",
+    "🧟 {t} có Elo {elo} và đang sống sót ở nhánh thua. Một đội không dễ bị loại.",
     "🧟 {t} đã thua một lần nhưng vẫn sống sót ở nhánh thua. Zombie khó giết lắm!",
     "🧟 Rơi xuống nhánh thua chưa phải là hết: {t} vẫn đang bò lên từng bậc.",
     "🧟 {t} — đội “hồi sinh” của giải. Một mạng đã mất, mạng còn lại cực kỳ lì lợm."
@@ -441,6 +1244,23 @@ var SN_BANK = {
     "🧟 {t} — the comeback kids of the competition. One life gone, the other one is very stubborn."
   ] },
   defendingOut: { tag: 'shock', vi: [
+    "👋 {t} — đương kim vô địch — đã bị loại. Chiếc cúp sẽ có chủ mới.",
+    "👋 Ngôi vương đã trống: {t} không thể bảo vệ danh hiệu.",
+    "👋 {t} đã rời giải. Nhà vô địch lần trước giờ chỉ còn là khán giả.",
+    "👋 {t} bị loại — một cú sốc lớn cho đương kim vô địch.",
+    "👋 Triều đại của {t} đã kết thúc. Đương kim vô địch đã bị loại.",
+    "👋 {t} có {gold} cúp vàng sự nghiệp, nhưng sẽ không có thêm chiếc nào ở giải này.",
+    "👋 Đương kim vô địch {t} đã rời cuộc chơi. Các đội còn lại đang nhìn chiếc cúp với ánh mắt mới.",
+    "👋 {t} đã không thể giữ ngôi. Chiếc cúp đang tìm kiếm ngôi nhà mới.",
+    "👋 {t} bị loại. Fan của {t} giờ chỉ còn biết nhớ về lần vô địch trước.",
+    "👋 Cú sốc: {t} — nhà vô địch — đã dừng bước. Giải đấu giờ mở ra cho tất cả.",
+    "👋 {t} đã bị loại. Vương miện đã rơi, ai sẽ nhặt lên?",
+    "👋 Không còn đương kim vô địch: {t} đã rời giải. Một chương mới sắp bắt đầu.",
+    "👋 {t} bị loại. Giữ ngôi luôn khó hơn giành ngôi, và {t} vừa biết điều đó.",
+    "👋 {t} đã rời giải. Tỉ lệ thắng vòng loại sự nghiệp {koPct}% không cứu được lần này.",
+    "👋 Đương kim vô địch {t} đã bị hạ bệ. Các đội khác đang ăn mừng trong lòng.",
+    "👋 {t} đã bị loại. Một kỷ nguyên đã khép lại, một kỷ nguyên mới sắp mở ra.",
+    "👋 {t} không thể bảo vệ danh hiệu. Cúp sẽ đổi chủ, và PesNews sẽ đổi tiêu đề.",
     "👋 Đương kim vô địch {t} đã bị loại! Ngai vàng đang chờ chủ mới.",
     "👋 {t} không thể bảo vệ ngôi vương. Cúp sẽ đổi chủ lần này.",
     "👋 Chấn động: nhà vô địch lần trước {t} đã phải dừng bước."
@@ -452,10 +1272,26 @@ var SN_BANK = {
 
   // ================= Match commentary (plain text: careerCommentary) =================
   r_shock: { tag: 'result', vi: [
+    "😱 {W} (Elo {eW}) vừa khiến {L} (Elo {eL}) phải cúi đầu. Bảng Elo rung chuyển!",
+    "😱 Không ai đặt cược cho {W}, vậy mà {W} đã thắng {L}. Kém {d} Elo thì đã sao?",
+    "😱 {d} điểm Elo chênh lệch vừa bị xóa bỏ trong một đêm: {W} hạ {L}.",
+    "😱 Chú chuột {W} (Elo {eW}) vừa cắn chú voi {L} (Elo {eL}).",
+    "😱 {L} (Elo {eL}) bước vào trận với tư thế cửa trên, bước ra với trận thua trước {W}.",
+    "😱 {W} kém {d} điểm Elo nhưng hơn {L} về ý chí. Kết quả: một cú sốc.",
+    "😱 Bất ngờ lớn: {W} đã làm điều không tưởng trước {L}.",
+    "😱 {L} có Elo {eL}, {W} có Elo {eW}. Trên giấy là vậy, trên sân thì {W} thắng.",
+    "😱 {W} vừa viết lại kịch bản: thắng {L} dù kém {d} điểm Elo.",
+    "😱 {L} vừa được nhắc nhở rằng Elo không ra sân. {W} mới là người ra sân.",
+    "😱 Cửa dưới {W} vừa đá bay cửa trên {L}. Máy tính dự đoán của PesNews cần sửa.",
+    "😱 {W} (Elo {eW}) thắng {L} (Elo {eL}). Khoảng cách {d} điểm giờ chỉ là kỷ niệm.",
+    "😱 {L} không tin vào mắt mình: thua {W}, đội kém mình {d} điểm Elo.",
+    "😱 Bài học hôm nay: đừng bao giờ xem thường {W}. {L} vừa học điều đó.",
+    "😱 {W} vừa có chiến thắng đáng nhớ nhất mùa trước {L} (Elo {eL}).",
+    "😱 Lật kèo! {W} kém {d} Elo vẫn hạ gục {L}.",
+    "🤯 {W} kém tới {d} điểm Elo mà vẫn khuất phục {L}. Ai đó kiểm tra lại bảng điểm đi!",
+    "🌋 {L} (Elo {eL}) vừa bị {W} đốt cháy. Nhiệt độ bảng xếp hạng tăng vọt.",
     "😱 ĐỊA CHẤN! {W} (Elo {eW}) quật ngã {L} (Elo {eL})!",
-    "🤯 Không ai tin nổi: {W} hạ {L} dù kém tới {d} điểm Elo!",
-    "😱 David hạ Goliath: {W} kém {d} Elo vẫn đánh bại {L}!",
-    "🌋 Núi lửa phun trào! {W} khiến {L} (Elo {eL}) bẽ mặt."
+    "😱 David hạ Goliath: {W} kém {d} Elo vẫn đánh bại {L}!"
   ], en: [
     "😱 SHOCKER! {W} (Elo {eW}) topple {L} (Elo {eL})!",
     "🤯 Unbelievable: {W} beat {L} despite being {d} Elo points behind!",
@@ -463,6 +1299,23 @@ var SN_BANK = {
     "🌋 Volcano erupts! {W} embarrass {L} (Elo {eL})."
   ] },
   r_sweep: { tag: 'result', vi: [
+    "🧹 {st}: {W} đè bẹp {L} {s}, không cho đối thủ một cơ hội nào.",
+    "🧹 {W} không cho {L} thở: {s} ở {st}.",
+    "🧹 {W} dọn dẹp {L} {s} tại {st}. Sạch như mới.",
+    "🧹 {s} không tì vết: {W} qua mặt {L} ở {st}.",
+    "🧹 {L} chưa kịp khởi động đã bị {W} loại {s} ở {st}.",
+    "🧹 {W} đi tiếp với tỷ số {s} trước {L} tại {st}. Không một chút rủi ro.",
+    "🧹 Trắng tay: {L} rời {st} sau trận thua {W} {s}.",
+    "🧹 {W} thắng {s} ở {st}. {L} chỉ kịp chào hỏi rồi ra về.",
+    "🧹 {st}: {W} {s} {L}. Một chiều từ đầu đến cuối.",
+    "🧹 {W} thắng tuyệt đối {s} trước {L} ở {st}. Đối thủ tiếp theo nên lo lắng.",
+    "🧹 {L} đã cố gắng, nhưng {W} không nhường một ván nào ({s}, {st}).",
+    "🧹 {W} đi qua {st} như đi dạo: {s} trước {L}.",
+    "🧹 {s} cho {W}! {L} rời {st} mà không có nổi một ván thắng.",
+    "🧹 {W} đã gửi một thông điệp tại {st}: {s} trước {L}.",
+    "🧹 Không cần ván quyết định: {W} thắng {L} {s} ở {st}.",
+    "🧹 {W} thắng {s}, {L} đi về. {st} vừa chứng kiến một màn trình diễn hoàn hảo.",
+    "🧹 {L} vừa bị {W} đánh bại {s} tại {st}. Một ngày để quên.",
     "🧹 {W} thắng trắng {L} {s} ở {st}, không cho đối thủ một ván nào!",
     "💪 {W} đánh bại {L} {s} gọn gàng ở {st}.",
     "🧹 {s} tròn trĩnh: {W} tiễn {L} khỏi {st} mà không đổ một giọt mồ hôi."
@@ -472,6 +1325,23 @@ var SN_BANK = {
     "🧹 A clean {s}: {W} send {L} out of {st} without breaking a sweat."
   ] },
   r_decider: { tag: 'result', vi: [
+    "😮‍💨 {st}: {W} vượt qua {L} {s} trong một trận đấu thử thách thần kinh.",
+    "😮‍💨 {W} thắng {L} {s} ở {st} sau một cuộc đấu kéo dài đến giây cuối.",
+    "😮‍💨 Ván quyết định đã chọn {W}: {s} trước {L} ở {st}.",
+    "😮‍💨 {W} và {L} đánh nhau đến ván cuối ở {st}. {W} thắng {s}.",
+    "😮‍💨 {L} đã rất gần, nhưng {W} mới là người đi tiếp ({s}, {st}).",
+    "😮‍💨 {W} vượt qua {L} {s} ở {st}. Tim người xem vẫn còn đập mạnh.",
+    "😮‍💨 {st}: {W} {s} {L}. Không ai muốn thua, nhưng phải có người thua.",
+    "😮‍💨 {W} thắng {s} sau ván quyết định. {L} ra về với cái đầu ngẩng cao.",
+    "😮‍💨 {s} — {W} đã thắng {L} ở {st} với bản lĩnh của kẻ không biết bỏ cuộc.",
+    "😮‍💨 {W} và {L} chơi hết sức tại {st}. Kết quả: {W} thắng {s}.",
+    "😮‍💨 Cuộc chiến cân não ở {st} kết thúc với chiến thắng {s} cho {W}.",
+    "😮‍💨 {W} thắng {L} {s} tại {st}. Một trận đấu đáng xem lại.",
+    "😮‍💨 {L} đã cân bằng, nhưng {W} có cú đấm cuối: {s} ở {st}.",
+    "😮‍💨 Ván cuối quyết định tất cả: {W} thắng {L} {s} tại {st}.",
+    "😮‍💨 {W} đi tiếp, {L} về nhà. {s} ở {st} — khoảng cách mỏng như sợi tóc.",
+    "😮‍💨 {st} vừa có một trận đấu kinh điển: {W} thắng {L} {s}.",
+    "😮‍💨 {W} giữ được bình tĩnh ở ván quyết định và thắng {L} {s} tại {st}.",
     "😮‍💨 {W} vượt qua {L} {s} ở {st} sau ván quyết định!",
     "⚔️ Phải kéo tới ván cuối, {W} mới hạ được {L} {s} ở {st}.",
     "💓 Tim đập chân run: {W} thắng {L} {s} ở {st} sau trận cân não tới phút chót."
@@ -481,8 +1351,24 @@ var SN_BANK = {
     "💓 Hearts racing: {W} beat {L} {s} in {st} after a battle to the very end."
   ] },
   r_demol: { tag: 'result', vi: [
+    "💥 {W} thắng {L} cách biệt {gd} bàn. Một trận đấu một chiều.",
+    "💥 {gd} bàn cách biệt! {L} sẽ muốn quên trận này càng sớm càng tốt.",
+    "💥 {W} không nương tay: thắng {L} cách biệt {gd} bàn.",
+    "💥 {L} đã bị {W} nghiền nát với cách biệt {gd} bàn.",
+    "💥 {W} vs {L}: một trận đấu, {gd} bàn cách biệt, và một đội muốn độn thổ.",
+    "💥 {W} ghi bàn như máy: thắng {L} cách biệt {gd} bàn.",
+    "💥 {gd} bàn chênh lệch — {W} đã biến {L} thành bại tướng.",
+    "💥 {L} vừa trải qua một trận đấu kinh hoàng trước {W} ({gd} bàn cách biệt).",
+    "💥 {W} đã không dừng lại cho đến khi cách biệt là {gd} bàn. {L} không thể làm gì.",
+    "💥 Cách biệt {gd} bàn: {W} vs {L} là trận đấu không cân sức nhất vòng.",
+    "💥 {W} thắng đậm {L}. {gd} bàn — con số nói lên tất cả.",
+    "💥 {L} cần phải xem lại hàng thủ sau khi thua {W} cách biệt {gd} bàn.",
+    "💥 {W} đã gửi lời cảnh báo đến cả giải: thắng {L} cách biệt {gd} bàn.",
+    "💥 {gd} bàn! {W} đã đá như thể đối thủ không tồn tại. {L} — xin chia buồn.",
+    "💥 {W} đã biến trận đấu thành buổi tập sút: thắng {L} cách biệt {gd} bàn.",
+    "💥 {L} thua {W} cách biệt {gd} bàn. Tối nay, tay cầm của {L} sẽ bị phạt đứng góc.",
     "💥 Hủy diệt! {W} vùi dập {L} cách biệt {gd} bàn.",
-    "🧹 {W} quét sạch {L} như dọn nhà ngày Tết.",
+    "🧹 {W} dọn sân giúp {L} — dọn luôn cả điểm số và niềm tin của {L}.",
     "🔨 {W} đè bẹp {L} với cách biệt {gd} bàn. Có ai gọi cứu hộ chưa?",
     "💥 {L} vừa trải qua cơn ác mộng: thua {W} cách biệt {gd} bàn."
   ], en: [
@@ -492,7 +1378,24 @@ var SN_BANK = {
     "💥 {L} just lived a nightmare: beaten by {gd} goals by {W}."
   ] },
   r_fest: { tag: 'result', vi: [
-    "🎆 Mưa bàn thắng: {tot} bàn trong một trận!",
+    "🎆 {tot} bàn thắng trong một trận! Hàng thủ hai đội đã đi nghỉ phép.",
+    "🎆 {tot} bàn! Một trận đấu như lễ hội pháo hoa.",
+    "🎆 Trận đấu này có {tot} bàn. Nếu bạn thích bàn thắng, đây là trận của bạn.",
+    "🎆 {tot} bàn thắng — bảng tỉ số suyển hỏng vì chạy không kịp.",
+    "🎆 {tot} bàn trong một trận! Thủ môn hai đội chắc phải đi khám mắt.",
+    "🎆 Ai nói bóng đá ít bàn? Trận này có {tot} bàn!",
+    "🎆 {tot} bàn thắng và vô số câu hỏi cho hai hàng thủ.",
+    "🎆 Cơn mưa bàn thắng: {tot} lần lưới rung trong một trận.",
+    "🎆 {tot} bàn! Nhóm chat chưa kịp gõ “GOAL” thì đã có bàn tiếp theo.",
+    "🎆 Trận đấu {tot} bàn — các huấn luyện viên phòng ngự đang ôm đầu.",
+    "🎆 {tot} bàn thắng trong một trận. Đây không phải bóng đá, đây là bóng rổ!",
+    "🎆 {tot} bàn! Khi cả hai đội đều quên mất cách phòng ngự.",
+    "🎆 {tot} bàn thắng — một trận đấu mà không ai muốn rời mắt.",
+    "🎆 {tot} bàn. Khung thành hai đội cần được thay lưới.",
+    "🎆 Trận đấu với {tot} bàn thắng — bữa tiệc tấn công không có hồi kết.",
+    "🎆 {tot} bàn! Trận này sẽ được nhắc lại trong nhiều năm tới.",
+    "🎆 {tot} bàn thắng: khán giả vui, hai thủ môn buồn.",
+    "🎆 {tot} bàn trong 90 phút — trung bình cứ vài phút lại có một lần ăn mừng!",
     "🍿 {tot} bàn thắng — khán giả được bữa no nê!",
     "🎆 {tot} bàn! Thủ môn hai đội chắc đang đi tìm việc mới."
   ], en: [
@@ -501,6 +1404,23 @@ var SN_BANK = {
     "🎆 {tot} goals! Both goalkeepers are probably updating their CVs."
   ] },
   r_wstreak: { tag: 'result', vi: [
+    "🔥 {W} thắng trận thứ {n} liên tiếp. Cỗ máy này không có nút tắt.",
+    "🔥 {n} trận, {n} chiến thắng. {W} đang ở đỉnh cao phong độ.",
+    "🔥 {W} kéo dài chuỗi thắng lên {n} trận. Đối thủ tiếp theo: chuẩn bị tinh thần.",
+    "🔥 Chuỗi thắng {n} trận của {W} vẫn chưa dừng lại.",
+    "🔥 {W} đang bay cao: {n} trận thắng liên tiếp.",
+    "🔥 {n} trận thắng liền! {W} đang chơi như một nhà vô địch.",
+    "🔥 {W} đã quên cảm giác thua: {n} trận thắng liên tiếp.",
+    "🔥 Không ai cản được {W}: chuỗi thắng đã lên {n}.",
+    "🔥 {W} với {n} trận thắng liên tiếp — đang ở trong “vùng”.",
+    "🔥 {n} chiến thắng liên tiếp cho {W}. Ai sẽ là người dừng chuỗi này?",
+    "🔥 {W} thắng tiếp! Chuỗi thắng giờ là {n} trận.",
+    "🔥 {W} đang là cơn ác mộng của cả giải: {n} trận thắng liền mạch.",
+    "🔥 {n} trận thắng! {W} đang đầy tự tin và không có dấu hiệu chậm lại.",
+    "🔥 {W} — {n} trận, {n} lần ăn mừng. Phong độ hủy diệt.",
+    "🔥 {W} đang có chuỗi thắng {n} trận. Tay cầm của {W} chắc đang được thờ.",
+    "🔥 Chuỗi {n} trận thắng của {W} đang khiến các đối thủ mất ngủ.",
+    "🔥 {W} thắng {n} trận liên tiếp. Mọi con mắt đều đổ dồn về {W}.",
     "🔥 {W} đã thắng {n} trận liên tiếp — ai cản nổi?",
     "🚀 {n} trận thắng liền mạch cho {W}!",
     "🔥 {W} đang nóng rực: {n} trận thắng liên tiếp."
@@ -510,6 +1430,23 @@ var SN_BANK = {
     "🔥 {W} are on fire: {n} wins in a row."
   ] },
   r_winlessEnd: { tag: 'result', vi: [
+    "🌅 {W} đã thắng trở lại sau {n} trận. Nụ cười đã trở lại.",
+    "🌅 {n} trận không thắng đã là quá khứ. {W} đã biết cảm giác chiến thắng.",
+    "🌅 Sau {n} trận chờ đợi, {W} cuối cùng đã thắng. Niềm vui vỡ òa!",
+    "🌅 {W} chấm dứt chuỗi {n} trận không thắng. Bầu trời đã trong xanh trở lại.",
+    "🌅 {n} trận đói chiến thắng — {W} vừa có một bữa no.",
+    "🌅 {W} thắng! Chuỗi {n} trận không thắng đã bị phá vỡ.",
+    "🌅 {W} đã tìm lại chiến thắng sau {n} trận. Hy vọng đây là khởi đầu mới.",
+    "🌅 {n} trận là quá dài. {W} vừa đặt dấu chấm hết cho chuỗi ngày buồn.",
+    "🌅 {W} thắng trở lại sau {n} trận. Tay cầm đã được tha thứ.",
+    "🌅 {W} đã phá dở lời nguyền {n} trận không thắng.",
+    "🌅 Chiến thắng đầu tiên sau {n} trận cho {W}. Ngọt ngào hơn bao giờ hết.",
+    "🌅 {W} đã thắng! Sau {n} trận, fan của {W} được cười trở lại.",
+    "🌅 {n} trận không thắng đã kết thúc. {W} đang đứng dậy từ đáy.",
+    "🌅 {W} vừa thắng sau {n} trận. Đôi khi, chiến thắng nhỏ nhất lại ý nghĩa nhất.",
+    "🌅 Chào mừng {W} trở lại với chiến thắng! {n} trận chờ đợi đã được đền đáp.",
+    "🌅 {W} đã thắng trở lại. {n} trận không thắng giờ chỉ còn là ký ức.",
+    "🌅 Sau {n} trận, {W} đã thắng. Một ánh sáng cuối đường hầm.",
     "🌅 {W} cuối cùng cũng biết thắng sau {n} trận!",
     "🌅 Sau {n} trận chờ đợi, {W} lại được nếm vị chiến thắng.",
     "🎈 {W} chấm dứt chuỗi {n} trận không thắng. Mở tiệc được rồi!"
@@ -519,6 +1456,23 @@ var SN_BANK = {
     "🎈 {W} end a {n}-match winless run. Party time!"
   ] },
   r_unbeatenEnd: { tag: 'result', vi: [
+    "🛑 {n} trận bất bại của {L} đã dừng lại. Bức tường cuối cùng cũng có vết nứt.",
+    "🛑 {L} đã biết thua trở lại sau {n} trận. Cảm giác này lạ lắm.",
+    "🛑 Hết rồi chuỗi {n} trận bất bại — {L} giờ phải bắt đầu lại từ đầu.",
+    "🛑 {L} đã rơi khiên: chuỗi {n} trận không thua kết thúc.",
+    "🛑 {n} trận không biết thua, và rồi {L} cũng phải cúi đầu.",
+    "🛑 Áo giáp của {L} đã bị xuyên thủng sau {n} trận bất bại.",
+    "🛑 {L} thua! Tin này hiếm đến mức phải chờ {n} trận mới có.",
+    "🛑 Chuỗi bất bại {n} trận của {L} đã trở thành lịch sử.",
+    "🛑 {L} ngã ngựa sau {n} trận bất bại. Không ai đứng mãi trên đỉnh.",
+    "🛑 {n} trận bất bại là một thành tích đáng nể. Nhưng hôm nay {L} đã thua.",
+    "🛑 Lời nguyền không-thua của {L} đã bị phá sau {n} trận.",
+    "🛑 {L} đã thua sau {n} trận. Các đối thủ giờ đã biết {L} cũng là người thường.",
+    "🛑 Đến lúc dừng: {L} kết thúc chuỗi {n} trận bất bại bằng một trận thua.",
+    "🛑 {n} trận bất bại đã qua. {L} giờ cần chứng minh mình có thể đứng dậy.",
+    "🛑 {L} vừa đánh mất chuỗi {n} trận bất bại. Nỗi buồn không nhỏ.",
+    "🛑 Chuỗi {n} trận không thua của {L} chính thức bị chấm dứt.",
+    "🛑 {L} thua trận đầu tiên sau {n} trận. Thần thoại đã sụp đổ.",
     "🛑 {L} chấm dứt chuỗi {n} trận bất bại.",
     "🛑 Chuỗi {n} trận bất bại của {L} đã vỡ vụn.",
     "🛑 Cuộc vui nào cũng có lúc tàn: {L} thua sau {n} trận bất bại."
@@ -528,6 +1482,22 @@ var SN_BANK = {
     "🛑 All good things end: {L} lose after {n} unbeaten matches."
   ] },
   r_lstreak: { tag: 'result', vi: [
+    "😬 {n} trận thua liên tiếp. {L} đang cần một phép màu.",
+    "😬 {L} lại thua! Chuỗi thua đã lên {n} trận.",
+    "😬 {L} đang trong khủng hoảng: {n} trận thua liền mạch.",
+    "😬 {n} thất bại liên tiếp — {L} cần tìm lại chính mình.",
+    "😬 Tay cầm của {L} đang bị nguyền rủa: {n} trận thua liên tiếp.",
+    "😬 {L} đã thua {n} trận liền. Bóng đá đôi khi thật tàn nhẫn.",
+    "😬 Không có điểm dừng: {L} thua trận thứ {n} liên tiếp.",
+    "😬 {L} đang là mồi ngon của cả giải: {n} trận thua liên tiếp.",
+    "😬 {n} trận thua! {L} có lẽ nên thử đổi đội hình, đổi chiến thuật, hoặc đổi ghế ngồi.",
+    "😬 {L} thua tiếp. {n} trận — con số không ai muốn nhìn thấy.",
+    "😬 Chuỗi thua {n} trận đang đè nặng lên vai {L}.",
+    "😬 {L} đã thua {n} trận liên tiếp. Ngày mai trời lại sáng, hy vọng vậy.",
+    "😬 {n} trận thua liền. {L} cần một chiến thắng để lấy lại niềm tin.",
+    "😬 {L} không thể thoát khỏi vòng xoáy: {n} thất bại liên tiếp.",
+    "😬 Ai đó ôm {L} một cái đi. {n} trận thua liên tiếp rồi.",
+    "😬 {L} thua trận thứ {n} liên tiếp. Các đối thủ đang xếp hàng để được gặp {L}.",
     "😬 {L} đã thua {n} trận liên tiếp. PesNews đề nghị nghỉ ngơi!",
     "🚑 {L} thua {n} trận liền, gọi xe cấp cứu chưa?",
     "📉 {n} thất bại liên tiếp cho {L}. Đáy vẫn còn sâu hơn?",
@@ -539,6 +1509,22 @@ var SN_BANK = {
     "🧯 {L} have lost {n} straight — the house is on fire, who has an extinguisher?"
   ] },
   r_draw: { tag: 'result', vi: [
+    "🤝 {H} và {A} chia điểm. Mỗi bên một ít, không ai mất hết.",
+    "🤝 Hòa giữa {H} và {A}. Một kết quả công bằng?",
+    "🤝 {H} và {A} không ai chịu ai. Kết quả: hòa.",
+    "🤝 {H} – {A}: hai đội cân tài cân sức, chia nhau mỗi đội một điểm.",
+    "🤝 {H} và {A} bắt tay sau trận hòa. Ai cũng tiếc một chút.",
+    "🤝 Hòa! {H} và {A} đều có cơ hội nhưng không ai tận dụng được.",
+    "🤝 {H} và {A} chia điểm trong một trận đấu giằng co.",
+    "🤝 {H} – {A}: trận hòa mà cả hai đều có thể đã thắng.",
+    "🤝 {H} và {A} ký hiệp ước hòa bình trên sân cỏ.",
+    "🤝 Một điểm cho {H}, một điểm cho {A}. Ai cũng có quà về nhà.",
+    "🤝 {H} và {A} không tìm được người thắng. Có lẽ lần sau.",
+    "🤝 {H} – {A} kết thúc bằng trận hòa. Bảng xếp hạng gần như không đổi.",
+    "🤝 {H} và {A} hòa nhau. Hai người cùng cười, hai người cùng tiếc.",
+    "🤝 Trận đấu giữa {H} và {A} kết thúc không có kẻ thắng người thua.",
+    "🤝 {H} và {A} hòa. Nhóm chat tranh cãi ai mới là người chơi hay hơn.",
+    "🤝 {H} – {A}: chia điểm, chia vui, chia buồn.",
     "🤝 {H} và {A} bất phân thắng bại.",
     "😐 Hòa! Chia điểm đều nhau, không ai vui hẳn.",
     "🤝 {H} – {A}: hòa cả làng, ai về nhà nấy.",
@@ -550,6 +1536,23 @@ var SN_BANK = {
     "⚖️ {H} and {A} perfectly balanced. The PesNews scales did not move an inch."
   ] },
   r_nil: { tag: 'result', vi: [
+    "😴 {H} và {A} không ghi được bàn nào. Khung thành vẫn còn nguyên vẹn.",
+    "😴 0 – 0! {H} và {A} đá cả trận mà bảng tỉ số không đổi.",
+    "😴 {H} và {A} chơi phòng ngự quá tốt — hoặc tấn công quá tệ. 0 – 0.",
+    "😴 Trận hòa không bàn thắng giữa {H} và {A}. Thủ môn hai đội là người hùng.",
+    "😴 {H} 0 – 0 {A}. Khán giả đã chuẩn bị căng cá nhưng không cần.",
+    "😴 {H} và {A} đã quên mang theo giày ghi bàn. 0 – 0.",
+    "😴 0 – 0 giữa {H} và {A}. Một trận đấu chiến thuật — hoặc một trận đấu buồn ngủ.",
+    "😴 {H} và {A} không ai chịu mở tỉ số. Kết quả: 0 – 0 tròn trinh.",
+    "😴 Lưới hai đội không rung lần nào: {H} 0 – 0 {A}.",
+    "😴 {H} và {A} chia điểm trong một trận không bàn thắng. Ai đó gọi dậy các tiền đạo.",
+    "😴 0 – 0. {H} và {A} đã tạo ra một trận đấu cực kỳ tiết kiệm bàn thắng.",
+    "😴 {H} và {A} bất phân thắng bại — và bất phân bàn thắng luôn.",
+    "😴 Trận 0 – 0 giữa {H} và {A}. Các hậu vệ được thưởng thêm bát cơm.",
+    "😴 {H} và {A} không ghi bàn. Người thắng duy nhất là chiếc gối của khán giả.",
+    "😴 {H} 0 – 0 {A}. Kết quả này không ai hài lòng, trừ thủ môn.",
+    "😴 {H} và {A} đá một trận không bàn thắng. Khung thành có lẽ đã bị dán băng keo.",
+    "😴 0 – 0 là kết quả cuối cùng giữa {H} và {A}. Một đêm không có pháo hoa.",
     "😴 0 – 0 giữa {H} và {A}. PesNews ngủ gật hai lần.",
     "😴 {H} và {A} tặng khán giả một trận 0 – 0. Ai hoàn tiền vé đây?",
     "🧱 Hai bức tường {H} và {A} va nhau: 0 – 0."
@@ -559,6 +1562,23 @@ var SN_BANK = {
     "🧱 Two walls collide, {H} and {A}: 0 – 0."
   ] },
   r_convincing: { tag: 'result', vi: [
+    "👏 {W} đánh bại {L} một cách đầy thuyết phục.",
+    "👏 {W} chơi hay hơn {L} ở mọi mặt trận.",
+    "👏 {L} đã cố gắng, nhưng {W} mạnh hơn hẳn.",
+    "👏 {W} kiểm soát trận đấu từ đầu đến cuối và thắng {L}.",
+    "👏 Một chiến thắng rõ ràng: {W} vượt trội {L}.",
+    "👏 {W} thắng {L} không chút đắn đo.",
+    "👏 {W} đã cho {L} thấy đẳng cấp khác biệt.",
+    "👏 {L} không có câu trả lời trước sức mạnh của {W}.",
+    "👏 {W} thắng thoải mái trước {L}. Một màn trình diễn chất lượng.",
+    "👏 {W} đã làm chủ trận đấu. {L} chỉ biết chạy theo.",
+    "👏 {W} đánh bại {L} với phong cách của một đội mạnh.",
+    "👏 {L} chơi không tệ, nhưng {W} chơi quá hay.",
+    "👏 {W} thắng {L} không cần phải đổ mồ hôi nhiều.",
+    "👏 {W} đã có một ngày làm việc hiệu quả trước {L}.",
+    "👏 {W} 1, {L} 0 — về đảng cấp, không chỉ về tỉ số.",
+    "👏 {W} thắng {L} một cách đáng xem. Ai bỏ lỡ sẽ tiếc.",
+    "👏 {L} đã bị {W} đánh bại ở mọi khu vực trên sân.",
     "👏 {W} thắng thuyết phục trước {L}.",
     "💪 {W} chơi áp đảo, {L} không có cửa.",
     "👏 Chiến thắng không cần bàn cãi của {W} trước {L}."
@@ -568,6 +1588,23 @@ var SN_BANK = {
     "👏 An undisputed win for {W} over {L}."
   ] },
   r_narrow: { tag: 'result', vi: [
+    "✅ {W} thắng {L} với khoảng cách mỏng manh nhất.",
+    "✅ {W} vượt qua {L} nhưng phải vất vả đến phút cuối.",
+    "✅ Thắng là thắng: {W} có đủ điểm trước {L}.",
+    "✅ {W} thắng {L} trong một trận đấu rất sít sao.",
+    "✅ {L} đã rất gần đến một trận hòa, nhưng {W} giữ được chiến thắng.",
+    "✅ {W} đã phải chơi hết sức để thắng {L}. Không dễ chút nào.",
+    "✅ Một bàn thắng tạo nên khác biệt: {W} hơn {L}.",
+    "✅ {W} thắng sát nút {L}. Tim người hâm mộ đập nhanh hơn bình thường.",
+    "✅ {W} vượt qua {L} trong gang tấc.",
+    "✅ {L} đã cố gắng đến cùng nhưng {W} vẫn giữ được 3 điểm.",
+    "✅ {W} thắng {L} với cách biệt tối thiểu. Thắng xấu vẫn là thắng.",
+    "✅ {W} đã làm đủ để thắng {L}. Không hơn, không kém.",
+    "✅ {L} ra về với nhiều tiếc nuối sau trận thua sít sao trước {W}.",
+    "✅ {W} thắng {L} nhờ một khoảnh khắc lóe sáng.",
+    "✅ {W} vượt qua {L} — một chiến thắng cần nhiều thần kinh thép.",
+    "✅ {W} thắng {L} và thở phào nhẹ nhõm khi trọng tài thổi còi.",
+    "✅ {L} đã có cơ hội, nhưng {W} tận dụng tốt hơn.",
     "✅ {W} giành chiến thắng sát nút trước {L}.",
     "😅 {W} thắng nghẹt thở, {L} tiếc nuối.",
     "✅ Một bàn là đủ: {W} vượt qua {L}."
@@ -577,6 +1614,23 @@ var SN_BANK = {
     "✅ One goal is enough: {W} get past {L}."
   ] },
   r_revenge: { tag: 'result', vi: [
+    "🔁 {W} đã trả được món nợ với {L}. Sòng phẳng!",
+    "🔁 Lần trước {L} thắng, lần này {W} thắng. Cân bằng đã được lập lại.",
+    "🔁 {W} đã đợi ngày này từ lâu: phục thù {L} thành công.",
+    "🔁 {L} đã thắng lần trước. {W} đã trả lại đầy đủ.",
+    "🔁 Báo thù là món ăn ngon nhất khi ăn nguội. {W} vừa ăn sạch đĩa trước {L}.",
+    "🔁 {W} đã không quên, và {L} giờ sẽ không quên.",
+    "🔁 {W} phục thù {L}. Tỉ số đối đầu lại nóng lên.",
+    "🔁 {W} đã trả đũa {L}. Trận tiếp theo sẽ còn kịch tính hơn.",
+    "🔁 Thù đã trả: {W} thắng {L} sau thất bại lần trước.",
+    "🔁 {L} tưởng mình đã nắm được {W}, nhưng {W} đã học được bài học.",
+    "🔁 {W} đã biến nỗi đau lần trước thành động lực để thắng {L}.",
+    "🔁 {W} đã phục hận. {L} giờ là người nợ.",
+    "🔁 Đánh qua đánh lại: {W} thắng {L} sau trận thua lần trước.",
+    "🔁 {W} đã gạch tên {L} khỏi sổ nợ.",
+    "🔁 Thất bại trước {L} đã làm {W} mạnh mẽ hơn. Giờ {W} đã thắng.",
+    "🔁 {W} đã trả được mối hận. {L} hãy chuẩn bị cho lần gặp sau.",
+    "🔁 {W} phục thù thành công trước {L}. Nhóm chat vừa được một phen sôi động.",
     "🔁 Báo thù thành công! {W} trả món nợ lần gặp trước với {L}.",
     "🔁 {W} chưa quên trận thua lần trước — và {L} vừa phải trả giá.",
     "🗡️ Ăn miếng trả miếng: {W} phục thù {L}."
@@ -586,6 +1640,23 @@ var SN_BANK = {
     "🗡️ Tit for tat: {W} get their revenge on {L}."
   ] },
   r_firstWin: { tag: 'result', vi: [
+    "🎊 {W} cuối cùng cũng thắng {L} sau {n} lần thử. Kiên nhẫn đã được đền đáp.",
+    "🎊 {n} trận không thắng trước {L} — và giờ {W} đã thắng!",
+    "🎊 Chiến thắng đầu tiên của {W} trước {L} sau {n} lần gặp. Lịch sử được viết lại.",
+    "🎊 {W} đã phá vỡ bức tường {L} sau {n} lần thất bại.",
+    "🎊 {L} đã không còn bất bại trước {W}. Sau {n} lần gặp, {W} đã thắng.",
+    "🎊 {W} ăn mừng như vô địch: thắng {L} lần đầu tiên sau {n} lần gặp.",
+    "🎊 {n} lần gặp, 1 chiến thắng. {W} đã có cái đầu tiên trước {L}.",
+    "🎊 {W} đã chứng minh rằng không có gì là không thể: thắng {L} sau {n} lần.",
+    "🎊 Cơn khát chiến thắng trước {L} đã kết thúc. {W} thắng sau {n} lần gặp.",
+    "🎊 {W} vừa đánh bại kẻ thù truyền kiếp {L} lần đầu tiên ({n} lần gặp trước đó).",
+    "🎊 Sau {n} lần vấp ngã, {W} đã đứng dậy và hạ {L}.",
+    "🎊 {W} đã thắng {L}! {n} lần gặp trước đó chỉ còn là quá khứ.",
+    "🎊 {L} đã mất đi “quân xây” ưa thích: {W} thắng sau {n} lần gặp.",
+    "🎊 {W} chờ {n} lần gặp để có chiến thắng này. Nó ngọt hơn mọi chiến thắng khác.",
+    "🎊 Chiến thắng lịch sử: {W} hạ {L} lần đầu sau {n} cuộc đối đầu.",
+    "🎊 {W} cuối cùng đã tìm ra cách đánh bại {L}. Mất {n} lần để học.",
+    "🎊 {n} lần gặp không thắng, và hôm nay {W} đã có ngày đẹp nhất trước {L}.",
     "🎊 Lần đầu tiên sau {n} lần gặp, {W} mới thắng được {L}!",
     "🎊 Lời nguyền đã bị phá: {W} hạ {L} lần đầu tiên trong lịch sử ({n} lần gặp trước đó).",
     "🎊 Chờ đợi {n} trận, {W} cuối cùng cũng biết cảm giác thắng {L}."
@@ -595,6 +1666,24 @@ var SN_BANK = {
     "🎊 {n} meetings of waiting — {W} finally know what beating {L} feels like."
   ] },
   r_peak: { tag: 'result', vi: [
+    "🏔️ {W} vừa đặt chân lên đỉnh mới: Elo {e}.",
+    "🏔️ Elo {e} — đây là con số cao nhất {W} từng đạt được.",
+    "🏔️ {W} phá kỷ lục Elo cá nhân: {e}. Đỉnh núi mới đã được chinh phục.",
+    "🏔️ {W} với Elo {e} đang ở phong độ tốt nhất sự nghiệp.",
+    "🏔️ Kỷ lục mới! {W} đạt Elo {e}, cao hơn bất kỳ lúc nào.",
+    "🏔️ {W} leo lên Elo {e}. Không khí trên đỉnh thật trong lành.",
+    "🏔️ {W} đang ở đỉnh cao sự nghiệp: Elo {e}.",
+    "🏔️ Elo của {W} vừa chạm mốc {e}. Một cột mốc đáng nhớ.",
+    "🏔️ {W} đã vượt qua chính mình: Elo {e}, đỉnh cao mới.",
+    "🏔️ {W} cắm cờ trên đỉnh Elo {e}. Ai sẽ là người kéo {W} xuống?",
+    "🏔️ {W} đạt Elo {e}. Chưa bao giờ {W} mạnh như lúc này.",
+    "🏔️ Kỷ lục cá nhân mới của {W}: Elo {e}. Tiếp tục leo nào!",
+    "🏔️ {W} đang đứng ở nơi cao nhất từng đến: Elo {e}.",
+    "🏔️ Elo {e}! {W} vừa viết lại kỷ lục của chính mình.",
+    "🏔️ {W} đã lên đến Elo {e}. Giờ là lúc để giữ vững.",
+    "🏔️ {W} đạt đỉnh Elo {e}. Chụp màn hình lại đi, không biết lúc nào rơi.",
+    "🏔️ {W} đạt đỉnh cao mới với Elo {e}. Các đối thủ đã bắt đầu lo lắng.",
+    "🏔️ {W} vươn lên Elo {e}, một con số chưa từng có trong sự nghiệp.",
     "🏔️ {W} chạm đỉnh Elo mới của sự nghiệp: {e}!",
     "🏔️ Kỷ lục cá nhân: Elo của {W} lên {e}, cao nhất từ trước tới nay."
   ], en: [
@@ -602,6 +1691,24 @@ var SN_BANK = {
     "🏔️ Personal best: {W}'s Elo climbs to {e}, the highest ever."
   ] },
   r_swing: { tag: 'result', vi: [
+    "🎢 {W} giành {x} điểm Elo từ {L}. Một trận đấu đắt giá.",
+    "🎢 {x} điểm Elo! {W} vừa có một món hời lớn từ {L}.",
+    "🎢 {L} mất {x} điểm Elo vào tay {W}. Đau đớn.",
+    "🎢 Trận đấu này đáng giá {x} điểm Elo — và {W} là người nhận.",
+    "🎢 {W} +{x}, {L} −{x}. Bảng Elo vừa có một cơn chấn động.",
+    "🎢 {x} điểm Elo đổi chủ: {W} giàu lên, {L} nghèo đi.",
+    "🎢 {W} vừa lấy đi {x} điểm Elo của {L}. Một phi vụ lớn.",
+    "🎢 {L} rơi {x} điểm Elo sau trận thua {W}. Một cú rơi mạnh.",
+    "🎢 {W} tăng {x} Elo, {L} giảm {x} Elo. Chỉ một trận mà bảng xếp hạng đổi khác.",
+    "🎢 {x} điểm Elo chuyển từ {L} sang {W}. Ngân hàng Elo vừa xử lý một giao dịch lớn.",
+    "🎢 {W} vừa được thưởng {x} điểm Elo sau khi thắng {L}.",
+    "🎢 {L} phải trả giá {x} điểm Elo cho trận thua {W}.",
+    "🎢 {x} điểm Elo — cái giá của một trận thua trước {W}. {L} biết rõ điều đó.",
+    "🎢 {W} leo, {L} trượt: {x} điểm Elo trong một trận.",
+    "🎢 {W} nhận {x} điểm Elo. {L} sẽ cần thời gian để gỡ lại.",
+    "🎢 {x} điểm Elo — trận đấu này đã thay đổi vị trí của {W} và {L}.",
+    "🎢 {W} đã cướp {x} điểm Elo của {L}. Một đêm thật tồi tệ cho {L}.",
+    "🎢 {W} và {L} vừa trao đổi {x} điểm Elo — đương nhiên là chỉ một chiều.",
     "🎢 Trận đấu rung chuyển bảng Elo: {W} +{x}, {L} −{x}.",
     "🎢 {x} điểm Elo đổi chủ chỉ trong một trận: từ {L} sang {W}."
   ], en: [
@@ -611,6 +1718,23 @@ var SN_BANK = {
 
   // ================= Season-wide =================
   upset: { tag: 'shock', vi: [
+    "💣 Quả bom của mùa: {w} (Elo {ew}) đánh bại {l} (Elo {el}) {sc} ở {st}.",
+    "💣 {w} kém {d} điểm Elo nhưng vẫn khiến {l} cúi đầu {sc} ({st}). Chưa có cú sốc nào lớn hơn.",
+    "💣 Mùa này có nhiều bất ngờ, nhưng không gì bằng {w} {sc} {l} ở {st}.",
+    "💣 {l} (Elo {el}) sẽ mãi nhớ {st}: thua {w} (Elo {ew}) {sc}.",
+    "💣 {d} điểm Elo chênh lệch, một tỉ số {sc}, và một {l} bẽ mặt. Kịch bản của {st}.",
+    "💣 Cửa dưới {w} đã làm nên chuyện: thắng {l} {sc} ở {st}.",
+    "💣 Ai cũng nghĩ {l} sẽ thắng. {w} không nghĩ vậy. Kết quả: {sc} ({st}).",
+    "💣 {w} đã làm nên cú sốc của mùa giải: {sc} trước {l}, dù kém {d} Elo.",
+    "💣 {st} đã chứng kiến điều không tưởng: {w} (Elo {ew}) quật ngã {l} (Elo {el}).",
+    "💣 {sc}! {w} đã đánh bại {l}, đội hơn mình {d} điểm Elo, ở {st}.",
+    "💣 {l} có lẽ vẫn chưa ngủ được sau trận {sc} trước {w} ở {st}.",
+    "💣 Các chuyên gia đã sai: {w} thắng {l} {sc} dù Elo chỉ có {ew} so với {el}.",
+    "💣 {w} vs {l} ở {st}: {sc}. Một trong những tỉ số được nhắc nhiều nhất mùa.",
+    "💣 {d} Elo không đủ để cứu {l} khỏi {w} ở {st} ({sc}).",
+    "💣 {w} đã biến {st} thành sân khấu riêng: thắng {l} {sc}.",
+    "💣 Cú sốc {sc} của {w} trước {l} vẫn còn được bàn tán trong nhóm chat.",
+    "💣 {l} (Elo {el}) thua {w} (Elo {ew}) {sc}. Điều không ai dám đoán.",
     "😱 Địa chấn của mùa: {w} (Elo {ew}) hạ {l} (Elo {el}) {sc} ở {st}.",
     "🤯 Không ai tin nổi: {w} kém {d} Elo vẫn quật ngã {l} {sc} ({st}).",
     "🌋 Trận động đất lớn nhất mùa: {w} khiến {l} bẽ mặt {sc} ({st}), chênh lệch {d} Elo."
@@ -620,6 +1744,22 @@ var SN_BANK = {
     "🌋 The biggest earthquake of the season: {w} humbled {l} {sc} ({st}) across a {d} Elo gap."
   ] },
   hot: { tag: 'form', vi: [
+    "🔥 {k} trận thắng liên tiếp — {t} đang là đội bóng nóng nhất giải.",
+    "🔥 {t} thắng {k} trận liền. Elo hiện tại {elo} và còn đang lên.",
+    "🔥 {t} đang có chuỗi {k} chiến thắng. Kỷ lục sự nghiệp của {t} là {bestW} trận.",
+    "🔥 Không ai cản nổi {t}: {k} trận, {k} chiến thắng.",
+    "🔥 {t} đang trong “vùng”: {k} chiến thắng liên tiếp, tỷ lệ thắng sự nghiệp {wr}%.",
+    "🔥 {k} chiến thắng liền mạch! {t} chơi như người không biết mệt.",
+    "🔥 Chuỗi {k} trận thắng của {t} khiến các đối thủ phải xem lại chiến thuật.",
+    "🔥 {t} thắng {k} trận liên tiếp. Tin đồn: {t} đã ngủ ôm tay cầm mỗi đêm.",
+    "🔥 {k} trận thắng! {t} đang chứng minh mình là ứng viên sáng giá.",
+    "🔥 {t} đang nóng: {k} trận thắng liên tiếp. Các đối thủ nên mang theo bình cứu hỏa.",
+    "🔥 {k} trận thắng liền — {t} đã quên mất cảm giác thua là như thế nào.",
+    "🔥 {t} và {k} chiến thắng liên tiếp: một chuỗi đáng sợ.",
+    "🔥 {t} đang ở đỉnh cao phong độ với {k} trận thắng. Đỉnh Elo sự nghiệp: {peak}.",
+    "🔥 {k} trận, không một vết xước: {t} đang thuộc về một đẳng cấp khác.",
+    "🔥 {t} thắng {k} trận liền. Ai sẽ là người dám đứng ra chặn?",
+    "🔥 Chuỗi thắng {k} trận đưa {t} vào danh sách ứng viên vô địch.",
     "🔥 {t} đã thắng {k} trận liên tiếp. Ai sẽ là người chặn đứng?",
     "🚀 {t} đang bay cao với {k} chiến thắng liền mạch.",
     "🔥 {k} trận thắng liền cho {t}. Nóng như chảo dầu!",
@@ -631,6 +1771,24 @@ var SN_BANK = {
     "🚂 The {t} train has no brakes: {k} straight wins."
   ] },
   bestForm: { tag: 'form', vi: [
+    "📈 Không ai có phong độ tốt hơn {t}: {p}/15 điểm trong 5 trận gần nhất.",
+    "📈 {t} đang là đội có phong độ cao nhất: {p}/15 điểm.",
+    "📈 {p}/15 điểm trong 5 trận — {t} đang vào form đúng lúc.",
+    "📈 {t} gom {p}/15 điểm gần đây. Elo hiện tại: {elo}.",
+    "📈 Phong độ 5 trận gần nhất của {t}: {p}/15. Đáng sợ.",
+    "📈 {t} đang chơi hay nhất giải với {p}/15 điểm trong 5 trận.",
+    "📈 {p} điểm từ 5 trận: {t} đang leo dốc không phanh.",
+    "📈 Ai muốn biết đội nào đang mạnh nhất? {t}, với {p}/15 điểm.",
+    "📈 {t}: {p}/15 điểm trong 5 trận. Các đối thủ đang bị bỏ lại phía sau.",
+    "📈 {t} đang đạt đỉnh phong độ ({p}/15). Tay cầm của {t} đang nóng ran.",
+    "📈 {p}/15 điểm — {t} đang là bảng xếp hạng phong độ thu nhỏ.",
+    "📈 {t} đang tăng tốc: {p} điểm trong 5 trận gần nhất.",
+    "📈 Thống kê không nói dối: {t} có {p}/15 điểm gần đây, tốt nhất giải.",
+    "📈 {t} đang đi đúng hướng với {p}/15 điểm trong 5 trận.",
+    "📈 5 trận, {p} điểm. {t} đang có chuỗi trận đáng nhớ.",
+    "📈 {t} với {p}/15 điểm — cỗ máy đang vận hành hết công suất.",
+    "📈 {p}/15 điểm gần đây đưa {t} vào tầm ngắm của mọi đối thủ.",
+    "📈 {t} đang chơi hay hơn bao giờ hết: {p}/15 điểm trong 5 trận.",
     "📈 {t} có phong độ tốt nhất giải: {p}/15 điểm trong 5 trận gần nhất.",
     "📈 5 trận gần nhất, {t} gom {p}/15 điểm. Đang vào guồng!"
   ], en: [
@@ -638,17 +1796,50 @@ var SN_BANK = {
     "📈 {p}/15 points from the last 5 for {t}. They are in the groove!"
   ] },
   coldLose: { tag: 'troll', vi: [
+    "🚑 {k} trận thua liên tiếp cho {t}. Bác sĩ đang trên đường đến.",
+    "🚑 {t} thua tiếp. Chuỗi thua đã lên {k} trận.",
+    "🚑 {t} đang rơi tự do với {k} trận thua. Elo hiện tại: {elo}.",
+    "🚑 {k} trận thua! {t} có lẽ nên nghỉ một tuần để lấy lại tinh thần.",
+    "🚑 {t} thua {k} trận liên tiếp. Tin đồn: {t} đã bắt đầu đổ lỗi cho đường truyền.",
+    "🚑 {k} thất bại liền — {t} đang ở giai đoạn khó khăn nhất.",
+    "🚑 {t} đã thua {k} trận liên tiếp. Đỉnh Elo sự nghiệp {peak} giờ chỉ là kỷ niệm xa xôi.",
+    "🚑 {t} thua {k} trận liền. Tay cầm đang bị đe dọa phải ném đi.",
+    "🚑 Ai đó cứu {t} với! {k} trận thua liên tiếp rồi.",
+    "🚑 {k} trận không biết điểm số — {t} cần một phép màu.",
+    "🚑 {t} thua {k} trận liên tiếp. Nhóm chat đã bắt đầu gửi lời chia buồn.",
+    "🚑 Chuỗi thua {k} trận của {t} chưa có dấu hiệu dừng lại.",
+    "🚑 {t} đang có chuỗi {k} trận thua. Tỷ lệ thắng sự nghiệp {wr}% đang khóc thét.",
+    "🚑 {k} trận thua liên tiếp. {t} có lẽ nên đổi ghế ngồi, đổi vận.",
+    "🚑 {t} thua tiếp, lần thứ {k} liên tiếp. Không ai muốn ở vị trí này.",
+    "🚑 {k} trận thua liên tiếp — {t} đang cần một chiến thắng để thở.",
     "🚑 {t} thua {k} trận liền. PesNews đề nghị kiểm tra lại tay cầm.",
     "📉 {t} đã thua {k} trận liên tiếp. Có cần gọi bác sĩ tâm lý không?",
-    "🧯 {t} thua {k} trận liền — cháy nhà rồi, ai dập lửa đây?",
+    "🧯 {t} đã gục ngã {k} lần liên tiếp. Bình cứu hỏa đâu rồi?",
     "🕳️ {t} rơi tự do: {k} thất bại liên tiếp và chưa thấy đáy."
   ], en: [
     "🚑 {t} have lost {k} in a row. PesNews suggests checking the controller.",
     "📉 {k} straight defeats for {t}. Time to call a sports psychologist?",
-    "🧯 {t} have lost {k} straight — the house is on fire!",
+    "🧯 {k} defeats on the trot for {t} — where is the fire extinguisher?",
     "🕳️ {t} in free fall: {k} straight defeats and no bottom in sight."
   ] },
   coldWinless: { tag: 'troll', vi: [
+    "🥶 {k} trận không thắng. {t} đang đóng băng.",
+    "🥶 {t} đã {k} trận chưa biết thắng. Ai đó bật lò sưởi lên đi.",
+    "🥶 {t} và chuỗi {k} trận không thắng — mùa đông không hồi kết.",
+    "🥶 {k} trận, 0 chiến thắng. {t} cần một ánh nắng mặt trời.",
+    "🥶 {t} đã {k} trận không thắng. Tin đồn: {t} đang đi xem bói.",
+    "🥶 {k} trận không thắng liên tiếp — {t} đang ở đáy của phong độ.",
+    "🥶 {t} đang quên cách ăn mừng: {k} trận không thắng.",
+    "🥶 {k} trận chưa thắng. {t} từng có Elo {peak}, giờ chỉ còn {elo}.",
+    "🥶 {t} đang trong cơn hạn hán chiến thắng kéo dài {k} trận.",
+    "🥶 {t}: {k} trận không thắng. Bùa may mắn cũ đã hết tác dụng.",
+    "🥶 {k} trận không thắng. {t} có lẽ nên thử mặc áo đỏ khi chơi.",
+    "🥶 {t} đã đợi {k} trận cho một chiến thắng. Vẫn còn đợi.",
+    "🥶 Chuỗi {k} trận không thắng của {t} đang khiến fan lo lắng.",
+    "🥶 {t} chưa thắng sau {k} trận. Bao giờ mới có xuân?",
+    "🥶 {k} trận không thắng — {t} đang cần một liều thuốc tinh thần.",
+    "🥶 {t} đã {k} trận không thắng. Bảng xếp hạng đang lạnh dần với {t}.",
+    "🥶 {k} trận không thắng. {t} đã thử mọi cách, trừ cách thắng.",
     "🥶 {t} đã {k} trận không biết thắng. Có ai mang bùa may mắn cho họ không?",
     "🍋 {k} trận chưa biết mùi chiến thắng — {t} chua như chanh.",
     "🥶 {t}: {k} trận, 0 chiến thắng. Mùa đông kéo dài quá."
@@ -658,6 +1849,23 @@ var SN_BANK = {
     "🥶 {t}: {k} games, 0 wins. A very long winter."
   ] },
   unbeaten: { tag: 'form', vi: [
+    "🛡️ {t} đã {k} trận không thua. Một pháo đài thực sự.",
+    "🛡️ {k} trận bất bại — {t} đang là đội khó đánh bại nhất giải.",
+    "🛡️ {t} bất bại {k} trận liên tiếp. Elo hiện tại: {elo}.",
+    "🛡️ {k} trận không thua. {t} đã quên cảm giác thất bại.",
+    "🛡️ {t} và {k} trận bất bại — một con số đáng nể phục.",
+    "🛡️ Ai có thể đánh bại {t}? {k} trận qua, chưa ai làm được.",
+    "🛡️ {t} đang có chuỗi {k} trận bất bại. Tỷ lệ thua sự nghiệp chỉ {lr}%.",
+    "🛡️ {k} trận không thua. {t} đang chơi với sự chắc chắn của một nhà vô địch.",
+    "🛡️ {t} đã {k} trận không biết thua. Đối thủ tiếp theo cần một kế hoạch đặc biệt.",
+    "🛡️ Bất bại {k} trận — {t} đang là nỗi khiếp sợ của mọi đối thủ.",
+    "🛡️ {t} {k} trận không thua. Pháo đài này chưa có vết nứt nào.",
+    "🛡️ {k} trận bất bại đưa {t} lên một tầm cao mới.",
+    "🛡️ {t} đã không thua trong {k} trận. Bí quyết? Chắc là cà phê sáng.",
+    "🛡️ Chuỗi {k} trận bất bại của {t} đang được cả giải chú ý.",
+    "🛡️ {t} bất bại {k} trận. Thách thức: ai sẽ là người đầu tiên hạ {t}?",
+    "🛡️ {k} trận không thua — {t} đang ở trong giai đoạn đỉnh cao.",
+    "🛡️ {t} đã không thua {k} trận. Hy vọng {t} không đọc tin này và bị “vận đen”.",
     "🛡️ {t} bất bại {k} trận liên tiếp. Muốn hạ họ phải có kế hoạch đặc biệt.",
     "🛡️ {k} trận không thua — {t} cứng như bê tông.",
     "🛡️ Lần cuối {t} thua là cách đây {k} trận. Ai còn nhớ không?"
@@ -667,6 +1875,24 @@ var SN_BANK = {
     "🛡️ The last time {t} lost was {k} matches ago. Does anyone remember?"
   ] },
   zigzag: { tag: 'form', vi: [
+    "🎢 {t} lên xuống thất thường: {f}. Không ai biết {t} sẽ ra sao.",
+    "🎢 Phong độ {f} — {t} đang chơi trò “thắng một, thua một”.",
+    "🎢 {t} với phong độ {f}: khó đoán như thời tiết.",
+    "🎢 {f} — phong độ của {t} giống nhịp tim khi xem phạt đền.",
+    "🎢 {t} có phong độ {f}. Nhà cái cũng phải bó tay.",
+    "🎢 {t} đang chơi theo kiểu zigzag: {f}.",
+    "🎢 Phong độ {f} của {t} khiến mọi dự đoán trở nên vô nghĩa.",
+    "🎢 {t}: {f}. Một ngày là siêu sao, ngày kia là người qua đường.",
+    "🎢 {t} thay đổi như tâm trạng: {f}.",
+    "🎢 {f} — {t} cần tìm lại sự ổn định nếu muốn đi xa.",
+    "🎢 {t} đang ở trên tàu lượn: {f}. Thắt dây an toàn vào!",
+    "🎢 Phong độ của {t} ({f}) là bài toán khó với PesNews.",
+    "🎢 {t}: {f}. Đoán trận tiếp theo? Tung đồng xu còn chính xác hơn.",
+    "🎢 {t} với chuỗi {f} — không ai biết {t} nào sẽ ra sân hôm nay.",
+    "🎢 {f}: {t} đang là đội khó đoán nhất giải.",
+    "🎢 {t} chơi như một đồng xu: {f}. Sấp hay ngửa?",
+    "🎢 Phong độ {f} — {t} có thể thắng bất kỳ ai, và thua bất kỳ ai.",
+    "🎢 {t} ({f}) đang khiến fan vừa vui vừa lo.",
     "🎢 Phong độ của {t} như tàu lượn: {f}. Đoán trận tới? Chịu!",
     "🎢 {t} thắng – thua xen kẽ ({f}). Ổn định trong sự bất ổn."
   ], en: [
@@ -674,6 +1900,24 @@ var SN_BANK = {
     "🎢 {t} alternate wins and losses ({f}). Consistently inconsistent."
   ] },
   drawRun: { tag: 'troll', vi: [
+    "🤝 {t} đã hòa {k} trận liền. Chắc {t} ghét phải chọn bên.",
+    "🤝 {k} trận hòa liên tiếp — {t} đang là chuyên gia chia điểm.",
+    "🤝 {t} hòa tiếp, lần thứ {k} liên tiếp. Ai đó dạy {t} cách thắng đi.",
+    "🤝 {k} trận hòa! {t} đang đi trên dây giữa thắng và thua.",
+    "🤝 {t} và {k} trận hòa liên tiếp — cân bằng đến mức nhàm chán.",
+    "🤝 {t} đã hòa {k} trận liền. Tổng sự nghiệp: {cD} trận hòa.",
+    "🤝 {k} trận hòa liên tiếp. {t} không thua, nhưng cũng không thắng.",
+    "🤝 {t} đang có chuỗi hòa {k} trận. Một điểm mỗi trận, không hơn không kém.",
+    "🤝 {t} hòa {k} trận liền. Tin đồn: {t} đã nhận được giải Nobel Hòa bình.",
+    "🤝 {k} trận hòa liên tiếp — {t} cần thêm một chút “muối” trong tấn công.",
+    "🤝 {t} đang hòa liên tiếp {k} trận. Bảng xếp hạng của {t} đứng yên.",
+    "🤝 {t} hòa {k} trận liền. Không ai buồn, nhưng cũng không ai vui.",
+    "🤝 {k} trận hòa — {t} đang đá bóng như một nhà ngoại giao.",
+    "🤝 {t} đã hòa {k} trận. Đã đến lúc phải chọn: thắng hoặc thua.",
+    "🤝 Chuỗi {k} trận hòa của {t} khiến các đối thủ bối rối.",
+    "🤝 {t}: {k} trận hòa liên tiếp. Một kỷ lục không ai muốn giữ.",
+    "🤝 {t} đang “giữ hòa khí” với cả giải: {k} trận hòa liền.",
+    "🤝 {k} trận hòa. {t} đang chờ một cú hích để bứt phá.",
     "🤝 {t} hòa {k} trận liên tiếp. Sứ giả hòa bình chính hiệu.",
     "🤝 {k} trận hòa liền cho {t}. Không thắng, không thua, không ai nhớ."
   ], en: [
@@ -681,6 +1925,23 @@ var SN_BANK = {
     "🤝 {k} straight draws for {t}. No wins, no losses, no memories."
   ] },
   attack: { tag: 'stats', vi: [
+    "⚽ {t} ghi {gf} bàn sau {p} trận. Hàng công số 1 của mùa giải.",
+    "⚽ {a} bàn mỗi trận — {t} đang là cơn ác mộng của các thủ môn.",
+    "⚽ {t} đã ghi {gf} bàn trong {p} trận. Trung bình sự nghiệp chỉ {gpm} bàn/trận.",
+    "⚽ Hàng công {t}: {gf} bàn, {p} trận, {a} bàn/trận. Siêu hạng.",
+    "⚽ {t} sút là vào: {gf} bàn sau {p} trận.",
+    "⚽ {gf} bàn thắng — {t} đang chơi bóng đá tấn công đẹp mắt nhất.",
+    "⚽ {t} ghi trung bình {a} bàn/trận. Không ai ghi nhiều hơn.",
+    "⚽ {t} và {gf} bàn thắng: con số khiến các hậu vệ rùng mình.",
+    "⚽ {gf} bàn trong {p} trận. {t} có lẽ đang chơi ở chế độ dễ.",
+    "⚽ {t} đã ghi {gf} bàn. Tổng sự nghiệp: {cgf} bàn thắng.",
+    "⚽ Hàng công sắc bén nhất giải thuộc về {t}: {a} bàn mỗi trận.",
+    "⚽ {t} đang ghi bàn như hái rau: {gf} bàn sau {p} trận.",
+    "⚽ {a} bàn/trận — {t} đang đá như một đội bóng rổ.",
+    "⚽ {t} đã có {gf} bàn thắng. Thủ môn các đội khác đang xin nghỉ ốm.",
+    "⚽ {gf} bàn sau {p} trận: {t} đang ở đỉnh cao tấn công.",
+    "⚽ {t} ghi {a} bàn mỗi trận. Phòng ngự là một khái niệm xa lạ với đối thủ của {t}.",
+    "⚽ {t}: {gf} bàn, {a}/trận. Cỗ máy ghi bàn không biết mệt.",
     "⚽ Hàng công {t} đã nổ {gf} bàn sau {p} trận ({a}/trận). Thủ môn các đội khác hãy cẩn thận!",
     "⚽ {t} là cỗ máy ghi bàn của mùa: {a} bàn mỗi trận.",
     "⚽ {gf} bàn sau {p} trận — {t} sút như không có ngày mai."
@@ -690,6 +1951,22 @@ var SN_BANK = {
     "⚽ {gf} goals in {p} games — {t} shoot like there is no tomorrow."
   ] },
   leak: { tag: 'troll', vi: [
+    "🥅 {t} đã thủng lưới {ga} bàn trong {p} trận. Hàng thủ đang đi nghỉ phép.",
+    "🥅 {a} bàn thua mỗi trận — {t} đang là máy phát quà cho đối thủ.",
+    "🥅 {t} thủng lưới {ga} bàn. Tổng sự nghiệp: {cga} bàn thua.",
+    "🥅 Hàng thủ {t}: {ga} bàn thua sau {p} trận. Ai đó cần mua thêm hậu vệ.",
+    "🥅 {t} đã để lọt lưới {ga} lần. Khung thành của {t} đang đón khách liên tục.",
+    "🥅 {a} bàn thua/trận. {t} có lẽ nên chơi với 2 thủ môn.",
+    "🥅 {ga} bàn thua trong {p} trận — {t} đang có hàng thủ tệ nhất giải.",
+    "🥅 {t} thủng lưới trung bình {a} bàn/trận. Sự nghiệp: {gapm} bàn thua/trận.",
+    "🥅 {t} đang có hàng thủ như cửa tự động: ai đến cũng mở.",
+    "🥅 {ga} bàn thua! {t} cần một cuộc cải tổ hàng phòng ngự.",
+    "🥅 {t} thủng lưới {ga} bàn sau {p} trận. Thủ môn đang cân nhắc nghỉ hưu.",
+    "🥅 {a} bàn thua mỗi trận — {t} đang là thiên đường của các tiền đạo.",
+    "🥅 {t} đã thua {ga} bàn. Mỗi đối thủ gặp {t} đều có thêm thành tích.",
+    "🥅 Hàng thủ {t} thủng lưới {ga} bàn trong {p} trận. Phòng ngự chỉ là lý thuyết.",
+    "🥅 {t} đã để thua {a} bàn/trận. Các đối thủ đang xếp hàng để ghi bàn.",
+    "🥅 {ga} bàn thua, {p} trận. {t} đang cần một phép màu nơi hàng thủ.",
     "🥅 {t} thủng lưới {ga} bàn sau {p} trận. Lưới khung thành hay lưới đánh cá?",
     "🧀 Hàng thủ {t} như miếng phô mai Thụy Sĩ: {a} bàn thua mỗi trận.",
     "🚪 Cửa nhà {t} mở toang: {a} bàn thua/trận. Ai đó lắp giùm cái khóa!",
@@ -701,6 +1978,23 @@ var SN_BANK = {
     "🕳️ {ga} conceded in {p} games. The {t} keeper is probably busy on his phone."
   ] },
   wall: { tag: 'stats', vi: [
+    "🧱 {t} chỉ thua {ga} bàn sau {p} trận. Phòng ngự là nghệ thuật.",
+    "🧱 {ga} bàn thua trong {p} trận — {t} có hàng thủ tốt nhất giải.",
+    "🧱 {t} đang xây một bức tường: {ga} bàn thua sau {p} trận.",
+    "🧱 {t} chỉ để lọt lưới {ga} lần. Các tiền đạo đang nản lòng.",
+    "🧱 Hàng thủ {t}: {ga} bàn thua, {p} trận. Khó lọt hơn khóa ngân hàng.",
+    "🧱 {t} là đội khó ghi bàn nhất giải: chỉ {ga} bàn thua.",
+    "🧱 {ga} bàn thua sau {p} trận. {t} đang phòng ngự như một cỗ máy.",
+    "🧱 {t} đã đóng cửa khung thành: {ga} bàn thua trong {p} trận.",
+    "🧱 Muốn ghi bàn vào lưới {t}? Hãy chuẩn bị tinh thần thất vọng.",
+    "🧱 {t} chỉ thua {ga} bàn. Sự nghiệp: {gapm} bàn thua/trận.",
+    "🧱 {t} với {ga} bàn thua sau {p} trận — hàng thủ bằng thép.",
+    "🧱 {ga} bàn thua — {t} đang khiến các đối thủ phải vò đầu bứt tai.",
+    "🧱 {t} đang có hàng thủ chắc nhất: {ga} bàn thua trong {p} trận.",
+    "🧱 Khung thành {t} chỉ rung {ga} lần sau {p} trận. Ấn tượng!",
+    "🧱 {t} phòng ngự như vạn lý trường thành: {ga} bàn thua.",
+    "🧱 {ga} bàn thua sau {p} trận. {t} đang chứng minh phòng ngự thắng danh hiệu.",
+    "🧱 {t} đang là cơn ác mộng của các tiền đạo với chỉ {ga} bàn thua.",
     "🧱 {t} mới để thủng lưới {ga} bàn sau {p} trận — bức tường thực sự.",
     "🧱 Muốn ghi bàn vào lưới {t}? Chúc may mắn: {ga} bàn thua sau {p} trận.",
     "🧱 Hàng thủ thép của {t}: chỉ {ga} bàn thua trong {p} trận."
@@ -710,6 +2004,23 @@ var SN_BANK = {
     "🧱 The steel defence of {t}: only {ga} conceded in {p} games."
   ] },
   blank: { tag: 'troll', vi: [
+    "🔇 {t} đã {k} trận không ghi bàn. Hàng công đang ngủ đông.",
+    "🔇 {k} trận tịt ngòi — {t} cần một tay sút thực thụ.",
+    "🔇 {t} đã không ghi bàn trong {k} trận. Khung thành đối phương quá nhỏ?",
+    "🔇 {k} trận không bàn thắng. {t} từng ghi {gpm} bàn/trận trong sự nghiệp.",
+    "🔇 {t} đang trong cơn khát bàn thắng: {k} trận trắng tay.",
+    "🔇 {t} đã {k} trận không ghi bàn. Tiền đạo của {t} có lẽ đang đi dạo.",
+    "🔇 {k} trận không ghi được bàn — {t} đang cần một liều thuốc tấn công.",
+    "🔇 {t} tịt ngòi {k} trận. Ai đó chỉ đường tới khung thành cho {t} đi.",
+    "🔇 {k} trận không bàn thắng. {t} đang tập phòng ngự quá nhiều chăng?",
+    "🔇 {t} đã quên cách ghi bàn: {k} trận trắng tay.",
+    "🔇 {k} trận tịt ngòi — {t} cần tìm lại cảm hứng.",
+    "🔇 {t} đang có chuỗi {k} trận không ghi bàn. Một kỷ lục đáng quên.",
+    "🔇 {t} sút hoài không vào: {k} trận không bàn thắng.",
+    "🔇 {k} trận không ghi bàn. {t} có lẽ nên thử sút bằng mắt nhắm.",
+    "🔇 {t} đã {k} trận không ghi bàn. Hàng công đang bị “cấm khẩu”.",
+    "🔇 {k} trận trắng tay — {t} đang là đội bóng ít nguy hiểm nhất giải.",
+    "🔇 {t} tịt ngòi {k} trận liên tiếp. Bàn thắng tiếp theo sẽ được ăn mừng như vô địch.",
     "🔇 {t} đã {k} trận tịt ngòi. Tiền đạo đi nghỉ mát rồi à?",
     "🔇 {k} trận không ghi nổi bàn nào — {t} cần gấp một tiền đạo.",
     "🔇 {t} đã quên đường tới khung thành đối phương trong {k} trận."
@@ -719,6 +2030,24 @@ var SN_BANK = {
     "🔇 {t} forgot the way to the opponent's goal in {k} games."
   ] },
   cleanSheets: { tag: 'stats', vi: [
+    "🧤 {t} đã có {k} trận sạch lưới. Thủ môn đang có mùa giải trong mơ.",
+    "🧤 {k} trận không thủng lưới — {t} đang là bậc thầy phòng ngự.",
+    "🧤 {t} giữ sạch lưới {k} lần. Các tiền đạo đang phát điên.",
+    "🧤 {k} trận sạch lưới! Khung thành {t} như có bùa hộ mệnh.",
+    "🧤 {t} đã không để lọt lưới trong {k} trận. Ấn tượng!",
+    "🧤 {k} trận sạch lưới — thủ môn {t} xứng đáng được vinh danh.",
+    "🧤 {t} với {k} trận sạch lưới đang khiến các đối thủ nản lòng.",
+    "🧤 {k} lần giữ sạch lưới. {t} đang phòng ngự với sự kiên nhẫn tuyệt đối.",
+    "🧤 {t} đã có {k} trận không thủng lưới. Tin đồn: thủ môn {t} đã được tăng lương.",
+    "🧤 {k} trận sạch lưới — {t} đang chứng minh sức mạnh của phòng ngự.",
+    "🧤 {t} giữ sạch lưới {k} lần. Ai dám nói phòng ngự là nhàm chán?",
+    "🧤 {k} trận không thủng lưới. {t} đang đứng đầu về khả năng phòng ngự.",
+    "🧤 {t} đã khóa chặt khung thành {k} lần.",
+    "🧤 {k} trận sạch lưới — {t} có lẽ đã thuê một đội an ninh cho khung thành.",
+    "🧤 {t} đã có {k} trận không thủng lưới. Thủ môn {t} đang là người hùng thầm lặng.",
+    "🧤 {k} trận sạch lưới. {t} đang xây dựng thành công từ hàng thủ.",
+    "🧤 {t} giữ sạch lưới {k} trận — một con số đáng nể phục.",
+    "🧤 {k} trận không bàn thua. {t} đang để cho đối thủ ra về tay trắng.",
     "🧤 {t} giữ sạch lưới {k} trận — thủ môn xứng đáng được tăng lương.",
     "🧤 {k} trận sạch lưới. Găng tay của thủ môn {t} có bôi keo à?"
   ], en: [
@@ -726,6 +2055,23 @@ var SN_BANK = {
     "🧤 {k} clean sheets. Are the {t} keeper's gloves glued?"
   ] },
   drawKing: { tag: 'troll', vi: [
+    "👑 {t} dẫn đầu về số trận hòa: {k} trận. Ngôi vua không ai muốn.",
+    "👑 {k} trận hòa — {t} đang là bậc thầy của sự cân bằng.",
+    "👑 {t} hòa nhiều nhất giải ({k} trận). Cả sự nghiệp: {cD} trận hòa.",
+    "👑 {t} đã hòa {k} trận. Không ai giỏi chia điểm hơn {t}.",
+    "👑 “Vua hòa” {t} với {k} trận hòa. Tỷ lệ hòa sự nghiệp: {dr}%.",
+    "👑 {k} trận hòa! {t} có lẽ đang tu luyện đạo trung dung.",
+    "👑 {t} và {k} trận hòa: không thua, không thắng, không drama.",
+    "👑 {t} đã chia điểm {k} lần. Đối thủ nào cũng được một điểm.",
+    "👑 {k} trận hòa — {t} đang là người gìn giữ hòa bình của giải.",
+    "👑 {t} hòa {k} trận. Nếu biến một nửa thành thắng, {t} đã ở top đầu.",
+    "👑 {t} đang giữ kỷ lục về số trận hòa: {k} trận.",
+    "👑 {k} trận hòa. {t} có lẽ đã bị ám bởi con số 1.",
+    "👑 {t} hòa {k} trận — các nhà cái đang cân nhắc tăng tỷ lệ hòa khi {t} ra sân.",
+    "👑 {k} trận hòa! {t} đang chơi bóng đá theo phong cách “ai cũng vui”.",
+    "👑 {t} đã hòa {k} trận. Chưa ai tìm ra cách đánh bại {t}, nhưng {t} cũng vậy.",
+    "👑 {k} trận hòa — {t} cần thêm một chút quyết đoán.",
+    "👑 {t} đang đứng đầu bảng hòa với {k} trận. Một danh hiệu đặc biệt.",
     "🤝 {t} là “vua hòa” với {k} trận hòa. Chia điểm là đam mê.",
     "🤝 {k} trận hòa — {t} đúng là sứ giả hòa bình của giải.",
     "🤝 {t} hòa {k} trận. Không muốn làm ai buồn cả."
@@ -735,6 +2081,24 @@ var SN_BANK = {
     "🤝 {t} have drawn {k} times. They just do not want to upset anyone."
   ] },
   bigWin: { tag: 'stats', vi: [
+    "💥 {h} {sc} {a} ở {st} — cách biệt lớn nhất mùa giải.",
+    "💥 Không trận nào đậm hơn {h} {sc} {a} ({st}).",
+    "💥 {h} {sc} {a}: một trận đấu một chiều ở {st}.",
+    "💥 Tỉ số đậm nhất mùa: {h} {sc} {a}. {st} sẽ không dễ bị quên.",
+    "💥 {st}: {h} {sc} {a}. Cách biệt khiến ai cũng phải nhìn lại.",
+    "💥 {h} {sc} {a} — trận đấu mà một đội muốn xóa khỏi lịch sử.",
+    "💥 {h} {sc} {a} ở {st}. Cái tên thua cuộc vẫn đang trốn trong phòng.",
+    "💥 Kỷ lục cách biệt của mùa: {h} {sc} {a} ({st}).",
+    "💥 {h} {sc} {a} — một trận đấu không cân sức tại {st}.",
+    "💥 {st} đã chứng kiến một màn hủy diệt: {h} {sc} {a}.",
+    "💥 Tỉ số {sc} giữa {h} và {a} ở {st} vẫn đứng đầu bảng cách biệt.",
+    "💥 {h} {sc} {a}. Nhóm chat vẫn còn đang cà khịa về trận này.",
+    "💥 {h} {sc} {a} ({st}) — khoảnh khắc được chụp màn hình nhiều nhất mùa.",
+    "💥 Trận đấu đậm nhất mùa: {h} {sc} {a}. Một bên cười, một bên khóc.",
+    "💥 {h} {sc} {a} ở {st}. Cách biệt này sẽ còn được nhắc lại nhiều mùa nữa.",
+    "💥 {st}: {h} {sc} {a}. Một trong những trận đấu đáng nhớ nhất mùa giải.",
+    "💥 {h} đã đánh bại {a} {sc} ở {st} — không ai thắng đậm hơn thế mùa này.",
+    "💥 {h} {sc} {a}: cách biệt đủ để viết cả một cuốn sách.",
     "💥 Trận thắng đậm nhất mùa: {h} {sc} {a} ({st}).",
     "💥 Tỉ số khó quên nhất mùa: {h} {sc} {a} ({st}). Có người vẫn chưa ngủ được."
   ], en: [
@@ -742,6 +2106,24 @@ var SN_BANK = {
     "💥 The most unforgettable score of the season: {h} {sc} {a} ({st}). Someone still cannot sleep."
   ] },
   fest: { tag: 'stats', vi: [
+    "🎇 {h} {sc} {a} ở {st} — trận đấu nhiều bàn thắng nhất mùa.",
+    "🎇 Không trận nào có nhiều bàn hơn {h} {sc} {a} ({st}).",
+    "🎇 {h} {sc} {a}: bữa tiệc bàn thắng ở {st}.",
+    "🎇 {st} đã chứng kiến một màn pháo hoa: {h} {sc} {a}.",
+    "🎇 {h} {sc} {a} — các hậu vệ hôm đó chắc đã quên mang giày.",
+    "🎇 Trận đấu có nhiều bàn nhất mùa: {h} {sc} {a} ({st}).",
+    "🎇 {h} {sc} {a} ở {st}. Trận đấu đáng xem nhất nếu bạn thích bàn thắng.",
+    "🎇 {h} và {a} đã tạo ra một cơn mưa bàn thắng: {sc} ở {st}.",
+    "🎇 {h} {sc} {a} — cả hai thủ môn đều muốn quên đêm đó.",
+    "🎇 {st}: {h} {sc} {a}. Bảng tỉ số đã phải làm việc cật lực.",
+    "🎇 {h} {sc} {a} ở {st} — trận đấu mà phòng ngự bị xóa sổ.",
+    "🎇 Kỷ lục bàn thắng một trận của mùa: {h} {sc} {a} ({st}).",
+    "🎇 {h} {sc} {a}. Ai xem trận này chắc chắn không bị buồn ngủ.",
+    "🎇 {st} đã có một đêm bùng nổ: {h} {sc} {a}.",
+    "🎇 {h} {sc} {a} — trận đấu được yêu thích nhất của các fan tấn công.",
+    "🎇 {h} và {a} không biết dừng: {sc} ở {st}.",
+    "🎇 {h} {sc} {a} ({st}). Thủ môn hai đội đã được nghỉ phép ngay sau đó.",
+    "🎇 {h} {sc} {a} — trận cầu không dành cho người yếu tim.",
     "🎆 Mưa bàn thắng: {h} {sc} {a} là trận nhiều bàn nhất mùa.",
     "🎆 {h} {sc} {a} — trận cầu mà các thủ môn muốn quên nhất."
   ], en: [
@@ -749,6 +2131,24 @@ var SN_BANK = {
     "🎆 {h} {sc} {a} — the match goalkeepers most want to forget."
   ] },
   avgGoals: { tag: 'stats', vi: [
+    "📊 {m} trận đã đá, {g} bàn đã ghi — trung bình {a} bàn mỗi trận. {c}",
+    "📊 Thống kê mùa giải: {a} bàn/trận sau {m} trận. {c}",
+    "📊 Lưới đã rung {g} lần trong {m} trận ({a}/trận). {c}",
+    "📊 Con số biết nói: {g} bàn, {m} trận, {a} bàn/trận. {c}",
+    "📊 PesNews đếm được {g} bàn thắng sau {m} trận. Trung bình: {a}. {c}",
+    "📊 Mỗi trận mùa này có trung bình {a} bàn ({g} bàn / {m} trận). {c}",
+    "📊 {g} lần ăn mừng trong {m} trận — {a} bàn mỗi trận. {c}",
+    "📊 Bảng tổng kết: {m} trận, {g} bàn, {a} bàn/trận. {c}",
+    "📊 Sau {m} trận, các đội đã ghi tổng cộng {g} bàn. {c}",
+    "📊 Hiệu suất ghi bàn của giải: {a} bàn/trận qua {m} trận. {c}",
+    "📊 {g} bàn thắng đã được ghi sau {m} trận đấu. {c}",
+    "📊 Trung bình {a} bàn mỗi trận — đó là nhịp đập của mùa giải. {c}",
+    "📊 {m} trận, {g} bàn. Máy tính của PesNews báo {a} bàn/trận. {c}",
+    "📊 Thủ môn các đội đã vào lưới nhặt bóng {g} lần sau {m} trận. {c}",
+    "📊 Số liệu mùa giải: {g} bàn / {m} trận = {a}. {c}",
+    "📊 {a} bàn/trận sau {m} trận đấu. {c}",
+    "📊 Sau {m} trận: {g} bàn thắng, tức {a} bàn mỗi trận. {c}",
+    "📊 {g} bàn trong {m} trận. Giải đấu đang có nhịp độ {a} bàn/trận. {c}",
     "📊 Mùa này: {g} bàn sau {m} trận, trung bình {a} bàn/trận. {c}",
     "📊 {g} bàn thắng, {m} trận, {a} bàn mỗi trận. {c}"
   ], en: [
@@ -756,6 +2156,24 @@ var SN_BANK = {
     "📊 {g} goals, {m} games, {a} per match. {c}"
   ] },
   avgHi: { tag: 'stats', vi: [
+    "Phòng ngự chỉ còn là truyền thuyết.",
+    "Các hậu vệ cần đi học lại.",
+    "Mùa giải của những tay sút.",
+    "Khung thành nào cũng rộng mở.",
+    "Bóng đá tấn công lên ngôi.",
+    "Tiền đạo đang kiếm bộn.",
+    "Lưới rung liên tục, khán giả mãn nguyện.",
+    "Một mùa giải không dành cho thủ môn.",
+    "Đây là bóng đá hay bóng rổ?",
+    "Các đội quên mất cách phòng ngự rồi.",
+    "Thủ môn đang nhận lương theo số bàn thua.",
+    "Bảng tỉ số làm việc vất vả nhất giải.",
+    "Mỗi trận đều là một bữa tiệc.",
+    "Khán giả không có thời gian để chớp mắt.",
+    "Phòng ngự đang được rao bán giá rẻ.",
+    "Nếu bạn thích bàn thắng, đây là thiên đường.",
+    "Các HLV phòng ngự đang thất nghiệp.",
+    "Lưới khung thành cần được thay mới.",
     "Hàng thủ các đội đi đâu hết rồi?",
     "Thủ môn nên đòi tăng lương."
   ], en: [
@@ -763,6 +2181,24 @@ var SN_BANK = {
     "Goalkeepers should ask for a raise."
   ] },
   avgLo: { tag: 'stats', vi: [
+    "Phòng ngự đang lên ngôi.",
+    "Các tiền đạo cần uống thêm cà phê.",
+    "Thủ môn đang có mùa giải nhàn nhã.",
+    "Bàn thắng đang là hàng hiếm.",
+    "Ai đó cần mang thêm đạn cho hàng công.",
+    "Mùa giải của những bức tường.",
+    "Các tay sút đang ngủ đông.",
+    "Khán giả bắt đầu ngáp.",
+    "Bóng đá chiến thuật kiểu cũ.",
+    "Mỗi bàn thắng đều quý như vàng.",
+    "Hàng công các đội cần được nạp năng lượng.",
+    "Các hậu vệ đáng được tăng lương.",
+    "Muốn xem bàn thắng? Hãy kiên nhẫn.",
+    "Khung thành đang được bảo vệ nghiêm ngặt.",
+    "Phòng ngự thắng danh hiệu, nhưng không thắng khán giả.",
+    "Giải đấu này cần thêm chút gia vị.",
+    "Lưới khung thành vẫn còn nguyên tem.",
+    "Tiền đạo đang tìm lại đường về khung thành.",
     "Hơi buồn ngủ một chút...",
     "Trận đấu cần thêm chút muối."
   ], en: [
@@ -770,6 +2206,24 @@ var SN_BANK = {
     "The matches need a pinch of salt."
   ] },
   avgMid: { tag: 'stats', vi: [
+    "Cân bằng giữa công và thủ.",
+    "Không quá nhiều, không quá ít.",
+    "Đúng chuẩn bóng đá hiện đại.",
+    "Một mùa giải vừa vặn.",
+    "Tiền đạo và hậu vệ đang hòa nhau.",
+    "Đủ để vui, đủ để căng thẳng.",
+    "Giải đấu đang ở trạng thái cân bằng.",
+    "Khán giả không chán, thủ môn không khóc.",
+    "Một con số đẹp cho mọi người.",
+    "Bóng đá đúng nghĩa.",
+    "Không ai có thể phàn nàn.",
+    "Nhịp độ ghi bàn ổn định.",
+    "Vừa đủ bàn thắng để nhóm chat có chuyện.",
+    "Phòng ngự tốt, tấn công tốt.",
+    "Giải đấu đang chạy đúng nhịp.",
+    "Số liệu đẹp để đưa vào sách giáo khoa.",
+    "Không nhiều bất ngờ, nhưng không nhàm chán.",
+    "Một mức bàn thắng mà PesNews thích.",
     "Vừa đủ để khán giả không ngủ gật.",
     "Mức bàn thắng lý tưởng, PesNews hài lòng."
   ], en: [
@@ -777,6 +2231,24 @@ var SN_BANK = {
     "A healthy goal rate, PesNews approves."
   ] },
   drawShare: { tag: 'troll', vi: [
+    "🤝 {p} số trận kết thúc bằng trận hòa. Các đội đang ngại thắng?",
+    "🤝 Tỷ lệ hòa mùa này: {p}. Chia điểm đang là mốt.",
+    "🤝 {p} trận hòa — giải đấu này cần thêm chút quyết đoán.",
+    "🤝 {p} số trận không có người thắng. Ai cũng muốn an toàn.",
+    "🤝 Mùa giải của những trận hòa: {p} số trận chia điểm.",
+    "🤝 {p} trận hòa. Các đội có lẽ đã ký hiệp ước không xâm phạm.",
+    "🤝 Tỷ lệ hòa {p} — bảng xếp hạng đang bị nén chặt.",
+    "🤝 {p} số trận hòa. Không ai thua, nhưng cũng không ai thắng.",
+    "🤝 {p} trận chia điểm — các nhà cái đang cười.",
+    "🤝 Mùa này {p} số trận hòa. Bóng đá hay cờ vây?",
+    "🤝 {p} trận hòa — một con số cho thấy các đội ngang ngửa.",
+    "🤝 Tỷ lệ hòa {p}. Giải đấu này không dành cho người thích kết quả rõ ràng.",
+    "🤝 {p} số trận kết thúc hòa. Các đội đang chơi quá thận trọng.",
+    "🤝 {p} trận hòa — một mùa giải của sự cân bằng.",
+    "🤝 {p} trận hòa. Ai đó cần phá vỡ thế bế tắc này.",
+    "🤝 Tỷ lệ hòa {p} — PesNews đang tính đến việc đổi tên giải thành “Cup Hòa bình”.",
+    "🤝 {p} số trận hòa. Bảng xếp hạng đang trở nên khó đoán.",
+    "🤝 {p} trận không phân thắng bại — một mùa giải đầy giằng co.",
     "😴 {p} số trận kết thúc hòa — giải đấu của những người yêu hòa bình.",
     "😴 {p} số trận hòa. Ai đó cần dạy các đội cách giành chiến thắng."
   ], en: [
@@ -784,6 +2256,24 @@ var SN_BANK = {
     "😴 {p} of games drawn. Someone needs to teach these teams how to win."
   ] },
   commonScore: { tag: 'stats', vi: [
+    "🔢 {sc} là tỉ số phổ biến nhất mùa, xuất hiện {k} lần.",
+    "🔢 {k} trận kết thúc với tỉ số {sc}. Một con số quen thuộc.",
+    "🔢 Tỉ số {sc} đã lặp lại {k} lần mùa này. Các đội thích sự quen thuộc.",
+    "🔢 {sc} — tỉ số của mùa giải với {k} lần xuất hiện.",
+    "🔢 PesNews thống kê: {sc} xuất hiện {k} lần, nhiều hơn bất kỳ tỉ số nào khác.",
+    "🔢 {k} lần {sc}. Nếu phải đoán tỉ số, hãy đoán {sc}.",
+    "🔢 Tỉ số {sc} đang là “món ăn ruột” của mùa giải ({k} lần).",
+    "🔢 {sc} lặp lại {k} lần — các đội đang chơi theo kịch bản?",
+    "🔢 {k} trận cùng tỉ số {sc}. Trùng hợp hay quy luật?",
+    "🔢 Tỉ số “quốc dân” mùa này: {sc}, xuất hiện {k} lần.",
+    "🔢 {sc} — {k} lần. Bảng tỉ số có lẽ đã bị kẹt.",
+    "🔢 {k} trận đấu đã kết thúc với {sc}. Một con số đáng nhớ.",
+    "🔢 {sc} xuất hiện {k} lần — tỉ số được yêu thích nhất giải.",
+    "🔢 Mùa này, {sc} là tỉ số được lặp lại nhiều nhất ({k} lần).",
+    "🔢 {k} lần {sc}. Các đội có vẻ rất thích sự an toàn.",
+    "🔢 {sc} đang là tỉ số “thương hiệu” của mùa giải ({k} lần).",
+    "🔢 Tỉ số {sc} xuất hiện {k} lần. PesNews đề nghị đăng ký bản quyền.",
+    "🔢 {k} lần {sc} — các đội đang có chung một “gu”.",
     "🔢 Tỉ số hay gặp nhất mùa: {sc} ({k} lần). Có vẻ các đội rất thích con số này.",
     "🔢 {sc} xuất hiện {k} lần — tỉ số “quốc dân” của mùa giải."
   ], en: [
@@ -793,6 +2283,23 @@ var SN_BANK = {
 
   // ================= Elo =================
   eloGain: { tag: 'elo', vi: [
+    "📈 {t} đã tăng {d} Elo trong mùa này. Không ai tăng nhiều hơn.",
+    "📈 {d} Elo — {t} đang là đội leo nhanh nhất bảng xếp hạng.",
+    "📈 {t} đã thu về {d} Elo mùa này. Elo hiện tại: {elo}.",
+    "📈 Mùa giải của {t}: {d} Elo và còn đang tăng.",
+    "📈 {t} tăng {d} Elo. Đỉnh sự nghiệp của {t} là {peak}.",
+    "📈 {d} Elo trong một mùa — {t} đang đầu tư rất hiệu quả.",
+    "📈 {t} đang là cổ phiếu nóng nhất sàn Elo: {d} mùa này.",
+    "📈 {t} bỏ túi {d} Elo. Ai đó đang chơi rất hay.",
+    "📈 {d} Elo cho {t}! Một mùa giải bội thu.",
+    "📈 {t} tăng {d} Elo mùa này, giờ đứng thứ {eloRank} bảng Elo toàn thời gian.",
+    "📈 {t} và mùa giải +{d} Elo — đáng để khung lại treo tường.",
+    "📈 {d} Elo — {t} đang có mùa giải thành công nhất về Elo.",
+    "📈 {t} đã lấy được {d} Elo từ các đối thủ. Ngân hàng Elo đang quá tải.",
+    "📈 {t} tăng {d} Elo. Các đối thủ đang phải trả phí cho {t}.",
+    "📈 {d} Elo cho {t} — mùa giải đáng nhớ nhất về phong độ.",
+    "📈 {t} đã thu về {d} Elo. Tên của {t} đang leo dần lên bảng xếp hạng.",
+    "📈 {t} +{d} Elo. Tin đồn: {t} đang được các đối thủ nghiên cứu kỹ.",
     "📈 {t} là đội hưởng lợi nhiều nhất mùa này: {d} Elo.",
     "💰 Cổ phiếu {t} đang tăng trần: {d} Elo chỉ trong mùa này.",
     "📈 {t} bỏ túi {d} Elo. Ngân hàng Elo phải mở thêm két."
@@ -802,6 +2309,23 @@ var SN_BANK = {
     "📈 {t} pocket {d} Elo. The Elo bank needs a new vault."
   ] },
   eloDrop: { tag: 'elo', vi: [
+    "📉 {t} đã mất {d} Elo mùa này. Một mùa giải để quên.",
+    "📉 {d} Elo đã bay đi — {t} cần tìm lại phong độ.",
+    "📉 {t} tụt {d} Elo. Elo hiện tại chỉ còn {elo}.",
+    "📉 {t} từng có Elo {peak}, giờ mùa này lại mất thêm {d}.",
+    "📉 {d} Elo biến mất trong một mùa. {t} đang ở giai đoạn khó khăn.",
+    "📉 {t} đang rơi tự do trên bảng Elo: {d} mùa này.",
+    "📉 {t} mất {d} Elo. Các đối thủ đang chia nhau số điểm đó.",
+    "📉 {d} Elo — {t} đang là đội mất nhiều Elo nhất mùa.",
+    "📉 {t} đã đánh rơi {d} Elo. Ai nhặt được xin trả lại.",
+    "📉 {t} mất {d} Elo mùa này. Bảng xếp hạng đang không thân thiện với {t}.",
+    "📉 {d} Elo đã trôi đi. {t} cần một chuỗi thắng để gỡ lại.",
+    "📉 {t} tụt {d} Elo — một mùa giải đầy thử thách.",
+    "📉 {t} đã trả {d} Elo học phí cho mùa này.",
+    "📉 {d} Elo — {t} có lẽ nên xem lại chiến thuật.",
+    "📉 {t} mất {d} Elo. Tin đồn: {t} đã đổ lỗi cho đội hình trong game.",
+    "📉 {t} đang là ngân hàng Elo của các đối thủ: {d} mùa này.",
+    "📉 {d} Elo đã bay đi. {t} đang cần một mùa giải bùng nổ để lấy lại.",
     "📉 {t} đã rơi {d} Elo mùa này. Chứng khoán còn đỡ hơn.",
     "📉 {t} mất {d} Elo — PesNews khuyên bán gấp trước khi quá muộn.",
     "📉 Ví Elo của {t} thủng một lỗ to: {d} trong mùa."
@@ -811,6 +2335,23 @@ var SN_BANK = {
     "📉 {t}'s Elo wallet has a big hole: {d} this season."
   ] },
   eloKing: { tag: 'elo', vi: [
+    "👑 {t} ({e} Elo) đang đứng đầu bảng Elo toàn thời gian và có mặt ở giải này.",
+    "👑 Số 1 Elo {t} ({e}) đang là mục tiêu của mọi đối thủ.",
+    "👑 {t} với {e} Elo — đội mạnh nhất lịch sử CLB đang tham dự.",
+    "👑 Ai muốn làm vua? Hãy đánh bại {t} ({e} Elo) trước đã.",
+    "👑 {t} ({e}) đang ở đỉnh bảng Elo. Mỗi trận đấu của {t} đều là một cuộc bảo vệ ngôi vương.",
+    "👑 {t} là số 1 Elo ({e}). Thắng {t} là trúng số độc đắc Elo.",
+    "👑 Đỉnh bảng Elo thuộc về {t} ({e}). Giải đấu này có thay đổi được điều đó?",
+    "👑 {t} ({e} Elo) — vị vua đang được thách thức.",
+    "👑 {t} đứng đầu Elo với {e}. Các đối thủ đang ngắm nghía vương miện.",
+    "👑 {e} Elo — {t} đang là tiêu chuẩn để các đội khác đo lường.",
+    "👑 {t} ({e}) vào giải với tư cách số 1 Elo. Áp lực hoàn toàn thuộc về {t}.",
+    "👑 Vua Elo {t} ({e}) — các đối thủ nên mang theo cả đội quân.",
+    "👑 {t} đang nắm ngôi số 1 Elo ({e}). Giữ ngôi khó hơn giành ngôi.",
+    "👑 {t} ({e} Elo) — đội mà ai cũng muốn đánh bại nhất.",
+    "👑 {t} là vua Elo với {e}. Câu hỏi: ai sẽ là kẻ soán ngôi?",
+    "👑 {t} ({e}) đang ở trên đỉnh. Nơi đó gió rất mạnh.",
+    "👑 Số 1 Elo {t} ({e}) đang được cả giải theo dõi từng trận.",
     "👑 {t} đang là số 1 bảng Elo toàn thời gian ({e}). Mọi đội đều muốn hạ bệ họ.",
     "👑 Vua Elo {t} ({e}) có mặt ở giải này. Ngai vàng nào cũng lung lay, cẩn thận nhé!",
     "👑 Ai thắng được {t} ({e} Elo) ở giải này sẽ được bơm Elo cực mạnh."
@@ -820,6 +2361,24 @@ var SN_BANK = {
     "👑 Whoever beats {t} ({e} Elo) here gets a huge Elo boost."
   ] },
   eloBelowBase: { tag: 'elo', vi: [
+    "🧊 {t} ({e} Elo) đang ở dưới mức 1500. Con đường trở lại còn dài.",
+    "🧊 Elo {e} — {t} đang cần leo lên ít nhất mức khởi điểm.",
+    "🧊 {t} có Elo {e}, thấp hơn cả một người mới bắt đầu.",
+    "🧊 {t} ({e}) đang ở vùng băng giá. Cần một mùa giải bùng nổ.",
+    "🧊 {t} đang ở dưới đường 1500 với {e} Elo. Từng có đỉnh {peak}.",
+    "🧊 Elo {e} — {t} đang phải chứng minh mình xứng đáng hơn thế.",
+    "🧊 {t} ({e}) dưới mức khởi điểm. Mỗi chiến thắng đều quý giá.",
+    "🧊 {t} đang ở {e} Elo. Đã đến lúc để đứng dậy.",
+    "🧊 {t} ({e} Elo) — một con số không ai muốn có trên hồ sơ.",
+    "🧊 {e} Elo. {t} cần thêm thật nhiều tự tin để thoát khỏi vùng lạnh.",
+    "🧊 {t} đang ở dưới 1500 Elo ({e}). Các đối thủ xem {t} như cơ hội kiếm điểm.",
+    "🧊 {t} ({e}) đang ở vùng đáy bảng Elo. Mùa này là cơ hội để thay đổi.",
+    "🧊 {t} với {e} Elo — đội cần nhiều nỗ lực nhất giải.",
+    "🧊 Elo {e} không nói lên tất cả. {t} vẫn có thể gây bất ngờ.",
+    "🧊 {t} ({e} Elo) đang cần một chuỗi thắng để lấy lại danh dự.",
+    "🧊 {t} đang ở {e} Elo, dưới mức khởi đầu. Tin đồn: {t} đã thuê HLV riêng.",
+    "🧊 {e} Elo — {t} đang ở điểm thấp, nhưng đáy là nơi để bật lên.",
+    "🧊 {t} ({e}) dưới 1500 Elo. Mỗi trận đấu là một bước trên đường trở lại.",
     "🧊 Elo của {t} chỉ còn {e}, dưới cả mức khởi điểm 1500.",
     "🧊 {t} ({e} Elo) đang sống dưới “mức nghèo Elo”. Cần gấp một chuỗi thắng."
   ], en: [
@@ -827,6 +2386,24 @@ var SN_BANK = {
     "🧊 {t} ({e} Elo) are below the Elo poverty line. A winning run is needed."
   ] },
   eloGapField: { tag: 'elo', vi: [
+    "📏 {a} và {b} cách nhau {g} điểm Elo — khoảng cách của hai thế hệ.",
+    "📏 {g} Elo chênh lệch giữa đỉnh {a} và đáy {b}.",
+    "📏 {a} mạnh nhất, {b} yếu nhất. Khoảng cách: {g} Elo.",
+    "📏 Giải đấu này có {g} điểm Elo chênh lệch từ {a} đến {b}.",
+    "📏 {a} và {b}: hai thế giới, cách nhau {g} Elo.",
+    "📏 Khoảng cách {g} Elo giữa {a} và {b} — một giải đấu không cân bằng?",
+    "📏 {g} Elo tách biệt {a} với {b}. Ai sẽ thu hẹp khoảng cách?",
+    "📏 {a} ở trên đỉnh, {b} ở dưới đáy, cách nhau {g} Elo.",
+    "📏 Từ {a} xuống {b} là {g} Elo. Một con dốc dài.",
+    "📏 {g} Elo — khoảng cách giữa {a} và {b} đang là bài toán của giải.",
+    "📏 {a} vs {b}: {g} điểm Elo chênh lệch. Nếu gặp nhau, bất ngờ sẽ lớn.",
+    "📏 Giải đấu với biên độ {g} Elo: từ {a} đến {b}.",
+    "📏 {a} và {b} cách nhau {g} Elo. Nhưng bóng đá không chơi trên giấy.",
+    "📏 {g} Elo giữa {a} và {b} — giải đấu của cá mập và cá con.",
+    "📏 {a} đứng đầu, {b} đứng cuối, {g} Elo là khoảng cách.",
+    "📏 {g} Elo — {b} cần rất nhiều chiến thắng để đuổi kịp {a}.",
+    "📏 {a} và {b} cách nhau {g} Elo. Một giải đấu đa dạng trình độ.",
+    "📏 Khoảng cách {g} Elo từ {a} đến {b} — đỉnh núi và thung lũng.",
     "📏 Chênh lệch Elo giữa đội mạnh nhất {a} và yếu nhất {b} là {g}. Cá lớn nuốt cá bé?",
     "📏 Từ {a} tới {b}: khoảng cách {g} điểm Elo. Giải đấu của hai thế giới."
   ], en: [
@@ -836,6 +2413,22 @@ var SN_BANK = {
 
   // ================= Previews =================
   bigMatch: { tag: 'preview', vi: [
+    "⚔️ {st} có một trận không thể bỏ lỡ: {h} vs {a}. PesNews chọn {f} ({p}), {pk}.{hh}",
+    "⚔️ {h} đấu {a} — trận cầu tâm điểm {st}. {f} nhỉnh hơn ({p}), {pk}.{hh}",
+    "⚔️ Tâm điểm của {st}: {h} – {a}. Máy tính PesNews nghiêng về {f} ({p}), {pk}.{hh}",
+    "⚔️ {h} và {a} sắp đối đầu ở {st}. Cửa trên: {f} ({p}), {pk}.{hh}",
+    "⚔️ {st}: {h} gặp {a}. Bắp rang đã sẵn sàng. Dự đoán: {f} ({p}), {pk}.{hh}",
+    "⚔️ Trận đấu hấp dẫn nhất {st}: {h} vs {a}. {f} có lợi thế ({p}), {pk}.{hh}",
+    "⚔️ {h} – {a} ở {st}: cuộc đọ sức của hai đội mạnh. {f} được chọn ({p}), {pk}.{hh}",
+    "⚔️ {st} nóng lên với {h} vs {a}. PesNews đặt niềm tin vào {f} ({p}), {pk}.{hh}",
+    "⚔️ {h} và {a} đại chiến ở {st}. {f} đang được đánh giá cao ({p}), {pk}.{hh}",
+    "⚔️ Đừng bỏ lỡ {h} vs {a} ở {st}. PesNews dự đoán {f} thắng ({p}), {pk}.{hh}",
+    "⚔️ {st}: {h} – {a}, trận đấu mà nhóm chat đang bàn tán nhiều nhất. {f} ({p}), {pk}.{hh}",
+    "⚔️ {h} vs {a} — trận đấu có thể quyết định cục diện {st}. {f} ({p}), {pk}.{hh}",
+    "⚔️ Tâm điểm {st}: {h} đấu {a}. {f} có {p} cơ hội, {pk}.{hh}",
+    "⚔️ {h} và {a} sẽ làm nóng {st}. PesNews tin {f} ({p}), {pk}.{hh}",
+    "⚔️ Cuộc chiến ở {st}: {h} vs {a}. {f} được xem là ứng viên ({p}), {pk}.{hh}",
+    "⚔️ {h} – {a} ở {st}: trận đấu đáng xem nhất vòng. {f} ({p}), {pk}.{hh}",
     "⚔️ Đại chiến {st}: {h} vs {a}. PesNews nghiêng về {f} ({p}), {pk}.{hh}",
     "🍿 Tâm điểm {st}: {h} đụng độ {a}. {f} được đánh giá cao hơn ({p}), {pk}.{hh}",
     "🔭 Trận cầu được chờ đợi nhất {st}: {h} – {a}. Cửa trên: {f} ({p}), {pk}.{hh}",
@@ -847,6 +2440,24 @@ var SN_BANK = {
     "🎬 Blockbuster, {st}: {h} meet {a}. The PesNews script: {f} win ({p}), {pk}.{hh}"
   ] },
   curse: { tag: 'preview', vi: [
+    "🧿 {f} có Elo cao hơn, nhưng lịch sử đối đầu đứng về phía {d} ({w}-{l}).",
+    "🧿 {d} là nỗi ám ảnh của {f}: {w}-{l} trong các lần gặp.",
+    "🧿 Trên giấy {f} mạnh hơn. Trong lịch sử, {d} dẫn {w}-{l}.",
+    "🧿 {f} gặp {d} — đối thủ mà {f} chưa bao giờ dễ chịu ({w}-{l}).",
+    "🧿 {d} dẫn {f} {w}-{l} trong đối đầu. Elo không phải là tất cả.",
+    "🧿 Lời nguyền {d}: {f} thua nhiều hơn thắng ({w}-{l}).",
+    "🧿 {f} cần cẩn thận: {d} đang dẫn {w}-{l} trong các lần gặp.",
+    "🧿 {d} có Elo thấp hơn nhưng lại là “biệt đội khiển trung” của {f} ({w}-{l}).",
+    "🧿 {f} vs {d}: đối đầu {w}-{l} nghiêng về {d}. Ai sẽ phá lời nguyền?",
+    "🧿 {d} luôn biết cách làm khó {f}: {w}-{l} trong lịch sử.",
+    "🧿 {f} mạnh hơn, nhưng {d} đã thắng {w} lần so với {l} lần thua.",
+    "🧿 {d} đang nắm giữ bí mật để đánh bại {f} ({w}-{l}).",
+    "🧿 {f} đã gặp khó trước {d} nhiều lần ({w}-{l}). Lần này thì sao?",
+    "🧿 Lịch sử đối đầu {w}-{l} cho {d}. {f} cần một đêm đặc biệt.",
+    "🧿 {d} là khắc tinh: {w}-{l} trước {f}. Elo chỉ là con số.",
+    "🧿 {f} sẽ phải vượt qua cả {d} và lịch sử ({w}-{l}).",
+    "🧿 {d} dẫn {w}-{l} trước {f}. Tin đồn: {f} đang mật pháp chống nguyền.",
+    "🧿 {f} vs {d}: trận đấu của Elo và lời nguyền ({w}-{l}).",
     "🧿 {d} kém Elo nhưng lại đang thắng {f} {w}-{l} trong đối đầu. Lời nguyền có tiếp diễn?",
     "🧿 {f} mạnh hơn trên giấy, nhưng {d} là “khắc tinh” ({w}-{l}). Cẩn thận!"
   ], en: [
@@ -854,6 +2465,23 @@ var SN_BANK = {
     "🧿 {f} are stronger on paper, but {d} are their bogey team ({w}-{l}). Careful!"
   ] },
   oneSided: { tag: 'troll', vi: [
+    "🐟 {d} có {p} cơ hội trước {f}. Cần một phép màu.",
+    "🐟 {d} vs {f}: PesNews chỉ cho {d} {p}. Nhưng bóng đá luôn có bất ngờ.",
+    "🐟 {f} đang được đánh giá vượt trội, {d} chỉ có {p}.",
+    "🐟 {d} gặp {f} — {p} cơ hội, nhưng không phải là không có.",
+    "🐟 {p} — đó là cơ hội của {d} trước {f}. Ai tin vào phép màu?",
+    "🐟 {d} bước vào hang cọp {f} với {p} cơ hội.",
+    "🐟 {f} vs {d}: kèo lệch. {d} chỉ có {p}.",
+    "🐟 {d} cần chơi trận hay nhất sự nghiệp để thắng {f} ({p}).",
+    "🐟 {p} cơ hội cho {d}. {f} chỉ cần chơi đúng sức.",
+    "🐟 {d} trước {f}: {p} cơ hội. Câu chuyện David và Goliath có lặp lại?",
+    "🐟 PesNews cho {d} {p} trước {f}. Nhưng PesNews đã sai nhiều lần rồi.",
+    "🐟 {d} đối đầu {f} với {p} cơ hội — một nhiệm vụ gần như bất khả thi.",
+    "🐟 {p} cho {d}. {f} được kỳ vọng sẽ thắng dễ dàng.",
+    "🐟 {d} có {p} để gây sốc trước {f}. Tay cầm sẵn sàng chưa?",
+    "🐟 {f} vs {d}: trận đấu trên giấy đã có kết quả. {d} chỉ có {p}.",
+    "🐟 {d} cần một đêm thần thánh để vượt qua {f} ({p}).",
+    "🐟 {p} cơ hội — {d} đang ở vị trê của kẻ yếu trước {f}.",
     "🐟 {d} gặp {f}: PesNews cho {d} {p} cơ hội. Mang theo áo mưa nhé!",
     "🙏 {d} chạm trán {f}. PesNews chỉ biết chúc {d} may mắn ({p}).",
     "🐟 Cá con {d} bơi vào bể cá mập {f}. Cơ hội sống sót: {p}."
@@ -863,6 +2491,23 @@ var SN_BANK = {
     "🐟 Little fish {d} swim into the {f} shark tank. Survival chance: {p}."
   ] },
   coinFlip: { tag: 'preview', vi: [
+    "🎲 {h} vs {a}: không ai biết trước được, {pk}.",
+    "🎲 {h} và {a} ngang ngửa — PesNews tung đồng xu, {pk}.",
+    "🎲 Trận đấu 50-50: {h} – {a}, {pk}.",
+    "🎲 {h} vs {a}: kèo cân bằng nhất vòng, {pk}.",
+    "🎲 Không có cửa trên, không có cửa dưới: {h} – {a}, {pk}.",
+    "🎲 {h} và {a} cân tài cân sức. Một chi tiết nhỏ sẽ quyết định, {pk}.",
+    "🎲 {h} – {a}: PesNews đã thử tính 3 lần, vẫn ra 50-50, {pk}.",
+    "🎲 {h} vs {a} — trận đấu khó đoán nhất, {pk}.",
+    "🎲 {h} và {a} không ai hơn ai. Bản lĩnh sẽ quyết định, {pk}.",
+    "🎲 {h} – {a}: trận đấu của những chi tiết nhỏ, {pk}.",
+    "🎲 {h} vs {a}: kèo thơm cho người thích mạo hiểm, {pk}.",
+    "🎲 {h} và {a}: hai đội ngang nhau, không ai dám đoán, {pk}.",
+    "🎲 {h} – {a}. Cân đĩa của PesNews đứng yên, {pk}.",
+    "🎲 {h} vs {a}: khó đoán như thời tiết mùa hè, {pk}.",
+    "🎲 {h} – {a}: ai chơi hay hơn hôm đó sẽ thắng, {pk}.",
+    "🎲 {h} và {a} ngang tài — trận đấu đáng xem nhất của những người thích căng thẳng, {pk}.",
+    "🎲 {h} vs {a}: PesNews xin đứng ngoài cuộc, {pk}.",
     "🎲 {h} vs {a} là kèo 50-50 đúng nghĩa. PesNews... xin phép không đoán!",
     "⚖️ {h} – {a}: hai bên ngang tài ngang sức, {pk}.",
     "🎲 {h} hay {a}? Máy tính của PesNews vừa bốc khói khi tính trận này."
@@ -872,6 +2517,23 @@ var SN_BANK = {
     "🎲 {h} or {a}? The PesNews computer started smoking on this one."
   ] },
   firstMeet: { tag: 'preview', vi: [
+    "🆕 {h} và {a} sẽ gặp nhau lần đầu tiên. Chưa có lịch sử, chỉ có hiện tại.",
+    "🆕 Lần đầu đối đầu: {h} vs {a}. Ai sẽ mở tỉ số lịch sử?",
+    "🆕 {h} – {a}: trang đầu tiên của một cuốn sách mới.",
+    "🆕 {h} chưa bao giờ gặp {a}. Hôm nay sẽ khác.",
+    "🆕 {h} và {a} — cuộc gặp gỡ đầu tiên. Kết quả sẽ được ghi vào sử sách.",
+    "🆕 {h} vs {a}: không có dữ liệu, không có dự đoán, chỉ có bóng đá.",
+    "🆕 Lần đầu tiên {h} và {a} đối đầu. Ai sẽ là kẻ chiến thắng đầu tiên?",
+    "🆕 {h} – {a}: cuộc chạm trán chưa từng có tiền lệ.",
+    "🆕 {h} và {a} sẽ làm quen với nhau trên sân cỏ.",
+    "🆕 {h} vs {a}: câu chuyện đối đầu bắt đầu từ hôm nay.",
+    "🆕 Lần gặp đầu tiên của {h} và {a}. Ấn tượng đầu tiên rất quan trọng.",
+    "🆕 {h} – {a}: chưa ai biết đối phương chơi thế nào.",
+    "🆕 {h} và {a} lần đầu đối mặt. Một mối kình địch mới có thể ra đời.",
+    "🆕 {h} vs {a}: không có lịch sử để dựa vào. Mọi thứ đều mới.",
+    "🆕 {h} – {a}: trận đấu đầu tiên, và có lẽ không phải là cuối cùng.",
+    "🆕 {h} và {a} chưa từng gặp nhau. PesNews đã chuẩn bị sẵn trang sử mới.",
+    "🆕 {h} vs {a}: lần đầu tiên, cảm xúc đầu tiên.",
     "🆕 {h} và {a} chưa từng gặp nhau. Lần đầu tiên luôn đáng nhớ!",
     "🆕 Cuộc chạm trán lịch sử: {h} lần đầu đối đầu {a}.",
     "🆕 Không có dữ liệu đối đầu giữa {h} và {a}. PesNews sẽ viết trang đầu tiên."
@@ -881,6 +2543,23 @@ var SN_BANK = {
     "🆕 No head-to-head data between {h} and {a}. PesNews will write page one."
   ] },
   classic: { tag: 'h2h', vi: [
+    "🏛️ {h} vs {a}: {n} lần gặp, thành tích {w}-{d}-{l}. Một cuộc đối đầu kinh điển.",
+    "🏛️ {h} và {a} đã gặp nhau {n} lần ({w}-{d}-{l}). Lần gặp tiếp theo sắp bắt đầu.",
+    "🏛️ {n} trận đối đầu, {w}-{d}-{l}. {h} – {a} là cuộc chiến lâu đời.",
+    "🏛️ {h} vs {a}: lịch sử {n} trận ({w}-{d}-{l}). Chương mới sắp được viết.",
+    "🏛️ {h} – {a} — cặp đấu {n} trận, {w}-{d}-{l}. Không ai muốn nhường.",
+    "🏛️ {n} lần gặp, {w}-{d}-{l}: {h} và {a} hiểu nhau hơn ai hết.",
+    "🏛️ {h} vs {a}: {w}-{d}-{l} sau {n} trận. Ai sẽ nới rộng khoảng cách?",
+    "🏛️ Kinh điển {h} – {a}: {n} trận, {w}-{d}-{l}. Mỗi trận đều có câu chuyện.",
+    "🏛️ {h} và {a} gặp nhau lần nữa. Lịch sử: {n} trận, {w}-{d}-{l}.",
+    "🏛️ {n} trận, {w} thắng, {d} hòa, {l} thua — {h} vs {a} luôn hấp dẫn.",
+    "🏛️ {h} – {a}: mối kình địch {n} trận ({w}-{d}-{l}).",
+    "🏛️ {h} vs {a}: cặp đấu được yêu thích nhất với {n} lần gặp ({w}-{d}-{l}).",
+    "🏛️ {n} lần đối đầu, {w}-{d}-{l}. {h} và {a} lại sắp viết tiếp câu chuyện.",
+    "🏛️ {h} – {a}: {w}-{d}-{l} qua {n} trận. Nhóm chat đã chia phe.",
+    "🏛️ {h} vs {a} — {n} trận, {w}-{d}-{l}. Không có trận nào dễ dàng.",
+    "🏛️ {h} và {a}: {n} trận đối đầu, {w}-{d}-{l}. Kinh điển không bao giờ cũ.",
+    "🏛️ {n} lần gặp ({w}-{d}-{l}) — {h} vs {a} là cuộc chiến của niềm kiêu hãnh.",
     "🏛️ Kinh điển trở lại: {h} vs {a} sau {n} lần gặp (đối đầu {w}-{d}-{l}).",
     "🏛️ {n} lần gặp nhau, {w}-{d}-{l}. {h} và {a} lại sắp viết thêm chương mới.",
     "🏛️ Cặp đấu lâu đời: {h} – {a} ({n} trận, {w}-{d}-{l}). Không ai muốn thua trận này."
@@ -890,6 +2569,23 @@ var SN_BANK = {
     "🏛️ An old rivalry: {h} – {a} ({n} games, {w}-{d}-{l}). Nobody wants to lose this one."
   ] },
   streakLine: { tag: 'preview', vi: [
+    "🔥 {t} đang có chuỗi {k} trận thắng. {o} có đủ sức cản?",
+    "🔥 {o} sẽ phải đối mặt với {t} đang nóng ({k} trận thắng).",
+    "🔥 {k} trận thắng liên tiếp — {t} muốn nối dài chuỗi trước {o}.",
+    "🔥 {t} ({k} trận thắng) vs {o}: chuỗi thắng đang bị thử thách.",
+    "🔥 {o} có thể trở thành người chấm dứt chuỗi {k} trận thắng của {t}.",
+    "🔥 {t} mang theo đà {k} trận thắng vào trận gặp {o}.",
+    "🔥 {k} trận thắng liên tiếp. {t} sẽ dừng lại ở {o}?",
+    "🔥 {o} đang đứng trước cơ hội: chặn đứng {t} sau {k} trận thắng.",
+    "🔥 {t} ({k} trận thắng) — đối thủ tiếp theo là {o}.",
+    "🔥 {t} đang bay cao với {k} trận thắng. {o} sẽ là bức tường hay tấm thảm?",
+    "🔥 {k} trận thắng của {t} sẽ đối đầu {o}. Chuỗi sẽ dài thêm một trận nữa?",
+    "🔥 {o} cần một màn trình diễn lớn để dừng {t} ({k} trận thắng).",
+    "🔥 {t} đến với chuỗi {k} trận thắng. {o} đã sẵn sàng chưa?",
+    "🔥 {t} vs {o}: chuỗi {k} trận thắng đang đặt cược.",
+    "🔥 {o} muốn viết tên mình vào lịch sử bằng cách dừng {t} ({k} trận thắng).",
+    "🔥 {k} trận thắng — {t} đang ở đỉnh cao. {o} cần cẩn thận.",
+    "🔥 {t} và chuỗi {k} trận thắng gặp {o}. Ai sẽ cười sau cùng?",
     "🔥 {t} mang chuỗi {k} trận thắng vào trận gặp {o}. Chuỗi sẽ dài thêm hay đứt?",
     "🔥 {o} có nhiệm vụ chặn đứng chuỗi {k} trận thắng của {t}.",
     "🔥 Chuỗi {k} trận thắng của {t} sắp bị {o} thử thách."
@@ -899,6 +2595,23 @@ var SN_BANK = {
     "🔥 {t}'s {k}-match winning run is about to be tested by {o}."
   ] },
   revengeChance: { tag: 'preview', vi: [
+    "🗡️ {t} đã thua {o} {sc} lần trước. Đây là lúc để trả nợ.",
+    "🗡️ {sc} — con số {t} vẫn còn nhớ khi gặp lại {o}.",
+    "🗡️ {t} gặp lại {o} sau trận thua {sc}. Phục thù hay thua tiếp?",
+    "🗡️ Lần trước {o} thắng {sc}. {t} đã chuẩn bị kỹ cho lần này.",
+    "🗡️ {t} vs {o}: trận đấu đòi nợ sau thất bại {sc}.",
+    "🗡️ {t} chưa quên {sc}. {o} cần chuẩn bị tinh thần.",
+    "🗡️ {o} đã thắng {t} {sc} lần trước. Lịch sử có lặp lại?",
+    "🗡️ {t} có cơ hội gỡ lại sau trận thua {sc} trước {o}.",
+    "🗡️ Món nợ {sc} đang chờ được trả. {t} vs {o}.",
+    "🗡️ {t} đã đợi ngày này từ lâu: gặp lại {o} sau {sc}.",
+    "🗡️ {o} thắng {sc} lần trước. Lần này {t} sẽ không nhường.",
+    "🗡️ {t} – {o}: cơ hội phục thù sau trận thua {sc}.",
+    "🗡️ {sc} — {t} muốn xóa con số này khỏi ký ức bằng chiến thắng trước {o}.",
+    "🗡️ {t} gặp lại kẻ đã đánh bại mình {sc}: {o}.",
+    "🗡️ {o} cần cẩn thận: {t} đang mang theo mối hận {sc}.",
+    "🗡️ {t} vs {o}: lần trước {sc}. Lần này thì sao?",
+    "🗡️ {t} đã thua {o} {sc}. Nhóm chat đang chờ trận phục thù.",
     "🗡️ Lần trước {t} thua {o} {sc}. Lần này có phục thù không?",
     "🗡️ {t} chưa quên trận thua {sc} trước {o}. Cơ hội trả nợ đã tới.",
     "🗡️ Món nợ {sc} với {o} — {t} sắp được đi đòi."
@@ -910,6 +2623,24 @@ var SN_BANK = {
 
   // ================= Milestones =================
   mileMatches: { tag: 'mile', vi: [
+    "🎖️ Mốc {m} trận đang đến gần với {t}: chỉ còn {k} trận.",
+    "🎖️ {t} còn {k} trận nữa là đạt {m} trận trong sự nghiệp. Một chặng đường dài.",
+    "🎖️ {k} trận nữa thôi — {t} sắp chạm mốc {m} trận.",
+    "🎖️ {t} đã có {mp} trận, còn {k} nữa là tròn {m}.",
+    "🎖️ {m} trận sự nghiệp đang chờ {t}. Chỉ còn {k} bước nữa.",
+    "🎖️ {t} sắp có {m} trận đấu. PesNews đã chuẩn bị bài viết vinh danh.",
+    "🎖️ Còn {k} trận nữa là {t} đạt {m} trận. Một cột mốc đáng nhớ.",
+    "🎖️ {t} còn {k} trận để có mặt trong câu lạc bộ {m} trận.",
+    "🎖️ {m} trận đấu — {t} chỉ còn cách {k} trận.",
+    "🎖️ {t} đang đếm ngược: {k} trận nữa là mốc {m}.",
+    "🎖️ {t} sắp cán mốc {m} trận — còn {k}. Bánh kem cỡ lớn có vẻ hợp lý.",
+    "🎖️ {k} trận nữa, {t} sẽ đạt {m} trận. Bền bỉ là một tài năng.",
+    "🎖️ {t} còn {k} trận để có {m} trận. {debut} là năm ra mắt.",
+    "🎖️ {m} trận — cột mốc mà {t} sắp chạm tới (còn {k}).",
+    "🎖️ {t} đang tiến gần mốc {m} trận. Chỉ cần thêm {k} trận.",
+    "🎖️ {k} trận nữa — {t} sẽ gia nhập nhóm {m} trận.",
+    "🎖️ {t} còn {k} trận để cán mốc {m}. Tay cầm đã được lau sạch chưa?",
+    "🎖️ Mốc {m} trận sự nghiệp đang chờ {t} sau {k} trận nữa.",
     "🎖️ {t} chỉ còn {k} trận nữa là cán mốc {m} trận sự nghiệp.",
     "🎖️ Sắp tới mốc {m} trận: {t} còn thiếu {k}. Bánh kem đã đặt chưa?"
   ], en: [
@@ -917,6 +2648,24 @@ var SN_BANK = {
     "🎖️ {m} games coming up: {t} need {k} more. Cake ordered?"
   ] },
   milePeak: { tag: 'mile', vi: [
+    "🏔️ {t} đang ở Elo {e}, cao nhất từ trước đến nay.",
+    "🏔️ Elo {e} — đỉnh cao sự nghiệp của {t}.",
+    "🏔️ {t} đang đứng trên đỉnh núi Elo của chính mình: {e}.",
+    "🏔️ {t} ({e} Elo) đang ở phong độ tốt nhất sự nghiệp.",
+    "🏔️ {t} với Elo {e} — chưa bao giờ cao hơn.",
+    "🏔️ Đỉnh Elo mới: {t} đang ở {e}. Giữ vững nhé!",
+    "🏔️ {t} đang ở {e} Elo — đỉnh cao mà {t} chưa từng đạt.",
+    "🏔️ {e} Elo! {t} đang có giai đoạn đẹp nhất.",
+    "🏔️ {t} đạt đỉnh Elo {e}. Giờ là lúc để chứng minh đó không phải ngẫu nhiên.",
+    "🏔️ {t} đang ở đỉnh: Elo {e}. Các đối thủ đang nhìn lên.",
+    "🏔️ {t} ({e}) đang ở nơi cao nhất sự nghiệp. Gió trên đỉnh rất mạnh.",
+    "🏔️ Elo {e} — {t} đang viết lại kỷ lục của chính mình.",
+    "🏔️ {t} đang ở {e} Elo. Đây là lúc để tận hưởng.",
+    "🏔️ {t} chạm đỉnh Elo {e}. Câu hỏi: còn cao hơn được nữa không?",
+    "🏔️ {t} ({e} Elo) — phiên bản mạnh nhất của {t} từ trước đến nay.",
+    "🏔️ {e} Elo — {t} đã lên đến đỉnh cao mới.",
+    "🏔️ {t} đang ở đỉnh Elo {e}. Tin đồn: {t} đã chụp màn hình để làm hình nền.",
+    "🏔️ {t} với {e} Elo đang ở đỉnh cao phong độ.",
     "🏔️ {t} đang ở đỉnh cao Elo sự nghiệp ({e}). Đừng nhìn xuống!",
     "🏔️ Chưa bao giờ {t} mạnh như lúc này: Elo {e}, cao nhất sự nghiệp."
   ], en: [
@@ -924,6 +2673,24 @@ var SN_BANK = {
     "🏔️ {t} have never been stronger: {e} Elo, a career high."
   ] },
   mileWins: { tag: 'mile', vi: [
+    "🏅 {t} còn {k} chiến thắng nữa là đạt {m} trận thắng sự nghiệp.",
+    "🏅 {m} chiến thắng — {t} chỉ còn cách {k}.",
+    "🏅 {t} đã thắng {cW} trận, còn {k} nữa là tròn {m}.",
+    "🏅 Mốc {m} trận thắng đang đến gần: {t} còn {k}.",
+    "🏅 {t} sắp có {m} chiến thắng. Một cột mốc đáng tự hào.",
+    "🏅 {k} chiến thắng nữa — {t} sẽ chạm mốc {m}.",
+    "🏅 {t} đang đếm ngược đến {m} chiến thắng: còn {k}.",
+    "🏅 {m} trận thắng sự nghiệp đang chờ {t}. Còn {k} nữa.",
+    "🏅 {t} còn {k} chiến thắng để có mặt trong câu lạc bộ {m} thắng.",
+    "🏅 {t} với tỷ lệ thắng {wr}% đang tiến gần mốc {m} chiến thắng (còn {k}).",
+    "🏅 {k} chiến thắng nữa là {t} đạt {m}. PesNews đang chuẩn bị pháo hoa.",
+    "🏅 {t} sắp cán mốc {m} trận thắng. Chỉ cần thêm {k}.",
+    "🏅 Mốc {m} chiến thắng đang trong tầm tay {t} (còn {k}).",
+    "🏅 {t} còn {k} trận thắng để viết tên vào danh sách {m} chiến thắng.",
+    "🏅 {m} chiến thắng — {t} đang rất gần, chỉ còn {k}.",
+    "🏅 {t} sắp chạm {m} trận thắng. Đối thủ tiếp theo cẩn thận, đừng thành nạn nhân lịch sử.",
+    "🏅 {k} trận thắng nữa — {t} sẽ có một cột mốc tuyệt vời.",
+    "🏅 {t} đang tiến đến {m} chiến thắng. Còn {k} bước nữa.",
     "🏅 {t} còn {k} trận thắng nữa là chạm mốc {m} chiến thắng sự nghiệp.",
     "🏅 Mốc {m} trận thắng đang chờ {t} — chỉ còn {k}."
   ], en: [
@@ -931,6 +2698,24 @@ var SN_BANK = {
     "🏅 The {m}-win milestone awaits {t} — just {k} to go."
   ] },
   mileGoals: { tag: 'mile', vi: [
+    "⚽ {t} còn {k} bàn nữa là chạm mốc {m} bàn sự nghiệp.",
+    "⚽ {m} bàn thắng — {t} chỉ còn cách {k} bàn.",
+    "⚽ {t} đã ghi {cgf} bàn, còn {k} nữa là tròn {m}.",
+    "⚽ Mốc {m} bàn đang đến gần với {t}: còn {k}.",
+    "⚽ {t} sắp có {m} bàn thắng. Thủ môn đối thủ tiếp theo hãy cẩn thận.",
+    "⚽ {k} bàn nữa — {t} sẽ đạt mốc {m} bàn thắng.",
+    "⚽ {t} đang đếm ngược đến bàn thắng thứ {m}: còn {k}.",
+    "⚽ Bàn thắng thứ {m} của {t} đang đến gần. Ai sẽ là nạn nhân?",
+    "⚽ {t} với {gpm} bàn/trận đang tiến gần mốc {m} bàn (còn {k}).",
+    "⚽ {k} bàn nữa thôi — {t} sắp chạm mốc {m}.",
+    "⚽ {t} còn {k} bàn để có {m} bàn thắng sự nghiệp.",
+    "⚽ {m} bàn thắng — cột mốc mà {t} sắp đạt được (còn {k}).",
+    "⚽ {t} sắp cán mốc {m} bàn. PesNews đã chuẩn bị tiêu đề.",
+    "⚽ {k} bàn nữa — {t} sẽ vào câu lạc bộ {m} bàn.",
+    "⚽ {t} đang rất gần mốc {m} bàn: chỉ còn {k}.",
+    "⚽ {t} còn {k} bàn. Bàn thắng thứ {m} sẽ là một khoảnh khắc đặc biệt.",
+    "⚽ Mốc {m} bàn thắng đang trong tầm ngắm của {t} (còn {k}).",
+    "⚽ {t} sắp ghi bàn thứ {m}. Chỉ còn {k} cú sút thành công.",
     "⚽ {t} còn {k} bàn nữa là cán mốc {m} bàn thắng sự nghiệp.",
     "⚽ Bàn thắng thứ {m} của {t} đang tới gần: còn thiếu {k}."
   ], en: [
@@ -938,6 +2723,24 @@ var SN_BANK = {
     "⚽ {t}'s goal number {m} is coming: {k} to go."
   ] },
   mileSeasons: { tag: 'mile', vi: [
+    "🗓️ {t} đang chơi giải đấu thứ {k}. Kinh nghiệm là vũ khí.",
+    "🗓️ Giải đấu thứ {k} của {t} — một hành trình dài.",
+    "🗓️ {t} đã có mặt ở {k} giải đấu. Không ai bền bỉ hơn.",
+    "🗓️ {k} giải đấu — {t} đã trở thành một phần của lịch sử CLB.",
+    "🗓️ {t} ra mắt từ {debut}, giờ đã là giải thứ {k}.",
+    "🗓️ {t} với {k} giải đấu — một cái tên quen thuộc với mọi người.",
+    "🗓️ Giải thứ {k} cho {t}. {mp} trận đấu và vẫn còn đói.",
+    "🗓️ {t} đã chơi {k} giải đấu. Lão làng của câu lạc bộ.",
+    "🗓️ {k} giải đấu — {t} đã thấy đủ mọi thăng trầm.",
+    "🗓️ {t} bước vào giải thứ {k} với {medals} huy chương trong tủ.",
+    "🗓️ {t} là đội kỳ cựu: {k} giải đấu, vô số kỷ niệm.",
+    "🗓️ Giải thứ {k} của {t} — câu lạc bộ không thể thiếu cái tên này.",
+    "🗓️ {t} đã gắn bó qua {k} giải đấu. Lòng trung thành đáng nể.",
+    "🗓️ {k} giải đấu với {t}. Mỗi giải là một chương mới.",
+    "🗓️ {t} đang ở giải thứ {k} — những người mới nên học hỏi.",
+    "🗓️ {t} và {k} giải đấu: kinh nghiệm không thể mua được.",
+    "🗓️ {k} giải đấu — {t} đã trở thành biểu tượng của câu lạc bộ.",
+    "🗓️ {t} đã chơi {k} giải đấu. Tin đồn: {t} có ghế riêng ở phòng chơi.",
     "🗓️ Đây là giải đấu thứ {k} của {t}. Lão làng thứ thiệt!",
     "🗓️ {t} đã góp mặt ở {k} giải đấu. Câu lạc bộ không thể thiếu họ."
   ], en: [
@@ -947,6 +2750,23 @@ var SN_BANK = {
 
   // ================= Career spotlight (each team's whole history) =================
   pNemesis: { tag: 'profile', vi: [
+    "😈 {xw} thắng, {xl} thua — bảng đối đầu {n} vs {x} đọc lên nghe như án phạt.",
+    "😈 PesNews hỏi {n} đối thủ khó nhất là ai. {n} im lặng 5 giây rồi nói: “{x}”.",
+    "😈 Tin đồn: {n} đã chặn {x} trên mọi mạng xã hội sau thất bại thứ {xl}.",
+    "😈 {x} có lẽ nên thu phí “bản quyền” vì đã thắng {n} tới {xl} lần.",
+    "😈 Bác sĩ tâm lý của {n} xác nhận: chỉ cần nhắc tên {x} là nhịp tim tăng vọt.",
+    "😈 {n} thắng {wr}% số trận sự nghiệp, nhưng trước {x} thì tỷ lệ ấy tan biến ({xw}-{xl}).",
+    "😈 Đối đầu {n} – {x}: {xl} lần {n} cúi đầu, {xw} lần ngẩng mặt. Chênh lệch quá rõ.",
+    "😈 Có những cặp đấu là duyên, có những cặp đấu là nợ. {n} nợ {x} tới {xl} trận thua.",
+    "😈 {x} là cái tên {n} không muốn thấy trên lịch thi đấu. {xl} trận thua là lý do.",
+    "😈 Nguồn tin thân cận: {n} từng mơ thấy {x} và tỉnh dậy toát mồ hôi.",
+    "😈 {n} đã đá {mp} trận sự nghiệp, nhưng {xl} trận thua trước {x} là đau nhất.",
+    "😈 Dù Elo {elo}, {n} vẫn là “khách quen” bị {x} hạ: {xl} lần.",
+    "😈 Nghiêm túc mà nói: {xw}-{xl} trước {x} là điểm yếu lớn nhất trong hồ sơ của {n}.",
+    "😈 {x} không cần chiến thuật khi gặp {n} — chỉ cần xuất hiện là đủ ({xl} thắng).",
+    "😈 {n} thề sẽ phục thù {x}. Đây là lần thề thứ {xl}, PesNews đã đếm.",
+    "😈 Chuyên gia phân tích: {x} đọc lối chơi của {n} như đọc truyện tranh. {xl} trận thắng là minh chứng.",
+    "😈 Mỗi lần thua {x}, {n} lại đổi hình nền điện thoại. Hiện đã đổi {xl} lần.",
     "😈 {x} chính là “khắc tinh” của {n}: thua {xl} trận, chỉ thắng {xw}.",
     "😈 Cứ gặp {x} là {n} run tay: {xw} thắng – {xl} thua.",
     "😈 Ác mộng của {n} có tên {x}: {xl} thất bại trong đối đầu."
@@ -956,6 +2776,23 @@ var SN_BANK = {
     "😈 {n}'s nightmare is called {x}: {xl} head-to-head defeats."
   ] },
   pNeverBeat: { tag: 'profile', vi: [
+    "🙈 {xp} trận, 0 thắng. {n} gặp {x} là như gặp bài kiểm tra chưa ôn.",
+    "🙈 Lời nguyền {x}: {n} đã thử {xp} lần, vẫn chưa một lần mỉm cười.",
+    "🙈 {n} có thể thắng nhiều đối thủ, nhưng {x} thì chưa — sau {xp} lần gặp.",
+    "🙈 Tin đồn: {n} đã thuê thầy cúng giải hạn “{x}”. Kết quả: vẫn {xp} trận chưa thắng.",
+    "🙈 {xp} lần đối đầu, {n} chưa có nổi một chiến thắng trước {x}. Thống kê tàn nhẫn.",
+    "🙈 Chiến thắng đầu tiên trước {x} vẫn là giấc mơ của {n} sau {xp} trận.",
+    "🙈 {n} gặp {x}: {xp} trận, kết quả tốt nhất cũng chỉ là không thua.",
+    "🙈 {x} là “trùm cuối” mà {n} chưa vượt qua được trong {xp} lần thử.",
+    "🙈 Nghe nói {n} đã luyện riêng một bài tủ chỉ để thắng {x}. {xp} trận rồi, bài tủ vẫn chưa linh.",
+    "🙈 {n} – {x}: {xp} trận, 0 chiến thắng cho {n}. Ngày phá dớp sẽ là ngày lễ.",
+    "🙈 PesNews đã đặt sẵn tít “{n} lần đầu hạ {x}”. Bản thảo đã cũ sau {xp} trận chờ đợi.",
+    "🙈 Với tỉ lệ thắng {wr}% sự nghiệp, việc {n} chưa thắng {x} sau {xp} trận là bí ẩn.",
+    "🙈 {xp} lần chạm trán {x} — {n} vẫn trắng tay về số trận thắng.",
+    "🙈 {n} nói: “Lần này sẽ khác.” {x} mỉm cười: “Đã {xp} lần rồi.”",
+    "🙈 Lịch sử đối đầu {n} vs {x} là trang giấy chưa có chữ “thắng” nào cho {n} ({xp} trận).",
+    "🙈 Nếu {n} thắng {x}, PesNews hứa sẽ in số đặc biệt. Đã chờ {xp} trận.",
+    "🙈 {x} là bức tường, {n} là quả bóng: {xp} lần đập vào, {xp} lần bật ra.",
     "🙈 {n} chưa từng thắng {x} sau {xp} lần gặp nhau.",
     "🙈 {xp} lần gặp {x}, 0 chiến thắng. {n} ơi, bao giờ mới phá dớp?",
     "🙈 Với {n}, {x} là bức tường không thể vượt qua: {xp} trận, chưa thắng lần nào."
@@ -965,6 +2802,23 @@ var SN_BANK = {
     "🙈 For {n}, {x} are an unclimbable wall: {xp} games, never a win."
   ] },
   pWorstLoss: { tag: 'profile', vi: [
+    "💀 {sc} trước {x} ở {s} — trận đấu {n} muốn xóa khỏi ký ức.",
+    "💀 Nhắc tới {s}, {n} chỉ nhớ một con số: {sc} trước {x}.",
+    "💀 Tin đồn: sau trận thua {x} {sc} ({s}), {n} đã tắt máy ba ngày liền.",
+    "💀 {n} từng bị {x} vùi dập {sc} ở {s}. Vết sẹo vẫn còn đó.",
+    "💀 Trận thua đậm nhất sự nghiệp {n}: {sc} trước {x} ({s}, {st}).",
+    "💀 {x} {sc} {n} — tỉ số ở {s} mà {n} không bao giờ muốn nghe lại.",
+    "💀 Nguồn tin thân cận: {n} vẫn giữ ảnh chụp màn hình {sc} trước {x} để tự nhắc nhở.",
+    "💀 {s} ({st}) là ngày tồi tệ nhất của {n}: thua {x} {sc}.",
+    "💀 Nghiêm túc: thất bại {sc} trước {x} ở {s} là bài học lớn nhất của {n}.",
+    "💀 {n} bị {x} hạ {sc} ở {s}. Hôm đó thủ môn {n} chắc đã ngủ quên.",
+    "💀 PesNews lật lại hồ sơ: {sc} trước {x}, {s} — trang buồn nhất của {n}.",
+    "💀 {n} kể: “Sau trận {sc} với {x}, tôi đã muốn bán tay cầm.” ({s})",
+    "💀 {x} từng cho {n} nếm trái đắng {sc} ở {s}. Món nợ chưa trả.",
+    "💀 Ở {s}, {x} thắng {n} {sc}. Khán giả hôm đó vẫn còn nhớ như in.",
+    "💀 Tỉ số {sc} trước {x} ({s}) — kỷ lục buồn trong sự nghiệp {n}.",
+    "💀 {n} để thủng lưới tơi tả {sc} trước {x} ở {s}. Hàng thủ hôm đó đi đâu?",
+    "💀 Tin đồn: {n} đã cấm nhắc tới {s} trong phòng thay đồ vì trận {sc} trước {x}.",
     "💀 Ký ức kinh hoàng: {n} thua {x} {sc} ở {s} ({st}).",
     "💀 {n} vẫn gặp ác mộng về trận thua {sc} trước {x} ({s}).",
     "💀 Trang đen tối nhất lịch sử {n}: {sc} trước {x} ở {s}."
@@ -974,6 +2828,24 @@ var SN_BANK = {
     "💀 The darkest page in {n}'s history: {sc} against {x} in {s}."
   ] },
   pBestWin: { tag: 'profile', vi: [
+    "🌈 {sc} trước {x} ở {s} — tỉ số {n} muốn in lên áo.",
+    "🌈 Trận thắng đậm nhất sự nghiệp {n}: {sc} trước {x} ({s}).",
+    "🌈 {n} từng vùi dập {x} {sc} ở {s}. {x} chắc vẫn chưa quên.",
+    "🌈 Nhắc tới {s}, {n} mỉm cười: thắng {x} {sc}.",
+    "🌈 Tin đồn: {n} đã đóng khung tỉ số {sc} trước {x} ({s}) treo phòng khách.",
+    "🌈 {n} {sc} {x} — kỷ niệm đẹp nhất trong hồ sơ của {n} ({s}).",
+    "🌈 Ở {s}, {n} cho {x} một bài học {sc}. Một màn trình diễn hoàn hảo.",
+    "🌈 {n} vẫn xem lại highlight trận thắng {x} {sc} ({s}) mỗi khi buồn.",
+    "🌈 Nghiêm túc: chiến thắng {sc} trước {x} ở {s} là đỉnh cao chiến thuật của {n}.",
+    "🌈 {x} sẽ không muốn nhớ lại {s}: thua {n} {sc}.",
+    "🌈 PesNews lật lại hồ sơ: {n} thắng {x} {sc} ở {s} — trang vàng của sự nghiệp.",
+    "🌈 {n} có Elo {elo} hôm nay, nhưng đêm {sc} trước {x} ({s}) mới là đỉnh cảm xúc.",
+    "🌈 Nguồn tin thân cận: {n} đặt mật khẩu wifi là tỉ số {sc} của trận thắng {x}.",
+    "🌈 {n} {sc} {x} ở {s}. Hôm đó mọi cú sút đều vào.",
+    "🌈 Chiến thắng {sc} trước {x} ({s}) — {n} muốn lặp lại khoảnh khắc ấy.",
+    "🌈 {s}: {n} hạ {x} {sc}. Khán giả hôm đó đã có một bữa tiệc bàn thắng.",
+    "🌈 {n} kể: “Trận {sc} với {x} là lúc tôi thấy mình bất khả chiến bại.” ({s})",
+    "🌈 {x} vẫn bị trêu về trận thua {n} {sc} ở {s}.",
     "🌈 Đêm đẹp nhất của {n}: thắng {x} {sc} ở {s}.",
     "🌈 {n} vẫn hay kể về trận thắng {x} {sc} ({s}). Kể mãi không chán."
   ], en: [
@@ -981,6 +2853,23 @@ var SN_BANK = {
     "🌈 {n} still love telling the story of beating {x} {sc} ({s}). Never gets old."
   ] },
   pPeakDrop: { tag: 'profile', vi: [
+    "📉 Từ đỉnh {pk} Elo, {n} đã rơi {k} điểm. Đường xuống luôn nhanh hơn đường lên.",
+    "📉 {n} từng chạm {pk} Elo. Giờ chỉ còn {elo} — hụt {k} điểm.",
+    "📉 −{k} Elo so với đỉnh {pk}: {n} đang tìm lại chính mình.",
+    "📉 Tin đồn: {n} vẫn chụp màn hình Elo {pk} ngày xưa để tự an ủi.",
+    "📉 {n} đánh rơi {k} điểm Elo kể từ đỉnh {pk}. Ai nhặt được xin trả lại.",
+    "📉 Đỉnh {pk} Elo giờ là ký ức. {n} kém {k} điểm và cần một cú bật.",
+    "📉 {n} đã xuống {k} điểm so với thời hoàng kim ({pk}). Phong độ là nhất thời?",
+    "📉 Nghiêm túc: {k} điểm Elo cách đỉnh {pk} cho thấy {n} đang sa sút rõ rệt.",
+    "📉 {n} ({elo}) đang thấp hơn đỉnh {pk} tới {k} điểm. Hành trình leo lại bắt đầu.",
+    "📉 Nguồn tin thân cận: {n} đã treo ảnh “Elo {pk}” lên tường làm động lực.",
+    "📉 {n} trượt {k} Elo từ đỉnh {pk}. Thang máy đi xuống không có nút dừng.",
+    "📉 Ngày {n} chạm {pk} Elo dường như đã xa lắm — giờ kém {k} điểm.",
+    "📉 {k} điểm Elo — khoảng cách giữa {n} hiện tại và {n} đỉnh cao ({pk}).",
+    "📉 {n} cần thắng liên tục để lấy lại {k} điểm Elo đã mất kể từ {pk}.",
+    "📉 Từng là {pk}, giờ là {elo}. {n} đang trải qua mùa đông Elo.",
+    "📉 PesNews hỏi {n} về {k} điểm Elo đã mất. Câu trả lời: “Tôi sẽ quay lại.”",
+    "📉 {n} cách đỉnh {pk} Elo tới {k} điểm. Hoàng hôn hay chỉ là đám mây đi qua?",
     "📉 {n} đã tụt {k} điểm Elo so với đỉnh cao {pk}.",
     "📉 Thời hoàng kim của {n} là Elo {pk}; giờ đã kém {k} điểm.",
     "📉 {n} đang trượt dốc: −{k} Elo so với đỉnh {pk}. Hoàng hôn của một ngôi sao?"
@@ -990,6 +2879,23 @@ var SN_BANK = {
     "📉 {n} are sliding: −{k} Elo from a peak of {pk}. The sunset of a star?"
   ] },
   pLowWin: { tag: 'profile', vi: [
+    "🪙 {n} thắng {k}% số trận sự nghiệp. Mỗi chiến thắng đều đáng ăn mừng.",
+    "🪙 Chỉ {k}% trận thắng — {n} là định nghĩa của sự kiên trì.",
+    "🪙 {n} thắng {k}% sau {mp} trận. Thua nhiều nhưng chưa bao giờ bỏ cuộc.",
+    "🪙 Tin đồn: {n} giữ một cuốn sổ ghi lại từng trận thắng. Sổ vẫn còn nhiều trang trống ({k}%).",
+    "🪙 {k}% tỉ lệ thắng. {n} là “ngân hàng điểm” của nhiều đối thủ.",
+    "🪙 {n} với {k}% trận thắng: thua {cL} trận, thắng {cW}. Con đường còn dài.",
+    "🪙 Nghiêm túc: {k}% tỉ lệ thắng là con số {n} cần cải thiện gấp.",
+    "🪙 {n} thắng {k}% số trận. Đối thủ nào cũng mong được gặp {n}.",
+    "🪙 {k}% — tỉ lệ thắng của {n}. Khắc phục hàng thủ ({gapm} bàn thua/trận) có lẽ là bước đầu.",
+    "🪙 {n} vẫn đến đều đặn dù chỉ thắng {k}%. Tinh thần thể thao đáng nể.",
+    "🪙 Nguồn tin thân cận: {n} đã đổi tên đội ba lần để đổi vận. Tỉ lệ thắng vẫn {k}%.",
+    "🪙 {n} thắng {k}% số trận. Nhưng ai cũng phải bắt đầu từ đâu đó.",
+    "🪙 Tỉ lệ thắng {k}%: {n} thua nhiều hơn thắng, nhưng bất ngờ luôn có thể xảy ra.",
+    "🪙 {k}% số trận thắng — {n} đang là “khách mời đặc biệt” của bảng xếp hạng.",
+    "🪙 {n} hứa sẽ nâng tỉ lệ thắng từ {k}% lên 50%. PesNews ghi nhận.",
+    "🪙 {n} thắng {k}% số trận. Mỗi lần thắng, cả nhóm chat lại được một phen bất ngờ.",
+    "🪙 {k}% tỉ lệ thắng sau {mp} trận — {n} cần một cuộc cách mạng chiến thuật.",
     "🪙 Tỉ lệ thắng của {n} chỉ {k}% — tung đồng xu còn tốt hơn.",
     "🪙 {k}% số trận thắng. {n} thua nhiều tới mức PesNews hết từ để chọc.",
     "🪙 {n} thắng {k}% số trận. Mục tiêu năm nay: chạm mốc 50%?"
@@ -999,6 +2905,24 @@ var SN_BANK = {
     "🪙 {n} win {k}% of their matches. This year's target: 50%?"
   ] },
   pWinRateHigh: { tag: 'profile', vi: [
+    "📈 {k}% số trận thắng — {n} gần như không biết thua là gì.",
+    "📈 {n} thắng {k}% sau {mp} trận. Một cỗ máy chiến thắng thực thụ.",
+    "📈 Tỉ lệ thắng {k}%: {n} đứng trong nhóm đáng sợ nhất câu lạc bộ.",
+    "📈 {n} thắng {cW}/{mp} trận ({k}%). Đối thủ nhìn lịch là thấy lo.",
+    "📈 Tin đồn: {n} có hợp đồng quảng cáo với hãng tay cầm nhờ tỉ lệ thắng {k}%.",
+    "📈 {k}% — tỉ lệ thắng mà {n} đã duy trì suốt sự nghiệp.",
+    "📈 Nghiêm túc: tỉ lệ thắng {k}% là thành tích hiếm có, {n} xứng đáng được tôn trọng.",
+    "📈 {n} thắng {k}% số trận với trung bình {gpm} bàn/trận. Hiệu quả tuyệt đối.",
+    "📈 {k}% trận thắng — {n} là đội mà ai cũng muốn tránh.",
+    "📈 Nguồn tin thân cận: {n} bực mình mỗi khi tỉ lệ thắng tụt dưới {k}%.",
+    "📈 {n} thắng {k}% số trận và có Elo {elo}. Mọi chỉ số đều đẹp.",
+    "📈 {n} ({k}% thắng) — các đội khác hãy xem đây là chuẩn mực.",
+    "📈 Tỉ lệ thắng {k}%: {n} đã biến chiến thắng thành thói quen.",
+    "📈 {n} thắng {k}% số trận. Thua một trận là đủ thành tin nóng.",
+    "📈 PesNews hỏi {n} bí quyết thắng {k}%. Câu trả lời: “Ngủ đủ giấc.”",
+    "📈 {k}% thắng trong {mp} trận — {n} là một hiện tượng của câu lạc bộ.",
+    "📈 Tin đồn: {n} đang viết sách “Làm sao thắng {k}% số trận”. Đặt trước tại PesNews.",
+    "📈 {n} với {k}% trận thắng — đẳng cấp không cần quảng cáo.",
     "📈 {n} thắng {k}% số trận trong sự nghiệp. Đẳng cấp là mãi mãi.",
     "📈 Tỉ lệ thắng {k}% — {n} là nỗi sợ của mọi đối thủ."
   ], en: [
@@ -1006,15 +2930,49 @@ var SN_BANK = {
     "📈 A {k}% win rate — {n} are every opponent's fear."
   ] },
   pLeaky: { tag: 'profile', vi: [
-    "🥅 Hàng thủ {n} thủng trung bình {k} bàn/trận trong sự nghiệp — lưới khung thành hay lưới đánh cá?",
+    "🥅 {n} thủng {k} bàn/trận sự nghiệp. Tiền đạo đối phương đang xoa tay.",
+    "🥅 Cứ mỗi trận {n} lại nhận {k} bàn. Phòng ngự là bài toán chưa có lời giải.",
+    "🥅 Hàng thủ {n} thủng trung bình {k} bàn/trận trong sự nghiệp — tường thành hay cửa xoay?",
+    "🥅 {n} thủng {k} bàn/trận. Thủ môn {n} đáng được tăng lương vì làm việc quá nhiều.",
+    "🥅 Tổng cộng {cga} bàn thua sự nghiệp — trung bình {k}/trận. {n} cần một hậu vệ mới.",
+    "🥅 Tin đồn: {n} đã thuê thợ hàn để vá khung thành. Vẫn thủng {k} bàn/trận.",
+    "🥅 {k} bàn thua mỗi trận: {n} phòng ngự như mời khách vào nhà.",
+    "🥅 Nghiêm túc: {k} bàn thua/trận là điểm yếu chí mạng của {n} qua nhiều mùa.",
+    "🥅 {n} ghi {gpm} bàn/trận nhưng thủng {k}. Phép trừ không mấy vui.",
+    "🥅 Hàng thủ {n}: {k} bàn thua/trận. Đối thủ nào cũng có quyền mơ ghi bàn.",
+    "🥅 Nguồn tin thân cận: thủ môn {n} xin nghỉ phép vì bị sút quá nhiều ({k} bàn/trận).",
+    "🥅 {n} để lọt lưới {k} bàn/trận. Có lẽ cần học lại bài phòng ngự cơ bản.",
+    "🥅 {k} bàn thua trung bình — {n} là món quà của các tiền đạo.",
+    "🥅 {n} thủng lưới {k} bàn/trận. Lưới khung thành của {n} chắc đã mòn.",
+    "🥅 {cga} bàn thua sau nhiều mùa: {n} cần một cuộc cải tổ hàng phòng ngự.",
+    "🥅 {n} và {k} bàn thua mỗi trận: tấn công là phòng ngự tốt nhất — vì phòng ngự không ổn.",
+    "🥅 PesNews hỏi {n} về hàng thủ. {n}: “Hàng thủ nào cơ?” ({k} bàn thua/trận)",
+    "🥅 {n} thủng {k} bàn/trận. Đội nào đang tịt ngòi hãy hẹn {n} một trận.",
     "🥅 {k} bàn thua mỗi trận là “đặc sản” của {n} qua nhiều mùa.",
     "🥅 Cả sự nghiệp {n} để thủng {k} bàn/trận. Hậu vệ chắc chỉ để trang trí."
   ], en: [
-    "🥅 The {n} defence leaks {k} goals per match over their career — goal net or fishing net?",
+    "🥅 The {n} defence leaks {k} goals per match over their career — a fortress or a revolving door?",
     "🥅 {k} conceded per match is {n}'s speciality across seasons.",
     "🥅 {n} concede {k} per match over their career. The defenders are decorative."
   ] },
   pKoChoke: { tag: 'profile', vi: [
+    "🫣 {k} loạt knock-out thắng — {n} cần một bác sĩ tâm lý cho những trận sinh tử.",
+    "🫣 {n} thắng {koW}/{koP} loạt loại trực tiếp ({koPct}%). Trận lớn là ác mộng.",
+    "🫣 Tin đồn: {n} run tay tới mức làm rơi tay cầm trong trận knock-out.",
+    "🫣 {n} chơi hay ở vòng bảng, nhưng knock-out thì chỉ thắng {k} loạt.",
+    "🫣 Nghiêm túc: {n} cần cải thiện bản lĩnh — chỉ {k} loạt knock-out thắng.",
+    "🫣 {k} chiến thắng ở loại trực tiếp. {n} và áp lực chưa phải là bạn.",
+    "🫣 Cứ đến loại trực tiếp là {n} “tắt điện”: chỉ {k} loạt thắng.",
+    "🫣 Nguồn tin thân cận: {n} mất ngủ trước mỗi trận knock-out. {k} loạt thắng là kết quả.",
+    "🫣 {n} thắng {koPct}% loạt loại trực tiếp. Nhiều đội làm tốt hơn thế.",
+    "🫣 {k} loạt knock-out thắng — {n} là “vua vòng bảng”, nhưng chỉ vậy.",
+    "🫣 {n} có tỉ lệ thắng {wr}% sự nghiệp, nhưng knock-out thì khác hẳn: {k} loạt thắng.",
+    "🫣 PesNews hỏi {n} về knock-out. {n}: “Đổi chủ đề được không?”",
+    "🫣 {n} cần học cách thắng khi mọi thứ đều đặt cược. {k} loạt knock-out thắng là chưa đủ.",
+    "🫣 Tin đồn: {n} đã tập riêng sút luân lưu cả tuần. Hy vọng nâng con số {k}.",
+    "🫣 Trận càng quan trọng, {n} càng hồi hộp: chỉ {k} lần qua được loại trực tiếp.",
+    "🫣 {n} và knock-out: {koW} thắng / {koP} loạt. Một mối quan hệ phức tạp.",
+    "🫣 {k} loạt knock-out thắng. {n} đang tìm “thuốc chống run” cho trận lớn.",
     "🫣 {n} chỉ thắng {k} loạt đấu loại trực tiếp. Cứ trận quyết định là run tay?",
     "🫣 Vòng bảng là hổ, loại trực tiếp là mèo: {n} thắng {k} loạt knock-out.",
     "🫣 {k} loạt knock-out thắng. Áp lực là kẻ thù số 1 của {n}."
@@ -1024,6 +2982,24 @@ var SN_BANK = {
     "🫣 {k} knock-out ties won. Pressure is {n}'s number 1 enemy."
   ] },
   pKoKing: { tag: 'profile', vi: [
+    "🎯 {k} loạt knock-out thắng — {n} sinh ra để chơi những trận sinh tử.",
+    "🎯 {n} thắng {koW}/{koP} loạt loại trực tiếp ({koPct}%). Áp lực? Không tồn tại.",
+    "🎯 Gặp {n} ở knock-out là gặp ác mộng: {k} loạt thắng.",
+    "🎯 Tin đồn: {n} có nhịp tim 60 nhịp/phút kể cả khi sút luân lưu.",
+    "🎯 Nghiêm túc: {k} loạt knock-out thắng cho thấy {n} có bản lĩnh hơn người.",
+    "🎯 {n} là chuyên gia loại trực tiếp — {koPct}% loạt đấu đều về tay {n}.",
+    "🎯 Càng áp lực {n} càng tỉnh: {k} loạt knock-out thắng.",
+    "🎯 Nguồn tin thân cận: {n} ngủ rất ngon trước các trận knock-out. {k} loạt thắng là bằng chứng.",
+    "🎯 {n} và knock-out: {koW} thắng / {koP} loạt. Một mối tình đẹp.",
+    "🎯 Trận quyết định là sân khấu của {n}: {k} loạt knock-out thắng.",
+    "🎯 {k} loạt loại trực tiếp thắng — {n} không cần làm nóng, vào là chiến.",
+    "🎯 PesNews hỏi {n} bí quyết knock-out. {n}: “Cứ coi như trận giao hữu.”",
+    "🎯 {n} thắng {koPct}% trận knock-out. Đối thủ gặp {n} ở bảng đấu loại hãy cầu nguyện.",
+    "🎯 {n} — {k} loạt knock-out thắng, {medals} huy chương. Bản lĩnh nhà vô địch.",
+    "🎯 Tin đồn: các đội bí mật cầu mong không chung nhánh với {n} ({k} loạt knock-out thắng).",
+    "🎯 {n} biết cách thắng khi cần nhất: {k} loạt loại trực tiếp.",
+    "🎯 {k} loạt knock-out — {n} đã biến áp lực thành nhiên liệu.",
+    "🎯 Vòng bảng là khởi động, knock-out mới là lúc {n} tỏa sáng ({k} loạt thắng).",
     "🎯 {n} là chuyên gia knock-out: thắng {k} loạt loại trực tiếp.",
     "🎯 Trận càng lớn {n} càng hay: {k} loạt knock-out thắng."
   ], en: [
@@ -1031,6 +3007,23 @@ var SN_BANK = {
     "🎯 The bigger the match, the better {n} get: {k} knock-out ties won."
   ] },
   pNoGold: { tag: 'profile', vi: [
+    "🏆❌ {n} đã đá {k} trận mà chưa chạm tay vào cúp vàng. Kiên nhẫn là vàng?",
+    "🏆❌ Tin đồn: {n} đã mua sẵn tủ kính. {k} trận rồi, tủ vẫn trống.",
+    "🏆❌ {k} trận, 0 cúp vàng. {n} đang viết câu chuyện về sự bền bỉ.",
+    "🏆❌ {n} với {k} trận sự nghiệp — còn thiếu đúng một thứ: danh hiệu vàng.",
+    "🏆❌ Nghiêm túc: sau {k} trận, {n} xứng đáng có một chiếc cúp vàng.",
+    "🏆❌ {n} thắng {wr}% số trận nhưng vẫn chưa có cúp vàng. Bóng đá đôi khi bất công.",
+    "🏆❌ {k} trận và vẫn chờ. {n} là “ông vua không cúp” của câu lạc bộ.",
+    "🏆❌ Nguồn tin thân cận: {n} đã tập kiểu nâng cúp trước gương. Chỉ thiếu cúp thật.",
+    "🏆❌ {n} đã có {k} trận. Cúp vàng vẫn là mảnh ghép còn thiếu.",
+    "🏆❌ {k} trận đấu, bao lần suýt chạm, nhưng {n} vẫn chưa có vàng.",
+    "🏆❌ PesNews đã chuẩn bị tiêu đề “{n} lần đầu vô địch” từ lâu. Còn chờ.",
+    "🏆❌ {n} có {medals} huy chương, nhưng vàng thì chưa. {k} trận chờ đợi.",
+    "🏆❌ {k} trận sự nghiệp — {n} đủ kinh nghiệm, chỉ thiếu chút may mắn để có vàng.",
+    "🏆❌ Tin đồn: {n} định đặt làm một chiếc cúp vàng giả để trưng tạm.",
+    "🏆❌ {n} chưa có vàng sau {k} trận. Giải này có phải là lần đầu tiên?",
+    "🏆❌ {k} trận không vàng — {n} chứng minh rằng đam mê không cần cúp.",
+    "🏆❌ {n} đang đợi chiếc cúp vàng đầu tiên sau {k} trận. Ngày đó sẽ đến.",
     "🏆❌ {k} trận mà chưa có nổi một chiếc cúp vàng. Tủ kính vẫn đang chờ, {n} ơi!",
     "🏆❌ {n} đã đá {k} trận, số cúp vàng: 0. Tủ kính phủ bụi rồi.",
     "🏆❌ {k} trận, bao mồ hôi, chưa một danh hiệu vàng. {n} vẫn kiên nhẫn chờ."
@@ -1040,15 +3033,49 @@ var SN_BANK = {
     "🏆❌ {k} matches, lots of sweat, not one gold. {n} keep waiting patiently."
   ] },
   pThrone: { tag: 'profile', vi: [
-    "👑 {n} đang số 1 Elo. Ngai vàng nào cũng lung lay, cẩn thận nhé!",
+    "👑 {n} đang dẫn đầu Elo toàn câu lạc bộ. Vương miện nặng lắm đấy.",
+    "👑 {n} là số 1 Elo. Mỗi trận thua sẽ là tin nóng trên trang nhất.",
+    "👑 {n} đang ngồi ghế số 1 Elo. Ghế cao thì gió lớn — giữ chặt nhé!",
+    "👑 {n} số 1 Elo với {elo} điểm. Cả bảng xếp hạng nhìn lên.",
+    "👑 Tin đồn: {n} đã đặt làm vương miện giấy để đội khi lên số 1 Elo.",
+    "👑 {n} đứng đầu bảng Elo. Mọi đối thủ đều muốn là người lật đổ.",
+    "👑 Nghiêm túc: {n} đang là đội mạnh nhất theo Elo ({elo}). Thật khó để phủ nhận.",
+    "👑 {n} — số 1 Elo, {wr}% thắng sự nghiệp. Đỉnh cao xứng đáng.",
+    "👑 Ngôi vương Elo đang thuộc về {n}. Bao lâu nữa?",
+    "👑 {n} trên đỉnh Elo. Nguồn tin thân cận: {n} kiểm tra bảng xếp hạng 10 lần mỗi ngày.",
+    "👑 {n} số 1 Elo — mục tiêu của tất cả đội còn lại trong câu lạc bộ.",
+    "👑 {n} đang ở {elo} Elo, cao nhất câu lạc bộ. Đỉnh riêng của {n} là {peak}.",
+    "👑 {n} đứng số 1 Elo. Ai thắng {n} sẽ nhận thưởng Elo hậu hĩnh.",
+    "👑 Trên đỉnh bảng Elo: {n}. Bên dưới: cả một đám đông muốn lên thay.",
+    "👑 PesNews hỏi {n} cảm giác số 1 Elo. {n}: “Cô đơn lắm.”",
+    "👑 {n} đang nắm giữ vị trí số 1 Elo. Mỗi trận đều là một lần bảo vệ ngôi vương.",
+    "👑 Số 1 Elo: {n}. Vị trí này không mua được, phải thắng mới có.",
+    "👑 Tin đồn: {n} đã đổi ảnh đại diện thành ảnh chụp bảng Elo.",
     "👑 Đỉnh bảng Elo hiện thuộc về {n}. Ai sẽ là người kéo họ xuống?",
     "👑 {n} ngồi trên ngai Elo số 1 — và cả câu lạc bộ đang nhắm vào họ."
   ], en: [
-    "👑 {n} are Elo number 1. Every throne wobbles — careful!",
+    "👑 {n} are Elo number 1. High seats catch the strongest wind — hold on tight!",
     "👑 The top of the Elo table belongs to {n}. Who will pull them down?",
     "👑 {n} sit on the Elo throne — and the whole club is aiming at them."
   ] },
   pVictim: { tag: 'profile', vi: [
+    "🎯 {k} lần {n} hạ {x}. Đối đầu này đã thành “chuyện thường ngày”.",
+    "🎯 Tin đồn: {x} đã xin ban tổ chức đừng xếp chung bảng với {n}.",
+    "🎯 {n} thắng {x} tới {k} lần. Một mối quan hệ không cân bằng.",
+    "🎯 Gặp {x}, {n} như được nạp điểm miễn phí: {k} chiến thắng.",
+    "🎯 {x} và {n}: {k} lần {x} ra về tay trắng. Mèo vờ chuột phiên bản PES.",
+    "🎯 Nghiêm túc: {n} có lối chơi khắc chế hoàn toàn {x} ({k} trận thắng).",
+    "🎯 {n} đã thắng {x} {k} lần. {x} chắc đang tìm thầy luyện riêng.",
+    "🎯 Nguồn tin thân cận: {x} đổi kênh TV mỗi khi thấy tên {n}.",
+    "🎯 {k} chiến thắng trước {x} — {n} có “sổ đỏ” với đối thủ này.",
+    "🎯 {n} đã biến {x} thành nạn nhân quen thuộc với {k} trận thắng.",
+    "🎯 {x} cần phá dớp: đã thua {n} tới {k} lần.",
+    "🎯 PesNews hỏi {x} về {n}. {x}: “Không bình luận.” ({k} thất bại)",
+    "🎯 {n} vs {x}: {k} lần thắng. Khán giả đã biết trước kịch bản.",
+    "🎯 Tin đồn: {n} gọi {x} là “ATM” trong nhóm chat riêng.",
+    "🎯 {k} lần hạ {x} — {n} đã thuộc lòng từng bước chạy của đối thủ.",
+    "🎯 {x} sẽ phải chơi trận hay nhất sự nghiệp nếu muốn dừng chuỗi {k} lần thua {n}.",
+    "🎯 {n} có {k} chiến thắng trước {x}. Một con số nói lên tất cả.",
     "🎯 {x} là “con mồi” quen thuộc của {n}: {k} lần bị hạ.",
     "🎯 Gặp {x} là {n} lại có điểm: {k} chiến thắng trong đối đầu.",
     "🎯 {n} “bắt nạt” {x} với {k} trận thắng. {x} chắc không muốn nghe tên {n}."
@@ -1058,6 +3085,23 @@ var SN_BANK = {
     "🎯 {n} own {x} with {k} wins. {x} probably hate hearing {n}'s name."
   ] },
   pCabinet: { tag: 'profile', vi: [
+    "🏆 {g}🥇 {s}🥈 {b}🥉 — tủ kính của {n} cần thêm kệ.",
+    "🏆 {n} sở hữu {g} vàng, {s} bạc, {b} đồng. Bộ sưu tập làm nhiều đội ghen tị.",
+    "🏆 Tin đồn: {n} phải thuê người lau cúp mỗi tuần ({g} vàng, {s} bạc, {b} đồng).",
+    "🏆 {n} không cần giới thiệu: {g} cúp vàng nói thay tất cả.",
+    "🏆 Nghiêm túc: {g} vàng, {s} bạc, {b} đồng là bảng thành tích của một đội lớn.",
+    "🏆 {n} bước vào giải với {g} danh hiệu vàng. Đối thủ nào cũng phải kiêng nể.",
+    "🏆 Tủ kính {n}: {g}🥇 {s}🥈 {b}🥉. Kinh nghiệm không mua được bằng tiền.",
+    "🏆 Nguồn tin thân cận: {n} đặt tên cho từng chiếc cúp trong số {g} chiếc vàng.",
+    "🏆 {g} lần vô địch — {n} biết rõ đường lên đỉnh.",
+    "🏆 {n} có {g} vàng, {s} bạc, {b} đồng. Giải này sẽ thêm màu gì?",
+    "🏆 Bộ sưu tập {g}-{s}-{b} của {n} là mơ ước của nhiều đội trong câu lạc bộ.",
+    "🏆 Tin đồn: {n} đang xây thêm phòng để chứa {g} cúp vàng và các huy chương khác.",
+    "🏆 {n} đã lên bục {g} lần ở vị trí cao nhất. Thói quen khó bỏ.",
+    "🏆 PesNews hỏi {n} chiếc cúp nào quý nhất. {n}: “Chiếc tiếp theo.”",
+    "🏆 {g} vàng, {s} bạc, {b} đồng — {n} là bảo tàng huy chương di động.",
+    "🏆 {n} mang {g} danh hiệu vàng trên vai. Áp lực hay động lực?",
+    "🏆 {n} ({g}🥇) — khi nhắc đến danh hiệu, cái tên này luôn xuất hiện.",
     "🏆 Tủ kính của {n}: {g} vàng, {s} bạc, {b} đồng. Đáng nể!",
     "🏆 {n} mang theo bộ sưu tập {g}🥇 {s}🥈 {b}🥉 vào giải. Kinh nghiệm là có thật.",
     "🏆 Với {g} cúp vàng, {n} biết rõ cảm giác đứng trên đỉnh."
@@ -1067,6 +3111,24 @@ var SN_BANK = {
     "🏆 With {g} gold trophies, {n} know exactly how the top feels."
   ] },
   pBestStreak: { tag: 'profile', vi: [
+    "📜 {k} trận thắng liên tiếp — kỷ lục của {n} vẫn còn đó.",
+    "📜 {n} từng có chuỗi {k} trận thắng. Thời đó không ai cản nổi.",
+    "📜 Tin đồn: {n} vẫn giữ ảnh chụp chuỗi {k} trận thắng trong ví.",
+    "📜 Kỷ lục cá nhân của {n}: {k} chiến thắng nối tiếp. Bạn có nhớ không?",
+    "📜 Nghiêm túc: chuỗi {k} trận thắng cho thấy {n} có thể bùng nổ bất cứ lúc nào.",
+    "📜 {n} từng thắng {k} trận liền. Phiên bản đó có quay lại không?",
+    "📜 {k} trận thắng nối tiếp — chuỗi dài nhất sự nghiệp {n}.",
+    "📜 Nguồn tin thân cận: {n} mơ về chuỗi {k} trận thắng mỗi đêm.",
+    "📜 {n} có kỷ lục {k} trận thắng. Đối thủ nào dám cá {n} không lặp lại?",
+    "📜 Ngày đó {n} thắng {k} trận liên tiếp. Cả câu lạc bộ chỉ biết đứng nhìn.",
+    "📜 Chuỗi {k} trận thắng — {n} đã từng chạm tới sự hoàn hảo.",
+    "📜 {n} cần thắng {k} trận liên tiếp để cân kỷ lục của chính mình.",
+    "📜 PesNews hỏi {n} về chuỗi {k} trận thắng. {n}: “Tôi muốn có chuỗi dài hơn.”",
+    "📜 {k} chiến thắng liền mạch — {n} đã từng là cơn bão.",
+    "📜 Kỷ lục {k} trận thắng của {n} vẫn đang chờ người phá.",
+    "📜 Tin đồn: {n} đặt mật khẩu máy tính theo số {k} — chuỗi thắng kỷ lục.",
+    "📜 {n} thắng {k} trận liên tiếp trong quá khứ. Hiện tại thì sao?",
+    "📜 {k} trận thắng nối tiếp — {n} biết cách thắng liên tục.",
     "📜 Kỷ lục của {n}: từng thắng {k} trận liên tiếp. Liệu có lặp lại?",
     "📜 Chuỗi thắng dài nhất sự nghiệp {n} là {k} trận. Ký ức đẹp."
   ], en: [
@@ -1074,6 +3136,24 @@ var SN_BANK = {
     "📜 {n}'s longest career winning run is {k} matches. Good memories."
   ] },
   pVeteran: { tag: 'profile', vi: [
+    "🎖️ {k} trận đấu — {n} đã thấy đủ mọi kịch bản.",
+    "🎖️ {n} với {k} trận sự nghiệp là lão làng của câu lạc bộ.",
+    "🎖️ Tin đồn: {n} đã dùng hết 5 tay cầm trong {k} trận sự nghiệp.",
+    "🎖️ {k} trận, {cW} thắng, {cD} hòa, {cL} thua. {n} là cuốn biên niên sử sống.",
+    "🎖️ Nghiêm túc: {k} trận là một hành trình đáng ngưỡng mộ của {n}.",
+    "🎖️ {n} đã đá {k} trận. Những tân binh hãy hỏi {n} về kinh nghiệm.",
+    "🎖️ Nguồn tin thân cận: {n} nhớ tỉ số của gần hết {k} trận đã đá.",
+    "🎖️ {k} trận — {n} ra mắt từ {debut} và vẫn miệt mài.",
+    "🎖️ {n} có {k} trận trong hồ sơ. Ghế của {n} ở phòng chơi đã lõm hẳn.",
+    "🎖️ {k} trận sự nghiệp — {n} không còn gì phải chứng minh, chỉ còn thứ để tận hưởng.",
+    "🎖️ {n} đã đá {k} trận và ghi {cgf} bàn. Một sự nghiệp đầy đặn.",
+    "🎖️ PesNews hỏi {n} bí quyết bền bỉ qua {k} trận. {n}: “Ngủ sớm và không quăng tay cầm.”",
+    "🎖️ {k} trận đấu — {n} đã trở thành một phần không thể thiếu của câu lạc bộ.",
+    "🎖️ {n} và {k} trận: kinh nghiệm là vũ khí mạnh nhất.",
+    "🎖️ Tin đồn: {n} có một cuốn nhật ký ghi lại đủ {k} trận đấu.",
+    "🎖️ {k} trận — {n} đã đối đầu gần như mọi đội trong câu lạc bộ.",
+    "🎖️ {n} có {k} trận sự nghiệp. Chân dài, bền bỉ, và vẫn đói.",
+    "🎖️ {k} trận — câu lạc bộ này có phần lớn lịch sử mang tên {n}.",
     "🎖️ {n} đã đá {k} trận trong sự nghiệp. Có gì trên đời mà họ chưa thấy?",
     "🎖️ {k} trận sự nghiệp — {n} là một phần lịch sử của câu lạc bộ."
   ], en: [
@@ -1081,6 +3161,24 @@ var SN_BANK = {
     "🎖️ {k} career matches — {n} are part of the club's history."
   ] },
   pRookie: { tag: 'profile', vi: [
+    "🐣 {n} mới có {k} trận. Mọi thứ đều còn mới mẻ.",
+    "🐣 {k} trận sự nghiệp — {n} đang trong giai đoạn làm quen.",
+    "🐣 Tin đồn: {n} vẫn đang tìm nút sút sau {k} trận.",
+    "🐣 {n} chỉ có {k} trận, nhưng ai cũng từng là tân binh.",
+    "🐣 Nghiêm túc: {k} trận là quá ít để đánh giá {n}. Hãy chờ thêm.",
+    "🐣 {n} mới đá {k} trận. Các đội kỳ cựu đừng xem thường.",
+    "🐣 Nguồn tin thân cận: {n} đã xem hết video hướng dẫn sau {k} trận đầu.",
+    "🐣 {k} trận — {n} vẫn đang viết những trang đầu tiên.",
+    "🐣 {n} là gương mặt mới: {k} trận sự nghiệp. Tương lai còn rộng mở.",
+    "🐣 {k} trận của {n} chưa đủ để có biệt danh. PesNews đang nghĩ.",
+    "🐣 {n} còn non với {k} trận, nhưng tân binh luôn là ẩn số khó lường.",
+    "🐣 PesNews hỏi {n} sau {k} trận. {n}: “Tôi đang học hỏi từng ngày.”",
+    "🐣 {k} trận sự nghiệp — {n} cần thêm thời gian để định hình lối chơi.",
+    "🐣 Tin đồn: {n} đã nhờ một đội kỳ cựu kèm riêng sau {k} trận đầu.",
+    "🐣 {n} mới có {k} trận. Không có áp lực, chỉ có cơ hội.",
+    "🐣 {k} trận — {n} đang lớn dần từng ngày.",
+    "🐣 {n} ({k} trận) — một trang giấy trắng chờ được viết.",
+    "🐣 Với {k} trận, {n} vẫn còn thấy hồi hộp mỗi lần vào sân.",
     "🐣 {n} mới có {k} trận trong sự nghiệp. Tân binh cần thời gian.",
     "🐣 {k} trận sự nghiệp thôi — {n} vẫn đang học việc."
   ], en: [
@@ -1088,6 +3186,23 @@ var SN_BANK = {
     "🐣 Just {k} career matches — {n} are still learning the trade."
   ] },
   pLastSeason: { tag: 'profile', vi: [
+    "🔙 {s}: {n} đạt {pl}. Mốc so sánh cho lần này.",
+    "🔙 Giải gần nhất {n} tham dự là {s}, kết quả: {pl}.",
+    "🔙 Tin đồn: {n} vẫn chưa quên được {s} ({pl}).",
+    "🔙 Ở {s}, {n} dừng bước với {pl}. Lần này mục tiêu là gì?",
+    "🔙 Nghiêm túc: kết quả {pl} ở {s} là thước đo cho {n} lần này.",
+    "🔙 {n} đã có {pl} ở {s}. Tiến hay lùi?",
+    "🔙 Nguồn tin thân cận: {n} đã xem lại các trận ở {s} để rút kinh nghiệm.",
+    "🔙 {s} — {n} về đích với {pl}. Chương mới bắt đầu.",
+    "🔙 {n} mang theo ký ức {pl} từ {s}. Động lực hay gánh nặng?",
+    "🔙 Lần trước ({s}), {n}: {pl}. Lần này {n} muốn viết lại câu chuyện.",
+    "🔙 {n} ở {s}: {pl}. Các đối thủ đã ghi nhớ.",
+    "🔙 PesNews hỏi {n} về {s}. {n}: “Quá khứ là quá khứ.” ({pl})",
+    "🔙 {s} để lại cho {n} thành tích {pl}. Giải này sẽ ra sao?",
+    "🔙 {n} kết thúc {s} với {pl}. Kinh nghiệm đó sẽ được dùng ngay.",
+    "🔙 Tin đồn: {n} đã dán kết quả {pl} từ {s} lên màn hình làm động lực.",
+    "🔙 {pl} ở {s} — {n} bước vào giải với một mốc tham chiếu rõ ràng.",
+    "🔙 {n} từng đạt {pl} ở {s}. Ai cũng tò mò lần này.",
     "🔙 Ở {s}, {n} kết thúc với thành tích: {pl}.",
     "🔙 Lần gần nhất, ở {s}, {n} đạt {pl}. Lần này sẽ tốt hơn hay tệ hơn?",
     "🔙 {n} bước vào giải với ký ức từ {s}: {pl}."
@@ -1099,6 +3214,23 @@ var SN_BANK = {
 
   // ================= Rivalries inside this season's field =================
   hRivalry: { tag: 'h2h', vi: [
+    "⚔️ {a} – {b}: {n} lần gặp, {w} thắng, {d} hòa, {l} thua. Duyên nợ chất chồng.",
+    "⚔️ Tin đồn: {a} và {b} đã cãi nhau trong nhóm chat về trận thứ {n}.",
+    "⚔️ {n} trận đối đầu — {a} và {b} hiểu nhau hơn cả bạn thân.",
+    "⚔️ {a} vs {b} là siêu kinh điển của câu lạc bộ: {w}-{d}-{l} sau {n} trận.",
+    "⚔️ Nghiêm túc: {n} lần gặp là con số kỷ lục giữa hai đội trong giải này — {a} và {b}.",
+    "⚔️ {a} thắng {w}, {b} thắng {l}, hòa {d}. Màn so tài này chưa có hồi kết.",
+    "⚔️ Nguồn tin thân cận: {a} và {b} luôn đến sớm hơn 30 phút mỗi khi gặp nhau.",
+    "⚔️ {n} trận {a} – {b}: đủ để làm một bộ phim tài liệu.",
+    "⚔️ {a} và {b} gặp nhau {n} lần. Không trận nào dễ dàng ({w}-{d}-{l}).",
+    "⚔️ Kình địch kinh điển: {a} vs {b}. {n} trận, và chưa ai chịu ai.",
+    "⚔️ {a} – {b}: {w} thắng, {d} hòa, {l} thua. Ai sẽ viết tiếp chương mới?",
+    "⚔️ PesNews hỏi {a} về {b}. {a}: “Họ là lý do tôi chơi PES.”",
+    "⚔️ {n} lần gặp nhau — {a} và {b} đã thuộc từng đường chuyền của nhau.",
+    "⚔️ Tin đồn: {b} đã thiết kế bài tủ riêng chỉ để đối đầu {a}.",
+    "⚔️ {a} vs {b}: {n} trận, {w}-{d}-{l}. Trận tiếp theo sẽ cháy vé.",
+    "⚔️ Cặp đấu {a} – {b} đã diễn ra {n} lần. Khán giả chưa bao giờ chán.",
+    "⚔️ {a} và {b} — {n} trận, một mối kình địch không hồi kết.",
     "⚔️ Cặp đấu nhiều duyên nợ nhất giải: {a} vs {b}, {n} lần gặp ({w}-{d}-{l}).",
     "⚔️ {a} và {b} đã gặp nhau {n} lần. Ai cũng thuộc lòng lối chơi của nhau.",
     "⚔️ Kình địch truyền kiếp {a} – {b}: {n} trận, {w}-{d}-{l}."
@@ -1108,6 +3240,23 @@ var SN_BANK = {
     "⚔️ Eternal rivals {a} – {b}: {n} games, {w}-{d}-{l}."
   ] },
   hLopsided: { tag: 'h2h', vi: [
+    "📊 {a} {w} – {l} {b}. Đối đầu này chỉ có một chiều.",
+    "📊 Tin đồn: {b} đã xin đổi lịch mỗi khi gặp {a} ({l}-{w}).",
+    "📊 {a} thắng {w} lần trước {b}. {b} chỉ có {l} lần vui.",
+    "📊 {b} gặp {a} như học sinh gặp bài thi khó: {l} thắng, {w} thua.",
+    "📊 Nghiêm túc: {a} có lợi thế tâm lý rõ ràng trước {b} ({w}-{l}).",
+    "📊 {w}-{l} cho {a}. {b} cần một phép màu.",
+    "📊 Nguồn tin thân cận: {b} không ngủ được trước trận gặp {a}.",
+    "📊 {a} vs {b}: lịch sử nói {w}-{l}. Không cần phân tích thêm.",
+    "📊 {a} đã thắng {b} {w} lần. Có lẽ {b} nên đổi chiến thuật.",
+    "📊 {b} chỉ thắng {a} {l} lần. Những lần đó được kể lại như huyền thoại.",
+    "📊 PesNews hỏi {b} về {a}. {b}: “Lần này khác.” ({l}-{w})",
+    "📊 {a} – {b}: {w} thắng, {l} thua. Một mối quan hệ không cân sức.",
+    "📊 Tin đồn: {a} gọi trận gặp {b} là “ngày nghỉ có lương”.",
+    "📊 {w} lần {a} thắng, {l} lần {b} phản kháng thành công. Cán cân nghiêng hẳn.",
+    "📊 {b} cần thắng {a} nhiều trận liên tiếp để thu hẹp khoảng cách {w}-{l}.",
+    "📊 {a} áp đảo {b}: {w}-{l}. Đừng nói đây là kình địch.",
+    "📊 {a} – {b}: {w}-{l}. Một đội thống trị, một đội chịu đựng.",
     "📊 Đối đầu một chiều: {a} thắng {b} {w} lần, chỉ thua {l}.",
     "📊 {b} gặp {a} là gặp hạn: {l} thắng – {w} thua.",
     "📊 {a} vs {b} chẳng khác gì mèo vờn chuột: {w}-{l}."
@@ -1117,6 +3266,24 @@ var SN_BANK = {
     "📊 {a} vs {b} is cat and mouse: {w}-{l}."
   ] },
   hEven: { tag: 'h2h', vi: [
+    "⚖️ {a} – {b}: {n} trận, số trận thắng ngang nhau. Không ai chịu ai.",
+    "⚖️ Tin đồn: {a} và {b} đã cá cược một bữa trà sữa cho trận quyết định.",
+    "⚖️ {n} lần gặp, cán cân vẫn nằm im. {a} và {b} là kỳ phùng địch thủ.",
+    "⚖️ {a} vs {b}: sòng phẳng tuyệt đối sau {n} trận.",
+    "⚖️ Nghiêm túc: {a} và {b} cân tài cân sức, {n} trận không phân thắng bại.",
+    "⚖️ {n} trận và vẫn hòa về số trận thắng. {a} – {b} cần thêm một trận nữa.",
+    "⚖️ Nguồn tin thân cận: {a} và {b} đều muốn là đội phá vỡ thế cân bằng.",
+    "⚖️ {a} – {b}: hai đội, {n} trận, một cán cân hoàn hảo.",
+    "⚖️ Ai mạnh hơn giữa {a} và {b}? Sau {n} trận, vẫn chưa có câu trả lời.",
+    "⚖️ {a} và {b} — {n} lần gặp, số trận thắng chia đều.",
+    "⚖️ PesNews hỏi {a} về {b}. {a}: “Họ là đối thủ xứng tầm nhất.”",
+    "⚖️ {n} trận ngang ngửa — {a} và {b} đang chờ trận phá thế.",
+    "⚖️ Tin đồn: trận {a} – {b} tiếp theo sẽ quyết định ai được quyền khoác lác trong nhóm chat.",
+    "⚖️ {a} – {b}: bóng đá công bằng nhất là đây. {n} trận, ngang nhau.",
+    "⚖️ {n} trận không ai vượt lên — {a} và {b} đúng là duyên nợ.",
+    "⚖️ {a} vs {b}: số trận thắng bằng nhau sau {n} lần so tài. Hồi hộp!",
+    "⚖️ Kỳ phùng địch thủ {a} – {b}: {n} trận, cân bằng tuyệt đối.",
+    "⚖️ {a} và {b} đã gặp nhau {n} lần. Không có kẻ mạnh, chỉ có duyên.",
     "⚖️ {a} và {b} bằng nhau về số trận thắng sau {n} lần gặp. Kỳ phùng địch thủ!",
     "⚖️ {n} lần gặp, cân bằng tuyệt đối: {a} – {b} vẫn chưa phân thắng bại."
   ], en: [
@@ -1126,6 +3293,24 @@ var SN_BANK = {
 
   // ================= History of this competition (same name, other years) =================
   hsEditions: { tag: 'hist', vi: [
+    "📚 Lần thứ {k} giải đấu này diễn ra — {s} tiếp nối truyền thống.",
+    "📚 {s} đánh dấu lần tổ chức thứ {k}. Lịch sử đang dày lên.",
+    "📚 Tin đồn: ban tổ chức đã làm bánh kem cho lần thứ {k} của giải.",
+    "📚 {k} lần tổ chức — giải đấu này đã thành thương hiệu của câu lạc bộ.",
+    "📚 Nghiêm túc: {s} là phiên bản thứ {k}, và mỗi phiên bản đều có câu chuyện riêng.",
+    "📚 Lần thứ {k} — ai sẽ ghi tên mình vào bảng vàng {s}?",
+    "📚 {s}: phiên bản thứ {k}. Những đội cũ quen đường, những đội mới tò mò.",
+    "📚 Nguồn tin thân cận: có đội đã tham dự đủ {k} lần tổ chức của giải này.",
+    "📚 {k} năm, {k} câu chuyện. {s} sẽ là chương tiếp theo.",
+    "📚 Giải đấu đã qua {k} lần tổ chức. Truyền thống được giữ vững.",
+    "📚 {s} — lần thứ {k}. PesNews đã có mặt đủ cả.",
+    "📚 Lần tổ chức thứ {k}: những kỷ lục cũ đang chờ bị phá ở {s}.",
+    "📚 Tin đồn: một số đội đã xem lại cả {k} phiên bản trước để chuẩn bị cho {s}.",
+    "📚 {s} là lần thứ {k}. Giải đấu ngày càng trưởng thành.",
+    "📚 {k} lần tổ chức — mỗi lần lại có một nhà vô địch, một kỷ niệm.",
+    "📚 {s}: lần thứ {k} của một giải đấu đã thành nếp.",
+    "📚 Lần thứ {k}! {s} hứa hẹn sẽ là phiên bản đáng nhớ.",
+    "📚 {s} nối dài chuỗi {k} lần tổ chức. Ai sẽ làm nên lịch sử?",
     "📚 {s} là lần tổ chức thứ {k} của giải đấu này.",
     "📚 Giải đấu này đã bước sang lần thứ {k}. Truyền thống đang được viết tiếp."
   ], en: [
@@ -1133,6 +3318,24 @@ var SN_BANK = {
     "📚 This competition reaches edition number {k}. The tradition continues."
   ] },
   hsFirst: { tag: 'hist', vi: [
+    "🆕 {s} mở màn — bảng vàng còn trống trơn.",
+    "🆕 Lần đầu tổ chức {s}. Ai cũng có cơ hội viết tên mình đầu tiên.",
+    "🆕 Tin đồn: các đội đã tranh nhau đăng ký {s} để được là “người tiên phong”.",
+    "🆕 {s} — giải đấu mới toàn tập. Không có đương kim vô địch, không có áp lực bảo vệ.",
+    "🆕 Nghiêm túc: nhà vô địch đầu tiên của {s} sẽ được nhớ mãi.",
+    "🆕 Lần đầu tiên của {s}. Mọi kỷ lục đều sẽ được thiết lập từ đây.",
+    "🆕 {s} ra mắt. Chưa có lịch sử, chưa có lời nguyền, chỉ có cơ hội.",
+    "🆕 Nguồn tin thân cận: ban tổ chức đã đặt sẵn khung ảnh cho nhà vô địch đầu tiên của {s}.",
+    "🆕 {s} — trang đầu tiên của một cuốn sách mới.",
+    "🆕 Đây là lần đầu {s} được tổ chức. Ai sẽ là huyền thoại đầu tiên?",
+    "🆕 {s} lần đầu tiên: bàn thắng đầu tiên, chiến thắng đầu tiên, nhà vô địch đầu tiên.",
+    "🆕 PesNews chào mừng {s} — giải đấu mới nhất của câu lạc bộ.",
+    "🆕 Tin đồn: một đội đã in sẵn áo “Nhà vô địch đầu tiên {s}”.",
+    "🆕 {s} bắt đầu từ con số 0. Bảng vàng đang chờ cái tên đầu tiên.",
+    "🆕 Lần đầu tiên, không ai biết trước điều gì — {s} là trang giấy trắng.",
+    "🆕 {s} — giải đấu ra đời hôm nay, huyền thoại ra đời ngày mai.",
+    "🆕 Phiên bản đầu tiên của {s}. Kỳ vọng lớn, bất ngờ còn lớn hơn.",
+    "🆕 {s} chào đời — mọi đội đều xuất phát ngang hàng.",
     "🆕 {s} là lần đầu tiên giải đấu này được tổ chức. Nhà vô địch sẽ đi vào lịch sử!",
     "🆕 Lần đầu tiên! Ai thắng {s} sẽ là cái tên đầu tiên trên bảng vàng."
   ], en: [
@@ -1140,6 +3343,23 @@ var SN_BANK = {
     "🆕 A first! Whoever wins {s} is the first name on the honours board."
   ] },
   hsKing: { tag: 'hist', vi: [
+    "📚 {t} — {k} lần vô địch giải này. Không ai nhiều hơn.",
+    "📚 Tin đồn: {t} coi giải này là “sân nhà” sau {k} lần vô địch.",
+    "📚 {k} chiếc cúp ở giải này — {t} là cái tên đầu tiên trên mọi danh sách.",
+    "📚 Nghiêm túc: {t} với {k} danh hiệu là ứng viên số 1 theo lịch sử.",
+    "📚 {t} đã nâng cúp giải này {k} lần. Thêm một lần nữa?",
+    "📚 Nguồn tin thân cận: {t} đã dành sẵn chỗ cho chiếc cúp tiếp theo, bên cạnh {k} chiếc cũ.",
+    "📚 {k} lần vô địch — {t} là người viết lịch sử giải đấu này.",
+    "📚 {t} thống trị giải này với {k} danh hiệu. Các đội khác cần cố gắng hơn.",
+    "📚 Bảng vàng giải đấu: {t} xuất hiện {k} lần. Đế chế thực sự.",
+    "📚 {t} có {k} cúp ở giải này. Đối thủ phải vượt qua cả lịch sử.",
+    "📚 PesNews hỏi {t} về {k} danh hiệu. {t}: “Chưa đủ.”",
+    "📚 {k} lần vô địch — {t} là tiêu chuẩn mà mọi đội muốn đạt tới.",
+    "📚 Tin đồn: {t} có hẳn một kệ riêng cho {k} chiếc cúp của giải này.",
+    "📚 {t} — {k} danh hiệu. Giải đấu này gần như mang tên {t}.",
+    "📚 {t} và {k} lần vô địch: không ai biết cách thắng giải này rõ hơn.",
+    "📚 {k} lần lên đỉnh — {t} đã biến giải đấu thành vương quốc của mình.",
+    "📚 {t} giữ kỷ lục {k} lần vô địch. Ai sẽ là người thách thức?",
     "📚 {t} là đội vô địch giải này nhiều nhất: {k} lần.",
     "📚 Lịch sử đứng về phía {t}: {k} lần vô địch giải đấu này.",
     "📚 {k} danh hiệu ở giải này — {t} là ông vua không ngai... à không, có ngai hẳn hoi."
@@ -1149,6 +3369,24 @@ var SN_BANK = {
     "📚 {k} titles in this competition — {t} are the uncrowned... no, very much crowned kings."
   ] },
   hsAbsent: { tag: 'hist', vi: [
+    "👻 {t} — nhà vô địch lần trước — không tham dự. Cúp sẽ sang tay mới.",
+    "👻 Tin đồn: {t} vắng mặt vì đang đi nghỉ dưỡng sau chức vô địch.",
+    "👻 Không có {t} bảo vệ ngôi vương. Cuộc đua trở nên mở hơn bao giờ hết.",
+    "👻 {t} không có mặt — các đội khác thở phào nhẹ nhõm.",
+    "👻 Nghiêm túc: sự vắng mặt của {t} khiến giải này không có ứng viên rõ ràng.",
+    "👻 Ngôi vương bỏ trống vì {t} không tham dự. Ai sẽ ngồi vào?",
+    "👻 Nguồn tin thân cận: {t} sẽ theo dõi giải từ xa và bình luận trong nhóm chat.",
+    "👻 {t} vắng mặt. Nhà vô địch mới sẽ không phải vượt qua đương kim vô địch.",
+    "👻 Đương kim vô địch {t} không dự giải. Cơ hội vàng cho những kẻ thách thức.",
+    "👻 {t} không tham gia — người chiến thắng lần này sẽ bị hỏi “nếu có {t} thì sao?”.",
+    "👻 PesNews đã liên hệ {t} để hỏi lý do vắng mặt. Câu trả lời: “Bí mật.”",
+    "👻 Tin đồn: {t} bỏ giải vì sợ mất danh hiệu. {t} phủ nhận ngay lập tức.",
+    "👻 Không có {t} — giải đấu mất đi một đối thủ lớn, nhưng có thêm một câu chuyện mới.",
+    "👻 {t} không có mặt để bảo vệ cúp. Ngôi vương đang chờ chủ mới.",
+    "👻 {t} vắng bóng — một giải đấu không có nhà vô địch cũ.",
+    "👻 Đương kim vô địch {t} đứng ngoài. Giải này sẽ có tân vương.",
+    "👻 {t} không dự giải. Cúp vàng chắc chắn sẽ đổi chủ.",
+    "👻 Không {t}, không đương kim vô địch — tất cả bắt đầu lại từ đầu.",
     "👻 Nhà vô địch lần trước {t} vắng mặt lần này. Ngai vàng bỏ trống!",
     "👻 Không có {t} — đương kim vô địch — ở giải năm nay. Cơ hội cho tất cả."
   ], en: [
@@ -1156,6 +3394,24 @@ var SN_BANK = {
     "👻 No {t} — the holders — this time. A chance for everyone."
   ] },
   hsNoRepeat: { tag: 'hist', vi: [
+    "🎲 {k} lần tổ chức, chưa ai vô địch hai lần. Giải này không chiều ai.",
+    "🎲 Tin đồn: giải này có lời nguyền “mỗi người chỉ một lần” sau {k} lần tổ chức.",
+    "🎲 Sau {k} lần tổ chức, không đội nào giữ được cúp quá một lần.",
+    "🎲 Nghiêm túc: {k} phiên bản không có nhà vô địch lặp lại — một giải đấu rất cân bằng.",
+    "🎲 {k} lần, {k} nhà vô địch. Ai sẽ là người đầu tiên vô địch lần hai?",
+    "🎲 Nguồn tin thân cận: các cựu vô địch đều muốn phá lời nguyền {k} lần tổ chức.",
+    "🎲 Giải này không có chủ sau {k} lần tổ chức. Mỗi lần là một vương triều mới.",
+    "🎲 {k} phiên bản, chưa ai chạm tay vào cúp lần thứ hai. Lần này thì sao?",
+    "🎲 Không có đế chế nào sau {k} lần tổ chức. Bất ngờ là đặc sản.",
+    "🎲 PesNews thống kê: {k} lần tổ chức, không một đội nào vô địch hai lần.",
+    "🎲 Tin đồn: cúp của giải này “không thích” ở lại một nhà quá lâu.",
+    "🎲 {k} lần tổ chức — giải đấu dân chủ nhất câu lạc bộ.",
+    "🎲 Chưa ai vô địch hai lần sau {k} phiên bản. Đội đầu tiên làm được sẽ thành huyền thoại.",
+    "🎲 {k} nhà vô địch khác nhau — giải này là vòng quay may mắn thực sự.",
+    "🎲 Sau {k} lần tổ chức, kỷ lục “vô địch hai lần” vẫn chưa có chủ.",
+    "🎲 Giải đấu không có vua: {k} lần, {k} người khác nhau lên ngôi.",
+    "🎲 {k} lần tổ chức và vẫn chưa có triều đại nào. Lần này có khác?",
+    "🎲 Lời nguyền {k} lần: chưa ai lặp lại được chức vô địch.",
     "🎲 Sau {k} lần tổ chức, chưa đội nào vô địch giải này hai lần. Lời nguyền có tiếp diễn?",
     "🎲 {k} lần tổ chức, {k} nhà vô địch khác nhau. Giải đấu không có chủ."
   ], en: [
@@ -1165,6 +3421,24 @@ var SN_BANK = {
 
   // ================= Outlook =================
   fRemaining: { tag: 'future', vi: [
+    "⏳ Chỉ còn {k} trận — từng điểm số giờ đều quý như vàng.",
+    "⏳ {k} trận nữa là kết thúc. Ai đang tính toán, ai đang cầu nguyện?",
+    "⏳ Tin đồn: một số đội đã lập bảng Excel tính mọi kịch bản cho {k} trận cuối.",
+    "⏳ {k} trận còn lại — đủ để một đội bật lên hoặc sụp đổ.",
+    "⏳ Nghiêm túc: với {k} trận còn lại, mọi sai lầm đều có thể trả giá đắt.",
+    "⏳ Đếm ngược: {k} trận. Bảng xếp hạng vẫn có thể đảo lộn.",
+    "⏳ Nguồn tin thân cận: không ai ngủ ngon khi còn {k} trận cuối.",
+    "⏳ {k} trận nữa — những trận đấu quyết định số phận cả mùa giải.",
+    "⏳ Còn {k} trận. Đội dẫn đầu lo lắng, đội bám đuổi hy vọng.",
+    "⏳ {k} trận cuối cùng — PesNews đã sẵn sàng đưa tin mọi bước ngoặt.",
+    "⏳ Giải đấu còn {k} trận. Bạn đã đoán ai vô địch chưa?",
+    "⏳ Tin đồn: có đội đã đặt tiệc ăn mừng dù còn {k} trận. Hơi sớm chăng?",
+    "⏳ {k} trận còn lại — đây là lúc bản lĩnh lên tiếng.",
+    "⏳ Đường đua đã vào khúc cua cuối: {k} trận nữa.",
+    "⏳ {k} trận — không nhiều, nhưng đủ để viết lại kịch bản.",
+    "⏳ PesNews nhắc: còn {k} trận. Đừng ai vội bỏ cuộc.",
+    "⏳ Còn {k} trận trước khi hạ màn. Mọi ánh mắt đổ dồn về bảng xếp hạng.",
+    "⏳ {k} trận nữa thôi — hồi hộp đang lên đỉnh điểm.",
     "⏳ Còn {k} trận nữa là hạ màn. Mọi thứ vẫn có thể xảy ra.",
     "⏳ {k} trận còn lại — đủ để làm nên lịch sử hoặc thảm họa."
   ], en: [
@@ -1172,6 +3446,24 @@ var SN_BANK = {
     "⏳ {k} matches left — enough for history or disaster."
   ] },
   fClinchNext: { tag: 'future', vi: [
+    "🔓 {l} chỉ cách cúp vàng một trận thắng.",
+    "🔓 Tin đồn: {l} đã đặt sẵn bánh kem cho trận tới.",
+    "🔓 Thắng trận tới là {l} vô địch sớm. Đối thủ có chịu làm nền?",
+    "🔓 {l} đứng trước cánh cửa vô địch — chỉ cần thêm một cú đẩy.",
+    "🔓 Nghiêm túc: áp lực trận tới đều dồn lên vai {l}. Thắng là xong.",
+    "🔓 {l} có thể chấm dứt cuộc đua ngay trận tới.",
+    "🔓 Nguồn tin thân cận: {l} đã tập kiểu nâng cúp trước gương.",
+    "🔓 Một trận thắng nữa — {l} sẽ là nhà vô địch.",
+    "🔓 Các đội còn lại chỉ còn hy vọng {l} vấp ngã ở trận tới.",
+    "🔓 {l} cầm chìa khóa chức vô địch. Trận tới sẽ là lúc mở cửa.",
+    "🔓 PesNews đã chuẩn bị tiêu đề “{l} vô địch!”. Chỉ chờ một trận thắng.",
+    "🔓 {l} thắng trận tới là có cúp. Đơn giản vậy thôi — nhưng không hề dễ.",
+    "🔓 Tin đồn: đối thủ tiếp theo của {l} đã thề sẽ phá hỏng bữa tiệc.",
+    "🔓 {l} đang ở rất gần vạch đích. Một chiến thắng là đủ.",
+    "🔓 Trận tới có thể là trận đăng quang của {l}.",
+    "🔓 {l} còn một bước. Pháo hoa đã sẵn sàng, chỉ chờ châm ngòi.",
+    "🔓 Cúp vàng đang ở trong tầm tay {l} — trận tới là thời khắc quyết định.",
+    "🔓 {l} thắng trận tới = vô địch. Không cần tính toán thêm.",
     "🔓 {l} có thể khóa chức vô địch ngay trận tới nếu thắng.",
     "🔓 Một chiến thắng nữa thôi là {l} được nâng cúp. Chuẩn bị pháo hoa!"
   ], en: [
@@ -1179,6 +3471,23 @@ var SN_BANK = {
     "🔓 One more win and {l} lift the trophy. Get the fireworks ready!"
   ] },
   fFinalGuess: { tag: 'future', vi: [
+    "🔮 Theo Elo, trận cuối sẽ là {a} đấu {b}. Còn bạn thì sao?",
+    "🔮 Tin đồn: {a} và {b} đã hẹn nhau ở chung kết từ trước khi giải bắt đầu.",
+    "🔮 PesNews dự đoán: {a} – {b} sẽ là trận đấu cuối cùng.",
+    "🔮 {a} vs {b} — chung kết trong mơ của các con số.",
+    "🔮 Nghiêm túc: xét theo Elo, {a} và {b} là hai đội mạnh nhất còn lại.",
+    "🔮 Máy tính của PesNews nói: {a} đấu {b}. Máy tính có sai bao giờ chưa? Có.",
+    "🔮 Nguồn tin thân cận: {a} đã xem lại các trận của {b} để chuẩn bị cho chung kết.",
+    "🔮 Nếu mọi thứ đúng kịch bản: {a} – {b} ở trận cuối.",
+    "🔮 {a} và {b} đang ở hai nhánh khác nhau. Gặp nhau ở chung kết?",
+    "🔮 Chung kết dự đoán: {a} vs {b}. Đội nào dám phá kịch bản?",
+    "🔮 Tin đồn: các đội còn lại đều muốn phá hỏng dự đoán {a} – {b}.",
+    "🔮 {a} – {b}: trận chung kết mà cả câu lạc bộ đang chờ.",
+    "🔮 Theo số liệu, trận cuối sẽ là {a} vs {b}. Số liệu có bị đánh bại?",
+    "🔮 PesNews đặt cược một ly cà phê: chung kết {a} – {b}.",
+    "🔮 {a} vs {b} — nếu xảy ra, đây sẽ là một trận chung kết rực lửa.",
+    "🔮 Bói toán của PesNews: {a} và {b} sẽ gặp nhau ở trận quyết định.",
+    "🔮 Hai đội được Elo ủng hộ nhất: {a} và {b}. Hẹn gặp ở chung kết?",
     "🔮 Chung kết trong mơ theo máy tính của PesNews: {a} vs {b}.",
     "🔮 PesNews đoán trận cuối sẽ là {a} – {b}. Ai muốn cá không?",
     "🔮 Nếu Elo nói đúng, {a} và {b} sẽ gặp nhau ở trận cuối cùng."
@@ -1190,6 +3499,24 @@ var SN_BANK = {
 
   // ================= Club sidelines =================
   clubMatches: { tag: 'fun', vi: [
+    "🗂️ {k} trận đấu — lịch sử câu lạc bộ đã dày như một cuốn từ điển.",
+    "🗂️ Tin đồn: tay cầm của câu lạc bộ đã chứng kiến đủ {k} trận và đang đòi nghỉ hưu.",
+    "🗂️ Câu lạc bộ đã có {k} trận đấu. Ai cũng có phần trong lịch sử đó.",
+    "🗂️ {k} trận đấu được lưu trữ. PesNews không bỏ sót trận nào.",
+    "🗂️ Nghiêm túc: {k} trận là một kho dữ liệu quý cho mọi phân tích.",
+    "🗂️ Nguồn tin thân cận: người quản lý dữ liệu đã nhập tay cả {k} trận.",
+    "🗂️ {k} trận — nếu mỗi trận 10 phút, câu lạc bộ đã dành rất nhiều giờ cho PES.",
+    "🗂️ Lịch sử câu lạc bộ: {k} trận, vô số tiếng hét và tràng cười.",
+    "🗂️ PesNews đếm được {k} trận đấu trong kho lưu trữ. Vẫn đang tăng.",
+    "🗂️ {k} trận đấu — mỗi trận là một câu chuyện nhỏ.",
+    "🗂️ Tin đồn: câu lạc bộ đang xin kỷ lục “nhiều trận PES nhất công ty” với {k} trận.",
+    "🗂️ {k} trận đã qua. Những trận hay nhất vẫn còn ở phía trước.",
+    "🗂️ Câu lạc bộ với {k} trận đấu — một cộng đồng thực sự.",
+    "🗂️ {k} trận trong kho dữ liệu. Elo, kỷ lục, tin đồn đều từ đây mà ra.",
+    "🗂️ PesNews cảm ơn {k} trận đấu đã cung cấp chất liệu viết bài.",
+    "🗂️ {k} trận — câu lạc bộ đã đi một chặng đường dài.",
+    "🗂️ Mỗi trận đều được ghi nhớ: {k} trận trong lịch sử câu lạc bộ.",
+    "🗂️ {k} trận và đếm tiếp — kho lưu trữ của PesNews không bao giờ đóng cửa.",
     "🗂️ Kho lưu trữ của PesNews đã ghi lại {k} trận đấu trong lịch sử câu lạc bộ.",
     "🗂️ {k} trận đấu và vẫn đang đếm. PesNews cần ổ cứng lớn hơn."
   ], en: [
@@ -1197,6 +3524,24 @@ var SN_BANK = {
     "🗂️ {k} matches and counting. PesNews needs a bigger hard drive."
   ] },
   clubGoals: { tag: 'fun', vi: [
+    "⚽ {k} bàn thắng trong lịch sử câu lạc bộ — lưới khung thành nào cũng đã rung.",
+    "⚽ Tin đồn: các thủ môn của câu lạc bộ đã lập hội “nạn nhân của {k} bàn thắng”.",
+    "⚽ Tổng cộng {k} bàn. Câu lạc bộ này không thiếu bàn thắng.",
+    "⚽ {k} bàn thắng — nếu mỗi bàn là một viên kẹo, cả công ty sẽ có phần.",
+    "⚽ Nghiêm túc: {k} bàn thắng cho thấy lối chơi tấn công là bản sắc của câu lạc bộ.",
+    "⚽ Nguồn tin thân cận: PesNews đã đếm đủ {k} bàn, không thiếu bàn nào.",
+    "⚽ {k} bàn thắng toàn thời gian. Bàn thắng tiếp theo sẽ thuộc về ai?",
+    "⚽ Lịch sử câu lạc bộ: {k} lần lưới rung, {k} lần tiếng hò reo.",
+    "⚽ {k} bàn thắng — đủ để làm một video highlight dài cả ngày.",
+    "⚽ Tin đồn: một thành viên đã đề nghị in con số {k} lên áo đấu của câu lạc bộ.",
+    "⚽ {k} bàn thắng — PesNews chưa bao giờ thiếu chất liệu viết về tấn công.",
+    "⚽ Câu lạc bộ đã ghi {k} bàn. Thủ môn ở đây luôn có việc làm.",
+    "⚽ {k} bàn thắng — từ những cú sút xa đến những pha đánh đầu.",
+    "⚽ Kho lưu trữ ghi nhận {k} bàn. Mỗi bàn một cảm xúc.",
+    "⚽ {k} bàn thắng và vẫn chưa dừng lại — câu lạc bộ này thích tấn công.",
+    "⚽ PesNews thống kê: {k} bàn thắng trong lịch sử. Con số đáng tự hào.",
+    "⚽ {k} lần bóng vào lưới — lịch sử câu lạc bộ được viết bằng bàn thắng.",
+    "⚽ {k} bàn thắng — để đạt mốc tiếp theo, các tiền đạo hãy tiếp tục cố gắng.",
     "⚽ Tổng cộng {k} bàn thắng đã được ghi trong lịch sử câu lạc bộ. Thủ môn nào cũng có phần.",
     "⚽ {k} bàn thắng toàn thời gian — đủ để thả bóng bay kín một sân vận động."
   ], en: [
@@ -1204,6 +3549,24 @@ var SN_BANK = {
     "⚽ {k} all-time goals — enough to fill a stadium with balloons."
   ] },
   fieldAvg: { tag: 'fun', vi: [
+    "🏋️ Elo trung bình {e} — giải này đứng thứ {r}/{n} về độ khó.",
+    "🏋️ Tin đồn: các đội đã biết giải này xếp thứ {r}/{n} về sức mạnh và đang lo lắng.",
+    "🏋️ Giải này có Elo trung bình {e}, xếp hạng {r} trong {n} giải của câu lạc bộ.",
+    "🏋️ Nghiêm túc: Elo trung bình {e} cho thấy mức độ cạnh tranh xếp thứ {r}/{n}.",
+    "🏋️ {e} Elo trung bình — thứ {r}/{n} giải. Không có trận nào dễ.",
+    "🏋️ Nguồn tin thân cận: PesNews đã tính Elo trung bình của tất cả {n} giải. Giải này đứng thứ {r}.",
+    "🏋️ Xếp thứ {r}/{n} về Elo trung bình ({e}). Một giải đấu đáng xem.",
+    "🏋️ {e} — đó là Elo trung bình của các đội ở đây. Hạng {r} trên {n} giải.",
+    "🏋️ Giải này mạnh thứ {r} trong {n} giải của câu lạc bộ (Elo trung bình {e}).",
+    "🏋️ Tin đồn: đội nào thắng giải xếp thứ {r}/{n} này sẽ được nể trọng hơn.",
+    "🏋️ Elo trung bình {e} — giải này xếp {r}/{n} về độ khốc liệt.",
+    "🏋️ {n} giải trong lịch sử, giải này đứng thứ {r} về sức mạnh với Elo trung bình {e}.",
+    "🏋️ PesNews xếp hạng: giải này thứ {r}/{n} theo Elo (trung bình {e}).",
+    "🏋️ Elo {e} bình quân mỗi đội — hạng {r} trong số {n} giải đấu.",
+    "🏋️ Mức độ khó: thứ {r}/{n}. Elo trung bình của sân chơi là {e}.",
+    "🏋️ Giải này có sức mạnh trung bình {e} Elo, hạng {r}/{n}. Vô địch ở đây không dễ.",
+    "🏋️ {e} Elo trung bình, xếp thứ {r} trên {n} — mỗi trận là một thử thách.",
+    "🏋️ So với {n} giải khác, giải này đứng thứ {r} về Elo ({e}).",
     "🏋️ Elo trung bình hiện tại của các đội ở giải này là {e}, xếp thứ {r}/{n} trong các giải của câu lạc bộ.",
     "🏋️ Xét theo Elo hiện tại, đây là giải mạnh thứ {r}/{n} của câu lạc bộ (trung bình {e})."
   ], en: [
@@ -1213,6 +3576,12 @@ var SN_BANK = {
 
   // ================= Rumours & quotes =================
   rumor: { tag: 'rumor', vi: [
+    "🤫 Tin đồn: {t} đã đổi hình nền điện thoại thành ảnh cúp vàng để “thu hút năng lượng”.",
+    "🧋 Nguồn tin giấu tên: {t} uống 3 ly trà sữa trước mỗi trận để tăng phản xạ.",
+    "💼 Có tin {t} xin nghỉ phép nửa ngày để tập luyện. Sếp chưa biết.",
+    "🐱 Tin đồn: mèo nhà {t} mới là “huấn luyện viên” thật sự, cứ nằm trên tay cầm là thắng.",
+    "📋 {t} bị bắt gặp vẽ sơ đồ chiến thuật lên giấy ăn trưa. Đồng nghiệp cảm thấy lo.",
+    "🛋️ Nguồn tin thân cận: {t} đã mua ghế gaming mới, khẳng định “ghế cũ làm tôi thua”.",
     "🤫 Nguồn tin giấu tên: {t} đã luyện tập lén suốt 3 đêm liền.",
     "👀 Có người thấy {t} xem lại băng hình đối thủ tới 2 giờ sáng.",
     "☕ {t} được cho là đã đổi sang tay cầm mới. Có phải vì phong độ gần đây?",
@@ -1244,6 +3613,22 @@ var SN_BANK = {
     "🕯️ {t} were spotted lighting a lucky candle before a big match."
   ] },
   qLeader: { tag: 'quote', vi: [
+    "🎤 {t}: “Bảng xếp hạng chỉ là con số, nhưng con số đẹp thì tôi vẫn thích.”",
+    "🎤 {t} khiêm tốn: “Chúng tôi chưa làm gì cả.” Rồi đăng ảnh bảng xếp hạng lên mạng.",
+    "🎤 {t}: “Tôi không nhìn bảng xếp hạng.” Nguồn tin: {t} xem 20 lần mỗi ngày.",
+    "🎤 {t} trả lời PesNews: “Ai muốn vị trí này thì hãy đến lấy.”",
+    "🎤 {t}: “Dẫn đầu không có nghĩa là vô địch. Chúng tôi vẫn cần tập trung.”",
+    "🎤 {t} thẳng thắn: “Tôi ngủ rất ngon. Các đội khác thì chắc không.”",
+    "🎤 {t}: “Bí quyết ư? Ăn sáng đầy đủ và không đọc bình luận.”",
+    "🎤 {t} cảm ơn khán giả: “Không có các bạn cổ vũ, chúng tôi vẫn dẫn đầu — nhưng sẽ buồn hơn.”",
+    "🎤 {t}: “Không có trận nào dễ. Chỉ có những trận chúng tôi khiến nó trở nên dễ.”",
+    "🎤 {t} nghiêm túc: “Chúng tôi tôn trọng mọi đối thủ, nhưng mục tiêu vẫn là 3 điểm.”",
+    "🎤 {t}: “Áp lực là đặc quyền.” Câu nói mượn từ một HLV nổi tiếng nào đó.",
+    "🎤 {t} đùa với PesNews: “Nếu tôi thua, hãy đổ cho mạng wifi.”",
+    "🎤 {t}: “Chúng tôi ở đây để viết lịch sử, không phải để đọc nó.”",
+    "🎤 {t} từ chối bình luận về chức vô địch: “Hỏi lại tôi sau trận cuối.”",
+    "🎤 {t}: “Tôi chỉ là một người bình thường với một tay cầm bất thường.”",
+    "🎤 {t} tuyên bố: “Trận tới chúng tôi sẽ đá như trận chung kết.”",
     "🎤 {t}: “Chúng tôi chỉ tập trung từng trận một.” (Câu nói kinh điển của mọi đội dẫn đầu.)",
     "🎤 {t} trả lời phỏng vấn: “Áp lực ư? Áp lực là của các đội phía sau.”",
     "🎤 {t}: “Cúp đã được đặt chỗ, chỉ chờ khắc tên.” Tự tin hay tự mãn?",
@@ -1255,6 +3640,22 @@ var SN_BANK = {
     "🎤 {t} declare: “The only goal is the title.” PesNews has it on tape."
   ] },
   qStruggler: { tag: 'quote', vi: [
+    "🎤 {t}: “Chúng tôi đang trong giai đoạn xây dựng lại.” Giai đoạn này đã kéo dài khá lâu.",
+    "🎤 {t} thẳng thắn: “Tôi đã thử mọi đội hình. Giờ chỉ còn thiếu may mắn.”",
+    "🎤 {t}: “Trọng tài hôm nay rất khó hiểu.” PesNews nhắc: trọng tài là máy.",
+    "🎤 {t}: “Chúng tôi thua nhưng đã học được nhiều.” Đây là bài học thứ mấy rồi?",
+    "🎤 {t} nghiêm túc: “Chúng tôi cần nhìn lại bản thân và làm tốt hơn.”",
+    "🎤 {t}: “Hôm nay mặt trời chiếu vào màn hình.” Trận đấu diễn ra trong nhà.",
+    "🎤 {t} tuyên bố: “Bảng xếp hạng không phản ánh đúng thực lực của chúng tôi.”",
+    "🎤 {t}: “Tôi vẫn tin vào đội bóng này.” Người duy nhất còn tin, theo nguồn tin.",
+    "🎤 {t} thở dài: “Tôi đã đổi tay cầm, đổi ghế, giờ chỉ còn đổi... chiến thuật.”",
+    "🎤 {t}: “Mỗi thất bại là một bước gần hơn tới chiến thắng.” Nhiều bước quá.",
+    "🎤 {t} đùa: “Chúng tôi đang cố tình để đối thủ chủ quan.”",
+    "🎤 {t}: “Không ai muốn thắng hơn chúng tôi.” Chỉ là chưa thắng được.",
+    "🎤 {t} từ chối đổ lỗi: “Là lỗi của tôi. Và một chút của tay cầm.”",
+    "🎤 {t}: “Hãy để chúng tôi yên. Trận tới sẽ nói lên tất cả.”",
+    "🎤 {t} hé lộ: “Tôi đã xem lại trận thua 5 lần. Lần nào cũng thua.”",
+    "🎤 {t}: “Chúng tôi không tệ, chỉ là các đội khác quá hay.”",
     "🎤 {t}: “Chúng tôi thiếu may mắn, thiếu trọng tài, và... tay cầm hôm nay hơi lag.”",
     "🎤 {t} họp báo: “Mùa giải còn dài.” (Câu nói quen thuộc của những đội đang khủng hoảng.)",
     "🎤 {t}: “Chúng tôi chơi hay hơn đối thủ, chỉ là họ ghi nhiều bàn hơn.”",
@@ -1266,6 +3667,23 @@ var SN_BANK = {
     "🎤 {t} promise: “The next match will be different.” PesNews has heard that a few times."
   ] },
   qTeo: { tag: 'quote', vi: [
+    "📰 PesNews ghi nhớ: “Không có trận đấu nào được quyết định trên giấy.”",
+    "📰 Châm ngôn PesNews: “Elo cao không ghi bàn, chỉ có người cầm tay cầm mới ghi bàn.”",
+    "📰 PesNews triết lý: thắng thì khiêm tốn, thua thì... đổ cho mạng lag.",
+    "📰 PesNews nhắc nhở: mọi tin đồn đều là bịa đặt — nhưng một số có vẻ đúng.",
+    "📰 PesNews: “Bảng xếp hạng là sự thật, còn lại đều là bình luận.”",
+    "📰 Bài học từ PesNews: không có đội yếu, chỉ có đội chưa gặp ngày may mắn.",
+    "📰 PesNews tự hỏi: nếu ai cũng tập trung từng trận một, thì ai tập trung vào cả mùa?",
+    "📰 PesNews tuyên bố: chúng tôi trung lập tuyệt đối — trừ khi có trà sữa.",
+    "📰 PesNews: “Thống kê giải thích quá khứ, bóng đá tạo ra tương lai.”",
+    "📰 Lời nhắn của PesNews: hãy chơi đẹp, thua đẹp, và đừng ném tay cầm.",
+    "📰 PesNews tổng kết: trận nào cũng có người cười, người khóc, và người chụp màn hình.",
+    "📰 PesNews nghiêm túc: dữ liệu được cập nhật sau mỗi trận, tin đồn thì cập nhật liên tục.",
+    "📰 Châm ngôn PesNews: “Đội nào cũng vô địch — trong giấc mơ.”",
+    "📰 PesNews khuyên: trước trận hãy ngủ đủ, sau trận hãy đọc PesNews.",
+    "📰 PesNews quan sát: tay cầm là vật bị đổ lỗi nhiều nhất câu lạc bộ.",
+    "📰 PesNews: “Mỗi bàn thắng là một câu chuyện, mỗi thất bại là một bài báo.”",
+    "📰 PesNews cảm ơn tất cả các đội đã cung cấp chất liệu cho những bài viết “không kiểm chứng”.",
     "📰 PesNews tự nhủ: “Dữ liệu không biết nói dối, nhưng bóng đá thì có.”",
     "📰 Lời khuyên của PesNews: thắng trận thì khoe, thua trận thì đổ cho tay cầm.",
     "📰 PesNews đã chạy hàng trăm kịch bản mô phỏng. Kết luận: bóng tròn, ai cũng có cơ hội."
@@ -1277,9 +3695,119 @@ var SN_BANK = {
 };
 
 // One sentence of situation `id` in the current language, placeholders filled from v.
+// Only variants whose {placeholders} are all present in v are used, so a template may quote optional
+// facts (career win rate, medals, nemesis... see snPlayerCtx) and is simply skipped when they are missing.
+// A situation without sentences in the current language returns ''.
+function snSetEn(pack) {
+  Object.keys(pack).forEach(function (id) { if (SN_BANK[id]) SN_BANK[id].en = pack[id]; });
+}
+var snKeysMemo = {};
+function snKeys(tpl) {
+  var k = snKeysMemo[tpl];
+  if (!k) { k = []; tpl.replace(/\{(\w+)\}/g, function (_, x) { k.push(x); return ''; }); snKeysMemo[tpl] = k; }
+  return k;
+}
 function snLine(id, v, rng) {
   var b = SN_BANK[id];
   if (!b) return '';
-  var arr = CR_EN ? b.en : b.vi;
-  return careerFill(arr[Math.floor((rng ? rng() : Math.random()) * arr.length)], v || {});
+  v = v || {};
+  var arr = (CR_EN ? b.en : b.vi) || [];
+  if (!arr.length) return '';
+  // Keep the variants with the fewest missing placeholders (normally zero missing).
+  var best = Infinity, ok = [];
+  arr.forEach(function (t) {
+    var miss = snKeys(t).filter(function (k) { return v[k] == null; }).length;
+    if (miss < best) { best = miss; ok = [t]; } else if (miss === best) ok.push(t);
+  });
+  return careerFill(ok[Math.floor((rng ? rng() : Math.random()) * ok.length)], v);
+}
+
+// Situations that tell the same story. Only the strongest one of a group is printed at a time
+// (newspaper front page, Teo headlines); ids outside any group are their own group.
+var SN_GROUPS = {
+  loseRun: ['coldLose', 'r_lstreak'], winless: ['coldWinless', 'r_winlessEnd'],
+  winRun: ['hot', 'r_wstreak', 'streakLine', 'bestForm'], upset: ['upset', 'r_shock'],
+  leaky: ['leak', 'pLeaky'], eloTop: ['eloKing', 'pThrone'], goalFest: ['fest', 'r_fest'],
+  peak: ['milePeak', 'r_peak'], veteran: ['preVeteran', 'pVeteran', 'mileSeasons', 'mileMatches'],
+  rookie: ['debutant', 'pRookie'], draws: ['r_draw', 'r_nil', 'drawRun', 'drawKing', 'drawShare'],
+  bigWin: ['bigWin', 'r_demol', 'r_sweep', 'pBestWin'], unbeaten: ['unbeaten', 'r_unbeatenEnd', 'champUnbeaten'],
+  defending: ['defending', 'champDefend', 'defendingOut', 'hsAbsent'], seriesKing: ['champSeriesKing', 'hsKing'],
+  rivalry: ['classic', 'hRivalry', 'hEven'], prey: ['pNemesis', 'pVictim', 'pNeverBeat', 'hLopsided', 'curse'],
+  revenge: ['r_revenge', 'r_firstWin', 'revengeChance', 'pWorstLoss'], clinch: ['clinch', 'fClinchNext', 'nearlyDone'],
+  final: ['finalPair', 'fFinalGuess'], silver: ['runnerUp', 'silverCurse', 'pNoGold'],
+  underdog: ['weakest', 'underdogAlive', 'darkHorse', 'oneSided'], eloFlop: ['eloFlop', 'under', 'bigOut', 'fallen'],
+  yearTitles: ['champYearDouble', 'yearHunt'], bottom: ['bottom', 'woodenSpoon', 'eloBelowBase'],
+  relegation: ['relegated', 'relSure', 'relDanger', 'relSecond'], odds: ['titleOdds', 'shared', 'trustOther'],
+  winRate: ['pLowWin', 'pWinRateHigh'], koRecord: ['pKoChoke', 'pKoKing'], cabinet: ['pCabinet', 'champDynasty', 'champFirst'],
+  club: ['clubMatches', 'clubGoals']
+};
+var SN_GRP = {};
+Object.keys(SN_GROUPS).forEach(function (g) { SN_GROUPS[g].forEach(function (id) { SN_GRP[id] = g; }); });
+function snGroupOf(id) { return SN_GRP[id] || id; }
+
+// Whose career facts a sentence may quote: commentary lines default to the winner W, newspaper
+// headlines to the first team placeholder (t, n, c, l, ...) unless listed here.
+var SN_SUBJ = { r_lstreak: 'L', r_unbeatenEnd: 'L', r_draw: 'H', r_nil: 'H',
+  eloFlop: 'f', curse: 'd', oneSided: 'd', upset: 'w', trustOther: 't', bigMatch: 'f', streakLine: 't', revengeChance: 't' };
+
+// Optional career facts of player `name` (resolved career name) for richer sentences.
+// fmt(x, kind) formats names ('n') and season names ('s'); HTML in the newspaper, plain text otherwise.
+// A fact is only set when it is meaningful, so templates using it are skipped otherwise:
+//   mp cW cD cL wr dr lr · cgf cga gpm gapm · elo peak peakGap eloRank eloOf · nS debut
+//   gold silver bronze medals firstGold lastGold lastS lastPl · flags g0 (no gold) m0 (no medal) · bestW bestU bestL bestWl curW curL curU curWl
+//   bwSc bwOpp bwS · wlSc wlOpp wlS · nem nemW nemD nemL · vic vicW vicL · rival rivalP rivalW rivalD rivalL · koW koP koPct
+var snCtxMemo = { cd: null, map: {} };
+function snPlayerCtx(cd, name, fmt) {
+  if (!cd || !name || !cd.elo || !cd.elo[name] || typeof teamCareer !== 'function') return null;
+  if (snCtxMemo.cd !== cd) snCtxMemo = { cd: cd, map: {} };
+  var key = (fmt ? 'h:' : 'p:') + name;
+  if (snCtxMemo.map[key] !== undefined) return snCtxMemo.map[key];
+  var f = fmt || function (x) { return x; }, esc = fmt ? escapeHtml : function (x) { return x; };
+  var tc = teamCareer(cd, name), e = tc.elo, c = {}, P = tc.list.length, W = 0, D = 0, L = 0;
+  tc.list.forEach(function (x) { if (x.r === 'W') W++; else if (x.r === 'D') D++; else L++; });
+  if (P) { c.mp = P; c.cW = W; c.cD = D; c.cL = L; }
+  if (P >= 5) { c.wr = Math.round(W * 100 / P); c.dr = Math.round(D * 100 / P); c.lr = Math.round(L * 100 / P); }
+  var real = tc.list.filter(function (x) { return !x.m.est && !x.m.ko; }), gf = 0, ga = 0;
+  real.forEach(function (x) { gf += x.gf; ga += x.ga; });
+  if (real.length >= 5) { c.cgf = gf; c.cga = ga; c.gpm = (gf / real.length).toFixed(1); c.gapm = (ga / real.length).toFixed(1); }
+  if (e) {
+    c.elo = Math.round(e.elo); c.peak = Math.round(e.peak);
+    if (e.peak - e.elo >= 20) c.peakGap = Math.round(e.peak - e.elo);
+  }
+  if (tc.rank) { c.eloRank = tc.rank; c.eloOf = tc.rankOf; }
+  if (tc.seasons.length >= 2) c.nS = tc.seasons.length;
+  if (tc.seasons.length) c.debut = f(tc.seasons[tc.seasons.length - 1].name, 's');
+  var mc = medalCount(tc.trophies), med = mc.gold + mc.silver + mc.bronze;
+  if (mc.gold) c.gold = mc.gold;
+  if (mc.silver) c.silver = mc.silver;
+  if (mc.bronze) c.bronze = mc.bronze;
+  if (med) c.medals = med;
+  // Flags (empty text, only there to select templates): g0 = no gold yet, m0 = no medal yet.
+  if (P >= 5 && !mc.gold) c.g0 = '';
+  if (P >= 5 && !med) c.m0 = '';
+  var golds = tc.trophies.filter(function (x) { return x.medal === 'gold'; });
+  if (golds.length) { c.firstGold = f(golds[0].season, 's'); c.lastGold = f(golds[golds.length - 1].season, 's'); }
+  var lt = tc.trophies[tc.trophies.length - 1];
+  if (lt && lt.place) { c.lastS = f(lt.season, 's'); c.lastPl = (lt.medal ? CR_MEDAL_ICON[lt.medal] + ' ' : '') + esc(lt.place); }
+  var sb = tc.streaks.best, sc = tc.streaks.cur;
+  if (sb.win >= 3) c.bestW = sb.win;
+  if (sb.unbeaten >= 4) c.bestU = sb.unbeaten;
+  if (sb.lose >= 3) c.bestL = sb.lose;
+  if (sb.winless >= 4) c.bestWl = sb.winless;
+  if (sc.win >= 2) c.curW = sc.win;
+  if (sc.lose >= 2) c.curL = sc.lose;
+  if (sc.unbeaten >= 3) c.curU = sc.unbeaten;
+  if (sc.winless >= 3) c.curWl = sc.winless;
+  var bw = tc.biggestWin, wl = tc.worstLoss;
+  if (bw && bw.gf - bw.ga >= 2) { c.bwSc = bw.gf + '–' + bw.ga; c.bwOpp = f(bw.opp, 'n'); c.bwS = f(bw.m.season, 's'); }
+  if (wl && wl.ga - wl.gf >= 2) { c.wlSc = wl.gf + '–' + wl.ga; c.wlOpp = f(wl.opp, 'n'); c.wlS = f(wl.m.season, 's'); }
+  var op = tc.opponents;
+  var nem = op.filter(function (o) { return o.L >= 2 && o.L > o.W; }).sort(function (a, b) { return (b.L - b.W) - (a.L - a.W) || b.L - a.L; })[0];
+  if (nem) { c.nem = f(nem.name, 'n'); c.nemW = nem.W; c.nemD = nem.D; c.nemL = nem.L; }
+  var vic = op.filter(function (o) { return o.W >= 3 && o.W >= 2 * o.L; }).sort(function (a, b) { return (b.W - b.L) - (a.W - a.L); })[0];
+  if (vic) { c.vic = f(vic.name, 'n'); c.vicW = vic.W; c.vicL = vic.L; }
+  if (op[0] && op[0].P >= 4) { c.rival = f(op[0].name, 'n'); c.rivalP = op[0].P; c.rivalW = op[0].W; c.rivalD = op[0].D; c.rivalL = op[0].L; }
+  if (tc.ko.P >= 2) { c.koW = tc.ko.W; c.koP = tc.ko.P; c.koPct = Math.round(tc.ko.W * 100 / tc.ko.P); }
+  snCtxMemo.map[key] = c;
+  return c;
 }

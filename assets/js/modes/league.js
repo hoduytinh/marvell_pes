@@ -1,4 +1,12 @@
 // Marvell PES Club - modes/league.js (split from app.js; shared global scope, load order set in index.html)
+    // Status icon of a round in the round picker (league + chess-swiss): finished / in progress / not started.
+    function pesRoundStatus(done, total){
+      var L = typeof crL === 'function' ? crL : function(v){ return v; };
+      var t = ' (' + done + '/' + total + ')';
+      if(total && done >= total) return { icon: '✅', cls: 'rs-done', title: L('Đã xong', 'Finished') + t };
+      if(done > 0) return { icon: '⏳', cls: 'rs-live', title: L('Đang diễn ra', 'In progress') + t };
+      return { icon: '⚪', cls: 'rs-todo', title: L('Chưa diễn ra', 'Not started') + t };
+    }
     function generateFixtures(teamCount){
       var n=teamCount; var hasBye=n%2===1; if(hasBye) n+=1;
       var idxs=Array.from({length:n},function(_,i){return i});
@@ -398,8 +406,11 @@ function renderFixtures(roundIdx){
           // Don't check any by default
           
           var span = document.createElement('span');
-          span.textContent = 'V' + (i + 1);
+          var rst = pesRoundStatus(s.rounds[i].filter(function(m, mi){ var r = s.results[i + '-' + mi]; return r && r.hg != null && r.ag != null; }).length, s.rounds[i].length);
+          span.textContent = rst.icon + ' V' + (i + 1);
           span.style.fontSize = '12px';
+          label.className = rst.cls;
+          label.title = rst.title;
           
           label.appendChild(checkbox);
           label.appendChild(span);
@@ -490,7 +501,7 @@ el.innerHTML = `
 `;
 
         var h=el.querySelector('.scoreH'); var a=el.querySelector('.scoreA');
-     if (isAdmin()) {
+     if (canEditScores()) {
        h.removeAttribute('readonly');
        a.removeAttribute('readonly');
        h.removeAttribute('disabled');
@@ -510,7 +521,7 @@ el.innerHTML = `
        a.style.pointerEvents = 'none';
      }
         function commit(){
-          if(!isAdmin()){
+          if(!canEditScores()){
             toast('Chỉ admin được phép sửa');
             // Do not re-render, just return
             return;

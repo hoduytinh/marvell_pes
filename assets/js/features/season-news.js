@@ -38,7 +38,14 @@ function snProbs(eh, ea, ko){
   return { h: p - d / 2, d: d, a: 1 - p - d / 2 };
 }
 function snE(x){ return escapeHtml(String(x == null ? '' : x)); }
-function snB(t){ return '<b class="no-i18n">' + snE(t && t.name != null ? t.name : t) + '</b>'; }
+// snB also remembers which team each bold name stands for (SN_TMAP, reset by snNews), so a headline
+// can pull in the career / season facts of the team it is about.
+var SN_TMAP = null;
+function snB(t){
+  var h = '<b class="no-i18n">' + snE(t && t.name != null ? t.name : t) + '</b>';
+  if(SN_TMAP && t && (!SN_TMAP[h] || (typeof t !== 'string' && !SN_TMAP[h].ck))) SN_TMAP[h] = typeof t === 'string' ? { name: t } : t;
+  return h;
+}
 function snSigned(v){ v = Math.round(v); return (v > 0 ? '+' : v < 0 ? '−' : '±') + Math.abs(v); }
 
 // ---------------- Season data ----------------
@@ -260,9 +267,10 @@ var SN_TAGS = {
   mile: crL('Cột mốc', 'Milestone'), form: crL('Phong độ', 'Form'), rel: crL('Rớt hạng', 'Relegation'),
   profile: crL('Hồ sơ', 'Profile'), h2h: crL('Đối đầu', 'Rivalry'), hist: crL('Lịch sử', 'History'),
   ko: crL('Loại trực tiếp', 'Knock-out'), elo: 'Elo', future: crL('Tương lai', 'Outlook'),
-  quote: crL('Phát ngôn', 'Quote'), fun: crL('Bên lề', 'Sidelines')
+  quote: crL('Phát ngôn', 'Quote'), fun: crL('Bên lề', 'Sidelines'),
+  gossip: crL('Lá cải', 'Gossip'), office: crL('Công sở', 'Office')
 };
-var SN_MAX_ITEMS = 12, SN_TAG_LIMIT = { rumor: 1, quote: 1, fun: 1, result: 2, troll: 3, profile: 3 };
+var SN_MAX_ITEMS = 14, SN_TAG_LIMIT = { rumor: 2, quote: 1, fun: 1, result: 2, troll: 3, profile: 3, gossip: 2, office: 1 };
 
 // Same competition in other years: the name without digits / punctuation ("2026 - Seri A" -> "seri a").
 function snSeriesKey(name){
@@ -298,9 +306,32 @@ function snShuffled(arr, rng){
 // all = true: every applicable headline (Teo Robot); otherwise a varied front page.
 function snNews(D, odds, rng, all){
   var cd = D.cd, items = [], teams = D.teams, nPlayed = D.played.length, W3 = D.W3;
+  SN_TMAP = {};
+  var posOf = {};
+  D.table.forEach(function(b, i){ posOf[b.t.idx] = { pos: i + 1, pts: b.Pts }; });
+  var fmtH = function(x, k){ return k === 'n' ? snB(x) : '<span class="no-i18n">' + snE(x) + '</span>'; };
+  // Facts of the team a headline is about: career (snPlayerCtx) + this season.
+  function ctxOf(v, id){
+    var keys = [SN_SUBJ[id], 't', 'n', 'c', 'l', 'r', 'b', 'w', 'd', 'f', 'a', 'h'], t = null;
+    for(var i = 0; i < keys.length && !t; i++) if(keys[i] && typeof v[keys[i]] === 'string') t = SN_TMAP[v[keys[i]]] || null;
+    if(!t) return null;
+    var c = {}, pc = D.dbl ? null : snPlayerCtx(cd, t.ck || careerResolveName(cd, t.name), fmtH);
+    if(pc) Object.keys(pc).forEach(function(k){ c[k] = pc[k]; });
+    if(t.idx != null && D.T[t.idx] === t && t.P){
+      c.sP = t.P; c.sW = t.W; c.sD = t.D; c.sL = t.L;
+      if(t.gP){ c.sGF = t.GF; c.sGA = t.GA; }
+      if(t.cs) c.sCS = t.cs;
+      if(Math.round(t.eloD)) c.sEloD = snSigned(t.eloD);
+      if(t.form.length >= 3) c.sForm = t.form.slice(-5).map(function(r){ return crL({ W: 'T', D: 'H', L: 'B' }[r], r); }).join('-');
+      if(posOf[t.idx]){ c.sPos = posOf[t.idx].pos; c.sPts = posOf[t.idx].pts; }
+    }
+    return c;
+  }
   function say(pri, id, v, tag){
     if(!SN_BANK[id]) return;
-    items.push({ pri: pri + rng() * 14, tag: tag || SN_BANK[id].tag, html: snLine(id, v, rng) });
+    var c = ctxOf(v, id), vv = v;
+    if(c){ vv = c; Object.keys(v).forEach(function(k){ vv[k] = v[k]; }); }
+    items.push({ pri: pri + rng() * 14, tag: tag || SN_BANK[id].tag, grp: [snGroupOf(id)], html: snLine(id, vv, rng) });
   }
   function pickR(arr){ return arr[Math.floor(rng() * arr.length)]; }
   var byElo = teams.slice().sort(function(a, b){ return b.elo - a.elo; });
@@ -337,7 +368,8 @@ function snNews(D, odds, rng, all){
     else if(series && series.titles[snLc(c.name)]) say(64, 'champSeriesKing', { c: snB(c), k: series.titles[snLc(c.name)] + 1 });
     if(D.mode === 'league' && D.table.length){
       var relN = Math.max(0, +((D.s.settings || {}).rel) || 0);
-      D.table.slice(D.table.length - relN).forEach(function(x){ say(62, 'relegated', { t: snB(x.t) }); });
+      var relT = D.table.slice(D.table.length - relN);
+      if(relT.length) say(62, 'relegated', { t: relT.map(function(x){ return snB(x.t); }).join(', ') });
     }
     if(D.kind === 'table' && D.table.length >= 4){
       var spoon = D.table[D.table.length - 1];
@@ -472,6 +504,7 @@ function snNews(D, odds, rng, all){
       var cm = careerCommentary(cd, i), m = cd.hist[i];
       if(!cm) return;
       items.push({ pri: (k ? 58 : 73) + rng() * 10, tag: 'result',
+        grp: (cm.ids || []).filter(function(id){ return ['r_convincing', 'r_narrow', 'r_decider'].indexOf(id) === -1; }).map(snGroupOf),
         html: '<span class="sn-score no-i18n">' + snE(m.home + ' ' + m.hg + ' – ' + m.ag + ' ' + m.away) + '</span> <small class="muted no-i18n">' + snE(m.stage) + '</small><br>' + snE(cm.lines.join(' ')) });
     });
   }
@@ -717,8 +750,35 @@ function snNews(D, odds, rng, all){
   }
   say(10 + rng() * 20, 'qTeo', {});
 
+  // --- Gossip & office life (features/news-gossip.js): random topics, each about a different player ---
+  if(typeof SN_GOSSIP !== 'undefined' && teams.length){
+    var gLeft = all ? 10 : 5, gUsed = {};
+    var gFit = function(who, t){
+      if(who === 'win') return t.P ? t.W >= t.L : eloRank[t.idx] <= Math.ceil(teams.length / 2);
+      if(who === 'lose') return t.P ? t.L > t.W : eloRank[t.idx] > Math.floor(teams.length / 2);
+      return true;
+    };
+    snShuffled(SN_GOSSIP, rng).forEach(function(g){
+      if(gLeft <= 0 || !SN_BANK[g.id]) return;
+      var pool = teams.filter(function(t){ return !gUsed[t.idx] && gFit(g.who, t); });
+      if(!pool.length) return;
+      var gt = pickR(pool), others = teams.filter(function(t){ return t !== gt; });
+      gUsed[gt.idx] = 1; gLeft--;
+      say(16 + rng() * 34, g.id, { t: snB(gt), o: others.length ? snB(pickR(others)) : null });
+    });
+  }
+
   items.sort(function(a, b){ return b.pri - a.pri; });
   items = items.filter(function(it){ return it.html; });
+  // One story per group: the strongest item of a group hides the others.
+  var gSeen = {};
+  items = items.filter(function(it){
+    var gs = it.grp || [];
+    if(gs.some(function(g){ return gSeen[g]; })) return false;
+    gs.forEach(function(g){ gSeen[g] = 1; });
+    return true;
+  });
+  SN_TMAP = null;
   if(all) return items;
   // Pick a varied front page.
   var outList = [], per = {};
