@@ -188,7 +188,7 @@
     'Đăng nhập quản trị': 'Admin login',
     'Nhập password quản trị': 'Enter admin password',
     'Sai password': 'Wrong password',
-    'Đăng nhập': 'Log in',
+    'Đăng nhập': 'Login',
     'Tên đăng nhập': 'Username',
     'Mật khẩu': 'Password',
     'Sai tên đăng nhập hoặc mật khẩu': 'Wrong username or password',

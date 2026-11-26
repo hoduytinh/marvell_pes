@@ -104,7 +104,10 @@ function updateAuthButton(){
     b.appendChild(s);
     b.title = 'Đăng xuất';
   } else {
-    b.textContent = 'Admin';
+    b.appendChild(document.createTextNode('🔑 '));
+    var l = document.createElement('span');
+    l.textContent = 'Đăng nhập';
+    b.appendChild(l);
     b.title = 'Đăng nhập';
   }
 }
