@@ -108,7 +108,7 @@ function rsReject(sid, key){
 
 // ---------- HTML ----------
 function rsSendBtn(sid, key, short){
-  return '<button type="button" class="ghost rs-send" data-rs-send data-rs-sid="' + escapeHtml(sid) + '" data-rs-key="' + escapeHtml(key) + '" title="' +
+  return '<button type="button" class="rs-send" data-rs-send data-rs-sid="' + escapeHtml(sid) + '" data-rs-key="' + escapeHtml(key) + '" title="' +
     escapeHtml(rsL('Gửi kết quả để admin/mod duyệt (chỉ 1 lần)', 'Submit the result for approval (once)')) + '">📨 ' +
     (short ? rsL('Gửi', 'Send') : rsL('Gửi kết quả', 'Submit result')) + '</button>';
 }
@@ -249,7 +249,7 @@ function rsOpenDialog(sid, key){
       'Each match can be submitted ONCE and cannot be edited. The result is saved only after an admin/mod approves it.') + '</div>' +
     '<div class="kg-warn rs-err"></div>' +
     '<div class="kg-actions"><button type="button" class="ghost" data-rs-act="cancel">' + rsL('Hủy', 'Cancel') + '</button>' +
-    '<button type="button" class="primary" data-rs-act="send">📨 ' + rsL('Gửi', 'Send') + '</button></div></div>';
+    '<button type="button" class="rs-hot" data-rs-act="send">📨 ' + rsL('Gửi', 'Send') + '</button></div></div>';
   if(typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', 'open');
   var h = dlg.querySelector('.rs-h');
   try { h.focus(); } catch(e){}
