@@ -27680,6 +27680,16 @@
       "y": -17,
       "t": 1795662404637,
       "img": "photos/cards/Toan-T10-mwwz16xc.jpg"
+    },
+    "Thái": {
+      "style": "allround",
+      "tier": "",
+      "label": "",
+      "zoom": 1.04,
+      "x": -12,
+      "y": -1,
+      "t": 1795662453656,
+      "img": "photos/cards/Thai-mwwz28rd.jpg"
     }
   },
   "pesRankOff": [
