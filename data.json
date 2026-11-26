@@ -27555,13 +27555,14 @@
       "img": "photos/cards/duc-mwwym9g4.png"
     },
     "Phong": {
-      "style": "toty",
+      "style": "allround",
       "tier": "",
       "label": "",
       "zoom": 1,
-      "x": 0,
+      "x": -5,
       "y": 0,
-      "t": 1795617517181
+      "t": 1795662237502,
+      "img": "photos/cards/Phong-mwwyxm00.jpg"
     },
     "Tùng Mai": {
       "style": "toty",
