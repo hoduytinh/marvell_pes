@@ -419,7 +419,7 @@ function showRoundExportDialog(title, blob, dataUrl, opts){
 }
 
 function openRoundExport(){
-  if(!isAdmin() && !(typeof isSupporter === 'function' && isSupporter())){ toast('Chỉ admin được phép sửa'); return; }
+  if(!canExportRound()){ toast('Tài khoản không có quyền Export vòng'); return; }
   var s = activeSeason();
   if(!s) return;
   if(!$('fixtures').querySelector('.fixture, .tournament-fixture')){ toast('Chưa có trận nào để export'); return; }

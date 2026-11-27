@@ -14,7 +14,7 @@ function rsL(vi, en){ return typeof crL === 'function' ? crL(vi, en) : vi; }
 function rsFbKey(v){ return String(v).replace(/[.#$\[\]\/]/g, '_'); }
 function rsBase(){ return RS_FB + '/submissions/' + rsFbKey(PES_SYSTEM_ID); }
 function rsSlot(s, key){ return rsFbKey(key) + '~' + (+((s && s.subRej) || {})[key] || 0); }
-function rsActive(){ return !!authSession() && (isAdminUser() || isSupporter() || isPlayer()); }
+function rsActive(){ return !!authSession() && hasAnyPerm(['score', 'submit']); }
 function rsScoreOk(v){ return typeof v === 'number' && v >= 0 && v <= 99 && Math.floor(v) === v; }
 function rsHasResult(s, key){
   var r = s && s.results && s.results[key];
@@ -32,7 +32,7 @@ function rsCanSend(sid, key){
   var s = state.seasons && state.seasons[sid];
   return isPlayer() && RS_STATE === 'ok' && rsOpenSeason(s) && !rsHasResult(s, key) && !rsPending(sid, key);
 }
-function rsCanReview(sid){ var s = state.seasons[sid]; return isAdminUser() && !!s && !seasonLocked(s); }
+function rsCanReview(sid){ var s = state.seasons[sid]; return canApproveResults() && !!s && !seasonLocked(s); }
 function rsWhen(ts){
   var d = new Date(+ts);
   if(isNaN(d.getTime())) return '';
@@ -300,7 +300,7 @@ document.addEventListener('visibilitychange', function(){
 
 (function(){
   function tick(){
-    var a = authSession(), u = a && rsActive() ? a.u + '|' + a.role : null;
+    var a = authSession(), u = a && rsActive() ? a.u + '|' + userPerms(a).join(',') : null;
     if(u !== rsLastUser){
       rsLastUser = u;
       RS_SUBS = {}; RS_STATE = ''; rsSig = '';

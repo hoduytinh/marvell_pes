@@ -137,7 +137,8 @@ function kgPreview(){
 
 function kgOpen(key){
   var s = activeSeason();
-  if(!s || typeof ensureSeasonEditable === 'function' && !ensureSeasonEditable()) return;
+  if(!s) return;
+  if(!canEditScores()){ if(!authSession()) openAdminLogin(); else toast(kgL('Không có quyền nhập tỉ số', 'No permission to enter scores')); return; }
   var names = kgTeams(s, key);
   if(!names) return;
   kgCur = { key: key, names: names };

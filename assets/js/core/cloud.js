@@ -159,7 +159,7 @@
       // A PAT unlocked by login may only push for systems the user can edit.
       canPush: function() {
         if(!this.pat || !this.enabled) return false;
-        if(this.patFromSession && !isAdminUser() && !isSupporter()) return false;
+        if(this.patFromSession && !canWriteCloud()) return false;
         return true;
       },
 
@@ -207,7 +207,7 @@
           el.title = 'Đang tắt tự động đồng bộ lên server';
           return;
         }
-        if(!this.pat && this.status !== 'loading' && typeof isAdminUser === 'function' && (isAdminUser() || isSupporter())) {
+        if(!this.pat && this.status !== 'loading' && typeof canWriteCloud === 'function' && canWriteCloud()) {
           el.textContent = '⚠️ Chỉ lưu trên máy';
           el.style.color = '#f59e0b';
           el.title = 'Thiết bị này chưa có quyền ghi cloud: thay đổi chỉ lưu trên máy, không đồng bộ lên server';

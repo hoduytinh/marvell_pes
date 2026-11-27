@@ -1281,7 +1281,7 @@ function renderStatsPage(){
   var host = $('statsPage');
   if(!host) return;
   var tabs = STATS_TABS.filter(function(t){
-    return !t.admin || ((isAdminUser() || isSupporter() || isPlayer()) && typeof amRenderHtml === 'function');
+    return !t.admin || (hasAnyPerm(['score', 'submit']) && typeof amRenderHtml === 'function');
   });
   if(!tabs.some(function(t){ return t.k === statsTab; })) statsTab = statsTab === 'legend' ? 'autolegend' : statsTab === 'ranking' ? 'pesrank' : 'career';
   var cd = careerData(state), hasMaster = !!(state.teamMasterList || []).length, only = hasMaster && statsMasterOnly;

@@ -1360,7 +1360,7 @@ body.hide-elo .elo-dl-line{display:none !important}
 
 /* ===== 8. Multi-system & accounts dialog ===== */
 #systemSel { max-width: 220px; }
-.sys-dialog { width: min(760px, 94vw); }
+.sys-dialog { width: min(1100px, 96vw); }
 .sys-dialog h4 { margin: 14px 0 8px; }
 .sys-hint { font-size: 12px; margin: 0 0 6px; }
 .sys-section { border-top: 1px solid var(--border); padding-top: 4px; }
@@ -1378,6 +1378,24 @@ body.hide-elo .elo-dl-line{display:none !important}
 .sys-badge { font-size: 11px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
 .sys-add { margin-top: 8px; border-style: dashed; }
 .sys-section > .sys-add.sys-row { padding: 8px 0; }
+.sys-pt-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+.sys-pt { width: 100%; border-collapse: collapse; font-size: 13px; }
+.sys-pt th, .sys-pt td { padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; text-align: left; }
+.sys-pt thead th { background: var(--card); font-weight: 600; white-space: nowrap; }
+.sys-pt th small { display: block; font-size: 10px; font-weight: 500; color: var(--muted); }
+.sys-pt .sys-pt-c { text-align: center; width: 1%; }
+.sys-pt .sys-pt-c input { width: 16px; height: 16px; cursor: pointer; }
+.sys-pt .sys-pt-c input:disabled { cursor: not-allowed; }
+.sys-pt .sys-pt-adm, .sys-pt .sys-pt-cloud { background: rgba(127,127,127,.06); }
+.sys-pt-user { white-space: nowrap; }
+.sys-pt-user .sys-uname { width: 130px; }
+.sys-pt-sys .sys-checks { gap: 4px 10px; }
+.sys-pt-sys .sys-checks[hidden], .sys-pt-sys > span[hidden] { display: none; }
+.sys-pt-pw .sys-row { flex-wrap: nowrap; }
+.sys-pt-pw .sys-pw { width: 130px; flex: 0 0 auto; }
+.sys-pt tbody tr:hover { background: rgba(127,127,127,.05); }
+.sys-pt tr.sys-pt-new td { border-top: 2px dashed var(--border); border-bottom: none; }
+.sys-pt-legend { margin: 8px 0 0; padding-left: 18px; font-size: 12px; columns: 2 320px; }
 .sys-footer { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 16px; position: sticky; bottom: -20px; background: var(--panel); padding: 10px 0; }
 .sys-status { flex: 1; font-size: 13px; }
 

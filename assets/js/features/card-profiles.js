@@ -144,7 +144,7 @@ function ceAlert(msg){ ceStatus(msg); alert(msg); }
 function ceSetDefault(){
   var name = ce.name, av = ce.av || {};
   if(!name || !ce.card) return ceAlert('❌ ' + crL('Chưa chọn tuyển thủ có dữ liệu.', 'No player with data selected.'));
-  if(!isAdminUser()) return ceAlert('❌ ' + crL('Cần đăng nhập admin để đặt thẻ sự nghiệp.', 'Log in as admin to set the career card.'));
+  if(!canEditCards()) return ceAlert('❌ ' + crL('Cần quyền 🃏 Thẻ cầu thủ để đặt thẻ sự nghiệp.', 'The 🃏 Player cards permission is required to set the career card.'));
   if(ceIsBack(ce.style)) return ceAlert('❌ ' + crL('Mặt sau không dùng làm thẻ sự nghiệp.', 'The card back cannot be a career card.'));
   if(!ceCanWriteCloud()) return ceAlert('❌ ' + crL('Chưa lưu được: cần bật Đồng bộ cloud và có GitHub PAT (quyền ghi) để lưu thẻ và ảnh lên git.',
     'Not saved: cloud sync must be ON with a GitHub PAT (write access) to save the card and photo to git.'));
@@ -179,7 +179,7 @@ function ceSetDefault(){
 
 function ceClearDefault(){
   var name = ce.name, p = ceProfile(name), key = careerName(name);
-  if(!p || !isAdminUser()) return;
+  if(!p || !canEditCards()) return;
   if(!confirm(crL('Bỏ thẻ sự nghiệp mặc định của ', 'Remove the default career card of ') + key + '?')) return;
   delete state.cardProfiles[key];
   ceSaveProfiles();
@@ -191,7 +191,7 @@ function ceClearDefault(){
 
 // Design for everyone (players without their own career card); tier stays automatic.
 function ceSetGlobalDefault(){
-  if(!isAdminUser()) return ceAlert('❌ ' + crL('Cần đăng nhập admin.', 'Log in as admin.'));
+  if(!canEditCards()) return ceAlert('❌ ' + crL('Cần quyền 🃏 Thẻ cầu thủ.', 'The 🃏 Player cards permission is required.'));
   if(ceIsBack(ce.style)) return ceAlert('❌ ' + crL('Mặt sau không dùng làm thẻ sự nghiệp.', 'The card back cannot be a career card.'));
   var label = ceStyleLabel(ce.style);
   if(!confirm(crL('Đặt mẫu ' + label + ' làm thẻ mặc định cho tất cả tuyển thủ (trừ người đã có thẻ riêng)?',
@@ -201,7 +201,7 @@ function ceSetGlobalDefault(){
   ceGlobalSaved(crL('Đã đặt mẫu chung: ', 'Default design for everyone: ') + label);
 }
 function ceClearGlobalDefault(){
-  if(!isAdminUser() || !state.cardDefault) return;
+  if(!canEditCards() || !state.cardDefault) return;
   if(!confirm(crL('Bỏ mẫu thẻ mặc định chung (về thẻ Sự nghiệp)?', 'Remove the default design for everyone (back to the Career card)?'))) return;
   delete state.cardDefault;
   ceGlobalSaved(crL('Đã bỏ mẫu chung.', 'Default design for everyone removed.'));
@@ -221,7 +221,7 @@ function ceGlobalSaved(msg){
 function ceRenderDefaultBox(){
   var box = $('ceDefBox');
   if(!box) return;
-  var admin = typeof isAdminUser === 'function' && isAdminUser(), p = ce.card ? ceProfile(ce.name) : null, g = ceGlobalDefault();
+  var admin = typeof canEditCards === 'function' && canEditCards(), p = ce.card ? ceProfile(ce.name) : null, g = ceGlobalDefault();
   box.hidden = !admin || !ce.card || ceIsBack(ce.style);
   if(box.hidden) return;
   $('ceGlobInfo').textContent = '🌐 ' + crL('Mẫu chung cho tất cả: ', 'Default design for everyone: ') +

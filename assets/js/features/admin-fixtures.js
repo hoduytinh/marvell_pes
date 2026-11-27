@@ -181,7 +181,7 @@ function amSaved(s, key, hg, ag){
 // the events its handlers listen to (change / blur / Enter), then render the previous season back.
 function amCommit(sid, key, hg, ag){
   var s = state.seasons[sid];
-  if(!s || seasonLocked(s) || !(isAdminUser() || isSupporter())) return false;
+  if(!s || seasonLocked(s) || !canScoreUser()) return false;
   if(amSaved(s, key, hg, ag)) return true;
   var prev = state.current, bview = getBracketView(), keep = amReadFilters(), ok = false;
   var rnd = /^(\d+)-\d+$/.exec(key) || /^cswiss-(\d+)-\d+$/.exec(key);
@@ -229,7 +229,7 @@ function amNum(inp){
   return inp.value === '' || isNaN(v) ? null : Math.max(0, v);
 }
 function amRowCommit(row){
-  if(amBusy || !row || !(isAdminUser() || isSupporter())) return;
+  if(amBusy || !row || !canScoreUser()) return;
   var hi = row.querySelector('.am-hg'), ai = row.querySelector('.am-ag');
   var hg = amNum(hi), ag = amNum(ai);
   if((hg == null) !== (ag == null)) return; // wait for the other side
@@ -282,7 +282,7 @@ document.addEventListener('click', function(e){
   if(!t || !t.closest) return;
   if(t.closest('#amBack')){
     amShowBack(false);
-    if(isAdminUser() || isSupporter() || isPlayer()) openStatsPage('admin');
+    if(hasAnyPerm(['score', 'submit'])) openStatsPage('admin');
     return;
   }
   if(t.closest('#btnAdminFixtures')){
