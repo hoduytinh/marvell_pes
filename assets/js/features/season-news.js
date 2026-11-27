@@ -909,6 +909,7 @@ function snH2HPaperHtml(a, b, rng){
   var date = new Date().toLocaleDateString(CR_EN ? 'en-GB' : 'vi-VN');
   var html = '<section class="sn-paper h2hn-paper"><div class="sn-paper-head"><span class="sn-mast">📰 PesNews</span>' +
     '<span class="sn-ed muted"><span class="no-i18n">' + E(r.a) + '</span> vs <span class="no-i18n">' + E(r.b) + '</span> · ' + date + '</span>' +
+    '<button type="button" class="ghost sn-refresh" data-h2hn-export title="' + E(crL('Xuất ảnh để copy', 'Export as image to copy')) + '">📷 ' + crL('Xuất ảnh', 'Export image') + '</button>' +
     '<button type="button" class="ghost sn-refresh" data-h2hn-refresh title="' + E(crL('Tin khác', 'More news')) + '">🔄</button></div>';
   var fx = '<div class="sn-fx-teams"><span class="no-i18n">' + E(r.a) + '</span><b class="sn-fx-sc" title="' + E(crL('Thắng – Hòa – Thua', 'Won – Drawn – Lost')) + '">' +
     r.W + ' – ' + r.D + ' – ' + r.L + '</b><span class="no-i18n">' + E(r.b) + '</span></div>';
@@ -933,10 +934,47 @@ function openH2HNews(a, b){
   var seed = function(){ return snRng(Math.floor(Math.random() * 4294967296)); };
   var dlg = smDialog('<div class="no-i18n"><div class="h2hn-body">' + snH2HPaperHtml(a, b, seed()) + '</div>' +
     '<div class="lg-dialog-foot"><button type="button" data-close>' + snE(crL('Đóng', 'Close')) + '</button></div></div>', function(e, d){
+      var ex = e.target.closest('[data-h2hn-export]');
+      if(ex){ snH2HNewsExport(d, a, b, ex); return; }
       if(!e.target.closest('[data-h2hn-refresh]')) return;
       d.querySelector('.h2hn-body').innerHTML = snH2HPaperHtml(a, b, seed());
     });
   dlg.classList.add('h2hn-dialog');
+}
+
+// Popup paper -> PNG (round-export.js helpers), shown in a window ready to copy.
+function snH2HNewsExport(dlg, a, b, btn){
+  var src = dlg.querySelector('.h2hn-paper');
+  if(!src || typeof captureNodeSnapshot !== 'function') return;
+  var title = '📰 PesNews: ' + a + ' vs ' + b;
+  var text = title + '\n' + [].map.call(src.querySelectorAll('.sn-top-text, .sn-text'), function(x){
+    return '• ' + x.textContent.trim();
+  }).join('\n');
+  btn.disabled = true;
+  var w = openExportWindow(); // synchronous inside the click so popup blockers allow it
+  captureNodeSnapshot(function(bg){
+    var wrap = document.createElement('div');
+    wrap.className = 'no-i18n';
+    wrap.style.cssText = 'position:fixed;left:0;top:0;z-index:-1;pointer-events:none;width:860px;padding:16px;' +
+      'box-sizing:border-box;background:' + bg + ';color:var(--text);font-family:inherit;';
+    var clone = src.cloneNode(true);
+    [].forEach.call(clone.querySelectorAll('button, .sn-foot'), function(x){ x.remove(); });
+    wrap.appendChild(clone);
+    document.body.appendChild(wrap);
+    return wrap;
+  }).then(function(blob){
+    return blobToDataUrl(blob).then(function(url){
+      var opts = { heading: crL('📤 Export PesNews đối đầu', '📤 Export head-to-head PesNews'), text: text };
+      if(!fillExportWindow(w, title, blob, url, opts)) showRoundExportDialog(title, blob, url, opts);
+    });
+  }).catch(function(err){
+    console.error('H2H PesNews export failed:', err);
+    if(w && !w.closed) w.close();
+    alert(crL('Không tạo được ảnh: ', 'Could not create the image: ') + (err && err.message ? err.message : err));
+  }).then(function(){
+    var nb = dlg.querySelector('[data-h2hn-export]');
+    if(nb) nb.disabled = false;
+  });
 }
 
 // "📰 PesNews" button of a head-to-head view.

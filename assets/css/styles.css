@@ -1554,6 +1554,7 @@ input.lg-num{width:80px;text-align:center;padding:4px 4px}
 .sm-dialog.h2hn-dialog{width:min(920px,96vw);max-height:92vh;overflow:auto}
 .h2hn-fx{padding:8px 10px;margin-bottom:10px;border:1px solid var(--border);border-radius:8px;background:var(--panel)}
 .h2hn-fx .sn-fx-teams{font-size:15px}
+.h2hn-paper .sn-refresh + .sn-refresh{margin-left:0}
 .teo-h2h-news{margin-left:6px;padding:2px 8px;font-size:12px;border-radius:999px;cursor:pointer;vertical-align:middle}
 .cp-row{display:flex;gap:22px;overflow-x:auto;padding:6px 4px 10px;scroll-snap-type:x proximity}
 .cp-item{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:6px;scroll-snap-align:end}
