@@ -195,7 +195,27 @@ function rsDecorate(){
   });
 }
 var rsTimer = null;
-function rsSchedule(){ clearTimeout(rsTimer); rsTimer = setTimeout(rsDecorate, 150); }
+function rsSchedule(){ clearTimeout(rsTimer); rsTimer = setTimeout(function(){ rsDecorate(); rsSyncToggle(); }, 150); }
+
+// Hide / unhide the submission lines under the season-view matches (button next to 📤 Export,
+// remembered per browser; the round export image follows the same choice).
+function rsHidden(){ try { return localStorage.getItem('pesRsHide') === '1'; } catch(e){ return false; } }
+function rsSyncToggle(){
+  var hide = rsHidden();
+  document.body.classList.toggle('rs-hide', hide);
+  var btn = document.getElementById('btnRsToggle');
+  if(!btn) return;
+  btn.hidden = !rsActive();
+  btn.classList.toggle('rs-toggle-off', hide);
+  var txt = hide ? rsL('📨 Hiện submit', '📨 Show submit') : rsL('📨 Ẩn submit', '📨 Hide submit');
+  if(btn.textContent !== txt) btn.textContent = txt; // body observer → avoid a re-schedule loop
+  btn.title = hide ? rsL('Đang ẩn dòng gửi/duyệt kết quả dưới các trận, bấm để hiện lại', 'Submission lines under the matches are hidden, click to show them')
+    : rsL('Ẩn dòng gửi/duyệt kết quả dưới các trận (ảnh Export cũng không có)', 'Hide the submission lines under the matches (also left out of the Export image)');
+}
+function rsToggleHidden(){
+  try { localStorage.setItem('pesRsHide', rsHidden() ? '0' : '1'); } catch(e){}
+  rsSyncToggle();
+}
 
 function rsRefreshUi(){
   if(document.body.classList.contains('page-stats') && typeof statsTab !== 'undefined' && statsTab === 'admin' && typeof renderStatsPage === 'function'){
@@ -281,6 +301,7 @@ function rsDialogSend(){
 // ---------- Wiring ----------
 document.addEventListener('click', function(e){
   var t = e.target, b = t && t.closest && t.closest('[data-rs-send],[data-rs-ok],[data-rs-rej],[data-rs-goto]');
+  if(t && t.closest && t.closest('#btnRsToggle')){ rsToggleHidden(); return; }
   if(!b){
     if(t && t.closest && t.closest('#btnAdminFixtures,[data-sp-tab="admin"]') && Date.now() - rsLastFetch > 10000) rsFetch();
     return;
@@ -310,6 +331,7 @@ document.addEventListener('visibilitychange', function(){
     if(u && !document.hidden && Date.now() - rsLastFetch > 60000) rsFetch();
   }
   function start(){
+    rsSyncToggle();
     tick();
     setInterval(tick, 5000);
     new MutationObserver(function(muts){

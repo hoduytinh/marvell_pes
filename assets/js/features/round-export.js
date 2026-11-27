@@ -65,6 +65,7 @@ function buildRoundSnapshotNode(title, bg){
     else cloneFields[i].setAttribute('value', srcFields[i].value);
   }
   [].forEach.call(clone.querySelectorAll('button'), function(b){ b.remove(); });
+  if(document.body.classList.contains('rs-hide')) [].forEach.call(clone.querySelectorAll('.rs-line'), function(el){ el.remove(); });
   [].forEach.call(clone.querySelectorAll('[data-key]'), function(el){ el.removeAttribute('data-key'); });
   wrap.appendChild(head);
   wrap.appendChild(clone);
