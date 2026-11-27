@@ -1329,7 +1329,8 @@ function renderStatsPage(){
     body = '<div class="sp-h2h-pick"><select id="spH2HA" class="no-i18n">' + opts(statsH2H[0]) + '</select>' +
       '<button type="button" class="ghost" id="spH2HSwap" title="' + escapeHtml(crL('Đổi bên', 'Swap')) + '">⇄</button>' +
       '<select id="spH2HB" class="no-i18n">' + opts(statsH2H[1]) + '</select>' +
-      (statsH2H[0] && statsH2H[1] ? '<button type="button" class="ghost" id="spH2HExport" title="' + escapeHtml(crL('Xuất ảnh để copy', 'Export as image to copy')) + '">📷 ' + crL('Xuất ảnh', 'Export image') + '</button>' : '') + '</div>' +
+      (statsH2H[0] && statsH2H[1] ? '<button type="button" class="ghost" id="spH2HExport" title="' + escapeHtml(crL('Xuất ảnh để copy', 'Export as image to copy')) + '">📷 ' + crL('Xuất ảnh', 'Export image') + '</button>' +
+        (typeof snH2HNewsBtn === 'function' ? snH2HNewsBtn(statsH2H[0], statsH2H[1]) : '') : '') + '</div>' +
       (statsH2H[0] && statsH2H[1] ? '<div class="sp-h2h">' + renderH2HHtml(cd, statsH2H[0], statsH2H[1]) + '</div>' : '<div class="muted">' + crL('Chưa có dữ liệu.', 'No data yet.') + '</div>');
   } else if(statsTab === 'pesrank') body = prRenderHtml(only);
   else if(statsTab === 'elo') body = crEloHtml(cd, only);

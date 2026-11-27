@@ -662,36 +662,7 @@ function snNews(D, odds, rng, all){
   if(!D.dbl){
     snShuffled(teams, rng).slice(0, 5).forEach(function(t){
       if(!cd.elo[t.ck]) return;
-      var tc = teamCareer(cd, t.ck);
-      if(!tc.list.length) return;
-      var n = snB(t), P = tc.list.length, Wn = tc.list.filter(function(x){ return x.r === 'W'; }).length;
-      var real = tc.list.filter(function(x){ return !x.m.est && !x.m.ko; }), GA = real.reduce(function(a, x){ return a + x.ga; }, 0);
-      var mc = medalCount(tc.trophies), opts = [];
-      var o = function(pri, id, v){ v.n = n; opts.push([pri, id, v]); };
-      var nem = tc.opponents.filter(function(x){ return x.L >= 3 && x.L > x.W; }).sort(function(a, b){ return b.L - a.L; })[0];
-      if(nem) o(44, 'pNemesis', { x: snB(nem.name), xl: nem.L, xw: nem.W });
-      var nb = tc.opponents.filter(function(x){ return x.P >= 3 && !x.W; }).sort(function(a, b){ return b.P - a.P; })[0];
-      if(nb) o(42, 'pNeverBeat', { x: snB(nb.name), xp: nb.P });
-      var vic = tc.opponents.filter(function(x){ return x.W >= 4 && x.W >= 3 * x.L; }).sort(function(a, b){ return b.W - a.W; })[0];
-      if(vic) o(36, 'pVictim', { x: snB(vic.name), k: vic.W });
-      var wl = tc.worstLoss, bw = tc.biggestWin;
-      if(wl && wl.ga - wl.gf >= 3) o(36, 'pWorstLoss', { x: snB(wl.opp), sc: wl.gf + '–' + wl.ga, s: stTxt(wl.m.season), st: stTxt(wl.m.stage) });
-      if(bw && bw.gf - bw.ga >= 3) o(32, 'pBestWin', { x: snB(bw.opp), sc: bw.gf + '–' + bw.ga, s: stTxt(bw.m.season) });
-      if(tc.elo && tc.elo.peak - tc.elo.elo >= 60) o(40, 'pPeakDrop', { k: Math.round(tc.elo.peak - tc.elo.elo), pk: Math.round(tc.elo.peak) });
-      if(P >= 15 && Wn / P < 0.35) o(40, 'pLowWin', { k: Math.round(Wn * 100 / P) });
-      else if(P >= 15 && Wn / P >= 0.6) o(36, 'pWinRateHigh', { k: Math.round(Wn * 100 / P) });
-      if(real.length >= 20 && GA / real.length >= 2.5) o(38, 'pLeaky', { k: (GA / real.length).toFixed(1) });
-      if(tc.ko.P >= 4 && tc.ko.W / tc.ko.P < 0.4) o(40, 'pKoChoke', { k: tc.ko.W + '/' + tc.ko.P });
-      else if(tc.ko.P >= 4 && tc.ko.W / tc.ko.P >= 0.65) o(34, 'pKoKing', { k: tc.ko.W + '/' + tc.ko.P });
-      if(P >= 20 && !mc.gold) o(38, 'pNoGold', { k: P });
-      else if(mc.gold + mc.silver + mc.bronze >= 3) o(34, 'pCabinet', { g: mc.gold, s: mc.silver, b: mc.bronze });
-      if(tc.rank === 1) o(46, 'pThrone', {});
-      if(tc.streaks.best.win >= 6) o(28, 'pBestStreak', { k: tc.streaks.best.win });
-      if(P >= 150) o(26, 'pVeteran', { k: P });
-      else if(P < 12) o(26, 'pRookie', { k: P });
-      var prevT = tc.trophies.filter(function(x){ return x.sid !== D.sid; }), lastT = prevT[prevT.length - 1];
-      if(lastT) o(32, 'pLastSeason', { s: stTxt(lastT.season), pl: (lastT.medal ? CR_MEDAL_ICON[lastT.medal] + ' ' : '') + snE(lastT.place) });
-      snShuffled(opts, rng).slice(0, 2).forEach(function(x){ say(x[0], x[1], x[2]); });
+      snShuffled(snCareerOpts(cd, t.ck, snB(t), D.sid), rng).slice(0, 2).forEach(function(x){ say(x[0], x[1], x[2]); });
     });
   }
 
@@ -801,6 +772,177 @@ function snHeadlines(s){
   if(!s) return [];
   var rng = snRng(Math.floor(Math.random() * 4294967296)), D = snData(s);
   return snNews(D, snOdds(D, rng), rng, true).map(function(n){ return { tag: n.tag, label: SN_TAGS[n.tag] || '', html: n.html }; });
+}
+
+// Career spotlight sentences of player ck (n = bold name): [pri, id, vars] options.
+// sid: season whose trophies do not count as "last season" (the running one), or null.
+function snCareerOpts(cd, ck, n, sid){
+  var tc = teamCareer(cd, ck), opts = [];
+  if(!tc.list.length) return opts;
+  var stTxt = function(x){ return '<span class="no-i18n">' + snE(x) + '</span>'; };
+  var P = tc.list.length, Wn = tc.list.filter(function(x){ return x.r === 'W'; }).length;
+  var real = tc.list.filter(function(x){ return !x.m.est && !x.m.ko; }), GA = real.reduce(function(a, x){ return a + x.ga; }, 0);
+  var mc = medalCount(tc.trophies);
+  var o = function(pri, id, v){ v.n = n; opts.push([pri, id, v]); };
+  var nem = tc.opponents.filter(function(x){ return x.L >= 3 && x.L > x.W; }).sort(function(a, b){ return b.L - a.L; })[0];
+  if(nem) o(44, 'pNemesis', { x: snB(nem.name), xl: nem.L, xw: nem.W });
+  var nb = tc.opponents.filter(function(x){ return x.P >= 3 && !x.W; }).sort(function(a, b){ return b.P - a.P; })[0];
+  if(nb) o(42, 'pNeverBeat', { x: snB(nb.name), xp: nb.P });
+  var vic = tc.opponents.filter(function(x){ return x.W >= 4 && x.W >= 3 * x.L; }).sort(function(a, b){ return b.W - a.W; })[0];
+  if(vic) o(36, 'pVictim', { x: snB(vic.name), k: vic.W });
+  var wl = tc.worstLoss, bw = tc.biggestWin;
+  if(wl && wl.ga - wl.gf >= 3) o(36, 'pWorstLoss', { x: snB(wl.opp), sc: wl.gf + '–' + wl.ga, s: stTxt(wl.m.season), st: stTxt(wl.m.stage) });
+  if(bw && bw.gf - bw.ga >= 3) o(32, 'pBestWin', { x: snB(bw.opp), sc: bw.gf + '–' + bw.ga, s: stTxt(bw.m.season) });
+  if(tc.elo && tc.elo.peak - tc.elo.elo >= 60) o(40, 'pPeakDrop', { k: Math.round(tc.elo.peak - tc.elo.elo), pk: Math.round(tc.elo.peak) });
+  if(P >= 15 && Wn / P < 0.35) o(40, 'pLowWin', { k: Math.round(Wn * 100 / P) });
+  else if(P >= 15 && Wn / P >= 0.6) o(36, 'pWinRateHigh', { k: Math.round(Wn * 100 / P) });
+  if(real.length >= 20 && GA / real.length >= 2.5) o(38, 'pLeaky', { k: (GA / real.length).toFixed(1) });
+  if(tc.ko.P >= 4 && tc.ko.W / tc.ko.P < 0.4) o(40, 'pKoChoke', { k: tc.ko.W + '/' + tc.ko.P });
+  else if(tc.ko.P >= 4 && tc.ko.W / tc.ko.P >= 0.65) o(34, 'pKoKing', { k: tc.ko.W + '/' + tc.ko.P });
+  if(P >= 20 && !mc.gold) o(38, 'pNoGold', { k: P });
+  else if(mc.gold + mc.silver + mc.bronze >= 3) o(34, 'pCabinet', { g: mc.gold, s: mc.silver, b: mc.bronze });
+  if(tc.rank === 1) o(46, 'pThrone', {});
+  if(tc.streaks.best.win >= 6) o(28, 'pBestStreak', { k: tc.streaks.best.win });
+  if(P >= 150) o(26, 'pVeteran', { k: P });
+  else if(P < 12) o(26, 'pRookie', { k: P });
+  var prevT = tc.trophies.filter(function(x){ return x.sid !== sid; }), lastT = prevT[prevT.length - 1];
+  if(lastT) o(32, 'pLastSeason', { s: stTxt(lastT.season), pl: (lastT.medal ? CR_MEDAL_ICON[lastT.medal] + ' ' : '') + snE(lastT.place) });
+  return opts;
+}
+
+// ---------------- Head-to-head PesNews ----------------
+// PesNews takes on one pair of players (H2H tab, Teo Robot): their record, the Elo forecast, the last
+// meeting and a few career / gossip lines of each side. Same sentence bank as the newspaper.
+function snH2HNews(cd, a, b, rng){
+  a = careerResolveName(cd, a); b = careerResolveName(cd, b);
+  var items = [];
+  SN_TMAP = {};
+  var A = snB(a), B = snB(b), stTxt = function(x){ return '<span class="no-i18n">' + snE(x) + '</span>'; };
+  var fmtH = function(x, k){ return k === 'n' ? snB(x) : stTxt(x); };
+  // gk: per-player group key, so the same kind of story may be told once for each side.
+  function say(pri, id, v, gk, tag){
+    if(!SN_BANK[id]) return;
+    var keys = [SN_SUBJ[id], 'n', 't', 'h', 'a', 'd', 'f'], who = null, vv = {};
+    for(var i = 0; i < keys.length && !who; i++) if(keys[i] && typeof v[keys[i]] === 'string' && SN_TMAP[v[keys[i]]]) who = SN_TMAP[v[keys[i]]].name;
+    var pc = who ? snPlayerCtx(cd, careerResolveName(cd, who), fmtH) : null;
+    if(pc) Object.keys(pc).forEach(function(k){ vv[k] = pc[k]; });
+    Object.keys(v).forEach(function(k){ vv[k] = v[k]; });
+    items.push({ pri: pri + rng() * 14, tag: tag || SN_BANK[id].tag, grp: [snGroupOf(id) + (gk ? '|' + gk : '')], html: snLine(id, vv, rng) });
+  }
+  var ta = teamCareer(cd, a), tb = teamCareer(cd, b);
+  var list = ta.list.filter(function(x){ return x.opp === b; }), P = list.length, W = 0, D = 0, L = 0;
+  list.forEach(function(x){ if(x.r === 'W') W++; else if(x.r === 'D') D++; else L++; });
+  var ea = cd.elo[a], eb = cd.elo[b], p = ea && eb ? snProbs(ea.elo, eb.elo, false) : null;
+
+  // --- Record ---
+  if(!P) say(95, 'firstMeet', { h: A, a: B });
+  if(P >= 2) say(80, 'hRivalry', { a: A, b: B, n: P, w: W, d: D, l: L });
+  if(P >= 5) say(80, 'classic', { h: A, a: B, n: P, w: W, d: D, l: L });
+  if(P >= 4 && W === L) say(88, 'hEven', { a: A, b: B, n: P });
+  var aDom = W >= L, dw = Math.max(W, L), dl = Math.min(W, L), Dom = aDom ? A : B, Sub = aDom ? B : A;
+  if(P >= 3 && dw - dl >= 2 && dl * 2 <= dw){
+    say(84, 'hLopsided', { a: Dom, b: Sub, w: dw, l: dl });
+    say(84, 'pNemesis', { n: Sub, x: Dom, xl: dw, xw: dl });
+    if(dw >= 3) say(82, 'pVictim', { n: Dom, x: Sub, k: dw });
+    if(!dl) say(90, 'pNeverBeat', { n: Sub, x: Dom, xp: P });
+  }
+
+  // --- Elo forecast ---
+  if(p){
+    var favA = p.h >= p.a, F = favA ? A : B, Dg = favA ? B : A;
+    if(Math.abs(p.h - p.a) < 0.08) say(76, 'coinFlip', { h: A, a: B, pk: crL('cửa thắng ' + snPct(p.h) + ' – ' + snPct(p.a), 'win chances ' + snPct(p.h) + ' – ' + snPct(p.a)) });
+    else if(Math.max(p.h, p.a) >= 0.6) say(74, 'oneSided', { d: Dg, f: F, p: snPct(Math.min(p.h, p.a)) });
+    var dogW = favA ? L : W, favW = favA ? W : L;
+    if(P >= 3 && dogW > favW) say(86, 'curse', { d: Dg, f: F, w: dogW, l: favW });
+  }
+
+  // --- Last meeting ---
+  var last = list[P - 1];
+  if(last){
+    var cm = careerCommentary(cd, last.i), m = last.m;
+    if(cm) items.push({ pri: 78 + rng() * 10, tag: 'result',
+      grp: (cm.ids || []).filter(function(id){ return ['r_convincing', 'r_narrow', 'r_decider'].indexOf(id) === -1; }).map(snGroupOf),
+      html: crL('Lần gặp gần nhất: ', 'Latest meeting: ') + '<span class="sn-score no-i18n">' + snE(m.home + ' ' + m.hg + ' – ' + m.ag + ' ' + m.away) + '</span> <small class="muted no-i18n">' +
+        snE(m.season + ' · ' + m.stage) + '</small><br>' + snE(cm.lines.join(' ')) });
+    if(Math.abs(last.gf - last.ga) >= 2){
+      var aLost = last.r === 'L';
+      say(72, 'revengeChance', { t: aLost ? A : B, o: aLost ? B : A, sc: Math.min(last.gf, last.ga) + '–' + Math.max(last.gf, last.ga) });
+    }
+  }
+
+  // --- Current form ---
+  [[ta, A, B], [tb, B, A]].forEach(function(x){
+    var k = x[0].streaks.cur.win;
+    if(k >= 3) say(66, 'streakLine', { t: x[1], k: k, o: x[2] });
+  });
+
+  // --- Career spotlight of each side (stories about this pair are already told above) ---
+  [[a, A, B], [b, B, A]].forEach(function(x){
+    snShuffled(snCareerOpts(cd, x[0], x[1], null).filter(function(o){ return o[2].x !== x[2] || ['pNemesis', 'pNeverBeat', 'pVictim'].indexOf(o[1]) === -1; }), rng).slice(0, 3)
+      .forEach(function(o){ say(o[0], o[1], o[2], x[0]); });
+  });
+
+  // --- Gossip, rumours & quotes ---
+  if(typeof SN_GOSSIP !== 'undefined'){
+    var gs = snShuffled(SN_GOSSIP.filter(function(g){ return SN_BANK[g.id] && g.who === 'any'; }), rng);
+    if(gs[0]) say(16 + rng() * 30, gs[0].id, { t: A, o: B });
+    if(gs[1]) say(16 + rng() * 30, gs[1].id, { t: B, o: A });
+  }
+  say(14 + rng() * 30, 'rumor', { t: rng() < 0.5 ? A : B });
+  say(8 + rng() * 20, 'qTeo', {});
+
+  items.sort(function(x, y){ return y.pri - x.pri; });
+  var gSeen = {};
+  items = items.filter(function(it){
+    if(!it.html) return false;
+    var g = it.grp || [];
+    if(g.some(function(k){ return gSeen[k]; })) return false;
+    g.forEach(function(k){ gSeen[k] = 1; });
+    return true;
+  });
+  SN_TMAP = null;
+  return { items: items.slice(0, 14), a: a, b: b, P: P, W: W, D: D, L: L, p: p };
+}
+
+function snH2HPaperHtml(a, b, rng){
+  var cd = careerData(state), r = snH2HNews(cd, a, b, rng), E = snE;
+  var date = new Date().toLocaleDateString(CR_EN ? 'en-GB' : 'vi-VN');
+  var html = '<section class="sn-paper h2hn-paper"><div class="sn-paper-head"><span class="sn-mast">📰 PesNews</span>' +
+    '<span class="sn-ed muted"><span class="no-i18n">' + E(r.a) + '</span> vs <span class="no-i18n">' + E(r.b) + '</span> · ' + date + '</span>' +
+    '<button type="button" class="ghost sn-refresh" data-h2hn-refresh title="' + E(crL('Tin khác', 'More news')) + '">🔄</button></div>';
+  var fx = '<div class="sn-fx-teams"><span class="no-i18n">' + E(r.a) + '</span><b class="sn-fx-sc" title="' + E(crL('Thắng – Hòa – Thua', 'Won – Drawn – Lost')) + '">' +
+    r.W + ' – ' + r.D + ' – ' + r.L + '</b><span class="no-i18n">' + E(r.b) + '</span></div>';
+  if(r.p) fx += '<div class="sn-fx-bar"><i class="h" style="width:' + (r.p.h * 100).toFixed(1) + '%"></i><i class="d" style="width:' + (r.p.d * 100).toFixed(1) + '%"></i>' +
+    '<i class="a" style="width:' + (r.p.a * 100).toFixed(1) + '%"></i></div><div class="sn-fx-cap muted">🔮 ' + crL('Trận tới (theo Elo): ', 'Next match (Elo): ') +
+    '<span class="no-i18n">' + E(r.a) + '</span> ' + snPct(r.p.h) + ' · ' + crL('Hòa ', 'Draw ') + snPct(r.p.d) + ' · <span class="no-i18n">' + E(r.b) + '</span> ' + snPct(r.p.a) + '</div>';
+  html += '<div class="h2hn-fx">' + fx + '</div>';
+  if(r.items.length){
+    var top = r.items[0];
+    html += '<article class="sn-top"><span class="sn-tag t-' + top.tag + '">' + SN_TAGS[top.tag] + '</span><div class="sn-top-text">' + top.html + '</div></article>' +
+      '<div class="sn-list">' + r.items.slice(1).map(function(n){
+        return '<article class="sn-item"><span class="sn-tag t-' + n.tag + '">' + SN_TAGS[n.tag] + '</span><div class="sn-text">' + n.html + '</div></article>';
+      }).join('') + '</div>';
+  } else html += '<div class="muted">' + crL('PesNews chưa có gì để viết về cặp đấu này.', 'PesNews has nothing to write about this pair yet.') + '</div>';
+  return html + '<div class="sn-foot muted">' + crL('PesNews viết tự động từ lịch sử đối đầu, Elo và sự nghiệp của hai bên — bấm 🔄 để đọc nhận định khác.',
+    'PesNews is written automatically from the head-to-head record, Elo and both careers — press 🔄 for another take.') + '</div></section>';
+}
+
+// Popup with PesNews' take on a pair of players.
+function openH2HNews(a, b){
+  if(!a || !b || typeof careerData !== 'function' || typeof smDialog !== 'function') return;
+  var seed = function(){ return snRng(Math.floor(Math.random() * 4294967296)); };
+  var dlg = smDialog('<div class="no-i18n"><div class="h2hn-body">' + snH2HPaperHtml(a, b, seed()) + '</div>' +
+    '<div class="lg-dialog-foot"><button type="button" data-close>' + snE(crL('Đóng', 'Close')) + '</button></div></div>', function(e, d){
+      if(!e.target.closest('[data-h2hn-refresh]')) return;
+      d.querySelector('.h2hn-body').innerHTML = snH2HPaperHtml(a, b, seed());
+    });
+  dlg.classList.add('h2hn-dialog');
+}
+
+// "📰 PesNews" button of a head-to-head view.
+function snH2HNewsBtn(a, b, cls){
+  return '<button type="button" class="' + (cls || 'ghost') + '" data-h2h-news data-h2h-a="' + snE(a) + '" data-h2h-b="' + snE(b) + '" title="' +
+    snE(crL('Nhận định của PesNews về cặp đấu', 'PesNews take on this pair')) + '">📰 PesNews</button>';
 }
 
 // ---------------- Rendering ----------------
@@ -926,6 +1068,8 @@ function snRenderOverview(s){
 }
 
 document.addEventListener('click', function(e){
+  var hn = e.target && e.target.closest ? e.target.closest('[data-h2h-news]') : null;
+  if(hn){ openH2HNews(hn.getAttribute('data-h2h-a'), hn.getAttribute('data-h2h-b')); return; }
   if(!e.target || !e.target.closest || !e.target.closest('[data-sn-refresh]')) return;
   snShuffle++;
   if(typeof renderSeasonOverview === 'function') renderSeasonOverview(activeSeason());

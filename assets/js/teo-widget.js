@@ -950,6 +950,7 @@
       ((styleEl && styleEl.textContent.match(/--teo-[\w-]+/g)) || []).forEach(function(v) { vars[v] = 1; });
       Object.keys(vars).forEach(function(v) { wrap.style.setProperty(v, panelCs.getPropertyValue(v)); });
       var clone = resultEl.cloneNode(true);
+      [].forEach.call(clone.querySelectorAll('[data-h2h-news]'), function(b) { b.remove(); });
       clone.style.maxHeight = 'none';
       clone.style.overflow = 'visible';
       clone.style.marginTop = '0';
@@ -1129,7 +1130,8 @@
     }
 
     function renderCareerH2H(a, b) {
-      resultEl.innerHTML = '<div class="teo-title">⚔️ ' + L('Đối đầu', 'Head-to-head') + ': <span class="no-i18n">' + escapeText(a) + '</span> vs <span class="no-i18n">' + escapeText(b) + '</span></div>' +
+      resultEl.innerHTML = '<div class="teo-title">⚔️ ' + L('Đối đầu', 'Head-to-head') + ': <span class="no-i18n">' + escapeText(a) + '</span> vs <span class="no-i18n">' + escapeText(b) + '</span>' +
+        (typeof window.snH2HNewsBtn === 'function' ? ' ' + window.snH2HNewsBtn(a, b, 'teo-h2h-news') : '') + '</div>' +
         window.renderH2HHtml(window.careerData(window.state), a, b);
       setCaptureEnabled(true);
     }
